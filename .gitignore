@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local working directories for split/processed CSVs and the customer's source
+# workbook - these contain real customer billing data and must never be committed.
+/data/
+*.xlsx
