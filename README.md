@@ -72,40 +72,85 @@ account-wide access.
 Until credentials exist, use `--no-upload` to test the split + process steps
 locally - the S3 step is the only part that needs AWS access.
 
-## SharePoint -> Power Automate -> this pipeline
+## SharePoint -> Azure Function -> S3
 
-Since detection is happening via Power Automate rather than this script
-polling SharePoint directly, the integration contract is:
+`function_app.py` is an HTTP-triggered Azure Function that runs this whole
+pipeline in the cloud: it fetches the latest matching workbook from SharePoint
+itself (via Microsoft Graph, app-only auth), then does the same split ->
+process -> upload steps as `run_pipeline.py`, in memory, per invocation.
+
+Power Automate's job is reduced to just the trigger:
 
 1. A Power Automate flow triggers **"When a file is created or modified"** on
-   the SharePoint folder the customer emails their workbook into.
-2. That flow gets the file onto a location this script can read - e.g. a
-   network/shared path, or an HTTP/Run-script action that hands the file to
-   wherever this runs.
-3. Power Automate then invokes:
-   ```bash
-   python run_pipeline.py --workbook "<downloaded file path>" --bucket my-saas-billing-bucket
-   ```
-4. That's it - Power Automate doesn't need to track "what month are we on."
-   Every invocation re-checks S3 itself and only processes what's actually
-   new, so it's safe to call this on every file drop, even if the customer
-   re-uploads the same workbook with just one new month appended, or the flow
-   fires more than once for the same file.
+   the SharePoint folder the customer's workbook lands in.
+2. It calls the Function's HTTP endpoint (an "HTTP" or "Azure Functions"
+   action, using the function key for auth) - no file content needs to be
+   attached to the call, since the Function pulls the file itself.
+3. The Function finds the most recently modified file in that folder whose
+   name contains `SP_FILENAME_CONTAINS`, downloads it, and runs the pipeline.
 
-The only two things needed to wire this up for real: (1) the AWS credentials
-above, and (2) whatever mechanism gets the SharePoint file from Power Automate
-onto disk where `run_pipeline.py` runs.
+Same safety property as `run_pipeline.py`: every invocation re-checks S3 for
+each provider's latest uploaded month and only processes what's new, so it's
+safe for Power Automate to call this on every file drop, or more than once for
+the same file, without double-processing anything.
+
+### Required Function App configuration
+
+Set these as Application Settings (Key Vault references for the two secrets -
+see the Key Vault setup steps from earlier in this conversation):
+
+| Setting | Description |
+|---|---|
+| `SP_TENANT_ID` | Azure AD tenant ID |
+| `SP_CLIENT_ID` | App registration (client) ID, granted Graph `Sites.Selected` or `Sites.Read.All` with admin consent |
+| `SP_CLIENT_SECRET` | That app registration's client secret - **Key Vault reference** |
+| `SP_SITE_HOSTNAME` | e.g. `yourtenant.sharepoint.com` |
+| `SP_SITE_PATH` | e.g. `sites/YourSiteName` |
+| `SP_FOLDER_PATH` | Document library path the workbook lands in, e.g. `Shared Documents/Customer Uploads` |
+| `SP_FILENAME_CONTAINS` | Substring to match the workbook's filename, e.g. `Consumption Costs` |
+| `S3_BUCKET` | Target S3 bucket |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | (or rely on a role/instance identity if you set one up) - **Key Vault references** |
+| `AWS_DEFAULT_REGION` | Bucket's region |
+
+`local.settings.json.example` has the same list for local `func start` testing
+- copy it to `local.settings.json` (already gitignored) and fill in real
+values there, never in `local.settings.json.example` itself.
+
+### Calling it
+
+```bash
+curl -X POST "https://<function-app-name>.azurewebsites.net/api/process?code=<function-key>"
+
+# optional query params:
+#   providers=Databricks,Snowflake   (default: all five)
+#   force_all_months=true            (ignore S3 state, reprocess everything)
+```
+
+It returns a JSON summary per provider: the latest month that was already in
+S3 before the run, and which new months got processed.
+
+### Deploying
+
+```bash
+func azure functionapp publish saas-pipeline-func
+```
+(run from this repo's root, alongside `host.json`; `.funcignore` keeps
+`tests/`, `data/`, and `README.md` out of the deployed package)
 
 ## Layout
 
 ```
 process_saas_data_local.py   # existing per-file transform script, unchanged
-run_pipeline.py              # orchestrator: split -> process -> upload
+run_pipeline.py              # CLI orchestrator: split -> process -> upload (cron/manual use)
+function_app.py              # Azure Function HTTP trigger: SharePoint fetch -> same pipeline -> upload
+host.json                    # Azure Functions runtime config
+local.settings.json.example  # template for local Function config (copy to local.settings.json)
 saas_pipeline/
   config.py                  # provider list, month names, column names
   split_monthly.py           # workbook -> per-month raw CSVs
   s3_sync.py                 # latest-month detection + upload
-tests/                       # uses a synthetic workbook + moto-mocked S3, no customer data
+  sharepoint_client.py       # Microsoft Graph auth + file lookup/download
+tests/                       # synthetic workbook + moto-mocked S3 + mocked Graph calls, no customer data
 ```
 
 ## Tests

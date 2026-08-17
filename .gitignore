@@ -6,3 +6,10 @@ __pycache__/
 # workbook - these contain real customer billing data and must never be committed.
 /data/
 *.xlsx
+
+# Real local Function config (tenant IDs, secrets for local testing) - only the
+# .example template with placeholders is meant to be committed.
+local.settings.json
+.python_packages/
+bin/
+obj/
