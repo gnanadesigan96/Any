@@ -25,12 +25,20 @@ def test_month_exists_false_when_nothing_uploaded(s3_client):
 
 
 def test_month_exists_true_when_a_file_is_there(s3_client):
-    _put(s3_client, "Databricks/2026/04/DatabricksApr_output.csv")
+    _put(s3_client, "databricks/2026/04/DatabricksApr_output.csv")
     assert s3_sync.month_exists(s3_client, BUCKET, "Databricks", 2026, 4) is True
 
 
+def test_month_exists_is_case_insensitive_to_the_provider_argument(s3_client):
+    # The real bucket's provider folders are lowercase even though the Excel
+    # sheet name (passed in as `provider`) is capitalized - this must still match.
+    _put(s3_client, "databricks/2026/04/DatabricksApr_output.csv")
+    assert s3_sync.month_exists(s3_client, BUCKET, "DATABRICKS", 2026, 4) is True
+    assert s3_sync.month_exists(s3_client, BUCKET, "databricks", 2026, 4) is True
+
+
 def test_month_exists_ignores_other_providers_and_months(s3_client):
-    _put(s3_client, "Databricks/2026/04/DatabricksApr_output.csv")
+    _put(s3_client, "databricks/2026/04/DatabricksApr_output.csv")
     assert s3_sync.month_exists(s3_client, BUCKET, "Databricks", 2026, 5) is False
     assert s3_sync.month_exists(s3_client, BUCKET, "Snowflake", 2026, 4) is False
 
@@ -42,8 +50,8 @@ def test_months_to_process_none_uploaded_processes_whole_window(s3_client):
 
 def test_months_to_process_skips_months_already_present(s3_client):
     for key in [
-        "Databricks/2026/01/DatabricksJan_output.csv",
-        "Databricks/2026/02/DatabricksFeb_output.csv",
+        "databricks/2026/01/DatabricksJan_output.csv",
+        "databricks/2026/02/DatabricksFeb_output.csv",
     ]:
         _put(s3_client, key)
     available = [(2026, 1), (2026, 2), (2026, 3), (2026, 4)]
@@ -54,9 +62,9 @@ def test_months_to_process_skips_months_already_present(s3_client):
 def test_months_to_process_backfills_an_older_gap_not_just_the_newest_month(s3_client):
     # January and March both uploaded fine, February was somehow skipped.
     for key in [
-        "Databricks/2026/01/DatabricksJan_output.csv",
-        "Databricks/2026/03/DatabricksMar_output.csv",
-        "Databricks/2026/04/DatabricksApr_output.csv",
+        "databricks/2026/01/DatabricksJan_output.csv",
+        "databricks/2026/03/DatabricksMar_output.csv",
+        "databricks/2026/04/DatabricksApr_output.csv",
     ]:
         _put(s3_client, key)
     available = [(2026, 1), (2026, 2), (2026, 3), (2026, 4)]
@@ -91,9 +99,9 @@ def test_months_to_process_never_goes_before_pipeline_start_month(s3_client):
 def test_months_to_process_up_to_date_returns_empty(s3_client):
     available = [(2026, 1), (2026, 2), (2026, 3)]
     for key in [
-        "Databricks/2026/01/x.csv",
-        "Databricks/2026/02/x.csv",
-        "Databricks/2026/03/x.csv",
+        "databricks/2026/01/x.csv",
+        "databricks/2026/02/x.csv",
+        "databricks/2026/03/x.csv",
     ]:
         _put(s3_client, key)
 
@@ -106,7 +114,7 @@ def test_upload_output_file_uses_provider_year_month_key(tmp_path, s3_client):
 
     key = s3_sync.upload_output_file(s3_client, BUCKET, "Databricks", 2026, 4, local_file)
 
-    assert key == "Databricks/2026/04/DatabricksApr_output.csv"
+    assert key == "databricks/2026/04/DatabricksApr_output.csv"
     obj = s3_client.get_object(Bucket=BUCKET, Key=key)
     assert obj["Body"].read() == b"a,b\n1,2\n"
 
@@ -117,7 +125,7 @@ def test_upload_output_file_with_prefix(tmp_path, s3_client):
 
     key = s3_sync.upload_output_file(s3_client, BUCKET, "Databricks", 2026, 4, local_file, prefix="saas-upload")
 
-    assert key == "saas-upload/Databricks/2026/04/DatabricksApr_output.csv"
+    assert key == "saas-upload/databricks/2026/04/DatabricksApr_output.csv"
     obj = s3_client.get_object(Bucket=BUCKET, Key=key)
     assert obj["Body"].read() == b"a,b\n1,2\n"
 
@@ -128,11 +136,11 @@ def test_upload_output_file_strips_slashes_from_prefix(tmp_path, s3_client):
 
     key = s3_sync.upload_output_file(s3_client, BUCKET, "Databricks", 2026, 4, local_file, prefix="/saas-upload/")
 
-    assert key == "saas-upload/Databricks/2026/04/DatabricksApr_output.csv"
+    assert key == "saas-upload/databricks/2026/04/DatabricksApr_output.csv"
 
 
 def test_month_exists_respects_prefix(s3_client):
-    _put(s3_client, "saas-upload/Databricks/2026/04/DatabricksApr_output.csv")
+    _put(s3_client, "saas-upload/databricks/2026/04/DatabricksApr_output.csv")
 
     # A file under the prefixed path shouldn't register at the bucket root, and vice versa.
     assert s3_sync.month_exists(s3_client, BUCKET, "Databricks", 2026, 4, prefix="") is False
@@ -140,7 +148,7 @@ def test_month_exists_respects_prefix(s3_client):
 
 
 def test_months_to_process_respects_prefix(s3_client):
-    _put(s3_client, "saas-upload/Databricks/2026/01/DatabricksJan_output.csv")
+    _put(s3_client, "saas-upload/databricks/2026/01/DatabricksJan_output.csv")
     available = [(2026, 1), (2026, 2)]
 
     # Without the matching prefix, that upload isn't found and Jan looks missing.

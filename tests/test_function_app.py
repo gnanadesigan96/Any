@@ -85,8 +85,8 @@ def test_happy_path_backfills_only_missing_months_in_window(monkeypatch, tmp_pat
 
     # Simulate Jan and Mar already uploaded, but Feb somehow missing - a gap,
     # not just a moving cutoff. Apr isn't uploaded yet either.
-    s3_client.put_object(Bucket=BUCKET, Key="Databricks/2026/01/DatabricksJan_output.csv", Body=b"x")
-    s3_client.put_object(Bucket=BUCKET, Key="Databricks/2026/03/DatabricksMar_output.csv", Body=b"x")
+    s3_client.put_object(Bucket=BUCKET, Key="databricks/2026/01/DatabricksJan_output.csv", Body=b"x")
+    s3_client.put_object(Bucket=BUCKET, Key="databricks/2026/03/DatabricksMar_output.csv", Body=b"x")
 
     fake_item = {
         "name": "2026 Consumption Costs.xlsx",
@@ -108,10 +108,10 @@ def test_happy_path_backfills_only_missing_months_in_window(monkeypatch, tmp_pat
 
     keys = {obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
     assert keys == {
-        "Databricks/2026/01/DatabricksJan_output.csv",
-        "Databricks/2026/02/DatabricksFeb_output.csv",
-        "Databricks/2026/03/DatabricksMar_output.csv",
-        "Databricks/2026/04/DatabricksApr_output.csv",
+        "databricks/2026/01/DatabricksJan_output.csv",
+        "databricks/2026/02/DatabricksFeb_output.csv",
+        "databricks/2026/03/DatabricksMar_output.csv",
+        "databricks/2026/04/DatabricksApr_output.csv",
     }
 
 
@@ -125,7 +125,7 @@ def test_uploads_under_s3_prefix_when_set(monkeypatch, tmp_path, s3_client):
 
     # Already uploaded, but under the prefixed path - without S3_PREFIX wired
     # through correctly, the pipeline would fail to see this and reprocess it.
-    s3_client.put_object(Bucket=BUCKET, Key="saas-upload/Databricks/2026/01/DatabricksJan_output.csv", Body=b"x")
+    s3_client.put_object(Bucket=BUCKET, Key="saas-upload/databricks/2026/01/DatabricksJan_output.csv", Body=b"x")
 
     fake_item = {
         "name": "2026 Consumption Costs.xlsx",
@@ -146,8 +146,8 @@ def test_uploads_under_s3_prefix_when_set(monkeypatch, tmp_path, s3_client):
 
     keys = {obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
     assert keys == {
-        "saas-upload/Databricks/2026/01/DatabricksJan_output.csv",
-        "saas-upload/Databricks/2026/02/DatabricksFeb_output.csv",
-        "saas-upload/Databricks/2026/03/DatabricksMar_output.csv",
-        "saas-upload/Databricks/2026/04/DatabricksApr_output.csv",
+        "saas-upload/databricks/2026/01/DatabricksJan_output.csv",
+        "saas-upload/databricks/2026/02/DatabricksFeb_output.csv",
+        "saas-upload/databricks/2026/03/DatabricksMar_output.csv",
+        "saas-upload/databricks/2026/04/DatabricksApr_output.csv",
     }

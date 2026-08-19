@@ -1,12 +1,18 @@
 """Check which months are already uploaded per provider in S3, and upload new ones.
 
-Bucket layout: s3://<bucket>/<prefix>/<Provider>/<Year>/<Month (2-digit)>/<file>
-e.g. s3://flatiron-saas-upload/saas-upload/Databricks/2026/04/DatabricksApr_output.csv
+Bucket layout: s3://<bucket>/<prefix>/<provider>/<Year>/<Month (2-digit)>/<file>
+e.g. s3://flatiron-saas-upload/saas-upload/databricks/2026/04/DatabricksApr_output.csv
 
 `prefix` is whatever sits between the bucket root and the provider folders
 (e.g. "saas-upload") - it varies per engagement/bucket, so every function here
 takes it as an explicit argument rather than hardcoding it. Pass "" (the
 default) when the provider folders sit directly at the bucket root.
+
+The provider folder itself is always lowercased, regardless of how the
+provider name is cased elsewhere (e.g. "Databricks" as the Excel sheet name/
+CSV filename prefix) - the real bucket's provider folders are all lowercase,
+and this is the one place that casing decision is made so the existence check
+and the upload can never drift apart on it.
 """
 from __future__ import annotations
 
@@ -22,7 +28,7 @@ DEFAULT_WINDOW_MONTHS = 12
 
 def _month_prefix(provider: str, year: int, month: int, prefix: str = "") -> str:
     base = f"{prefix.strip('/')}/" if prefix else ""
-    return f"{base}{provider}/{year}/{month:02d}/"
+    return f"{base}{provider.lower()}/{year}/{month:02d}/"
 
 
 def month_exists(s3_client, bucket: str, provider: str, year: int, month: int, prefix: str = "") -> bool:

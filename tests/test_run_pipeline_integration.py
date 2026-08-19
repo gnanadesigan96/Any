@@ -75,14 +75,14 @@ def test_first_run_uploads_every_month(workbook, s3_client, tmp_path, monkeypatc
         obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])
     }
     assert keys == {
-        "Databricks/2026/01/DatabricksJan.csv",
-        "Databricks/2026/02/DatabricksFeb.csv",
-        "Databricks/2026/03/DatabricksMar.csv",
-        "Databricks/2026/04/DatabricksApr.csv",
-        "Snowflake/2026/01/SnowflakeJan.csv",
-        "Snowflake/2026/02/SnowflakeFeb.csv",
-        "Snowflake/2026/03/SnowflakeMar.csv",
-        "Snowflake/2026/04/SnowflakeApr.csv",
+        "databricks/2026/01/DatabricksJan.csv",
+        "databricks/2026/02/DatabricksFeb.csv",
+        "databricks/2026/03/DatabricksMar.csv",
+        "databricks/2026/04/DatabricksApr.csv",
+        "snowflake/2026/01/SnowflakeJan.csv",
+        "snowflake/2026/02/SnowflakeFeb.csv",
+        "snowflake/2026/03/SnowflakeMar.csv",
+        "snowflake/2026/04/SnowflakeApr.csv",
     }
 
 
@@ -90,8 +90,8 @@ def test_second_run_only_uploads_new_months(workbook, s3_client, tmp_path, monke
     monkeypatch.setattr(run_pipeline, "run_process_script", lambda csv_path: csv_path)
 
     # Simulate "we already have everything through Feb" for Databricks only.
-    s3_client.put_object(Bucket=BUCKET, Key="Databricks/2026/01/DatabricksJan.csv", Body=b"x")
-    s3_client.put_object(Bucket=BUCKET, Key="Databricks/2026/02/DatabricksFeb.csv", Body=b"x")
+    s3_client.put_object(Bucket=BUCKET, Key="databricks/2026/01/DatabricksJan.csv", Body=b"x")
+    s3_client.put_object(Bucket=BUCKET, Key="databricks/2026/02/DatabricksFeb.csv", Body=b"x")
 
     _run(workbook, tmp_path / "out", extra_args=["--providers", "Databricks"])
 
@@ -99,8 +99,8 @@ def test_second_run_only_uploads_new_months(workbook, s3_client, tmp_path, monke
         obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])
     }
     assert keys == {
-        "Databricks/2026/01/DatabricksJan.csv",
-        "Databricks/2026/02/DatabricksFeb.csv",
-        "Databricks/2026/03/DatabricksMar.csv",
-        "Databricks/2026/04/DatabricksApr.csv",
+        "databricks/2026/01/DatabricksJan.csv",
+        "databricks/2026/02/DatabricksFeb.csv",
+        "databricks/2026/03/DatabricksMar.csv",
+        "databricks/2026/04/DatabricksApr.csv",
     }

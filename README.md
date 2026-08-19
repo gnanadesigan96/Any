@@ -26,14 +26,18 @@ it's re-run.
 4. Runs the existing `process_saas_data_local.py` on that CSV to produce the
    `*_output.csv` file (unchanged - this repo doesn't modify that script).
 5. Uploads the output file to
-   `s3://<bucket>/<prefix>/<Provider>/<Year>/<Month>/<Provider><Mon>_output.csv`
-   (e.g. `s3://flatiron-saas-upload/saas-upload/Databricks/2026/04/DatabricksApr_output.csv`),
-   matching the existing `prefix -> Provider -> Year -> Month` folder structure
-   in the bucket. The bucket name and that prefix both vary per
-   engagement/environment - this test bucket is `flatiron-saas-upload` with
-   prefix `saas-upload`, but neither is hardcoded anywhere; both are passed in
-   (`--bucket`/`--s3-prefix` on the CLI, `S3_BUCKET`/`S3_PREFIX` for the
-   Function). Leave the prefix unset if the provider folders sit directly at
+   `s3://<bucket>/<prefix>/<provider>/<Year>/<Month>/<Provider><Mon>_output.csv`
+   (e.g. `s3://flatiron-saas-upload/saas-upload/databricks/2026/04/DatabricksApr_output.csv`),
+   matching the existing `prefix -> provider -> Year -> Month` folder structure
+   in the bucket. The provider folder is always lowercased regardless of how
+   it's cased elsewhere (the Excel sheet name and the filename itself stay
+   `Databricks` - only the S3 folder segment is forced to lowercase, since
+   that's what the real bucket actually uses). The bucket name and the prefix
+   both vary per engagement/environment - this test bucket is
+   `flatiron-saas-upload` with prefix `saas-upload`, but neither is hardcoded
+   anywhere; both are passed in (`--bucket`/`--s3-prefix` on the CLI,
+   `S3_BUCKET`/`S3_PREFIX` for the Function). Leave the prefix unset if the
+   provider folders sit directly at
    the bucket root.
 
 Note: the `2026-6` / `$12,499` look in the workbook is just Excel's *display*
