@@ -16,7 +16,10 @@ it's re-run.
    moving cutoff: if February was somehow skipped while January and March both
    uploaded fine, it gets backfilled too - it's not just "whatever's newer
    than the last upload." Months older than that trailing 12-month window are
-   left alone even if they happen to be missing.
+   left alone even if they happen to be missing. It also never looks earlier
+   than `PIPELINE_START_MONTH` (2026-01) in `saas_pipeline/config.py`, however
+   wide the window is - the pipeline has no reason to touch anything before
+   its own start date, even if the workbook someday grows to include it.
 3. For each month being processed, writes a raw CSV with:
    - `usage_start_date` / `usage_end_date` formatted as `DD/MM/YY` (e.g. `01/06/26`)
    - `cost` as a plain number (e.g. `12499.00`, no `$` or thousands separator)

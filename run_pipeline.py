@@ -28,7 +28,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from saas_pipeline.config import PROVIDER_SHEETS
+from saas_pipeline.config import PIPELINE_START_MONTH, PROVIDER_SHEETS
 from saas_pipeline.split_monthly import read_provider_sheet, write_month_csv
 from saas_pipeline import s3_sync
 
@@ -48,7 +48,7 @@ def run_process_script(csv_path: Path) -> Path:
 def _plan_months(provider, available, s3_client, bucket, no_upload, force_all_months):
     """Decide which (year, month) pairs to process for this provider."""
     if no_upload or force_all_months:
-        return sorted(available)
+        return sorted(m for m in available if m >= PIPELINE_START_MONTH)
     return s3_sync.months_to_process(s3_client, bucket, provider, available)
 
 

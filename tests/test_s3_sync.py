@@ -68,11 +68,24 @@ def test_months_to_process_ignores_gaps_older_than_the_window(s3_client):
     available = [(2025, 1), (2025, 2), (2026, 1), (2026, 2), (2026, 3), (2026, 4), (2026, 5)]
     # Only the single oldest month (2025-01) falls outside a trailing window of 6
     # out of these 7 available months - it's missing from S3 too, but should
-    # never be flagged since it's outside the window.
-    to_process = s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available, window_size=6)
+    # never be flagged since it's outside the window. floor=None isolates the
+    # window-slicing behavior from the separate PIPELINE_START_MONTH floor.
+    to_process = s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available, window_size=6, floor=None)
 
     assert (2025, 1) not in to_process
     assert to_process == [(2025, 2), (2026, 1), (2026, 2), (2026, 3), (2026, 4), (2026, 5)]
+
+
+def test_months_to_process_never_goes_before_pipeline_start_month(s3_client):
+    # Even with a wide window that would otherwise reach back into 2025, the
+    # default floor (PIPELINE_START_MONTH = 2026-01) excludes anything earlier.
+    available = [(2025, 6), (2025, 12), (2026, 1), (2026, 2), (2026, 3)]
+
+    to_process = s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available, window_size=24)
+
+    assert (2025, 6) not in to_process
+    assert (2025, 12) not in to_process
+    assert to_process == [(2026, 1), (2026, 2), (2026, 3)]
 
 
 def test_months_to_process_up_to_date_returns_empty(s3_client):

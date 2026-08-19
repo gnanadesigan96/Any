@@ -8,6 +8,8 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+from saas_pipeline.config import PIPELINE_START_MONTH
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_WINDOW_MONTHS = 12
@@ -27,16 +29,21 @@ def months_to_process(
     provider: str,
     available_months: list[tuple[int, int]],
     window_size: int = DEFAULT_WINDOW_MONTHS,
+    floor: tuple[int, int] | None = PIPELINE_START_MONTH,
 ) -> list[tuple[int, int]]:
-    """Check the most recent `window_size` months present in the workbook and
-    return whichever ones don't already have a file in S3, oldest first.
+    """Check the most recent `window_size` eligible months present in the
+    workbook and return whichever ones don't already have a file in S3,
+    oldest first.
 
     This is a per-month gap check, not a moving cutoff: a month older than the
     newest one but still missing (e.g. February was skipped while January and
     March both uploaded fine) gets backfilled too. Months older than the
-    window are left alone even if they're missing.
+    window are left alone even if they're missing, and months before `floor`
+    (default: PIPELINE_START_MONTH) are never considered at all, however wide
+    the window is.
     """
-    window = sorted(available_months)[-window_size:]
+    eligible = [m for m in available_months if floor is None or m >= floor]
+    window = sorted(eligible)[-window_size:]
     return [month for month in window if not month_exists(s3_client, bucket, provider, *month)]
 
 

@@ -23,3 +23,8 @@ COST_COLUMN = "cost"
 
 # Which date column determines which month a row belongs to.
 MONTH_KEY_COLUMN = "usage_start_date"
+
+# The S3 gap-check never looks earlier than this (year, month), even if the
+# workbook someday contains older data and the trailing window would
+# otherwise reach past it.
+PIPELINE_START_MONTH = (2026, 1)

@@ -27,7 +27,7 @@ import boto3
 
 from process_saas_data_local import process_saas_data_local
 from saas_pipeline import s3_sync
-from saas_pipeline.config import PROVIDER_SHEETS
+from saas_pipeline.config import PIPELINE_START_MONTH, PROVIDER_SHEETS
 from saas_pipeline.sharepoint_client import (
     download_drive_item,
     find_latest_matching_file,
@@ -51,7 +51,7 @@ REQUIRED_ENV_VARS = [
 
 def _plan_months(provider: str, available: list, s3_client, bucket: str, force_all_months: bool):
     if force_all_months:
-        return sorted(available)
+        return sorted(m for m in available if m >= PIPELINE_START_MONTH)
     return s3_sync.months_to_process(s3_client, bucket, provider, available)
 
 
@@ -77,7 +77,8 @@ def run_pipeline_for_workbook(workbook_path: Path, providers: list, bucket: str,
                 summary[provider] = {"processed": [], "note": "no rows with a usable usage_start_date"}
                 continue
 
-            window = sorted(available)[-s3_sync.DEFAULT_WINDOW_MONTHS:]
+            eligible = [m for m in available if m >= PIPELINE_START_MONTH]
+            window = sorted(eligible)[-s3_sync.DEFAULT_WINDOW_MONTHS:]
             to_process = _plan_months(provider, available, s3_client, bucket, force_all_months)
             processed = []
 
