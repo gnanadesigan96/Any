@@ -49,13 +49,15 @@ REQUIRED_ENV_VARS = [
 ]
 
 
-def _plan_months(provider: str, available: list, s3_client, bucket: str, force_all_months: bool):
+def _plan_months(provider: str, available: list, s3_client, bucket: str, s3_prefix: str, force_all_months: bool):
     if force_all_months:
         return sorted(m for m in available if m >= PIPELINE_START_MONTH)
-    return s3_sync.months_to_process(s3_client, bucket, provider, available)
+    return s3_sync.months_to_process(s3_client, bucket, provider, available, prefix=s3_prefix)
 
 
-def run_pipeline_for_workbook(workbook_path: Path, providers: list, bucket: str, force_all_months: bool) -> dict:
+def run_pipeline_for_workbook(
+    workbook_path: Path, providers: list, bucket: str, s3_prefix: str, force_all_months: bool
+) -> dict:
     """Split + process + upload every new month for each provider. Returns a
     per-provider summary suitable for logging/returning as the HTTP response."""
     s3_client = boto3.client("s3")
@@ -79,7 +81,7 @@ def run_pipeline_for_workbook(workbook_path: Path, providers: list, bucket: str,
 
             eligible = [m for m in available if m >= PIPELINE_START_MONTH]
             window = sorted(eligible)[-s3_sync.DEFAULT_WINDOW_MONTHS:]
-            to_process = _plan_months(provider, available, s3_client, bucket, force_all_months)
+            to_process = _plan_months(provider, available, s3_client, bucket, s3_prefix, force_all_months)
             processed = []
 
             for year, month in to_process:
@@ -88,7 +90,7 @@ def run_pipeline_for_workbook(workbook_path: Path, providers: list, bucket: str,
                     headers, date_col_indices, cost_col_idx, rows, provider, year, month, monthly_csv_dir
                 )
                 output_path = Path(process_saas_data_local(str(csv_path)))
-                s3_sync.upload_output_file(s3_client, bucket, provider, year, month, output_path)
+                s3_sync.upload_output_file(s3_client, bucket, provider, year, month, output_path, prefix=s3_prefix)
                 processed.append(f"{year}-{month:02d}")
 
             summary[provider] = {
@@ -120,6 +122,7 @@ def process_saas_consumption(req: func.HttpRequest) -> func.HttpResponse:
     folder_path = os.environ["SHAREPOINT_FOLDER_PATH"]
     filename_contains = os.environ.get("SHAREPOINT_FILENAME_CONTAINS", "")
     bucket = os.environ["S3_BUCKET"]
+    s3_prefix = os.environ.get("S3_PREFIX", "")
 
     with tempfile.TemporaryDirectory() as tmp:
         try:
@@ -132,7 +135,7 @@ def process_saas_consumption(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(f"SharePoint fetch failed: {exc}", status_code=502)
 
         try:
-            summary = run_pipeline_for_workbook(workbook_path, providers, bucket, force_all_months)
+            summary = run_pipeline_for_workbook(workbook_path, providers, bucket, s3_prefix, force_all_months)
         except Exception as exc:
             logging.exception("Pipeline run failed")
             return func.HttpResponse(f"Pipeline run failed: {exc}", status_code=500)

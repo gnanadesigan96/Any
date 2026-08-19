@@ -11,7 +11,8 @@
     "SHAREPOINT_FOLDER_PATH": "General/Flatiron-SaaS-Upload/Data",
     "SHAREPOINT_FILENAME_CONTAINS": "",
 
-    "S3_BUCKET": "your-s3-bucket-name",
+    "S3_BUCKET": "flatiron-saas-upload",
+    "S3_PREFIX": "saas-upload",
     "AWS_DEFAULT_REGION": "us-east-1",
     "AWS_ACCESS_KEY_ID": "<local testing only - use Key Vault references in the deployed Function App>",
     "AWS_SECRET_ACCESS_KEY": "<local testing only - use Key Vault references in the deployed Function App>"

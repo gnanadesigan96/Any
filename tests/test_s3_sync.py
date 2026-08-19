@@ -109,3 +109,43 @@ def test_upload_output_file_uses_provider_year_month_key(tmp_path, s3_client):
     assert key == "Databricks/2026/04/DatabricksApr_output.csv"
     obj = s3_client.get_object(Bucket=BUCKET, Key=key)
     assert obj["Body"].read() == b"a,b\n1,2\n"
+
+
+def test_upload_output_file_with_prefix(tmp_path, s3_client):
+    local_file = tmp_path / "DatabricksApr_output.csv"
+    local_file.write_text("a,b\n1,2\n")
+
+    key = s3_sync.upload_output_file(s3_client, BUCKET, "Databricks", 2026, 4, local_file, prefix="saas-upload")
+
+    assert key == "saas-upload/Databricks/2026/04/DatabricksApr_output.csv"
+    obj = s3_client.get_object(Bucket=BUCKET, Key=key)
+    assert obj["Body"].read() == b"a,b\n1,2\n"
+
+
+def test_upload_output_file_strips_slashes_from_prefix(tmp_path, s3_client):
+    local_file = tmp_path / "DatabricksApr_output.csv"
+    local_file.write_text("x")
+
+    key = s3_sync.upload_output_file(s3_client, BUCKET, "Databricks", 2026, 4, local_file, prefix="/saas-upload/")
+
+    assert key == "saas-upload/Databricks/2026/04/DatabricksApr_output.csv"
+
+
+def test_month_exists_respects_prefix(s3_client):
+    _put(s3_client, "saas-upload/Databricks/2026/04/DatabricksApr_output.csv")
+
+    # A file under the prefixed path shouldn't register at the bucket root, and vice versa.
+    assert s3_sync.month_exists(s3_client, BUCKET, "Databricks", 2026, 4, prefix="") is False
+    assert s3_sync.month_exists(s3_client, BUCKET, "Databricks", 2026, 4, prefix="saas-upload") is True
+
+
+def test_months_to_process_respects_prefix(s3_client):
+    _put(s3_client, "saas-upload/Databricks/2026/01/DatabricksJan_output.csv")
+    available = [(2026, 1), (2026, 2)]
+
+    # Without the matching prefix, that upload isn't found and Jan looks missing.
+    assert s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available, prefix="") == available
+    # With the correct prefix, Jan is correctly recognized as already there.
+    assert s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available, prefix="saas-upload") == [
+        (2026, 2)
+    ]

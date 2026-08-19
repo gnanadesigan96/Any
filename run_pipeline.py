@@ -11,13 +11,15 @@ customer's workbook:
   2. Split the sheet into one raw CSV per month being processed (dates -> DD/MM/YY,
      cost -> plain number).
   3. Run process_saas_data_local.py on that CSV to produce the *_output.csv.
-  4. Upload the output file to s3://<bucket>/<Provider>/<Year>/<Month>/.
+  4. Upload the output file to s3://<bucket>/<prefix>/<Provider>/<Year>/<Month>/
+     (--s3-prefix is whatever sits between the bucket root and the provider
+     folders, e.g. "saas-upload" - leave unset if they sit at the bucket root).
 
 Safe to re-run on the same or an updated workbook at any time: it always re-checks S3
 itself, so it never re-processes or re-uploads a month that's already there.
 
 Examples:
-    python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket my-saas-billing-bucket
+    python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket flatiron-saas-upload --s3-prefix saas-upload
     python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --no-upload
 """
 from __future__ import annotations
@@ -45,11 +47,11 @@ def run_process_script(csv_path: Path) -> Path:
     return csv_path.with_name(f"{csv_path.stem}_output{csv_path.suffix}")
 
 
-def _plan_months(provider, available, s3_client, bucket, no_upload, force_all_months):
+def _plan_months(provider, available, s3_client, bucket, s3_prefix, no_upload, force_all_months):
     """Decide which (year, month) pairs to process for this provider."""
     if no_upload or force_all_months:
         return sorted(m for m in available if m >= PIPELINE_START_MONTH)
-    return s3_sync.months_to_process(s3_client, bucket, provider, available)
+    return s3_sync.months_to_process(s3_client, bucket, provider, available, prefix=s3_prefix)
 
 
 def main():
@@ -57,6 +59,12 @@ def main():
     parser.add_argument("--workbook", required=True, help="Path to the customer's consumption workbook (.xlsx)")
     parser.add_argument("--output-dir", default="data/monthly_csv", help="Local working directory for split/processed CSVs")
     parser.add_argument("--bucket", default=None, help="S3 bucket to upload output files to")
+    parser.add_argument(
+        "--s3-prefix",
+        default="",
+        help="Path between the bucket root and the provider folders, e.g. 'saas-upload'. "
+        "Leave unset if the provider folders sit directly at the bucket root.",
+    )
     parser.add_argument("--providers", nargs="+", default=PROVIDER_SHEETS, help="Subset of provider sheets to process")
     parser.add_argument("--no-upload", action="store_true", help="Skip the S3 step; only split + process locally")
     parser.add_argument(
@@ -85,7 +93,9 @@ def main():
             logger.info("[%s] no rows with a usable usage_start_date; skipping", provider)
             continue
 
-        to_process = _plan_months(provider, available, s3_client, args.bucket, args.no_upload, args.force_all_months)
+        to_process = _plan_months(
+            provider, available, s3_client, args.bucket, args.s3_prefix, args.no_upload, args.force_all_months
+        )
 
         if not to_process:
             logger.info("[%s] all months in the trailing window are already in S3; nothing to do", provider)
@@ -106,7 +116,9 @@ def main():
             output_path = run_process_script(csv_path)
 
             if s3_client is not None:
-                s3_sync.upload_output_file(s3_client, args.bucket, provider, year, month, output_path)
+                s3_sync.upload_output_file(
+                    s3_client, args.bucket, provider, year, month, output_path, prefix=args.s3_prefix
+                )
 
     logger.info("Pipeline run complete.")
 

@@ -26,9 +26,15 @@ it's re-run.
 4. Runs the existing `process_saas_data_local.py` on that CSV to produce the
    `*_output.csv` file (unchanged - this repo doesn't modify that script).
 5. Uploads the output file to
-   `s3://<bucket>/<Provider>/<Year>/<Month>/<Provider><Mon>_output.csv`
-   (e.g. `s3://<bucket>/Databricks/2026/04/DatabricksApr_output.csv`), matching
-   the existing `Provider -> Year -> Month` folder structure in the bucket.
+   `s3://<bucket>/<prefix>/<Provider>/<Year>/<Month>/<Provider><Mon>_output.csv`
+   (e.g. `s3://flatiron-saas-upload/saas-upload/Databricks/2026/04/DatabricksApr_output.csv`),
+   matching the existing `prefix -> Provider -> Year -> Month` folder structure
+   in the bucket. The bucket name and that prefix both vary per
+   engagement/environment - this test bucket is `flatiron-saas-upload` with
+   prefix `saas-upload`, but neither is hardcoded anywhere; both are passed in
+   (`--bucket`/`--s3-prefix` on the CLI, `S3_BUCKET`/`S3_PREFIX` for the
+   Function). Leave the prefix unset if the provider folders sit directly at
+   the bucket root.
 
 Note: the `2026-6` / `$12,499` look in the workbook is just Excel's *display*
 formatting - the cells actually hold a real date and a real number. The split
@@ -38,7 +44,10 @@ either way.
 
 Re-running the pipeline on the same or an updated workbook is always safe: it
 never re-derives state from a local file, only from what's actually sitting in
-S3, so it can't re-process or double-upload a month that's already there.
+S3, so it can't re-process or double-upload a month that's already there. This
+is checked *before* anything else happens for that month - if a month's S3
+folder already has a file in it, that month is never re-generated, never
+re-transformed, and never re-uploaded. Nothing in that folder is touched.
 
 "Current month" is driven entirely by what's newest in the customer's
 workbook, not by today's real calendar date - billing data lags (e.g. June's
@@ -56,16 +65,16 @@ pip install -r requirements.txt
 
 ```bash
 # Full run: split new months, process them, upload to S3
-python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket my-saas-billing-bucket
+python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket flatiron-saas-upload --s3-prefix saas-upload
 
 # Local-only dry run (no AWS needed): split + process every month, skip S3 entirely
 python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --no-upload
 
 # Re-process every month regardless of what's already in S3 (e.g. to backfill or fix a bad upload)
-python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket my-saas-billing-bucket --force-all-months
+python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket flatiron-saas-upload --s3-prefix saas-upload --force-all-months
 
 # Only specific providers
-python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket my-saas-billing-bucket --providers Databricks Snowflake
+python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket flatiron-saas-upload --s3-prefix saas-upload --providers Databricks Snowflake
 ```
 
 ## AWS setup (not yet configured)
@@ -123,7 +132,8 @@ see the Key Vault setup steps from earlier in this conversation):
 | `SHAREPOINT_SITE_URL` | Combined hostname + site path, e.g. `yourtenant.sharepoint.com/sites/YourSiteName` (scheme/trailing slash optional, both get stripped) |
 | `SHAREPOINT_FOLDER_PATH` | Document library path the workbook lands in, e.g. `General/Flatiron-SaaS-Upload/Data` |
 | `SHAREPOINT_FILENAME_CONTAINS` | Optional substring to match the workbook's filename, e.g. `Consumption Costs`. Leave unset/empty to just take the most recently modified file in the folder - fine when that folder is dedicated to this one workbook. |
-| `S3_BUCKET` | Target S3 bucket |
+| `S3_BUCKET` | Target S3 bucket, e.g. `flatiron-saas-upload` - varies per engagement |
+| `S3_PREFIX` | Optional path between the bucket root and the provider folders, e.g. `saas-upload`. Leave unset if the provider folders sit directly at the bucket root - also varies per engagement |
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | (or rely on a role/instance identity if you set one up) - **Key Vault references** |
 | `AWS_DEFAULT_REGION` | Bucket's region |
 

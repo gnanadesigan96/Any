@@ -113,3 +113,41 @@ def test_happy_path_backfills_only_missing_months_in_window(monkeypatch, tmp_pat
         "Databricks/2026/03/DatabricksMar_output.csv",
         "Databricks/2026/04/DatabricksApr_output.csv",
     }
+
+
+def test_uploads_under_s3_prefix_when_set(monkeypatch, tmp_path, s3_client):
+    for key, value in REQUIRED_ENV.items():
+        monkeypatch.setenv(key, value)
+    monkeypatch.setenv("S3_PREFIX", "saas-upload")
+
+    workbook_path = tmp_path / "2026 Consumption Costs.xlsx"
+    _make_workbook(workbook_path)
+
+    # Already uploaded, but under the prefixed path - without S3_PREFIX wired
+    # through correctly, the pipeline would fail to see this and reprocess it.
+    s3_client.put_object(Bucket=BUCKET, Key="saas-upload/Databricks/2026/01/DatabricksJan_output.csv", Body=b"x")
+
+    fake_item = {
+        "name": "2026 Consumption Costs.xlsx",
+        "lastModifiedDateTime": "2026-07-01T00:00:00Z",
+        "@microsoft.graph.downloadUrl": "https://presigned.example/file.xlsx",
+    }
+
+    with patch("function_app.get_graph_token", return_value="tok"), \
+         patch("function_app.get_site_id", return_value="site-abc"), \
+         patch("function_app.find_latest_matching_file", return_value=fake_item), \
+         patch("function_app.download_drive_item", side_effect=lambda item, dest: workbook_path):
+        response = function_app.process_saas_consumption(_make_request(params={"providers": "Databricks"}))
+
+    assert response.status_code == 200
+    body = json.loads(response.get_body())
+    assert body["Databricks"]["already_in_s3"] == ["2026-01"]
+    assert body["Databricks"]["processed"] == ["2026-02", "2026-03", "2026-04"]
+
+    keys = {obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
+    assert keys == {
+        "saas-upload/Databricks/2026/01/DatabricksJan_output.csv",
+        "saas-upload/Databricks/2026/02/DatabricksFeb_output.csv",
+        "saas-upload/Databricks/2026/03/DatabricksMar_output.csv",
+        "saas-upload/Databricks/2026/04/DatabricksApr_output.csv",
+    }
