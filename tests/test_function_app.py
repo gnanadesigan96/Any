@@ -19,13 +19,11 @@ HEADERS = [
 ]
 
 REQUIRED_ENV = {
-    "SP_TENANT_ID": "tenant-1",
-    "SP_CLIENT_ID": "client-1",
-    "SP_CLIENT_SECRET": "secret-1",
-    "SP_SITE_HOSTNAME": "contoso.sharepoint.com",
-    "SP_SITE_PATH": "sites/Billing",
-    "SP_FOLDER_PATH": "Shared Documents",
-    "SP_FILENAME_CONTAINS": "Consumption Costs",
+    "SHAREPOINT_TENANT_ID": "tenant-1",
+    "SHAREPOINT_CLIENT_ID": "client-1",
+    "SHAREPOINT_CLIENT_SECRET": "secret-1",
+    "SHAREPOINT_SITE_URL": "contoso.sharepoint.com/sites/Billing",
+    "SHAREPOINT_FOLDER_PATH": "Shared Documents",
     "S3_BUCKET": BUCKET,
 }
 
@@ -64,7 +62,7 @@ def test_missing_env_vars_returns_500(monkeypatch):
     response = function_app.process_saas_consumption(_make_request())
 
     assert response.status_code == 500
-    assert "SP_TENANT_ID" in response.get_body().decode()
+    assert "SHAREPOINT_TENANT_ID" in response.get_body().decode()
 
 
 def test_sharepoint_fetch_failure_returns_502(monkeypatch):

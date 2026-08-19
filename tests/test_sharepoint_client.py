@@ -13,6 +13,25 @@ def _mock_response(json_data=None, content=b"", raise_for_status=None):
     return resp
 
 
+def test_parse_site_url_splits_hostname_and_path():
+    assert sharepoint_client.parse_site_url("cloudenablersinc.sharepoint.com/sites/SupportTeam") == (
+        "cloudenablersinc.sharepoint.com",
+        "sites/SupportTeam",
+    )
+
+
+def test_parse_site_url_strips_scheme_and_trailing_slash():
+    assert sharepoint_client.parse_site_url("https://contoso.sharepoint.com/sites/Billing/") == (
+        "contoso.sharepoint.com",
+        "sites/Billing",
+    )
+
+
+def test_parse_site_url_rejects_missing_path():
+    with pytest.raises(ValueError):
+        sharepoint_client.parse_site_url("contoso.sharepoint.com")
+
+
 @patch("saas_pipeline.sharepoint_client.requests.post")
 def test_get_graph_token_posts_client_credentials(mock_post):
     mock_post.return_value = _mock_response({"access_token": "tok-123"})
@@ -51,6 +70,21 @@ def test_find_latest_matching_file_picks_most_recently_modified(mock_get):
     item = sharepoint_client.find_latest_matching_file("tok", "site-abc", "Shared Documents", "Consumption Costs")
 
     assert item["name"] == "2026 Consumption Costs.xlsx"
+
+
+@patch("saas_pipeline.sharepoint_client.requests.get")
+def test_find_latest_matching_file_with_no_filter_matches_any_file(mock_get):
+    mock_get.return_value = _mock_response({
+        "value": [
+            {"name": "Consumption.xlsx", "file": {}, "lastModifiedDateTime": "2026-05-01T00:00:00Z"},
+            {"name": "Consumption (2).xlsx", "file": {}, "lastModifiedDateTime": "2026-07-01T00:00:00Z"},
+            {"name": "SomeFolder", "folder": {}, "lastModifiedDateTime": "2026-08-02T00:00:00Z"},
+        ]
+    })
+
+    item = sharepoint_client.find_latest_matching_file("tok", "site-abc", "Data")
+
+    assert item["name"] == "Consumption (2).xlsx"
 
 
 @patch("saas_pipeline.sharepoint_client.requests.get")

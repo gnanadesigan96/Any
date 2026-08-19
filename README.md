@@ -86,8 +86,9 @@ Power Automate's job is reduced to just the trigger:
 2. It calls the Function's HTTP endpoint (an "HTTP" or "Azure Functions"
    action, using the function key for auth) - no file content needs to be
    attached to the call, since the Function pulls the file itself.
-3. The Function finds the most recently modified file in that folder whose
-   name contains `SP_FILENAME_CONTAINS`, downloads it, and runs the pipeline.
+3. The Function finds the most recently modified file in that folder
+   (optionally filtered by `SHAREPOINT_FILENAME_CONTAINS`), downloads it, and
+   runs the pipeline.
 
 Same safety property as `run_pipeline.py`: every invocation re-checks S3 for
 each provider's latest uploaded month and only processes what's new, so it's
@@ -101,13 +102,12 @@ see the Key Vault setup steps from earlier in this conversation):
 
 | Setting | Description |
 |---|---|
-| `SP_TENANT_ID` | Azure AD tenant ID |
-| `SP_CLIENT_ID` | App registration (client) ID, granted Graph `Sites.Selected` or `Sites.Read.All` with admin consent |
-| `SP_CLIENT_SECRET` | That app registration's client secret - **Key Vault reference** |
-| `SP_SITE_HOSTNAME` | e.g. `yourtenant.sharepoint.com` |
-| `SP_SITE_PATH` | e.g. `sites/YourSiteName` |
-| `SP_FOLDER_PATH` | Document library path the workbook lands in, e.g. `Shared Documents/Customer Uploads` |
-| `SP_FILENAME_CONTAINS` | Substring to match the workbook's filename, e.g. `Consumption Costs` |
+| `SHAREPOINT_TENANT_ID` | Azure AD tenant ID |
+| `SHAREPOINT_CLIENT_ID` | App registration (client) ID, granted Graph `Sites.Selected` or `Sites.Read.All` with admin consent |
+| `SHAREPOINT_CLIENT_SECRET` | That app registration's client secret - **Key Vault reference** |
+| `SHAREPOINT_SITE_URL` | Combined hostname + site path, e.g. `yourtenant.sharepoint.com/sites/YourSiteName` (scheme/trailing slash optional, both get stripped) |
+| `SHAREPOINT_FOLDER_PATH` | Document library path the workbook lands in, e.g. `General/Flatiron-SaaS-Upload/Data` |
+| `SHAREPOINT_FILENAME_CONTAINS` | Optional substring to match the workbook's filename, e.g. `Consumption Costs`. Leave unset/empty to just take the most recently modified file in the folder - fine when that folder is dedicated to this one workbook. |
 | `S3_BUCKET` | Target S3 bucket |
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | (or rely on a role/instance identity if you set one up) - **Key Vault references** |
 | `AWS_DEFAULT_REGION` | Bucket's region |

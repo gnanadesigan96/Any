@@ -5,8 +5,8 @@ results.
 
 All config comes from environment variables (Function App "Environment
 variables" / Application Settings - see local.settings.json.example for the
-full list). Secrets (SP_CLIENT_SECRET, AWS keys) are meant to be Key Vault
-references there, not plain values - see README.md.
+full list). Secrets (SHAREPOINT_CLIENT_SECRET, AWS keys) are meant to be Key
+Vault references there, not plain values - see README.md.
 
 Safe to call repeatedly / on every SharePoint file-drop notification: it
 re-derives "what's new" from S3 on every invocation, so it never reprocesses
@@ -31,19 +31,18 @@ from saas_pipeline.sharepoint_client import (
     find_latest_matching_file,
     get_graph_token,
     get_site_id,
+    parse_site_url,
 )
 from saas_pipeline.split_monthly import read_provider_sheet, write_month_csv
 
 app = func.FunctionApp()
 
 REQUIRED_ENV_VARS = [
-    "SP_TENANT_ID",
-    "SP_CLIENT_ID",
-    "SP_CLIENT_SECRET",
-    "SP_SITE_HOSTNAME",
-    "SP_SITE_PATH",
-    "SP_FOLDER_PATH",
-    "SP_FILENAME_CONTAINS",
+    "SHAREPOINT_TENANT_ID",
+    "SHAREPOINT_CLIENT_ID",
+    "SHAREPOINT_CLIENT_SECRET",
+    "SHAREPOINT_SITE_URL",
+    "SHAREPOINT_FOLDER_PATH",
     "S3_BUCKET",
 ]
 
@@ -107,13 +106,12 @@ def process_saas_consumption(req: func.HttpRequest) -> func.HttpResponse:
     providers_param = req.params.get("providers")
     providers = [p.strip() for p in providers_param.split(",")] if providers_param else PROVIDER_SHEETS
 
-    tenant_id = os.environ["SP_TENANT_ID"]
-    client_id = os.environ["SP_CLIENT_ID"]
-    client_secret = os.environ["SP_CLIENT_SECRET"]
-    site_hostname = os.environ["SP_SITE_HOSTNAME"]
-    site_path = os.environ["SP_SITE_PATH"]
-    folder_path = os.environ["SP_FOLDER_PATH"]
-    filename_contains = os.environ["SP_FILENAME_CONTAINS"]
+    tenant_id = os.environ["SHAREPOINT_TENANT_ID"]
+    client_id = os.environ["SHAREPOINT_CLIENT_ID"]
+    client_secret = os.environ["SHAREPOINT_CLIENT_SECRET"]
+    site_hostname, site_path = parse_site_url(os.environ["SHAREPOINT_SITE_URL"])
+    folder_path = os.environ["SHAREPOINT_FOLDER_PATH"]
+    filename_contains = os.environ.get("SHAREPOINT_FILENAME_CONTAINS", "")
     bucket = os.environ["S3_BUCKET"]
 
     with tempfile.TemporaryDirectory() as tmp:

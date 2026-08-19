@@ -8,6 +8,7 @@ just the target site) or Sites.Read.All, with admin consent granted.
 from __future__ import annotations
 
 import logging
+import re
 from pathlib import Path
 
 import requests
@@ -17,6 +18,20 @@ logger = logging.getLogger(__name__)
 GRAPH_BASE = "https://graph.microsoft.com/v1.0"
 REQUEST_TIMEOUT_SECONDS = 30
 DOWNLOAD_TIMEOUT_SECONDS = 120
+
+
+def parse_site_url(site_url: str) -> tuple[str, str]:
+    """Split a SharePoint site URL/reference into (hostname, site_path).
+
+    Accepts either a bare 'tenant.sharepoint.com/sites/Name' or a full
+    'https://tenant.sharepoint.com/sites/Name' - the scheme, if present, is
+    stripped before splitting on the first remaining '/'.
+    """
+    cleaned = re.sub(r"^https?://", "", site_url.strip()).rstrip("/")
+    hostname, _, site_path = cleaned.partition("/")
+    if not hostname or not site_path:
+        raise ValueError(f"Could not split '{site_url}' into hostname/site_path")
+    return hostname, site_path
 
 
 def get_graph_token(tenant_id: str, client_id: str, client_secret: str) -> str:
@@ -48,9 +63,11 @@ def get_site_id(token: str, site_hostname: str, site_path: str) -> str:
     return response.json()["id"]
 
 
-def find_latest_matching_file(token: str, site_id: str, folder_path: str, filename_contains: str) -> dict:
+def find_latest_matching_file(token: str, site_id: str, folder_path: str, filename_contains: str = "") -> dict:
     """List files in a SharePoint folder and return the most recently modified one
-    whose name contains `filename_contains` (case-insensitive)."""
+    whose name contains `filename_contains` (case-insensitive). Leave
+    `filename_contains` empty to match any file in the folder - useful when the
+    folder is dedicated to just this one workbook."""
     url = f"{GRAPH_BASE}/sites/{site_id}/drive/root:/{folder_path}:/children"
     response = requests.get(url, headers={"Authorization": f"Bearer {token}"}, timeout=REQUEST_TIMEOUT_SECONDS)
     response.raise_for_status()
