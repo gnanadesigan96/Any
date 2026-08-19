@@ -8,9 +8,11 @@ variables" / Application Settings - see local.settings.json.example for the
 full list). Secrets (SHAREPOINT_CLIENT_SECRET, AWS keys) are meant to be Key
 Vault references there, not plain values - see README.md.
 
-Safe to call repeatedly / on every SharePoint file-drop notification: it
-re-derives "what's new" from S3 on every invocation, so it never reprocesses
-or double-uploads a month that's already there.
+Safe to call repeatedly / on every SharePoint file-drop notification: for each
+provider it checks the most recent 6 months present in the workbook against
+S3 individually, and only backfills whichever ones are actually missing - an
+older gap gets filled just like the newest month would, and anything already
+uploaded is left untouched.
 """
 from __future__ import annotations
 
@@ -48,10 +50,9 @@ REQUIRED_ENV_VARS = [
 
 
 def _plan_months(provider: str, available: list, s3_client, bucket: str, force_all_months: bool):
-    latest = s3_sync.get_latest_uploaded_month(s3_client, bucket, provider)
-    latest_desc = f"{latest[0]}-{latest[1]:02d}" if latest else "none uploaded yet"
-    to_process = sorted(available) if force_all_months else s3_sync.months_to_process(available, latest)
-    return to_process, latest_desc
+    if force_all_months:
+        return sorted(available)
+    return s3_sync.months_to_process(s3_client, bucket, provider, available)
 
 
 def run_pipeline_for_workbook(workbook_path: Path, providers: list, bucket: str, force_all_months: bool) -> dict:
@@ -76,7 +77,8 @@ def run_pipeline_for_workbook(workbook_path: Path, providers: list, bucket: str,
                 summary[provider] = {"processed": [], "note": "no rows with a usable usage_start_date"}
                 continue
 
-            to_process, latest_desc = _plan_months(provider, available, s3_client, bucket, force_all_months)
+            window = sorted(available)[-s3_sync.DEFAULT_WINDOW_MONTHS:]
+            to_process = _plan_months(provider, available, s3_client, bucket, force_all_months)
             processed = []
 
             for year, month in to_process:
@@ -88,7 +90,11 @@ def run_pipeline_for_workbook(workbook_path: Path, providers: list, bucket: str,
                 s3_sync.upload_output_file(s3_client, bucket, provider, year, month, output_path)
                 processed.append(f"{year}-{month:02d}")
 
-            summary[provider] = {"latest_uploaded_before_run": latest_desc, "processed": processed}
+            summary[provider] = {
+                "checked_window": [f"{y}-{m:02d}" for y, m in window],
+                "already_in_s3": [f"{y}-{m:02d}" for y, m in window if (y, m) not in to_process],
+                "processed": processed,
+            }
 
     return summary
 

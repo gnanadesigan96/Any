@@ -1,4 +1,4 @@
-"""Detect the latest month already uploaded per provider in S3, and upload new output files.
+"""Check which months are already uploaded per provider in S3, and upload new ones.
 
 Bucket layout: s3://<bucket>/<Provider>/<Year>/<Month (2-digit)>/<file>
 e.g. s3://<bucket>/Databricks/2026/04/DatabricksApr_output.csv
@@ -10,42 +10,34 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_WINDOW_MONTHS = 6
 
-def get_latest_uploaded_month(s3_client, bucket: str, provider: str) -> tuple[int, int] | None:
-    """Return (year, month) of the most recently uploaded month folder for this
-    provider, or None if nothing has been uploaded yet."""
-    provider_prefix = f"{provider}/"
-    year_resp = s3_client.list_objects_v2(Bucket=bucket, Prefix=provider_prefix, Delimiter="/")
-    years = []
-    for entry in year_resp.get("CommonPrefixes", []):
-        part = entry["Prefix"][len(provider_prefix):].strip("/")
-        if part.isdigit():
-            years.append(int(part))
-    if not years:
-        return None
-    latest_year = max(years)
 
-    year_prefix = f"{provider_prefix}{latest_year}/"
-    month_resp = s3_client.list_objects_v2(Bucket=bucket, Prefix=year_prefix, Delimiter="/")
-    months = []
-    for entry in month_resp.get("CommonPrefixes", []):
-        part = entry["Prefix"][len(year_prefix):].strip("/")
-        if part.isdigit():
-            months.append(int(part))
-    if not months:
-        return None
-
-    return latest_year, max(months)
+def month_exists(s3_client, bucket: str, provider: str, year: int, month: int) -> bool:
+    """Return True if a file has already been uploaded under this provider's
+    year/month folder in S3."""
+    prefix = f"{provider}/{year}/{month:02d}/"
+    response = s3_client.list_objects_v2(Bucket=bucket, Prefix=prefix, MaxKeys=1)
+    return bool(response.get("Contents"))
 
 
 def months_to_process(
-    available_months: list[tuple[int, int]], latest_uploaded: tuple[int, int] | None
+    s3_client,
+    bucket: str,
+    provider: str,
+    available_months: list[tuple[int, int]],
+    window_size: int = DEFAULT_WINDOW_MONTHS,
 ) -> list[tuple[int, int]]:
-    """Given the (year, month) pairs present in the workbook and the latest one
-    already uploaded, return the new ones to process, oldest first."""
-    if latest_uploaded is None:
-        return sorted(available_months)
-    return sorted(m for m in available_months if m > latest_uploaded)
+    """Check the most recent `window_size` months present in the workbook and
+    return whichever ones don't already have a file in S3, oldest first.
+
+    This is a per-month gap check, not a moving cutoff: a month older than the
+    newest one but still missing (e.g. February was skipped while January and
+    March both uploaded fine) gets backfilled too. Months older than the
+    window are left alone even if they're missing.
+    """
+    window = sorted(available_months)[-window_size:]
+    return [month for month in window if not month_exists(s3_client, bucket, provider, *month)]
 
 
 def upload_output_file(s3_client, bucket: str, provider: str, year: int, month: int, local_path: Path) -> str:

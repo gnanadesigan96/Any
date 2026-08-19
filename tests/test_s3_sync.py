@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import boto3
 import pytest
 from moto import mock_aws
@@ -22,50 +20,71 @@ def _put(client, key):
     client.put_object(Bucket=BUCKET, Key=key, Body=b"data")
 
 
-def test_no_uploads_yet_returns_none(s3_client):
-    assert s3_sync.get_latest_uploaded_month(s3_client, BUCKET, "Databricks") is None
+def test_month_exists_false_when_nothing_uploaded(s3_client):
+    assert s3_sync.month_exists(s3_client, BUCKET, "Databricks", 2026, 4) is False
 
 
-def test_finds_latest_month_within_latest_year(s3_client):
+def test_month_exists_true_when_a_file_is_there(s3_client):
+    _put(s3_client, "Databricks/2026/04/DatabricksApr_output.csv")
+    assert s3_sync.month_exists(s3_client, BUCKET, "Databricks", 2026, 4) is True
+
+
+def test_month_exists_ignores_other_providers_and_months(s3_client):
+    _put(s3_client, "Databricks/2026/04/DatabricksApr_output.csv")
+    assert s3_sync.month_exists(s3_client, BUCKET, "Databricks", 2026, 5) is False
+    assert s3_sync.month_exists(s3_client, BUCKET, "Snowflake", 2026, 4) is False
+
+
+def test_months_to_process_none_uploaded_processes_whole_window(s3_client):
+    available = [(2026, 1), (2026, 2), (2026, 3)]
+    assert s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available) == available
+
+
+def test_months_to_process_skips_months_already_present(s3_client):
     for key in [
         "Databricks/2026/01/DatabricksJan_output.csv",
         "Databricks/2026/02/DatabricksFeb_output.csv",
+    ]:
+        _put(s3_client, key)
+    available = [(2026, 1), (2026, 2), (2026, 3), (2026, 4)]
+
+    assert s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available) == [(2026, 3), (2026, 4)]
+
+
+def test_months_to_process_backfills_an_older_gap_not_just_the_newest_month(s3_client):
+    # January and March both uploaded fine, February was somehow skipped.
+    for key in [
+        "Databricks/2026/01/DatabricksJan_output.csv",
         "Databricks/2026/03/DatabricksMar_output.csv",
+        "Databricks/2026/04/DatabricksApr_output.csv",
+    ]:
+        _put(s3_client, key)
+    available = [(2026, 1), (2026, 2), (2026, 3), (2026, 4)]
+
+    assert s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available) == [(2026, 2)]
+
+
+def test_months_to_process_ignores_gaps_older_than_the_window(s3_client):
+    available = [(2025, 1), (2025, 2), (2026, 1), (2026, 2), (2026, 3), (2026, 4), (2026, 5)]
+    # Only the single oldest month (2025-01) falls outside a trailing window of 6
+    # out of these 7 available months - it's missing from S3 too, but should
+    # never be flagged since it's outside the window.
+    to_process = s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available, window_size=6)
+
+    assert (2025, 1) not in to_process
+    assert to_process == [(2025, 2), (2026, 1), (2026, 2), (2026, 3), (2026, 4), (2026, 5)]
+
+
+def test_months_to_process_up_to_date_returns_empty(s3_client):
+    available = [(2026, 1), (2026, 2), (2026, 3)]
+    for key in [
+        "Databricks/2026/01/x.csv",
+        "Databricks/2026/02/x.csv",
+        "Databricks/2026/03/x.csv",
     ]:
         _put(s3_client, key)
 
-    assert s3_sync.get_latest_uploaded_month(s3_client, BUCKET, "Databricks") == (2026, 3)
-
-
-def test_ignores_other_providers(s3_client):
-    _put(s3_client, "Databricks/2026/05/DatabricksMay_output.csv")
-    _put(s3_client, "Snowflake/2026/01/SnowflakeJan_output.csv")
-
-    assert s3_sync.get_latest_uploaded_month(s3_client, BUCKET, "Databricks") == (2026, 5)
-    assert s3_sync.get_latest_uploaded_month(s3_client, BUCKET, "Snowflake") == (2026, 1)
-
-
-def test_picks_latest_year_not_just_latest_month_number(s3_client):
-    # 2027-01 is chronologically newer than 2026-12 even though "01" < "12" alphabetically
-    _put(s3_client, "Databricks/2026/12/DatabricksDec_output.csv")
-    _put(s3_client, "Databricks/2027/01/DatabricksJan_output.csv")
-
-    assert s3_sync.get_latest_uploaded_month(s3_client, BUCKET, "Databricks") == (2027, 1)
-
-
-def test_months_to_process_none_uploaded_yet():
-    available = [(2026, 1), (2026, 2), (2026, 3)]
-    assert s3_sync.months_to_process(available, None) == available
-
-
-def test_months_to_process_skips_already_uploaded():
-    available = [(2026, 1), (2026, 2), (2026, 3), (2026, 4), (2026, 5), (2026, 6)]
-    assert s3_sync.months_to_process(available, (2026, 3)) == [(2026, 4), (2026, 5), (2026, 6)]
-
-
-def test_months_to_process_up_to_date_returns_empty():
-    available = [(2026, 1), (2026, 2), (2026, 3)]
-    assert s3_sync.months_to_process(available, (2026, 3)) == []
+    assert s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available) == []
 
 
 def test_upload_output_file_uses_provider_year_month_key(tmp_path, s3_client):

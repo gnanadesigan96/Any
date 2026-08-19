@@ -9,9 +9,15 @@ it's re-run.
 1. Reads the workbook (e.g. `2026 Consumption Costs.xlsx`) and keeps only the
    five provider sheets: **Snowflake, Databricks, Elastic, Datadog, Splunk**
    (the `... VLookup` sheets are ignored).
-2. For each provider, groups rows by month (based on `usage_start_date`) and
-   figures out which months are **already uploaded to S3** vs. new.
-3. For each new month only, writes a raw CSV with:
+2. For each provider, groups rows by month (based on `usage_start_date`), looks
+   at the most recent **6 months** present in the workbook, and checks each one
+   individually against S3 - a month already uploaded is skipped, and a
+   missing one is queued for processing. This is a per-month gap check, not a
+   moving cutoff: if February was somehow skipped while January and March both
+   uploaded fine, it gets backfilled too - it's not just "whatever's newer
+   than the last upload." Months older than that trailing 6-month window are
+   left alone even if they happen to be missing.
+3. For each month being processed, writes a raw CSV with:
    - `usage_start_date` / `usage_end_date` formatted as `DD/MM/YY` (e.g. `01/06/26`)
    - `cost` as a plain number (e.g. `12499.00`, no `$` or thousands separator)
 4. Runs the existing `process_saas_data_local.py` on that CSV to produce the
@@ -30,6 +36,12 @@ either way.
 Re-running the pipeline on the same or an updated workbook is always safe: it
 never re-derives state from a local file, only from what's actually sitting in
 S3, so it can't re-process or double-upload a month that's already there.
+
+"Current month" is driven entirely by what's newest in the customer's
+workbook, not by today's real calendar date - billing data lags (e.g. June's
+costs might not be final until August), so a workbook that only goes up to
+June is treated as being caught up through June, even if it's August when the
+pipeline runs.
 
 ## Setup
 
@@ -65,9 +77,9 @@ anything, so any of these work once set up:
   Lambda, attach a role instead - no static keys needed.
 
 Whichever identity runs this needs, at minimum, on the target bucket:
-`s3:ListBucket` (to find the latest uploaded month) and `s3:PutObject` (to
-upload output files). Scope it to that one bucket/prefix rather than
-account-wide access.
+`s3:ListBucket` (to check which months already have a file) and
+`s3:PutObject` (to upload output files). Scope it to that one bucket/prefix
+rather than account-wide access.
 
 Until credentials exist, use `--no-upload` to test the split + process steps
 locally - the S3 step is the only part that needs AWS access.
@@ -90,10 +102,10 @@ Power Automate's job is reduced to just the trigger:
    (optionally filtered by `SHAREPOINT_FILENAME_CONTAINS`), downloads it, and
    runs the pipeline.
 
-Same safety property as `run_pipeline.py`: every invocation re-checks S3 for
-each provider's latest uploaded month and only processes what's new, so it's
-safe for Power Automate to call this on every file drop, or more than once for
-the same file, without double-processing anything.
+Same safety property as `run_pipeline.py`: every invocation re-checks S3,
+month by month across the trailing 6-month window, per provider - so it's safe
+for Power Automate to call this on every file drop, or more than once for the
+same file, without double-processing anything.
 
 ### Required Function App configuration
 
@@ -126,8 +138,9 @@ curl -X POST "https://<function-app-name>.azurewebsites.net/api/process?code=<fu
 #   force_all_months=true            (ignore S3 state, reprocess everything)
 ```
 
-It returns a JSON summary per provider: the latest month that was already in
-S3 before the run, and which new months got processed.
+It returns a JSON summary per provider: the trailing 6-month window that was
+checked, which of those months were already in S3, and which ones got
+processed (backfilled).
 
 ### Deploying
 
@@ -148,7 +161,7 @@ local.settings.json.example  # template for local Function config (copy to local
 saas_pipeline/
   config.py                  # provider list, month names, column names
   split_monthly.py           # workbook -> per-month raw CSVs
-  s3_sync.py                 # latest-month detection + upload
+  s3_sync.py                 # per-month gap check (trailing 6-month window) + upload
   sharepoint_client.py       # Microsoft Graph auth + file lookup/download
 tests/                       # synthetic workbook + moto-mocked S3 + mocked Graph calls, no customer data
 ```

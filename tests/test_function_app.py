@@ -34,7 +34,7 @@ def _make_workbook(path: Path):
     for provider in ["Databricks"]:
         ws = wb.create_sheet(provider)
         ws.append(HEADERS)
-        for month in (1, 2, 3):
+        for month in (1, 2, 3, 4):
             ws.append([
                 "acct", "acct", "acct", "on-demand", "us", "Usage",
                 datetime.datetime(2026, month, 1), datetime.datetime(2026, month, 1),
@@ -76,15 +76,17 @@ def test_sharepoint_fetch_failure_returns_502(monkeypatch):
     assert "auth failed" in response.get_body().decode()
 
 
-def test_happy_path_uploads_only_new_months(monkeypatch, tmp_path, s3_client):
+def test_happy_path_backfills_only_missing_months_in_window(monkeypatch, tmp_path, s3_client):
     for key, value in REQUIRED_ENV.items():
         monkeypatch.setenv(key, value)
 
     workbook_path = tmp_path / "2026 Consumption Costs.xlsx"
     _make_workbook(workbook_path)
 
-    # Simulate Databricks already uploaded through Jan.
+    # Simulate Jan and Mar already uploaded, but Feb somehow missing - a gap,
+    # not just a moving cutoff. Apr isn't uploaded yet either.
     s3_client.put_object(Bucket=BUCKET, Key="Databricks/2026/01/DatabricksJan_output.csv", Body=b"x")
+    s3_client.put_object(Bucket=BUCKET, Key="Databricks/2026/03/DatabricksMar_output.csv", Body=b"x")
 
     fake_item = {
         "name": "2026 Consumption Costs.xlsx",
@@ -100,12 +102,14 @@ def test_happy_path_uploads_only_new_months(monkeypatch, tmp_path, s3_client):
 
     assert response.status_code == 200
     body = json.loads(response.get_body())
-    assert body["Databricks"]["latest_uploaded_before_run"] == "2026-01"
-    assert body["Databricks"]["processed"] == ["2026-02", "2026-03"]
+    assert body["Databricks"]["checked_window"] == ["2026-01", "2026-02", "2026-03", "2026-04"]
+    assert body["Databricks"]["already_in_s3"] == ["2026-01", "2026-03"]
+    assert body["Databricks"]["processed"] == ["2026-02", "2026-04"]
 
     keys = {obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
     assert keys == {
         "Databricks/2026/01/DatabricksJan_output.csv",
         "Databricks/2026/02/DatabricksFeb_output.csv",
         "Databricks/2026/03/DatabricksMar_output.csv",
+        "Databricks/2026/04/DatabricksApr_output.csv",
     }

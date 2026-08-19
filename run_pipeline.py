@@ -5,16 +5,16 @@ End-to-end SaaS consumption pipeline.
 For each provider sheet (Snowflake, Databricks, Elastic, Datadog, Splunk) in the
 customer's workbook:
 
-  1. Figure out which (year, month) folders are already uploaded to S3 for that
-     provider, and skip straight past them - only new months get processed.
-  2. Split the sheet into one raw CSV per new month (dates -> DD/MM/YY, cost -> plain
-     number).
+  1. Look at the most recent 6 months present in the workbook, and check each one
+     individually against S3 - a month already uploaded is skipped, a missing one
+     (even an older gap, not just the newest month) gets backfilled.
+  2. Split the sheet into one raw CSV per month being processed (dates -> DD/MM/YY,
+     cost -> plain number).
   3. Run process_saas_data_local.py on that CSV to produce the *_output.csv.
   4. Upload the output file to s3://<bucket>/<Provider>/<Year>/<Month>/.
 
-Safe to re-run on the same or an updated workbook at any time: it always re-derives
-"what's new" from what's already in S3, so it never re-processes or re-uploads a month
-that's already there.
+Safe to re-run on the same or an updated workbook at any time: it always re-checks S3
+itself, so it never re-processes or re-uploads a month that's already there.
 
 Examples:
     python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket my-saas-billing-bucket
@@ -46,15 +46,10 @@ def run_process_script(csv_path: Path) -> Path:
 
 
 def _plan_months(provider, available, s3_client, bucket, no_upload, force_all_months):
-    """Decide which (year, month) pairs to process for this provider, and a
-    human-readable description of the latest month already uploaded."""
-    if no_upload:
-        return sorted(available), "n/a (--no-upload)"
-
-    latest = s3_sync.get_latest_uploaded_month(s3_client, bucket, provider)
-    latest_desc = f"{latest[0]}-{latest[1]:02d}" if latest else "none uploaded yet"
-    to_process = sorted(available) if force_all_months else s3_sync.months_to_process(available, latest)
-    return to_process, latest_desc
+    """Decide which (year, month) pairs to process for this provider."""
+    if no_upload or force_all_months:
+        return sorted(available)
+    return s3_sync.months_to_process(s3_client, bucket, provider, available)
 
 
 def main():
@@ -90,18 +85,15 @@ def main():
             logger.info("[%s] no rows with a usable usage_start_date; skipping", provider)
             continue
 
-        to_process, latest_desc = _plan_months(
-            provider, available, s3_client, args.bucket, args.no_upload, args.force_all_months
-        )
+        to_process = _plan_months(provider, available, s3_client, args.bucket, args.no_upload, args.force_all_months)
 
         if not to_process:
-            logger.info("[%s] already up to date (latest uploaded: %s); nothing to do", provider, latest_desc)
+            logger.info("[%s] all months in the trailing window are already in S3; nothing to do", provider)
             continue
 
         logger.info(
-            "[%s] latest uploaded: %s | workbook has: %s | will process: %s",
+            "[%s] workbook has: %s | missing/will process: %s",
             provider,
-            latest_desc,
             [f"{y}-{m:02d}" for y, m in available],
             [f"{y}-{m:02d}" for y, m in to_process],
         )
