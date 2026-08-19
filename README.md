@@ -10,12 +10,12 @@ it's re-run.
    five provider sheets: **Snowflake, Databricks, Elastic, Datadog, Splunk**
    (the `... VLookup` sheets are ignored).
 2. For each provider, groups rows by month (based on `usage_start_date`), looks
-   at the most recent **6 months** present in the workbook, and checks each one
+   at the most recent **12 months** present in the workbook, and checks each one
    individually against S3 - a month already uploaded is skipped, and a
    missing one is queued for processing. This is a per-month gap check, not a
    moving cutoff: if February was somehow skipped while January and March both
    uploaded fine, it gets backfilled too - it's not just "whatever's newer
-   than the last upload." Months older than that trailing 6-month window are
+   than the last upload." Months older than that trailing 12-month window are
    left alone even if they happen to be missing.
 3. For each month being processed, writes a raw CSV with:
    - `usage_start_date` / `usage_end_date` formatted as `DD/MM/YY` (e.g. `01/06/26`)
@@ -103,7 +103,7 @@ Power Automate's job is reduced to just the trigger:
    runs the pipeline.
 
 Same safety property as `run_pipeline.py`: every invocation re-checks S3,
-month by month across the trailing 6-month window, per provider - so it's safe
+month by month across the trailing 12-month window, per provider - so it's safe
 for Power Automate to call this on every file drop, or more than once for the
 same file, without double-processing anything.
 
@@ -138,7 +138,7 @@ curl -X POST "https://<function-app-name>.azurewebsites.net/api/process?code=<fu
 #   force_all_months=true            (ignore S3 state, reprocess everything)
 ```
 
-It returns a JSON summary per provider: the trailing 6-month window that was
+It returns a JSON summary per provider: the trailing 12-month window that was
 checked, which of those months were already in S3, and which ones got
 processed (backfilled).
 
@@ -161,7 +161,7 @@ local.settings.json.example  # template for local Function config (copy to local
 saas_pipeline/
   config.py                  # provider list, month names, column names
   split_monthly.py           # workbook -> per-month raw CSVs
-  s3_sync.py                 # per-month gap check (trailing 6-month window) + upload
+  s3_sync.py                 # per-month gap check (trailing 12-month window) + upload
   sharepoint_client.py       # Microsoft Graph auth + file lookup/download
 tests/                       # synthetic workbook + moto-mocked S3 + mocked Graph calls, no customer data
 ```

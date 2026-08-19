@@ -9,7 +9,7 @@ full list). Secrets (SHAREPOINT_CLIENT_SECRET, AWS keys) are meant to be Key
 Vault references there, not plain values - see README.md.
 
 Safe to call repeatedly / on every SharePoint file-drop notification: for each
-provider it checks the most recent 6 months present in the workbook against
+provider it checks the most recent 12 months present in the workbook against
 S3 individually, and only backfills whichever ones are actually missing - an
 older gap gets filled just like the newest month would, and anything already
 uploaded is left untouched.

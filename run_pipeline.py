@@ -5,7 +5,7 @@ End-to-end SaaS consumption pipeline.
 For each provider sheet (Snowflake, Databricks, Elastic, Datadog, Splunk) in the
 customer's workbook:
 
-  1. Look at the most recent 6 months present in the workbook, and check each one
+  1. Look at the most recent 12 months present in the workbook, and check each one
      individually against S3 - a month already uploaded is skipped, a missing one
      (even an older gap, not just the newest month) gets backfilled.
   2. Split the sheet into one raw CSV per month being processed (dates -> DD/MM/YY,
