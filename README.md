@@ -81,21 +81,28 @@ python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket flatiro
 python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket flatiron-saas-upload --s3-prefix saas-upload --providers Databricks Snowflake
 ```
 
-## AWS setup (not yet configured)
+## AWS setup
 
-The script uses boto3's standard credential chain - it doesn't hardcode
-anything, so any of these work once set up:
+The Azure Function always accesses S3 through **STS AssumeRole**, not static
+credentials directly: a base IAM identity (`AWS_ACCESS_KEY_ID` /
+`AWS_SECRET_ACCESS_KEY`) assumes `AWS_ROLE_ARN` (optionally with
+`AWS_ROLE_EXTERNAL_ID`, if the role's trust policy requires one) to get a
+short-lived session - the STS default validity is 1 hour. Each invocation
+assumes the role fresh at the start of the run; since a run finishes in
+seconds, there's no need to cache or refresh a session across invocations.
+`saas_pipeline/aws_auth.py` is the one place this happens.
 
-- **Access keys**: set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and
-  `AWS_DEFAULT_REGION` as environment variables (or an `AWS_PROFILE` pointing
-  at a profile in `~/.aws/credentials`).
-- **IAM role**: if this ends up running on an EC2 instance, ECS task, or
-  Lambda, attach a role instead - no static keys needed.
+The base identity itself only needs `sts:AssumeRole` on `AWS_ROLE_ARN` - the
+actual S3 permissions (`s3:ListBucket` to check which months already have a
+file, `s3:PutObject` to upload output files, `s3:GetObject` too if
+`S3_INPUT_BUCKET` differs from `S3_BUCKET`) live on that role instead, scoped
+to the relevant bucket/prefix rather than account-wide.
 
-Whichever identity runs this needs, at minimum, on the target bucket:
-`s3:ListBucket` (to check which months already have a file) and
-`s3:PutObject` (to upload output files). Scope it to that one bucket/prefix
-rather than account-wide access.
+`run_pipeline.py` (the CLI) supports the same pattern optionally via
+`--aws-role-arn` (plus `--aws-role-session-name` / `--aws-role-external-id`) -
+omit it and it falls back to boto3's standard credential chain (plain
+`AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, an `AWS_PROFILE`, or an attached
+instance/task role), same as before.
 
 Until credentials exist, use `--no-upload` to test the split + process steps
 locally - the S3 step is the only part that needs AWS access.
@@ -138,7 +145,10 @@ see the Key Vault setup steps from earlier in this conversation):
 | `SHAREPOINT_FILENAME_CONTAINS` | Optional substring to match the workbook's filename, e.g. `Consumption Costs`. Leave unset/empty to just take the most recently modified file in the folder - fine when that folder is dedicated to this one workbook. |
 | `S3_BUCKET` | Target S3 bucket, e.g. `flatiron-saas-upload` - varies per engagement |
 | `S3_PREFIX` | Optional path between the bucket root and the provider folders, e.g. `saas-upload`. Leave unset if the provider folders sit directly at the bucket root - also varies per engagement |
-| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | (or rely on a role/instance identity if you set one up) - **Key Vault references** |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | The base identity that assumes `AWS_ROLE_ARN` - **Key Vault references** |
+| `AWS_ROLE_ARN` | Role to assume for the actual S3 access, e.g. `arn:aws:iam::<account-id>:role/<role-name>` |
+| `AWS_ROLE_SESSION_NAME` | Optional, defaults to `saas-pipeline` |
+| `AWS_ROLE_EXTERNAL_ID` | Optional - only needed if the role's trust policy requires an ExternalId |
 | `AWS_DEFAULT_REGION` | Bucket's region |
 
 `local.settings.json.example` has the same list for local `func start` testing
@@ -193,7 +203,7 @@ if nothing new has landed.
 | `S3_POLL_SCHEDULE` | NCRONTAB schedule, e.g. `0 */15 * * * *` for every 15 minutes - tunable without redeploying code, since the Function reads it via an app-setting reference |
 | `S3_POLL_FORCE_ALL_MONTHS` | Optional, default `false` - `true` reprocesses every month in the workbook regardless of what's already in S3 |
 
-If `S3_INPUT_BUCKET` differs from `S3_BUCKET`, the IAM user needs
+If `S3_INPUT_BUCKET` differs from `S3_BUCKET`, `AWS_ROLE_ARN` needs
 `s3:ListBucket` + `s3:GetObject` on that input bucket/prefix too, alongside
 the `s3:ListBucket` + `s3:PutObject` it already has on the output bucket.
 
@@ -210,6 +220,7 @@ saas_pipeline/
   split_monthly.py           # workbook -> per-month raw CSVs
   s3_sync.py                 # per-month gap check (trailing 12-month window) + upload
   sharepoint_client.py       # Microsoft Graph auth + file lookup/download
+  aws_auth.py                # STS AssumeRole -> session-scoped S3 client
 tests/                       # synthetic workbook + moto-mocked S3 + mocked Graph calls, no customer data
 ```
 

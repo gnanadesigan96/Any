@@ -16,6 +16,12 @@ variables" / Application Settings - see local.settings.json.example for the
 full list). Secrets (SHAREPOINT_CLIENT_SECRET, AWS keys) are meant to be Key
 Vault references there, not plain values - see README.md.
 
+S3 access goes through STS AssumeRole rather than static credentials: a base
+IAM identity (AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY) assumes AWS_ROLE_ARN to
+get a short-lived session. Each invocation assumes the role fresh at the
+start of the run - no caching needed, since a run finishes in seconds, well
+within the session's ~1 hour validity.
+
 Safe to call repeatedly / run on every schedule tick: for each provider it
 checks the most recent 12 months present in the workbook against S3
 individually, and only backfills whichever ones are actually missing - an
@@ -31,10 +37,10 @@ import tempfile
 from pathlib import Path
 
 import azure.functions as func
-import boto3
 
 from process_saas_data_local import process_saas_data_local
 from saas_pipeline import s3_sync
+from saas_pipeline.aws_auth import assume_role_s3_client
 from saas_pipeline.config import PIPELINE_START_MONTH, PROVIDER_SHEETS
 from saas_pipeline.sharepoint_client import (
     download_drive_item,
@@ -47,6 +53,12 @@ from saas_pipeline.split_monthly import read_provider_sheet, write_month_csv
 
 app = func.FunctionApp()
 
+AWS_REQUIRED_ENV_VARS = [
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_ROLE_ARN",
+]
+
 REQUIRED_ENV_VARS = [
     "SHAREPOINT_TENANT_ID",
     "SHAREPOINT_CLIENT_ID",
@@ -54,12 +66,23 @@ REQUIRED_ENV_VARS = [
     "SHAREPOINT_SITE_URL",
     "SHAREPOINT_FOLDER_PATH",
     "S3_BUCKET",
-]
+] + AWS_REQUIRED_ENV_VARS
 
 S3_POLL_REQUIRED_ENV_VARS = [
     "S3_INPUT_BUCKET",
     "S3_BUCKET",
-]
+] + AWS_REQUIRED_ENV_VARS
+
+
+def _build_s3_client():
+    return assume_role_s3_client(
+        base_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+        base_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+        role_arn=os.environ["AWS_ROLE_ARN"],
+        role_session_name=os.environ.get("AWS_ROLE_SESSION_NAME", "saas-pipeline"),
+        external_id=os.environ.get("AWS_ROLE_EXTERNAL_ID") or None,
+        region_name=os.environ.get("AWS_DEFAULT_REGION"),
+    )
 
 
 def _plan_months(provider: str, available: list, s3_client, bucket: str, s3_prefix: str, force_all_months: bool):
@@ -69,11 +92,10 @@ def _plan_months(provider: str, available: list, s3_client, bucket: str, s3_pref
 
 
 def run_pipeline_for_workbook(
-    workbook_path: Path, providers: list, bucket: str, s3_prefix: str, force_all_months: bool
+    workbook_path: Path, providers: list, s3_client, bucket: str, s3_prefix: str, force_all_months: bool
 ) -> dict:
     """Split + process + upload every new month for each provider. Returns a
     per-provider summary suitable for logging/returning as the HTTP response."""
-    s3_client = boto3.client("s3")
     summary = {}
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -137,6 +159,12 @@ def process_saas_consumption(req: func.HttpRequest) -> func.HttpResponse:
     bucket = os.environ["S3_BUCKET"]
     s3_prefix = os.environ.get("S3_PREFIX", "")
 
+    try:
+        s3_client = _build_s3_client()
+    except Exception as exc:
+        logging.exception("Failed to assume AWS role")
+        return func.HttpResponse(f"AWS role assumption failed: {exc}", status_code=502)
+
     with tempfile.TemporaryDirectory() as tmp:
         try:
             token = get_graph_token(tenant_id, client_id, client_secret)
@@ -148,7 +176,7 @@ def process_saas_consumption(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(f"SharePoint fetch failed: {exc}", status_code=502)
 
         try:
-            summary = run_pipeline_for_workbook(workbook_path, providers, bucket, s3_prefix, force_all_months)
+            summary = run_pipeline_for_workbook(workbook_path, providers, s3_client, bucket, s3_prefix, force_all_months)
         except Exception as exc:
             logging.exception("Pipeline run failed")
             return func.HttpResponse(f"Pipeline run failed: {exc}", status_code=500)
@@ -176,7 +204,11 @@ def poll_s3_for_new_workbook(timer: func.TimerRequest) -> None:
     s3_prefix = os.environ.get("S3_PREFIX", "")
     force_all_months = (os.environ.get("S3_POLL_FORCE_ALL_MONTHS") or "").lower() == "true"
 
-    s3_client = boto3.client("s3")
+    try:
+        s3_client = _build_s3_client()
+    except Exception:
+        logging.exception("Failed to assume AWS role")
+        return
 
     latest = s3_sync.find_latest_input_file(s3_client, input_bucket, input_prefix, input_filename_contains)
     if latest is None:
@@ -192,7 +224,9 @@ def poll_s3_for_new_workbook(timer: func.TimerRequest) -> None:
             return
 
         try:
-            summary = run_pipeline_for_workbook(workbook_path, PROVIDER_SHEETS, bucket, s3_prefix, force_all_months)
+            summary = run_pipeline_for_workbook(
+                workbook_path, PROVIDER_SHEETS, s3_client, bucket, s3_prefix, force_all_months
+            )
         except Exception:
             logging.exception("Pipeline run failed (S3 poll trigger)")
             return

@@ -19,6 +19,12 @@ HEADERS = [
     "cost", "team", "usage_type", "Line of Business", "Pillar",
 ]
 
+AWS_ENV = {
+    "AWS_ACCESS_KEY_ID": "AKIAEXAMPLEBASE",
+    "AWS_SECRET_ACCESS_KEY": "base-secret",
+    "AWS_ROLE_ARN": "arn:aws:iam::692859928464:role/corestack-enable-linkedaccounts",
+}
+
 REQUIRED_ENV = {
     "SHAREPOINT_TENANT_ID": "tenant-1",
     "SHAREPOINT_CLIENT_ID": "client-1",
@@ -26,6 +32,7 @@ REQUIRED_ENV = {
     "SHAREPOINT_SITE_URL": "contoso.sharepoint.com/sites/Billing",
     "SHAREPOINT_FOLDER_PATH": "Shared Documents",
     "S3_BUCKET": BUCKET,
+    **AWS_ENV,
 }
 
 
@@ -67,7 +74,7 @@ def test_missing_env_vars_returns_500(monkeypatch):
     assert "SHAREPOINT_TENANT_ID" in response.get_body().decode()
 
 
-def test_sharepoint_fetch_failure_returns_502(monkeypatch):
+def test_sharepoint_fetch_failure_returns_502(monkeypatch, s3_client):
     for key, value in REQUIRED_ENV.items():
         monkeypatch.setenv(key, value)
 
@@ -166,6 +173,8 @@ def test_poll_s3_missing_env_vars_logs_and_returns(monkeypatch, caplog):
 
 
 def test_poll_s3_no_input_file_logs_and_returns(monkeypatch, s3_client, caplog):
+    for key, value in AWS_ENV.items():
+        monkeypatch.setenv(key, value)
     monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
     monkeypatch.setenv("S3_BUCKET", BUCKET)
 
@@ -176,6 +185,8 @@ def test_poll_s3_no_input_file_logs_and_returns(monkeypatch, s3_client, caplog):
 
 
 def test_poll_s3_backfills_only_missing_months(monkeypatch, tmp_path, s3_client, caplog):
+    for key, value in AWS_ENV.items():
+        monkeypatch.setenv(key, value)
     monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
     monkeypatch.setenv("S3_BUCKET", BUCKET)
     monkeypatch.setenv("S3_INPUT_PREFIX", "raw-uploads")
@@ -203,6 +214,8 @@ def test_poll_s3_backfills_only_missing_months(monkeypatch, tmp_path, s3_client,
 
 
 def test_poll_s3_picks_prefix_filtered_most_recent_file(monkeypatch, tmp_path, s3_client, caplog):
+    for key, value in AWS_ENV.items():
+        monkeypatch.setenv(key, value)
     monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
     monkeypatch.setenv("S3_BUCKET", BUCKET)
     monkeypatch.setenv("S3_INPUT_PREFIX", "raw-uploads")

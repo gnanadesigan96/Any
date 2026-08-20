@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -72,6 +73,14 @@ def main():
         action="store_true",
         help="Ignore what's already in S3 and (re)process every month present in the workbook",
     )
+    parser.add_argument(
+        "--aws-role-arn",
+        default=None,
+        help="If set, assume this role (via STS, using AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY as the base "
+        "identity) for S3 access instead of using those credentials directly.",
+    )
+    parser.add_argument("--aws-role-session-name", default="saas-pipeline", help="RoleSessionName for --aws-role-arn")
+    parser.add_argument("--aws-role-external-id", default=None, help="Optional ExternalId for --aws-role-arn")
     args = parser.parse_args()
 
     if not args.no_upload and not args.bucket:
@@ -82,9 +91,21 @@ def main():
 
     s3_client = None
     if not args.no_upload:
-        import boto3
+        if args.aws_role_arn:
+            from saas_pipeline.aws_auth import assume_role_s3_client
 
-        s3_client = boto3.client("s3")
+            s3_client = assume_role_s3_client(
+                base_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+                base_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+                role_arn=args.aws_role_arn,
+                role_session_name=args.aws_role_session_name,
+                external_id=args.aws_role_external_id,
+                region_name=os.environ.get("AWS_DEFAULT_REGION"),
+            )
+        else:
+            import boto3
+
+            s3_client = boto3.client("s3")
 
     for provider in args.providers:
         headers, date_col_indices, cost_col_idx, months = read_provider_sheet(workbook_path, provider)
