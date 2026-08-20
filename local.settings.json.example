@@ -15,6 +15,12 @@
     "S3_PREFIX": "saas-upload",
     "AWS_DEFAULT_REGION": "us-east-1",
     "AWS_ACCESS_KEY_ID": "<local testing only - use Key Vault references in the deployed Function App>",
-    "AWS_SECRET_ACCESS_KEY": "<local testing only - use Key Vault references in the deployed Function App>"
+    "AWS_SECRET_ACCESS_KEY": "<local testing only - use Key Vault references in the deployed Function App>",
+
+    "S3_INPUT_BUCKET": "flatiron-saas-upload",
+    "S3_INPUT_PREFIX": "raw-uploads",
+    "S3_INPUT_FILENAME_CONTAINS": "",
+    "S3_POLL_SCHEDULE": "0 */15 * * * *",
+    "S3_POLL_FORCE_ALL_MONTHS": "false"
   }
 }

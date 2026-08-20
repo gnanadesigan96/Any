@@ -165,14 +165,44 @@ processed (backfilled).
 func azure functionapp publish saas-pipeline-func
 ```
 (run from this repo's root, alongside `host.json`; `.funcignore` keeps
-`tests/`, `data/`, and `README.md` out of the deployed package)
+`tests/`, `data/`, and `README.md` out of the deployed package. This single
+deploy covers both functions below - they live in the same `function_app.py`.)
+
+## S3 direct-upload -> Azure Function -> S3
+
+The customer can also drop the workbook directly into S3 instead of
+SharePoint - both are valid entry points into the same pipeline, since it's
+not yet settled which one they'll actually use going forward.
+
+`PollS3ForNewWorkbook` is a **Timer-triggered** function in the same
+`function_app.py` (no separate deploy, no new AWS Lambda needed) that, on a
+schedule, checks a raw-upload location in S3 for the most recently modified
+file and runs it through the exact same `run_pipeline_for_workbook()` logic
+the SharePoint path uses - it just gets the workbook a different way. Same
+safety property applies: every tick re-checks S3 per provider and only
+backfills what's actually missing, so it's harmless to poll repeatedly even
+if nothing new has landed.
+
+### Required Function App configuration (in addition to `S3_BUCKET`/`S3_PREFIX` above)
+
+| Setting | Description |
+|---|---|
+| `S3_INPUT_BUCKET` | Bucket the customer drops the raw workbook into - can be the same bucket as `S3_BUCKET` or a different one |
+| `S3_INPUT_PREFIX` | Optional path within that bucket, e.g. `raw-uploads` |
+| `S3_INPUT_FILENAME_CONTAINS` | Optional substring to match the workbook's filename. Leave unset to just take the most recently modified file in that location |
+| `S3_POLL_SCHEDULE` | NCRONTAB schedule, e.g. `0 */15 * * * *` for every 15 minutes - tunable without redeploying code, since the Function reads it via an app-setting reference |
+| `S3_POLL_FORCE_ALL_MONTHS` | Optional, default `false` - `true` reprocesses every month in the workbook regardless of what's already in S3 |
+
+If `S3_INPUT_BUCKET` differs from `S3_BUCKET`, the IAM user needs
+`s3:ListBucket` + `s3:GetObject` on that input bucket/prefix too, alongside
+the `s3:ListBucket` + `s3:PutObject` it already has on the output bucket.
 
 ## Layout
 
 ```
 process_saas_data_local.py   # existing per-file transform script, unchanged
 run_pipeline.py              # CLI orchestrator: split -> process -> upload (cron/manual use)
-function_app.py              # Azure Function HTTP trigger: SharePoint fetch -> same pipeline -> upload
+function_app.py              # Azure Functions: HTTP (SharePoint fetch) + Timer (S3 input poll) -> same pipeline -> upload
 host.json                    # Azure Functions runtime config
 local.settings.json.example  # template for local Function config (copy to local.settings.json)
 saas_pipeline/

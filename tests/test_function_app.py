@@ -12,6 +12,7 @@ from moto import mock_aws
 import function_app
 
 BUCKET = "test-saas-billing"
+INPUT_BUCKET = "test-raw-uploads"
 HEADERS = [
     "account_name", "account_number", "payer_account_id", "bill_type", "region",
     "charge_type", "usage_start_date", "usage_end_date", "product", "service",
@@ -52,6 +53,7 @@ def s3_client():
     with mock_aws():
         client = boto3.client("s3", region_name="us-east-1")
         client.create_bucket(Bucket=BUCKET)
+        client.create_bucket(Bucket=INPUT_BUCKET)
         yield client
 
 
@@ -150,4 +152,76 @@ def test_uploads_under_s3_prefix_when_set(monkeypatch, tmp_path, s3_client):
         "saas-upload/databricks/2026/02/DatabricksFeb_output.csv",
         "saas-upload/databricks/2026/03/DatabricksMar_output.csv",
         "saas-upload/databricks/2026/04/DatabricksApr_output.csv",
+    }
+
+
+def test_poll_s3_missing_env_vars_logs_and_returns(monkeypatch, caplog):
+    monkeypatch.delenv("S3_INPUT_BUCKET", raising=False)
+    monkeypatch.delenv("S3_BUCKET", raising=False)
+
+    with caplog.at_level("ERROR"):
+        function_app.poll_s3_for_new_workbook(None)
+
+    assert "S3_INPUT_BUCKET" in caplog.text
+
+
+def test_poll_s3_no_input_file_logs_and_returns(monkeypatch, s3_client, caplog):
+    monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
+    monkeypatch.setenv("S3_BUCKET", BUCKET)
+
+    with caplog.at_level("INFO"):
+        function_app.poll_s3_for_new_workbook(None)
+
+    assert "No input workbook found" in caplog.text
+
+
+def test_poll_s3_backfills_only_missing_months(monkeypatch, tmp_path, s3_client, caplog):
+    monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
+    monkeypatch.setenv("S3_BUCKET", BUCKET)
+    monkeypatch.setenv("S3_INPUT_PREFIX", "raw-uploads")
+
+    workbook_path = tmp_path / "2026 Consumption Costs.xlsx"
+    _make_workbook(workbook_path)
+    s3_client.upload_file(str(workbook_path), INPUT_BUCKET, "raw-uploads/2026 Consumption Costs.xlsx")
+
+    # Jan and Mar already uploaded to the output bucket - Feb is a gap, Apr is new.
+    s3_client.put_object(Bucket=BUCKET, Key="databricks/2026/01/DatabricksJan_output.csv", Body=b"x")
+    s3_client.put_object(Bucket=BUCKET, Key="databricks/2026/03/DatabricksMar_output.csv", Body=b"x")
+
+    with caplog.at_level("INFO"):
+        function_app.poll_s3_for_new_workbook(None)
+
+    assert "Pipeline run summary (S3 poll trigger)" in caplog.text
+
+    keys = {obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
+    assert keys == {
+        "databricks/2026/01/DatabricksJan_output.csv",
+        "databricks/2026/02/DatabricksFeb_output.csv",
+        "databricks/2026/03/DatabricksMar_output.csv",
+        "databricks/2026/04/DatabricksApr_output.csv",
+    }
+
+
+def test_poll_s3_picks_prefix_filtered_most_recent_file(monkeypatch, tmp_path, s3_client, caplog):
+    monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
+    monkeypatch.setenv("S3_BUCKET", BUCKET)
+    monkeypatch.setenv("S3_INPUT_PREFIX", "raw-uploads")
+    monkeypatch.setenv("S3_INPUT_FILENAME_CONTAINS", "Consumption")
+
+    # A non-matching file shouldn't be picked even if present.
+    s3_client.put_object(Bucket=INPUT_BUCKET, Key="raw-uploads/notes.txt", Body=b"irrelevant")
+
+    workbook_path = tmp_path / "2026 Consumption Costs.xlsx"
+    _make_workbook(workbook_path)
+    s3_client.upload_file(str(workbook_path), INPUT_BUCKET, "raw-uploads/2026 Consumption Costs.xlsx")
+
+    with caplog.at_level("INFO"):
+        function_app.poll_s3_for_new_workbook(None)
+
+    keys = {obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
+    assert keys == {
+        "databricks/2026/01/DatabricksJan_output.csv",
+        "databricks/2026/02/DatabricksFeb_output.csv",
+        "databricks/2026/03/DatabricksMar_output.csv",
+        "databricks/2026/04/DatabricksApr_output.csv",
     }

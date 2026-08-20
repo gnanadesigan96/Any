@@ -73,3 +73,25 @@ def upload_output_file(
     logger.info("Uploading %s -> s3://%s/%s", local_path, bucket, key)
     s3_client.upload_file(str(local_path), bucket, key)
     return key
+
+
+def find_latest_input_file(s3_client, bucket: str, prefix: str = "", filename_contains: str = "") -> dict | None:
+    """Return the most recently modified object under `prefix` (optionally
+    filtered to keys whose name contains `filename_contains`), or None if
+    nothing matches. Used to find the customer's raw workbook when it's
+    dropped directly into S3 rather than SharePoint."""
+    response = s3_client.list_objects_v2(Bucket=bucket, Prefix=prefix)
+    candidates = [
+        obj
+        for obj in response.get("Contents", [])
+        if not obj["Key"].endswith("/") and filename_contains.lower() in obj["Key"].lower()
+    ]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda obj: obj["LastModified"])
+
+
+def download_input_file(s3_client, bucket: str, obj: dict, dest_path: Path) -> Path:
+    logger.info("Downloading s3://%s/%s -> %s", bucket, obj["Key"], dest_path)
+    s3_client.download_file(bucket, obj["Key"], str(dest_path))
+    return dest_path

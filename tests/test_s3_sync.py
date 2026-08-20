@@ -1,3 +1,6 @@
+import datetime
+from unittest.mock import MagicMock
+
 import boto3
 import pytest
 from moto import mock_aws
@@ -157,3 +160,53 @@ def test_months_to_process_respects_prefix(s3_client):
     assert s3_sync.months_to_process(s3_client, BUCKET, "Databricks", available, prefix="saas-upload") == [
         (2026, 2)
     ]
+
+
+def test_find_latest_input_file_returns_none_when_empty(s3_client):
+    assert s3_sync.find_latest_input_file(s3_client, BUCKET, "raw-uploads/") is None
+
+
+def test_find_latest_input_file_returns_most_recent():
+    # moto's LastModified only has second-level granularity, so two puts in
+    # the same test can tie - use a mocked client with explicit timestamps to
+    # test the actual "most recent wins" logic reliably.
+    s3_client = MagicMock()
+    s3_client.list_objects_v2.return_value = {
+        "Contents": [
+            {"Key": "raw-uploads/2026 Consumption Costs (old).xlsx", "LastModified": datetime.datetime(2026, 5, 1)},
+            {"Key": "raw-uploads/2026 Consumption Costs.xlsx", "LastModified": datetime.datetime(2026, 7, 1)},
+        ]
+    }
+
+    latest = s3_sync.find_latest_input_file(s3_client, BUCKET, "raw-uploads/")
+
+    assert latest["Key"] == "raw-uploads/2026 Consumption Costs.xlsx"
+
+
+def test_find_latest_input_file_filters_by_filename_contains(s3_client):
+    _put(s3_client, "raw-uploads/notes.txt")
+    _put(s3_client, "raw-uploads/2026 Consumption Costs.xlsx")
+
+    latest = s3_sync.find_latest_input_file(s3_client, BUCKET, "raw-uploads/", filename_contains="Consumption")
+
+    assert latest["Key"] == "raw-uploads/2026 Consumption Costs.xlsx"
+
+
+def test_find_latest_input_file_ignores_folder_placeholder_keys(s3_client):
+    s3_client.put_object(Bucket=BUCKET, Key="raw-uploads/", Body=b"")
+    _put(s3_client, "raw-uploads/2026 Consumption Costs.xlsx")
+
+    latest = s3_sync.find_latest_input_file(s3_client, BUCKET, "raw-uploads/")
+
+    assert latest["Key"] == "raw-uploads/2026 Consumption Costs.xlsx"
+
+
+def test_download_input_file(tmp_path, s3_client):
+    _put(s3_client, "raw-uploads/file.xlsx")
+    obj = s3_sync.find_latest_input_file(s3_client, BUCKET, "raw-uploads/")
+    dest = tmp_path / "file.xlsx"
+
+    result = s3_sync.download_input_file(s3_client, BUCKET, obj, dest)
+
+    assert result == dest
+    assert dest.read_bytes() == b"data"

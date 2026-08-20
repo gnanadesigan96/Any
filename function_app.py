@@ -1,16 +1,24 @@
-"""Azure Function (HTTP trigger): pulls the latest consumption workbook from
-SharePoint, splits it into per-provider/per-month CSVs, runs
-process_saas_data_local.py on whatever isn't already in S3, and uploads the
-results.
+"""Azure Functions: two independent entry points that both feed the same
+pipeline, since the customer may submit the workbook either way.
+
+- ProcessSaasConsumption (HTTP trigger): pulls the latest workbook from
+  SharePoint, for use with the Power Automate flow.
+- PollS3ForNewWorkbook (Timer trigger): on a schedule, pulls the latest
+  workbook from a raw-upload location in S3, for when the customer drops the
+  file directly into S3 instead of SharePoint.
+
+Both then split the workbook into per-provider/per-month CSVs, run
+process_saas_data_local.py on whatever isn't already in S3, and upload the
+results - that shared logic lives in run_pipeline_for_workbook() below.
 
 All config comes from environment variables (Function App "Environment
 variables" / Application Settings - see local.settings.json.example for the
 full list). Secrets (SHAREPOINT_CLIENT_SECRET, AWS keys) are meant to be Key
 Vault references there, not plain values - see README.md.
 
-Safe to call repeatedly / on every SharePoint file-drop notification: for each
-provider it checks the most recent 12 months present in the workbook against
-S3 individually, and only backfills whichever ones are actually missing - an
+Safe to call repeatedly / run on every schedule tick: for each provider it
+checks the most recent 12 months present in the workbook against S3
+individually, and only backfills whichever ones are actually missing - an
 older gap gets filled just like the newest month would, and anything already
 uploaded is left untouched.
 """
@@ -45,6 +53,11 @@ REQUIRED_ENV_VARS = [
     "SHAREPOINT_CLIENT_SECRET",
     "SHAREPOINT_SITE_URL",
     "SHAREPOINT_FOLDER_PATH",
+    "S3_BUCKET",
+]
+
+S3_POLL_REQUIRED_ENV_VARS = [
+    "S3_INPUT_BUCKET",
     "S3_BUCKET",
 ]
 
@@ -142,3 +155,46 @@ def process_saas_consumption(req: func.HttpRequest) -> func.HttpResponse:
 
     logging.info("Pipeline run summary: %s", summary)
     return func.HttpResponse(body=json.dumps(summary), status_code=200, mimetype="application/json")
+
+
+@app.function_name(name="PollS3ForNewWorkbook")
+@app.timer_trigger(schedule="%S3_POLL_SCHEDULE%", arg_name="timer", run_on_startup=False, use_monitor=True)
+def poll_s3_for_new_workbook(timer: func.TimerRequest) -> None:
+    """Check a raw-upload location in S3 for the customer's workbook and run
+    the pipeline against whatever's most recently modified there. Runs on the
+    schedule set by the S3_POLL_SCHEDULE app setting (NCRONTAB, e.g.
+    '0 */15 * * * *' for every 15 minutes)."""
+    missing = [name for name in S3_POLL_REQUIRED_ENV_VARS if not os.environ.get(name)]
+    if missing:
+        logging.error("S3 poll skipped - missing required app settings: %s", ", ".join(missing))
+        return
+
+    input_bucket = os.environ["S3_INPUT_BUCKET"]
+    input_prefix = os.environ.get("S3_INPUT_PREFIX", "")
+    input_filename_contains = os.environ.get("S3_INPUT_FILENAME_CONTAINS", "")
+    bucket = os.environ["S3_BUCKET"]
+    s3_prefix = os.environ.get("S3_PREFIX", "")
+    force_all_months = (os.environ.get("S3_POLL_FORCE_ALL_MONTHS") or "").lower() == "true"
+
+    s3_client = boto3.client("s3")
+
+    latest = s3_sync.find_latest_input_file(s3_client, input_bucket, input_prefix, input_filename_contains)
+    if latest is None:
+        logging.info("No input workbook found under s3://%s/%s", input_bucket, input_prefix)
+        return
+
+    with tempfile.TemporaryDirectory() as tmp:
+        workbook_path = Path(tmp) / Path(latest["Key"]).name
+        try:
+            s3_sync.download_input_file(s3_client, input_bucket, latest, workbook_path)
+        except Exception:
+            logging.exception("Failed to download input workbook from S3")
+            return
+
+        try:
+            summary = run_pipeline_for_workbook(workbook_path, PROVIDER_SHEETS, bucket, s3_prefix, force_all_months)
+        except Exception:
+            logging.exception("Pipeline run failed (S3 poll trigger)")
+            return
+
+    logging.info("Pipeline run summary (S3 poll trigger): %s", summary)
