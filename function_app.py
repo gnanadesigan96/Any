@@ -16,11 +16,18 @@ variables" / Application Settings - see local.settings.json.example for the
 full list). Secrets (SHAREPOINT_CLIENT_SECRET, AWS keys) are meant to be Key
 Vault references there, not plain values - see README.md.
 
-S3 access goes through STS AssumeRole rather than static credentials: a base
-IAM identity (AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY) assumes AWS_ROLE_ARN to
-get a short-lived session. Each invocation assumes the role fresh at the
-start of the run - no caching needed, since a run finishes in seconds, well
-within the session's ~1 hour validity.
+Two distinct AWS credential pairs, for two distinct jobs:
+- AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY: used directly (no role assumption)
+  to write to the OUTPUT bucket (S3_BUCKET) - this is the identity that
+  actually puts files in S3, in both trigger paths.
+- AWS_STS_ACCESS_KEY_ID/AWS_STS_SECRET_ACCESS_KEY: used only to call
+  STS AssumeRole (AWS_ROLE_ARN, optionally AWS_ROLE_EXTERNAL_ID) to get a
+  short-lived session for reading the raw workbook out of the INPUT bucket
+  (S3_INPUT_BUCKET), which lives in a different, linked AWS account. This
+  pair is only needed by the S3-polling trigger, since the SharePoint trigger
+  never touches the input bucket. Each invocation assumes the role fresh at
+  the start of the run - no caching needed, since a run finishes in seconds,
+  well within the session's ~1 hour validity.
 
 Safe to call repeatedly / run on every schedule tick: for each provider it
 checks the most recent 12 months present in the workbook against S3
@@ -37,6 +44,7 @@ import tempfile
 from pathlib import Path
 
 import azure.functions as func
+import boto3
 
 from process_saas_data_local import process_saas_data_local
 from saas_pipeline import s3_sync
@@ -53,9 +61,14 @@ from saas_pipeline.split_monthly import read_provider_sheet, write_month_csv
 
 app = func.FunctionApp()
 
-AWS_REQUIRED_ENV_VARS = [
+OUTPUT_AWS_REQUIRED_ENV_VARS = [
     "AWS_ACCESS_KEY_ID",
     "AWS_SECRET_ACCESS_KEY",
+]
+
+INPUT_AWS_REQUIRED_ENV_VARS = [
+    "AWS_STS_ACCESS_KEY_ID",
+    "AWS_STS_SECRET_ACCESS_KEY",
     "AWS_ROLE_ARN",
 ]
 
@@ -66,18 +79,31 @@ REQUIRED_ENV_VARS = [
     "SHAREPOINT_SITE_URL",
     "SHAREPOINT_FOLDER_PATH",
     "S3_BUCKET",
-] + AWS_REQUIRED_ENV_VARS
+] + OUTPUT_AWS_REQUIRED_ENV_VARS
 
 S3_POLL_REQUIRED_ENV_VARS = [
     "S3_INPUT_BUCKET",
     "S3_BUCKET",
-] + AWS_REQUIRED_ENV_VARS
+] + OUTPUT_AWS_REQUIRED_ENV_VARS + INPUT_AWS_REQUIRED_ENV_VARS
 
 
-def _build_s3_client():
+def _build_output_s3_client():
+    """Client for writing to the output bucket - direct static credentials,
+    no role assumption."""
+    return boto3.client(
+        "s3",
+        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+        region_name=os.environ.get("AWS_DEFAULT_REGION"),
+    )
+
+
+def _build_input_s3_client():
+    """Client for reading the raw workbook from the input bucket in a linked
+    account - via STS AssumeRole using a separate base identity."""
     return assume_role_s3_client(
-        base_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
-        base_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+        base_access_key_id=os.environ["AWS_STS_ACCESS_KEY_ID"],
+        base_secret_access_key=os.environ["AWS_STS_SECRET_ACCESS_KEY"],
         role_arn=os.environ["AWS_ROLE_ARN"],
         role_session_name=os.environ.get("AWS_ROLE_SESSION_NAME", "saas-pipeline"),
         external_id=os.environ.get("AWS_ROLE_EXTERNAL_ID") or None,
@@ -160,10 +186,10 @@ def process_saas_consumption(req: func.HttpRequest) -> func.HttpResponse:
     s3_prefix = os.environ.get("S3_PREFIX", "")
 
     try:
-        s3_client = _build_s3_client()
+        s3_client = _build_output_s3_client()
     except Exception as exc:
-        logging.exception("Failed to assume AWS role")
-        return func.HttpResponse(f"AWS role assumption failed: {exc}", status_code=502)
+        logging.exception("Failed to build output S3 client")
+        return func.HttpResponse(f"Output S3 client setup failed: {exc}", status_code=502)
 
     with tempfile.TemporaryDirectory() as tmp:
         try:
@@ -205,27 +231,33 @@ def poll_s3_for_new_workbook(timer: func.TimerRequest) -> None:
     force_all_months = (os.environ.get("S3_POLL_FORCE_ALL_MONTHS") or "").lower() == "true"
 
     try:
-        s3_client = _build_s3_client()
+        input_s3_client = _build_input_s3_client()
     except Exception:
-        logging.exception("Failed to assume AWS role")
+        logging.exception("Failed to assume AWS role for input bucket access")
         return
 
-    latest = s3_sync.find_latest_input_file(s3_client, input_bucket, input_prefix, input_filename_contains)
+    latest = s3_sync.find_latest_input_file(input_s3_client, input_bucket, input_prefix, input_filename_contains)
     if latest is None:
         logging.info("No input workbook found under s3://%s/%s", input_bucket, input_prefix)
+        return
+
+    try:
+        output_s3_client = _build_output_s3_client()
+    except Exception:
+        logging.exception("Failed to build output S3 client")
         return
 
     with tempfile.TemporaryDirectory() as tmp:
         workbook_path = Path(tmp) / Path(latest["Key"]).name
         try:
-            s3_sync.download_input_file(s3_client, input_bucket, latest, workbook_path)
+            s3_sync.download_input_file(input_s3_client, input_bucket, latest, workbook_path)
         except Exception:
             logging.exception("Failed to download input workbook from S3")
             return
 
         try:
             summary = run_pipeline_for_workbook(
-                workbook_path, PROVIDER_SHEETS, s3_client, bucket, s3_prefix, force_all_months
+                workbook_path, PROVIDER_SHEETS, output_s3_client, bucket, s3_prefix, force_all_months
             )
         except Exception:
             logging.exception("Pipeline run failed (S3 poll trigger)")

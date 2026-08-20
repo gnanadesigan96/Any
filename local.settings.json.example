@@ -14,8 +14,12 @@
     "S3_BUCKET": "flatiron-saas-upload",
     "S3_PREFIX": "saas-upload",
     "AWS_DEFAULT_REGION": "us-east-1",
+
     "AWS_ACCESS_KEY_ID": "<local testing only - use Key Vault references in the deployed Function App>",
     "AWS_SECRET_ACCESS_KEY": "<local testing only - use Key Vault references in the deployed Function App>",
+
+    "AWS_STS_ACCESS_KEY_ID": "<local testing only - use Key Vault references in the deployed Function App>",
+    "AWS_STS_SECRET_ACCESS_KEY": "<local testing only - use Key Vault references in the deployed Function App>",
     "AWS_ROLE_ARN": "arn:aws:iam::<account-id>:role/<role-name>",
     "AWS_ROLE_SESSION_NAME": "saas-pipeline",
     "AWS_ROLE_EXTERNAL_ID": "<external id, if the role's trust policy requires one>",

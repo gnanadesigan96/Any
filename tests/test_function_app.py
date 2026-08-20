@@ -19,9 +19,18 @@ HEADERS = [
     "cost", "team", "usage_type", "Line of Business", "Pillar",
 ]
 
-AWS_ENV = {
-    "AWS_ACCESS_KEY_ID": "AKIAEXAMPLEBASE",
-    "AWS_SECRET_ACCESS_KEY": "base-secret",
+# Output creds: used directly to write to the output bucket, no role assumption.
+OUTPUT_AWS_ENV = {
+    "AWS_ACCESS_KEY_ID": "AKIAEXAMPLEOUTPUT",
+    "AWS_SECRET_ACCESS_KEY": "output-secret",
+}
+
+# Input creds: a completely separate pair, used only to assume a role for
+# reading the input bucket in a linked account - must never share a variable
+# name with the output creds above.
+INPUT_AWS_ENV = {
+    "AWS_STS_ACCESS_KEY_ID": "AKIAEXAMPLESTS",
+    "AWS_STS_SECRET_ACCESS_KEY": "sts-secret",
     "AWS_ROLE_ARN": "arn:aws:iam::692859928464:role/corestack-enable-linkedaccounts",
 }
 
@@ -32,7 +41,7 @@ REQUIRED_ENV = {
     "SHAREPOINT_SITE_URL": "contoso.sharepoint.com/sites/Billing",
     "SHAREPOINT_FOLDER_PATH": "Shared Documents",
     "S3_BUCKET": BUCKET,
-    **AWS_ENV,
+    **OUTPUT_AWS_ENV,
 }
 
 
@@ -72,6 +81,37 @@ def test_missing_env_vars_returns_500(monkeypatch):
 
     assert response.status_code == 500
     assert "SHAREPOINT_TENANT_ID" in response.get_body().decode()
+
+
+def test_sharepoint_path_does_not_require_input_aws_creds(monkeypatch, s3_client):
+    # The SharePoint/HTTP path never touches the input bucket or the role, so
+    # it must not require AWS_STS_*/AWS_ROLE_ARN - only the output creds.
+    for key, value in REQUIRED_ENV.items():
+        monkeypatch.setenv(key, value)
+    for key in INPUT_AWS_ENV:
+        monkeypatch.delenv(key, raising=False)
+
+    with patch("function_app.get_graph_token", side_effect=RuntimeError("auth failed")):
+        response = function_app.process_saas_consumption(_make_request())
+
+    # Still reaches (and fails at) the SharePoint step, proving it got past
+    # env-var validation and output-client setup without any input creds.
+    assert response.status_code == 502
+    assert "auth failed" in response.get_body().decode()
+
+
+def test_poll_s3_requires_separate_input_creds_even_with_output_creds_set(monkeypatch, caplog):
+    for key, value in OUTPUT_AWS_ENV.items():
+        monkeypatch.setenv(key, value)
+    monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
+    monkeypatch.setenv("S3_BUCKET", BUCKET)
+    for key in INPUT_AWS_ENV:
+        monkeypatch.delenv(key, raising=False)
+
+    with caplog.at_level("ERROR"):
+        function_app.poll_s3_for_new_workbook(None)
+
+    assert "AWS_STS_ACCESS_KEY_ID" in caplog.text
 
 
 def test_sharepoint_fetch_failure_returns_502(monkeypatch, s3_client):
@@ -173,7 +213,9 @@ def test_poll_s3_missing_env_vars_logs_and_returns(monkeypatch, caplog):
 
 
 def test_poll_s3_no_input_file_logs_and_returns(monkeypatch, s3_client, caplog):
-    for key, value in AWS_ENV.items():
+    for key, value in OUTPUT_AWS_ENV.items():
+        monkeypatch.setenv(key, value)
+    for key, value in INPUT_AWS_ENV.items():
         monkeypatch.setenv(key, value)
     monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
     monkeypatch.setenv("S3_BUCKET", BUCKET)
@@ -185,7 +227,9 @@ def test_poll_s3_no_input_file_logs_and_returns(monkeypatch, s3_client, caplog):
 
 
 def test_poll_s3_backfills_only_missing_months(monkeypatch, tmp_path, s3_client, caplog):
-    for key, value in AWS_ENV.items():
+    for key, value in OUTPUT_AWS_ENV.items():
+        monkeypatch.setenv(key, value)
+    for key, value in INPUT_AWS_ENV.items():
         monkeypatch.setenv(key, value)
     monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
     monkeypatch.setenv("S3_BUCKET", BUCKET)
@@ -214,7 +258,9 @@ def test_poll_s3_backfills_only_missing_months(monkeypatch, tmp_path, s3_client,
 
 
 def test_poll_s3_picks_prefix_filtered_most_recent_file(monkeypatch, tmp_path, s3_client, caplog):
-    for key, value in AWS_ENV.items():
+    for key, value in OUTPUT_AWS_ENV.items():
+        monkeypatch.setenv(key, value)
+    for key, value in INPUT_AWS_ENV.items():
         monkeypatch.setenv(key, value)
     monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
     monkeypatch.setenv("S3_BUCKET", BUCKET)

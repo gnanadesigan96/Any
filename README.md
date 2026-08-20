@@ -83,26 +83,39 @@ python run_pipeline.py --workbook "2026 Consumption Costs.xlsx" --bucket flatiro
 
 ## AWS setup
 
-The Azure Function always accesses S3 through **STS AssumeRole**, not static
-credentials directly: a base IAM identity (`AWS_ACCESS_KEY_ID` /
-`AWS_SECRET_ACCESS_KEY`) assumes `AWS_ROLE_ARN` (optionally with
-`AWS_ROLE_EXTERNAL_ID`, if the role's trust policy requires one) to get a
-short-lived session - the STS default validity is 1 hour. Each invocation
-assumes the role fresh at the start of the run; since a run finishes in
-seconds, there's no need to cache or refresh a session across invocations.
-`saas_pipeline/aws_auth.py` is the one place this happens.
+**Two distinct credential pairs, for two distinct jobs** - they must never
+share the same variable names, since they authenticate as different
+identities for different purposes:
 
-The base identity itself only needs `sts:AssumeRole` on `AWS_ROLE_ARN` - the
-actual S3 permissions (`s3:ListBucket` to check which months already have a
-file, `s3:PutObject` to upload output files, `s3:GetObject` too if
-`S3_INPUT_BUCKET` differs from `S3_BUCKET`) live on that role instead, scoped
-to the relevant bucket/prefix rather than account-wide.
+- **Output creds** (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`) - used
+  directly, no role assumption, to write to the output bucket (`S3_BUCKET`).
+  This is the identity that actually puts the processed files in S3, in both
+  trigger paths.
+- **Input creds** (`AWS_STS_ACCESS_KEY_ID` / `AWS_STS_SECRET_ACCESS_KEY`) -
+  used only to call **STS AssumeRole** (`AWS_ROLE_ARN`, optionally
+  `AWS_ROLE_EXTERNAL_ID` if the role's trust policy requires one) to get a
+  short-lived session for reading the raw workbook out of the input bucket
+  (`S3_INPUT_BUCKET`), which lives in a different, linked AWS account. Only
+  the S3-polling trigger needs this pair - the SharePoint trigger never
+  touches the input bucket or the role at all.
 
-`run_pipeline.py` (the CLI) supports the same pattern optionally via
-`--aws-role-arn` (plus `--aws-role-session-name` / `--aws-role-external-id`) -
-omit it and it falls back to boto3's standard credential chain (plain
-`AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, an `AWS_PROFILE`, or an attached
-instance/task role), same as before.
+The STS session's default validity is 1 hour; each invocation assumes the
+role fresh at the start of the run rather than caching a session, since a run
+finishes in seconds. `saas_pipeline/aws_auth.py` is the one place the actual
+AssumeRole call happens.
+
+Permission scoping: the output creds need `s3:ListBucket` + `s3:PutObject` on
+the output bucket directly. The input-side base identity only needs
+`sts:AssumeRole` on `AWS_ROLE_ARN` itself - the actual `s3:ListBucket` +
+`s3:GetObject` on the input bucket live on that role, in the linked account,
+not on the base identity.
+
+`run_pipeline.py` (the CLI) supports the same AssumeRole pattern optionally
+via `--aws-role-arn` (plus `--aws-role-session-name` / `--aws-role-external-id`)
+for its one S3 client - omit it and it falls back to boto3's standard
+credential chain (plain `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, an
+`AWS_PROFILE`, or an attached instance/task role), same as before. The CLI
+doesn't have a separate input-bucket concept, so it only ever needs one client.
 
 Until credentials exist, use `--no-upload` to test the split + process steps
 locally - the S3 step is the only part that needs AWS access.
@@ -145,11 +158,10 @@ see the Key Vault setup steps from earlier in this conversation):
 | `SHAREPOINT_FILENAME_CONTAINS` | Optional substring to match the workbook's filename, e.g. `Consumption Costs`. Leave unset/empty to just take the most recently modified file in the folder - fine when that folder is dedicated to this one workbook. |
 | `S3_BUCKET` | Target S3 bucket, e.g. `flatiron-saas-upload` - varies per engagement |
 | `S3_PREFIX` | Optional path between the bucket root and the provider folders, e.g. `saas-upload`. Leave unset if the provider folders sit directly at the bucket root - also varies per engagement |
-| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | The base identity that assumes `AWS_ROLE_ARN` - **Key Vault references** |
-| `AWS_ROLE_ARN` | Role to assume for the actual S3 access, e.g. `arn:aws:iam::<account-id>:role/<role-name>` |
-| `AWS_ROLE_SESSION_NAME` | Optional, defaults to `saas-pipeline` |
-| `AWS_ROLE_EXTERNAL_ID` | Optional - only needed if the role's trust policy requires an ExternalId |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | Output creds - used directly to write to `S3_BUCKET` - **Key Vault references** |
 | `AWS_DEFAULT_REGION` | Bucket's region |
+
+(The SharePoint path only needs the output creds above - `AWS_ROLE_ARN` and the input creds belong to the S3-polling path below, since only that one touches the input bucket.)
 
 `local.settings.json.example` has the same list for local `func start` testing
 - copy it to `local.settings.json` (already gitignored) and fill in real
@@ -197,15 +209,19 @@ if nothing new has landed.
 
 | Setting | Description |
 |---|---|
-| `S3_INPUT_BUCKET` | Bucket the customer drops the raw workbook into - can be the same bucket as `S3_BUCKET` or a different one |
+| `S3_INPUT_BUCKET` | Bucket the customer drops the raw workbook into - can be the same bucket as `S3_BUCKET` or a different one (typically a linked account) |
 | `S3_INPUT_PREFIX` | Optional path within that bucket, e.g. `raw-uploads` |
 | `S3_INPUT_FILENAME_CONTAINS` | Optional substring to match the workbook's filename. Leave unset to just take the most recently modified file in that location |
 | `S3_POLL_SCHEDULE` | NCRONTAB schedule, e.g. `0 */15 * * * *` for every 15 minutes - tunable without redeploying code, since the Function reads it via an app-setting reference |
 | `S3_POLL_FORCE_ALL_MONTHS` | Optional, default `false` - `true` reprocesses every month in the workbook regardless of what's already in S3 |
+| `AWS_STS_ACCESS_KEY_ID` / `AWS_STS_SECRET_ACCESS_KEY` | Input creds - a **separate** pair from the output creds above, used only to assume `AWS_ROLE_ARN` - **Key Vault references** |
+| `AWS_ROLE_ARN` | Role to assume for input-bucket access, e.g. `arn:aws:iam::<account-id>:role/<role-name>` |
+| `AWS_ROLE_SESSION_NAME` | Optional, defaults to `saas-pipeline` |
+| `AWS_ROLE_EXTERNAL_ID` | Optional - only needed if the role's trust policy requires an ExternalId |
 
-If `S3_INPUT_BUCKET` differs from `S3_BUCKET`, `AWS_ROLE_ARN` needs
-`s3:ListBucket` + `s3:GetObject` on that input bucket/prefix too, alongside
-the `s3:ListBucket` + `s3:PutObject` it already has on the output bucket.
+`AWS_ROLE_ARN` needs `s3:ListBucket` + `s3:GetObject` on the input
+bucket/prefix in its own account. The output creds' `s3:ListBucket` +
+`s3:PutObject` on the output bucket are unaffected either way.
 
 ## Layout
 
