@@ -5,10 +5,11 @@ import pytest
 from saas_pipeline import sharepoint_client
 
 
-def _mock_response(json_data=None, content=b"", raise_for_status=None):
+def _mock_response(json_data=None, content=b"", raise_for_status=None, status_code=200):
     resp = MagicMock()
     resp.json.return_value = json_data or {}
     resp.content = content
+    resp.status_code = status_code
     resp.raise_for_status = raise_for_status or (lambda: None)
     return resp
 
@@ -112,3 +113,63 @@ def test_download_drive_item_writes_content_without_auth_header(mock_get, tmp_pa
     called_url, kwargs = mock_get.call_args[0][0], mock_get.call_args[1]
     assert called_url == "https://presigned.example/file.xlsx"
     assert "headers" not in kwargs
+
+
+@patch("saas_pipeline.sharepoint_client.requests.put")
+def test_upload_file_to_sharepoint_uses_simple_upload_for_small_files(mock_put):
+    mock_put.return_value = _mock_response({"id": "item-1", "name": "file.xlsx"}, status_code=201)
+
+    result = sharepoint_client.upload_file_to_sharepoint("tok", "site-abc", "Shared Documents", "file.xlsx", b"small content")
+
+    assert result == {"id": "item-1", "name": "file.xlsx"}
+    called_url, kwargs = mock_put.call_args[0][0], mock_put.call_args[1]
+    assert called_url == "https://graph.microsoft.com/v1.0/sites/site-abc/drive/root:/Shared Documents/file.xlsx:/content"
+    assert kwargs["headers"]["Authorization"] == "Bearer tok"
+    assert kwargs["data"] == b"small content"
+
+
+@patch("saas_pipeline.sharepoint_client.requests.put")
+@patch("saas_pipeline.sharepoint_client.requests.post")
+def test_upload_file_to_sharepoint_uses_chunked_upload_for_large_files(mock_post, mock_put):
+    mock_post.return_value = _mock_response({"uploadUrl": "https://upload.example/session"})
+
+    big_content = b"x" * (sharepoint_client.SIMPLE_UPLOAD_MAX_BYTES + 100)
+    mock_put.return_value = _mock_response({"id": "item-2", "name": "big.xlsx"}, status_code=201)
+
+    result = sharepoint_client.upload_file_to_sharepoint("tok", "site-abc", "Shared Documents", "big.xlsx", big_content)
+
+    assert result == {"id": "item-2", "name": "big.xlsx"}
+    session_url, session_kwargs = mock_post.call_args[0][0], mock_post.call_args[1]
+    assert session_url == (
+        "https://graph.microsoft.com/v1.0/sites/site-abc/drive/root:/Shared Documents/big.xlsx:/createUploadSession"
+    )
+    assert session_kwargs["json"] == {"item": {"@microsoft.graph.conflictBehavior": "replace"}}
+
+    # One PUT since the content fits in a single chunk; verify Content-Range covers the whole file.
+    put_url, put_kwargs = mock_put.call_args[0][0], mock_put.call_args[1]
+    assert put_url == "https://upload.example/session"
+    assert put_kwargs["headers"]["Content-Range"] == f"bytes 0-{len(big_content) - 1}/{len(big_content)}"
+    assert "Authorization" not in put_kwargs["headers"]
+
+
+@patch("saas_pipeline.sharepoint_client.requests.put")
+@patch("saas_pipeline.sharepoint_client.requests.post")
+def test_upload_file_to_sharepoint_chunked_upload_sends_multiple_chunks(mock_post, mock_put):
+    mock_post.return_value = _mock_response({"uploadUrl": "https://upload.example/session"})
+
+    total = sharepoint_client.UPLOAD_SESSION_CHUNK_SIZE + 1000
+    content = b"y" * total
+    # Intermediate chunk: 202 with nextExpectedRanges. Final chunk: 201 with the driveItem.
+    mock_put.side_effect = [
+        _mock_response({"nextExpectedRanges": ["..."]}, status_code=202),
+        _mock_response({"id": "item-3"}, status_code=201),
+    ]
+
+    result = sharepoint_client.upload_file_to_sharepoint("tok", "site-abc", "Data", "big.xlsx", content)
+
+    assert result == {"id": "item-3"}
+    assert mock_put.call_count == 2
+    first_range = mock_put.call_args_list[0][1]["headers"]["Content-Range"]
+    second_range = mock_put.call_args_list[1][1]["headers"]["Content-Range"]
+    assert first_range == f"bytes 0-{sharepoint_client.UPLOAD_SESSION_CHUNK_SIZE - 1}/{total}"
+    assert second_range == f"bytes {sharepoint_client.UPLOAD_SESSION_CHUNK_SIZE}-{total - 1}/{total}"

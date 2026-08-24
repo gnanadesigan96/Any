@@ -1,15 +1,16 @@
-"""Azure Functions: two independent entry points that both feed the same
-pipeline, since the customer may submit the workbook either way.
+"""Azure Functions: two independent entry points, one pipeline.
 
 - ProcessSaasConsumption (HTTP trigger): pulls the latest workbook from
-  SharePoint, for use with the Power Automate flow.
-- PollS3ForNewWorkbook (Timer trigger): on a schedule, pulls the latest
-  workbook from a raw-upload location in S3, for when the customer drops the
-  file directly into S3 instead of SharePoint.
-
-Both then split the workbook into per-provider/per-month CSVs, run
-process_saas_data_local.py on whatever isn't already in S3, and upload the
-results - that shared logic lives in run_pipeline_for_workbook() below.
+  SharePoint, splits it into per-provider/per-month CSVs, runs
+  process_saas_data_local.py on whatever isn't already in S3, and uploads the
+  results. This is the only place the actual pipeline runs.
+- PollS3ForNewWorkbook (Timer trigger): for when the customer drops the raw
+  workbook directly into S3 instead of SharePoint. On a schedule, it checks a
+  raw-upload location in S3 and, if there's a new file, relays it into the
+  SharePoint folder - from there the existing Power Automate flow's own
+  SharePoint trigger picks it up and calls ProcessSaasConsumption, exactly as
+  if the customer had uploaded to SharePoint directly. It does not run the
+  pipeline itself, so there's only ever one place doing the real work.
 
 All config comes from environment variables (Function App "Environment
 variables" / Application Settings - see local.settings.json.example for the
@@ -18,22 +19,24 @@ Vault references there, not plain values - see README.md.
 
 Two distinct AWS credential pairs, for two distinct jobs:
 - AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY: used directly (no role assumption)
-  to write to the OUTPUT bucket (S3_BUCKET) - this is the identity that
-  actually puts files in S3, in both trigger paths.
+  to write to the OUTPUT bucket (S3_BUCKET) - only ProcessSaasConsumption
+  needs this, since it's the only thing that ever writes output.
 - AWS_STS_ACCESS_KEY_ID/AWS_STS_SECRET_ACCESS_KEY: used only to call
   STS AssumeRole (AWS_ROLE_ARN, optionally AWS_ROLE_EXTERNAL_ID) to get a
   short-lived session for reading the raw workbook out of the INPUT bucket
-  (S3_INPUT_BUCKET), which lives in a different, linked AWS account. This
-  pair is only needed by the S3-polling trigger, since the SharePoint trigger
-  never touches the input bucket. Each invocation assumes the role fresh at
+  (S3_INPUT_BUCKET), which lives in a different, linked AWS account. Only
+  PollS3ForNewWorkbook needs this. Each invocation assumes the role fresh at
   the start of the run - no caching needed, since a run finishes in seconds,
   well within the session's ~1 hour validity.
 
-Safe to call repeatedly / run on every schedule tick: for each provider it
-checks the most recent 12 months present in the workbook against S3
-individually, and only backfills whichever ones are actually missing - an
-older gap gets filled just like the newest month would, and anything already
-uploaded is left untouched.
+Safe to call repeatedly: ProcessSaasConsumption checks the most recent
+12 months present in the workbook against S3 individually, and only
+backfills whichever ones are actually missing - an older gap gets filled
+just like the newest month would, and anything already uploaded is left
+untouched. PollS3ForNewWorkbook just relays whatever's newest in the input
+location every tick, which is harmless even if nothing's changed since the
+last run, since SharePoint's own "created or modified" trigger only fires
+Power Automate when the content actually differs.
 """
 from __future__ import annotations
 
@@ -56,6 +59,7 @@ from saas_pipeline.sharepoint_client import (
     get_graph_token,
     get_site_id,
     parse_site_url,
+    upload_file_to_sharepoint,
 )
 from saas_pipeline.split_monthly import read_provider_sheet, write_month_csv
 
@@ -72,19 +76,19 @@ INPUT_AWS_REQUIRED_ENV_VARS = [
     "AWS_ROLE_ARN",
 ]
 
-REQUIRED_ENV_VARS = [
+SHAREPOINT_REQUIRED_ENV_VARS = [
     "SHAREPOINT_TENANT_ID",
     "SHAREPOINT_CLIENT_ID",
     "SHAREPOINT_CLIENT_SECRET",
     "SHAREPOINT_SITE_URL",
     "SHAREPOINT_FOLDER_PATH",
-    "S3_BUCKET",
-] + OUTPUT_AWS_REQUIRED_ENV_VARS
+]
 
-S3_POLL_REQUIRED_ENV_VARS = [
-    "S3_INPUT_BUCKET",
-    "S3_BUCKET",
-] + OUTPUT_AWS_REQUIRED_ENV_VARS + INPUT_AWS_REQUIRED_ENV_VARS
+REQUIRED_ENV_VARS = SHAREPOINT_REQUIRED_ENV_VARS + ["S3_BUCKET"] + OUTPUT_AWS_REQUIRED_ENV_VARS
+
+S3_POLL_REQUIRED_ENV_VARS = (
+    ["S3_INPUT_BUCKET"] + SHAREPOINT_REQUIRED_ENV_VARS + INPUT_AWS_REQUIRED_ENV_VARS
+)
 
 
 def _build_output_s3_client():
@@ -214,10 +218,12 @@ def process_saas_consumption(req: func.HttpRequest) -> func.HttpResponse:
 @app.function_name(name="PollS3ForNewWorkbook")
 @app.timer_trigger(schedule="%S3_POLL_SCHEDULE%", arg_name="timer", run_on_startup=False, use_monitor=True)
 def poll_s3_for_new_workbook(timer: func.TimerRequest) -> None:
-    """Check a raw-upload location in S3 for the customer's workbook and run
-    the pipeline against whatever's most recently modified there. Runs on the
-    schedule set by the S3_POLL_SCHEDULE app setting (NCRONTAB, e.g.
-    '0 */15 * * * *' for every 15 minutes)."""
+    """Check a raw-upload location in S3 for the customer's workbook and, if
+    there's one, relay it into the SharePoint folder - the existing Power
+    Automate flow's own SharePoint trigger then picks it up and calls
+    ProcessSaasConsumption, exactly as if the customer had uploaded to
+    SharePoint directly. Runs on the schedule set by the S3_POLL_SCHEDULE app
+    setting (NCRONTAB, e.g. '0 */15 * * * *' for every 15 minutes)."""
     missing = [name for name in S3_POLL_REQUIRED_ENV_VARS if not os.environ.get(name)]
     if missing:
         logging.error("S3 poll skipped - missing required app settings: %s", ", ".join(missing))
@@ -226,9 +232,6 @@ def poll_s3_for_new_workbook(timer: func.TimerRequest) -> None:
     input_bucket = os.environ["S3_INPUT_BUCKET"]
     input_prefix = os.environ.get("S3_INPUT_PREFIX", "")
     input_filename_contains = os.environ.get("S3_INPUT_FILENAME_CONTAINS", "")
-    bucket = os.environ["S3_BUCKET"]
-    s3_prefix = os.environ.get("S3_PREFIX", "")
-    force_all_months = (os.environ.get("S3_POLL_FORCE_ALL_MONTHS") or "").lower() == "true"
 
     try:
         input_s3_client = _build_input_s3_client()
@@ -241,14 +244,15 @@ def poll_s3_for_new_workbook(timer: func.TimerRequest) -> None:
         logging.info("No input workbook found under s3://%s/%s", input_bucket, input_prefix)
         return
 
-    try:
-        output_s3_client = _build_output_s3_client()
-    except Exception:
-        logging.exception("Failed to build output S3 client")
-        return
+    tenant_id = os.environ["SHAREPOINT_TENANT_ID"]
+    client_id = os.environ["SHAREPOINT_CLIENT_ID"]
+    client_secret = os.environ["SHAREPOINT_CLIENT_SECRET"]
+    site_hostname, site_path = parse_site_url(os.environ["SHAREPOINT_SITE_URL"])
+    folder_path = os.environ["SHAREPOINT_FOLDER_PATH"]
+    filename = Path(latest["Key"]).name
 
     with tempfile.TemporaryDirectory() as tmp:
-        workbook_path = Path(tmp) / Path(latest["Key"]).name
+        workbook_path = Path(tmp) / filename
         try:
             s3_sync.download_input_file(input_s3_client, input_bucket, latest, workbook_path)
         except Exception:
@@ -256,11 +260,14 @@ def poll_s3_for_new_workbook(timer: func.TimerRequest) -> None:
             return
 
         try:
-            summary = run_pipeline_for_workbook(
-                workbook_path, PROVIDER_SHEETS, output_s3_client, bucket, s3_prefix, force_all_months
-            )
+            token = get_graph_token(tenant_id, client_id, client_secret)
+            site_id = get_site_id(token, site_hostname, site_path)
+            upload_file_to_sharepoint(token, site_id, folder_path, filename, workbook_path.read_bytes())
         except Exception:
-            logging.exception("Pipeline run failed (S3 poll trigger)")
+            logging.exception("Failed to relay workbook from S3 to SharePoint")
             return
 
-    logging.info("Pipeline run summary (S3 poll trigger): %s", summary)
+    logging.info(
+        "Relayed s3://%s/%s -> SharePoint %s/%s - Power Automate will pick it up from there",
+        input_bucket, latest["Key"], folder_path, filename,
+    )

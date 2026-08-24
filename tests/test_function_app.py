@@ -100,11 +100,13 @@ def test_sharepoint_path_does_not_require_input_aws_creds(monkeypatch, s3_client
     assert "auth failed" in response.get_body().decode()
 
 
-def test_poll_s3_requires_separate_input_creds_even_with_output_creds_set(monkeypatch, caplog):
-    for key, value in OUTPUT_AWS_ENV.items():
+def test_poll_s3_requires_separate_input_creds_even_with_sharepoint_and_output_set(monkeypatch, caplog):
+    # SharePoint config and output creds present (the poll path needs SharePoint
+    # too, to relay into it) - but the input creds are a genuinely separate
+    # pair and must be required independently.
+    for key, value in REQUIRED_ENV.items():
         monkeypatch.setenv(key, value)
     monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
-    monkeypatch.setenv("S3_BUCKET", BUCKET)
     for key in INPUT_AWS_ENV:
         monkeypatch.delenv(key, raising=False)
 
@@ -204,7 +206,6 @@ def test_uploads_under_s3_prefix_when_set(monkeypatch, tmp_path, s3_client):
 
 def test_poll_s3_missing_env_vars_logs_and_returns(monkeypatch, caplog):
     monkeypatch.delenv("S3_INPUT_BUCKET", raising=False)
-    monkeypatch.delenv("S3_BUCKET", raising=False)
 
     with caplog.at_level("ERROR"):
         function_app.poll_s3_for_new_workbook(None)
@@ -212,13 +213,16 @@ def test_poll_s3_missing_env_vars_logs_and_returns(monkeypatch, caplog):
     assert "S3_INPUT_BUCKET" in caplog.text
 
 
-def test_poll_s3_no_input_file_logs_and_returns(monkeypatch, s3_client, caplog):
-    for key, value in OUTPUT_AWS_ENV.items():
+def _set_poll_env(monkeypatch):
+    for key, value in REQUIRED_ENV.items():
         monkeypatch.setenv(key, value)
     for key, value in INPUT_AWS_ENV.items():
         monkeypatch.setenv(key, value)
     monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
-    monkeypatch.setenv("S3_BUCKET", BUCKET)
+
+
+def test_poll_s3_no_input_file_logs_and_returns(monkeypatch, s3_client, caplog):
+    _set_poll_env(monkeypatch)
 
     with caplog.at_level("INFO"):
         function_app.poll_s3_for_new_workbook(None)
@@ -226,44 +230,39 @@ def test_poll_s3_no_input_file_logs_and_returns(monkeypatch, s3_client, caplog):
     assert "No input workbook found" in caplog.text
 
 
-def test_poll_s3_backfills_only_missing_months(monkeypatch, tmp_path, s3_client, caplog):
-    for key, value in OUTPUT_AWS_ENV.items():
-        monkeypatch.setenv(key, value)
-    for key, value in INPUT_AWS_ENV.items():
-        monkeypatch.setenv(key, value)
-    monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
-    monkeypatch.setenv("S3_BUCKET", BUCKET)
+def test_poll_s3_relays_latest_file_to_sharepoint(monkeypatch, tmp_path, s3_client, caplog):
+    # The poll path must NOT run the pipeline itself - it only relays the
+    # file into SharePoint and leaves the actual processing to the existing
+    # Power Automate -> ProcessSaasConsumption flow.
+    _set_poll_env(monkeypatch)
     monkeypatch.setenv("S3_INPUT_PREFIX", "raw-uploads")
 
     workbook_path = tmp_path / "2026 Consumption Costs.xlsx"
     _make_workbook(workbook_path)
     s3_client.upload_file(str(workbook_path), INPUT_BUCKET, "raw-uploads/2026 Consumption Costs.xlsx")
 
-    # Jan and Mar already uploaded to the output bucket - Feb is a gap, Apr is new.
-    s3_client.put_object(Bucket=BUCKET, Key="databricks/2026/01/DatabricksJan_output.csv", Body=b"x")
-    s3_client.put_object(Bucket=BUCKET, Key="databricks/2026/03/DatabricksMar_output.csv", Body=b"x")
-
-    with caplog.at_level("INFO"):
+    with patch("function_app.get_graph_token", return_value="tok"), \
+         patch("function_app.get_site_id", return_value="site-abc"), \
+         patch("function_app.upload_file_to_sharepoint") as mock_upload, \
+         caplog.at_level("INFO"):
         function_app.poll_s3_for_new_workbook(None)
 
-    assert "Pipeline run summary (S3 poll trigger)" in caplog.text
+    mock_upload.assert_called_once()
+    args = mock_upload.call_args[0]
+    assert args[0] == "tok"
+    assert args[1] == "site-abc"
+    assert args[2] == REQUIRED_ENV["SHAREPOINT_FOLDER_PATH"]
+    assert args[3] == "2026 Consumption Costs.xlsx"
+    assert args[4] == workbook_path.read_bytes()
+    assert "Relayed" in caplog.text
 
+    # The output bucket must be completely untouched by this path.
     keys = {obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
-    assert keys == {
-        "databricks/2026/01/DatabricksJan_output.csv",
-        "databricks/2026/02/DatabricksFeb_output.csv",
-        "databricks/2026/03/DatabricksMar_output.csv",
-        "databricks/2026/04/DatabricksApr_output.csv",
-    }
+    assert keys == set()
 
 
-def test_poll_s3_picks_prefix_filtered_most_recent_file(monkeypatch, tmp_path, s3_client, caplog):
-    for key, value in OUTPUT_AWS_ENV.items():
-        monkeypatch.setenv(key, value)
-    for key, value in INPUT_AWS_ENV.items():
-        monkeypatch.setenv(key, value)
-    monkeypatch.setenv("S3_INPUT_BUCKET", INPUT_BUCKET)
-    monkeypatch.setenv("S3_BUCKET", BUCKET)
+def test_poll_s3_filters_by_filename_before_relaying(monkeypatch, tmp_path, s3_client):
+    _set_poll_env(monkeypatch)
     monkeypatch.setenv("S3_INPUT_PREFIX", "raw-uploads")
     monkeypatch.setenv("S3_INPUT_FILENAME_CONTAINS", "Consumption")
 
@@ -274,13 +273,24 @@ def test_poll_s3_picks_prefix_filtered_most_recent_file(monkeypatch, tmp_path, s
     _make_workbook(workbook_path)
     s3_client.upload_file(str(workbook_path), INPUT_BUCKET, "raw-uploads/2026 Consumption Costs.xlsx")
 
-    with caplog.at_level("INFO"):
+    with patch("function_app.get_graph_token", return_value="tok"), \
+         patch("function_app.get_site_id", return_value="site-abc"), \
+         patch("function_app.upload_file_to_sharepoint") as mock_upload:
         function_app.poll_s3_for_new_workbook(None)
 
-    keys = {obj["Key"] for obj in s3_client.list_objects_v2(Bucket=BUCKET).get("Contents", [])}
-    assert keys == {
-        "databricks/2026/01/DatabricksJan_output.csv",
-        "databricks/2026/02/DatabricksFeb_output.csv",
-        "databricks/2026/03/DatabricksMar_output.csv",
-        "databricks/2026/04/DatabricksApr_output.csv",
-    }
+    mock_upload.assert_called_once()
+    assert mock_upload.call_args[0][3] == "2026 Consumption Costs.xlsx"
+
+
+def test_poll_s3_relay_failure_is_logged(monkeypatch, tmp_path, s3_client, caplog):
+    _set_poll_env(monkeypatch)
+
+    workbook_path = tmp_path / "file.xlsx"
+    workbook_path.write_bytes(b"data")
+    s3_client.upload_file(str(workbook_path), INPUT_BUCKET, "file.xlsx")
+
+    with patch("function_app.get_graph_token", side_effect=RuntimeError("auth failed")), \
+         caplog.at_level("ERROR"):
+        function_app.poll_s3_for_new_workbook(None)
+
+    assert "Failed to relay workbook from S3 to SharePoint" in caplog.text

@@ -1,9 +1,11 @@
-"""Microsoft Graph client for finding and downloading the latest consumption
-workbook dropped into a SharePoint document library.
+"""Microsoft Graph client for finding, downloading, and uploading files in a
+SharePoint document library.
 
 Uses the OAuth2 client-credentials flow (app-only auth) - the calling app
 registration needs the Graph *application* permission Sites.Selected (scoped to
-just the target site) or Sites.Read.All, with admin consent granted.
+just the target site) or Sites.Read.All, with admin consent granted. Writing
+(upload_file_to_sharepoint) additionally needs write access - Sites.Selected
+granted with the "write" role, or Sites.ReadWrite.All.
 """
 from __future__ import annotations
 
@@ -18,6 +20,13 @@ logger = logging.getLogger(__name__)
 GRAPH_BASE = "https://graph.microsoft.com/v1.0"
 REQUEST_TIMEOUT_SECONDS = 30
 DOWNLOAD_TIMEOUT_SECONDS = 120
+UPLOAD_TIMEOUT_SECONDS = 120
+
+# Graph's "simple upload" (a single PUT) only works below 4 MiB; at or above
+# that, an upload session (chunked PUTs) is required instead.
+SIMPLE_UPLOAD_MAX_BYTES = 4 * 1024 * 1024
+# Upload-session chunk size must be a multiple of 320 KiB.
+UPLOAD_SESSION_CHUNK_SIZE = 60 * 320 * 1024  # ~18.75 MiB
 
 
 def parse_site_url(site_url: str) -> tuple[str, str]:
@@ -92,3 +101,58 @@ def download_drive_item(item: dict, dest_path: Path) -> Path:
     dest_path.write_bytes(response.content)
     logger.info("Downloaded '%s' (modified %s) -> %s", item["name"], item["lastModifiedDateTime"], dest_path)
     return dest_path
+
+
+def upload_file_to_sharepoint(token: str, site_id: str, folder_path: str, filename: str, content: bytes) -> dict:
+    """Upload (or overwrite) a file at folder_path/filename in a SharePoint
+    document library. Uses Graph's simple upload for files under 4 MiB and a
+    chunked upload session above that, so it stays correct as the workbook
+    grows rather than assuming it always stays small."""
+    if len(content) < SIMPLE_UPLOAD_MAX_BYTES:
+        return _simple_upload(token, site_id, folder_path, filename, content)
+    return _chunked_upload(token, site_id, folder_path, filename, content)
+
+
+def _simple_upload(token: str, site_id: str, folder_path: str, filename: str, content: bytes) -> dict:
+    url = f"{GRAPH_BASE}/sites/{site_id}/drive/root:/{folder_path}/{filename}:/content"
+    response = requests.put(
+        url,
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/octet-stream"},
+        data=content,
+        timeout=UPLOAD_TIMEOUT_SECONDS,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def _chunked_upload(token: str, site_id: str, folder_path: str, filename: str, content: bytes) -> dict:
+    session_url = f"{GRAPH_BASE}/sites/{site_id}/drive/root:/{folder_path}/{filename}:/createUploadSession"
+    session_response = requests.post(
+        session_url,
+        headers={"Authorization": f"Bearer {token}"},
+        json={"item": {"@microsoft.graph.conflictBehavior": "replace"}},
+        timeout=REQUEST_TIMEOUT_SECONDS,
+    )
+    session_response.raise_for_status()
+    upload_url = session_response.json()["uploadUrl"]
+
+    total = len(content)
+    result = {}
+    for start in range(0, total, UPLOAD_SESSION_CHUNK_SIZE):
+        end = min(start + UPLOAD_SESSION_CHUNK_SIZE, total)
+        chunk = content[start:end]
+        chunk_response = requests.put(
+            upload_url,
+            headers={
+                "Content-Length": str(len(chunk)),
+                "Content-Range": f"bytes {start}-{end - 1}/{total}",
+            },
+            data=chunk,
+            timeout=UPLOAD_TIMEOUT_SECONDS,
+        )
+        chunk_response.raise_for_status()
+        # Intermediate chunks return 202 with nextExpectedRanges; only the
+        # final chunk returns 200/201 with the completed driveItem.
+        if chunk_response.status_code in (200, 201):
+            result = chunk_response.json()
+    return result

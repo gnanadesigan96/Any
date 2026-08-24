@@ -190,52 +190,63 @@ func azure functionapp publish saas-pipeline-func
 `tests/`, `data/`, and `README.md` out of the deployed package. This single
 deploy covers both functions below - they live in the same `function_app.py`.)
 
-## S3 direct-upload -> Azure Function -> S3
+## S3 direct-upload -> SharePoint -> the regular routine
 
 The customer can also drop the workbook directly into S3 instead of
-SharePoint - both are valid entry points into the same pipeline, since it's
-not yet settled which one they'll actually use going forward.
+SharePoint - both are valid entry points, since it's not yet settled which
+one they'll actually use going forward. But there's still only one place the
+actual pipeline runs: `ProcessSaasConsumption`. The S3 path doesn't process
+anything itself - it detects the new file and relays it into the SharePoint
+folder, and from there the existing Power Automate flow's own SharePoint
+trigger picks it up and calls `ProcessSaasConsumption`, exactly as if the
+customer had uploaded to SharePoint directly.
 
 `PollS3ForNewWorkbook` is a **Timer-triggered** function in the same
 `function_app.py` (no separate deploy, no new AWS Lambda needed) that, on a
-schedule, checks a raw-upload location in S3 for the most recently modified
-file and runs it through the exact same `run_pipeline_for_workbook()` logic
-the SharePoint path uses - it just gets the workbook a different way. Same
-safety property applies: every tick re-checks S3 per provider and only
-backfills what's actually missing, so it's harmless to poll repeatedly even
-if nothing new has landed.
+schedule:
+1. Checks a raw-upload location in S3 for the most recently modified file
+2. Downloads it (via the assumed-role input client)
+3. Uploads it into `SHAREPOINT_FOLDER_PATH` (via `upload_file_to_sharepoint`,
+   which uses Graph's simple upload for files under 4 MiB and a chunked
+   upload session above that, so it stays correct as the workbook grows)
 
-### Required Function App configuration (in addition to `S3_BUCKET`/`S3_PREFIX` above)
+That's it - it stops there. It's safe to run on every tick even if nothing's
+changed since the last poll: SharePoint's own "created or modified" trigger
+only actually fires Power Automate when the content differs, so relaying an
+unchanged file is a harmless no-op downstream.
+
+### Required Function App configuration (in addition to the SharePoint settings above)
 
 | Setting | Description |
 |---|---|
-| `S3_INPUT_BUCKET` | Bucket the customer drops the raw workbook into - can be the same bucket as `S3_BUCKET` or a different one (typically a linked account) |
+| `S3_INPUT_BUCKET` | Bucket the customer drops the raw workbook into - typically a different, linked account from the output bucket |
 | `S3_INPUT_PREFIX` | Optional path within that bucket, e.g. `raw-uploads` |
 | `S3_INPUT_FILENAME_CONTAINS` | Optional substring to match the workbook's filename. Leave unset to just take the most recently modified file in that location |
 | `S3_POLL_SCHEDULE` | NCRONTAB schedule, e.g. `0 */15 * * * *` for every 15 minutes - tunable without redeploying code, since the Function reads it via an app-setting reference |
-| `S3_POLL_FORCE_ALL_MONTHS` | Optional, default `false` - `true` reprocesses every month in the workbook regardless of what's already in S3 |
 | `AWS_STS_ACCESS_KEY_ID` / `AWS_STS_SECRET_ACCESS_KEY` | Input creds - a **separate** pair from the output creds above, used only to assume `AWS_ROLE_ARN` - **Key Vault references** |
 | `AWS_ROLE_ARN` | Role to assume for input-bucket access, e.g. `arn:aws:iam::<account-id>:role/<role-name>` |
 | `AWS_ROLE_SESSION_NAME` | Optional, defaults to `saas-pipeline` |
 | `AWS_ROLE_EXTERNAL_ID` | Optional - only needed if the role's trust policy requires an ExternalId |
 
 `AWS_ROLE_ARN` needs `s3:ListBucket` + `s3:GetObject` on the input
-bucket/prefix in its own account. The output creds' `s3:ListBucket` +
-`s3:PutObject` on the output bucket are unaffected either way.
+bucket/prefix in its own account - nothing more, since this path never
+touches the output bucket. The SharePoint app registration needs write access
+to relay the file in: Graph `Sites.Selected` granted with the "write" role,
+or `Sites.ReadWrite.All`.
 
 ## Layout
 
 ```
 process_saas_data_local.py   # existing per-file transform script, unchanged
 run_pipeline.py              # CLI orchestrator: split -> process -> upload (cron/manual use)
-function_app.py              # Azure Functions: HTTP (SharePoint fetch) + Timer (S3 input poll) -> same pipeline -> upload
+function_app.py              # Azure Functions: HTTP (SharePoint fetch -> pipeline -> upload) + Timer (S3 input poll -> relay to SharePoint)
 host.json                    # Azure Functions runtime config
 local.settings.json.example  # template for local Function config (copy to local.settings.json)
 saas_pipeline/
   config.py                  # provider list, month names, column names
   split_monthly.py           # workbook -> per-month raw CSVs
   s3_sync.py                 # per-month gap check (trailing 12-month window) + upload
-  sharepoint_client.py       # Microsoft Graph auth + file lookup/download
+  sharepoint_client.py       # Microsoft Graph auth + file lookup/download/upload
   aws_auth.py                # STS AssumeRole -> session-scoped S3 client
 tests/                       # synthetic workbook + moto-mocked S3 + mocked Graph calls, no customer data
 ```

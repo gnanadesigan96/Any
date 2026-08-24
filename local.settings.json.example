@@ -24,10 +24,9 @@
     "AWS_ROLE_SESSION_NAME": "saas-pipeline",
     "AWS_ROLE_EXTERNAL_ID": "<external id, if the role's trust policy requires one>",
 
-    "S3_INPUT_BUCKET": "flatiron-saas-upload",
+    "S3_INPUT_BUCKET": "<bucket in the linked account the customer uploads the raw workbook to>",
     "S3_INPUT_PREFIX": "raw-uploads",
     "S3_INPUT_FILENAME_CONTAINS": "",
-    "S3_POLL_SCHEDULE": "0 */15 * * * *",
-    "S3_POLL_FORCE_ALL_MONTHS": "false"
+    "S3_POLL_SCHEDULE": "0 */15 * * * *"
   }
 }
