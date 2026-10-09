@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from .render import build_timeline
+from .stock import credit_lines
 from .util import fmt_timestamp, read_json, write_json
 
 MIN_CHAPTER_SECONDS = 10
@@ -24,13 +25,15 @@ def chapter_times(script, timeline: list, fps: int) -> list:
     return marks if len(marks) >= 3 else []
 
 
-def build_description(script, chapters: list) -> str:
+def build_description(script, chapters: list, credits: list = ()) -> str:
     parts = [script.description.strip()]
     if chapters:
         parts.append("Chapters:\n" + "\n".join(f"{fmt_timestamp(t)} {title}" for title, t in chapters))
     sources = sorted({f.source.strip() for f in script.fact_check if f.source.strip() and f.source != "n/a"})
     if sources:
         parts.append("Sources:\n" + "\n".join(f"- {s}" for s in sources))
+    if credits:
+        parts.append("Stock footage: " + ", ".join(credits))
     return "\n\n".join(parts)
 
 
@@ -44,20 +47,21 @@ def write_review(run_dir: Path, topic: str, script, timing: list, cfg: dict,
     # metadata.json is the human's file once it exists (chosen title, approval, upload IDs);
     # only rebuild it when the script itself was regenerated.
     if metadata is None or regenerate:
-        metadata = _new_metadata(topic, script, chapters, thumbnails, shorts, dry_run)
+        metadata = _new_metadata(topic, script, chapters, thumbnails, shorts, dry_run,
+                                 credit_lines(run_dir / "images"))
         write_json(meta_path, metadata)
     _write_review_md(run_dir, topic, script, timeline, thumbnails, shorts, metadata)
     return run_dir / "REVIEW.md"
 
 
-def _new_metadata(topic, script, chapters, thumbnails, shorts, dry_run) -> dict:
+def _new_metadata(topic, script, chapters, thumbnails, shorts, dry_run, credits) -> dict:
     return {
         "approved": False,
         "dry_run": dry_run,
         "topic": topic,
         "title": script.titles[0],
         "title_options": script.titles,
-        "description": build_description(script, chapters),
+        "description": build_description(script, chapters, credits),
         "tags": script.tags,
         "thumbnail": thumbnails[0].name if thumbnails else None,
         "thumbnail_options": [t.name for t in thumbnails],

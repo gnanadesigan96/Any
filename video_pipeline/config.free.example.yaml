@@ -1,0 +1,30 @@
+# $0 setup: script via the free Claude.ai chat, free Kokoro voice on your computer,
+# free stock footage from Pexels/Pixabay. Copy to config.yaml and edit the channel section.
+
+channel:
+  name: "Rise & Fall Files"
+  niche: "Engineering Disasters"
+  audience: "curious adults who enjoy documentaries"
+  tone: "calm, gripping documentary narrator; short sentences; no hype"
+  language: "English"
+
+script:
+  provider: "manual"        # you paste the prompt into claude.ai and paste the reply back
+  target_words: 1500
+  words_per_scene: 28
+  num_shorts: 3
+
+voice:
+  provider: "kokoro"        # free, runs on your computer; model (~350 MB) downloads on first use
+  kokoro:
+    voice: "am_michael"     # preview others with: python make_video.py voices
+    speed: 1.0              # 0.9 = slower and calmer, 1.1 = faster
+
+images:
+  provider: "stock"         # free stock video clips and photos
+  stock:
+    sources: ["pexels", "pixabay"]
+    prefer_video: true      # moving footage where available, photos otherwise
+
+video:
+  music_dir: "assets/music" # free tracks from the YouTube Audio Library

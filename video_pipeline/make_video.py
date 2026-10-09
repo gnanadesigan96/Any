@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from vidpipe import bank  # noqa: E402
 from vidpipe.config import load_config  # noqa: E402
-from vidpipe.pipeline import REDO, make_video  # noqa: E402
+from vidpipe.pipeline import REDO, ManualStepNeeded, make_video  # noqa: E402
 from vidpipe.upload import upload_run  # noqa: E402
 
 
@@ -48,6 +48,11 @@ def main() -> int:
     p_topics.add_argument("--subcategory", default="")
     p_topics.add_argument("--limit", type=int, default=25)
 
+    p_voices = sub.add_parser("voices", help="preview the free Kokoro voices (writes one mp3 per voice)")
+    p_voices.add_argument("--say", default="In 1940, a brand new bridge began to twist in the wind. "
+                                            "Within hours, it was gone.")
+    p_voices.add_argument("--only", nargs="*", default=[], help="e.g. am_michael bm_george")
+
     p_up = sub.add_parser("upload", help="upload an approved run to YouTube (private)")
     p_up.add_argument("run_dir")
     p_up.add_argument("--shorts", action="store_true", help="also upload the Shorts")
@@ -75,8 +80,18 @@ def main() -> int:
             for row in rows[: args.limit]:
                 print(f"[{row['subcategory']}] {row['title']}\n    {row['angle']}")
             print(f"\n{len(rows)} unused topics in '{args.niche}'.")
+        elif args.command == "voices":
+            from vidpipe.config import resolve
+            from vidpipe.voice import preview_voices
+            out_dir = resolve("voice_samples")
+            for path in preview_voices(cfg, args.say, out_dir, args.only):
+                print(path)
+            print("Listen, then set voice.kokoro.voice in config.yaml to the one you like.")
         elif args.command == "upload":
             upload_run(Path(args.run_dir).resolve(), cfg, args.shorts, args.publish_at)
+    except ManualStepNeeded as e:
+        print(e)
+        return 0
     except RuntimeError as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1

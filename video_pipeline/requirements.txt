@@ -5,4 +5,5 @@ pillow>=10
 PyYAML>=6
 google-api-python-client>=2.100
 google-auth-oauthlib>=1.2
+kokoro-onnx>=0.6
 pytest>=8

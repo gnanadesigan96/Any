@@ -2,11 +2,15 @@
 
 import base64
 import os
+import re
+import threading
+import wave
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import requests
 
+from .config import resolve
 from .util import log, media_duration, read_json, run_ffmpeg, write_json
 
 ELEVEN_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps"
@@ -78,6 +82,105 @@ class ElevenLabsVoice:
         return words or _even_words(text, media_duration(out_mp3))
 
 
+KOKORO_RELEASE = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
+
+
+def split_sentences(text: str) -> list:
+    return [s for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s]
+
+
+def distribute_words(sentence: str, start: float, end: float) -> list:
+    """Spread a sentence's words over [start, end], weighted by length plus a beat after
+    commas, as a stand-in for real word timings (Kokoro doesn't report them)."""
+    tokens = sentence.split()
+    weights = [len(re.sub(r"\W", "", t)) + 2 + (3 if t[-1:] in ",;:" else 0) for t in tokens]
+    total, t, out = sum(weights) or 1, start, []
+    for tok, w in zip(tokens, weights):
+        span = (end - start) * w / total
+        out.append([tok, round(t, 3), round(t + span, 3)])
+        t += span
+    return out
+
+
+def _download(url: str, dest: Path) -> None:
+    log(f"Downloading {dest.name} (one time)...")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    tmp = dest.with_suffix(dest.suffix + ".part")
+    with requests.get(url, stream=True, timeout=60) as r:
+        r.raise_for_status()
+        with open(tmp, "wb") as f:
+            for chunk in r.iter_content(1 << 20):
+                f.write(chunk)
+    tmp.replace(dest)
+
+
+class KokoroVoice:
+    """Free, open-source voice that runs on your own computer (Apache-2.0 model)."""
+
+    SENTENCE_PAUSE = 0.28
+    SCENE_TAIL = 0.35
+
+    def __init__(self, cfg: dict):
+        try:
+            from kokoro_onnx import Kokoro
+        except ImportError as e:
+            raise RuntimeError("Kokoro isn't installed: pip install kokoro-onnx") from e
+        k = cfg["voice"]["kokoro"]
+        model_dir = resolve(k["model_dir"])
+        model, voices = model_dir / k["model_file"], model_dir / "voices-v1.0.bin"
+        for path in (model, voices):
+            if not path.exists():
+                _download(KOKORO_RELEASE + path.name, path)
+        self.k = k
+        self.engine = Kokoro(str(model), str(voices))
+        if k["voice"] not in self.engine.get_voices():
+            raise RuntimeError(f"Unknown Kokoro voice '{k['voice']}'; run `python make_video.py voices`")
+        self.lock = threading.Lock()  # one synthesis at a time keeps memory use predictable
+
+    def _speak(self, text: str):
+        with self.lock:
+            return self.engine.create(text, voice=self.k["voice"], speed=self.k["speed"],
+                                      lang=self.k["lang"])
+
+    def synthesize(self, text: str, prev_text: str, next_text: str, out_mp3: Path) -> list:
+        import numpy as np
+
+        pieces, words, t, sr = [], [], 0.0, 24000
+        sentences = split_sentences(text)
+        for i, sentence in enumerate(sentences):
+            audio, sr = self._speak(sentence)
+            dur = len(audio) / sr
+            words += distribute_words(sentence, t, t + dur)
+            pieces.append(audio)
+            t += dur
+            pause = self.SENTENCE_PAUSE if i < len(sentences) - 1 else self.SCENE_TAIL
+            pieces.append(np.zeros(int(pause * sr), dtype=np.float32))
+            t += pause
+        samples = np.clip(np.concatenate(pieces) if pieces else np.zeros(sr, dtype=np.float32), -1, 1)
+        wav_path = out_mp3.with_suffix(".wav")
+        with wave.open(str(wav_path), "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(sr)
+            w.writeframes((samples * 32767).astype(np.int16).tobytes())
+        run_ffmpeg(["-i", wav_path, "-c:a", "libmp3lame", "-q:a", "2", out_mp3])
+        wav_path.unlink()
+        return words
+
+
+def preview_voices(cfg: dict, text: str, out_dir: Path, voices: list) -> list:
+    """Render the same line in several Kokoro voices so you can pick one by ear."""
+    engine = KokoroVoice(cfg)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    outputs = []
+    for v in voices or [v for v in engine.engine.get_voices() if v[:3] in ("am_", "af_", "bm_", "bf_")]:
+        engine.k = {**engine.k, "voice": v}
+        path = out_dir / f"{v}.mp3"
+        engine.synthesize(text, "", "", path)
+        outputs.append(path)
+    return outputs
+
+
 class DummyVoice:
     """Silent audio paced at ~2.6 words/second; used by --dry-run."""
 
@@ -97,6 +200,8 @@ def make_voice(cfg: dict, dry_run: bool):
     provider = cfg["voice"]["provider"]
     if provider == "elevenlabs":
         return ElevenLabsVoice(cfg)
+    if provider == "kokoro":
+        return KokoroVoice(cfg)
     raise RuntimeError(f"Unknown voice.provider '{provider}'")
 
 

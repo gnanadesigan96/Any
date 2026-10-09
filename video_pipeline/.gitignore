@@ -7,3 +7,6 @@ youtube_token.json
 # Music you add may be licensed for use but not redistribution
 assets/music/*
 !assets/music/.gitkeep
+# Downloaded voice model and voice previews
+models/
+voice_samples/

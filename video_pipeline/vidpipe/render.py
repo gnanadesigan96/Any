@@ -1,6 +1,7 @@
 """Stage 4: assemble scenes into the long-form video and the vertical Shorts with ffmpeg."""
 
 import random
+import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from .config import resolve
 from .util import find_font_file, log, media_duration, run_ffmpeg
 
 MOTIONS = ["zoom_in", "pan_right", "zoom_out", "pan_left"]
+VIDEO_SUFFIXES = {".mp4", ".mov", ".webm", ".m4v"}
 
 
 def build_timeline(timing: list, fps: int) -> list:
@@ -40,12 +42,45 @@ def _zoompan(motion: str, frames: int, zoom: float, out_w: int, out_h: int, fps:
     return f"zoompan=z='{z}':x='{x}':y='{y}':d={frames}:s={out_w}x{out_h}:fps={fps}"
 
 
+def _media_size(path: Path):
+    if path.suffix.lower() in VIDEO_SUFFIXES:
+        out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                              "stream=width,height", "-of", "csv=p=0", str(path)],
+                             capture_output=True, text=True, check=True)
+        w, h = out.stdout.strip().split("\n")[0].split(",")[:2]
+        return int(w), int(h)
+    with Image.open(path) as im:
+        return im.width, im.height
+
+
+def _render_video_clip(src: Path, frames: int, out: Path, cfg: dict, vertical: bool, enc: list) -> None:
+    """Stock video: fill the frame, conform the frame rate, loop if the clip is too short."""
+    fps = cfg["video"]["fps"]
+    if not vertical:
+        w, h = cfg["video"]["width"], cfg["video"]["height"]
+        vf = (f"fps={fps},scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},"
+              "setsar=1,format=yuv420p")
+        run_ffmpeg(["-stream_loop", "-1", "-i", src, "-vf", vf, *enc])
+        return
+    w, h = cfg["shorts"]["width"], cfg["shorts"]["height"]
+    sw, sh = _media_size(src)
+    fg_h = int(w * sh / sw) // 2 * 2
+    fc = (f"[0:v]fps={fps},split[a][b];"
+          f"[a]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},boxblur=24:4,eq=brightness=-0.12[bg];"
+          f"[b]scale={w}:{fg_h},setsar=1[fg];"
+          f"[bg][fg]overlay=(W-w)/2:(H-h)/2-{int(h * 0.04)},format=yuv420p")
+    run_ffmpeg(["-stream_loop", "-1", "-i", src, "-filter_complex", fc, *enc])
+
+
 def render_scene_clip(image: Path, frames: int, motion: str, out: Path, cfg: dict,
                       vertical: bool = False) -> None:
     v = cfg["video"]
     fps, zoom = v["fps"], v["zoom"]
     enc = ["-c:v", "libx264", "-preset", v["preset"], "-crf", v["crf"], "-pix_fmt", "yuv420p",
            "-frames:v", frames, "-an", out]
+    if image.suffix.lower() in VIDEO_SUFFIXES:
+        _render_video_clip(image, frames, out, cfg, vertical, enc)
+        return
     if not vertical:
         w, h = v["width"], v["height"]
         # Upscale 2x before zoompan: zoompan rounds to whole pixels, so this keeps motion smooth.
@@ -57,8 +92,8 @@ def render_scene_clip(image: Path, frames: int, motion: str, out: Path, cfg: dic
     # Vertical: blurred full-bleed background + the whole landscape image, moving, in the middle.
     s = cfg["shorts"]
     w, h = s["width"], s["height"]
-    with Image.open(image) as im:
-        fg_h = int(w * im.height / im.width) // 2 * 2
+    iw, ih = _media_size(image)
+    fg_h = int(w * ih / iw) // 2 * 2
     fc = (f"[0:v]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},"
           f"boxblur=24:4,eq=brightness=-0.12,fps={fps}[bg];"
           f"[1:v]scale={2 * w}:{2 * fg_h},"

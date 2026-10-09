@@ -1,7 +1,11 @@
 """Stage 1: research + script + metadata, as one structured Claude call."""
 
+import json
+import re
+from pathlib import Path
+
 import anthropic
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from .util import log
 
@@ -9,6 +13,7 @@ from .util import log
 class Scene(BaseModel):
     narration: str
     visual: str
+    search_query: str
 
 
 class Chapter(BaseModel):
@@ -33,6 +38,7 @@ class VideoScript(BaseModel):
     tags: list[str]
     thumbnail_texts: list[str]
     thumbnail_visual: str
+    thumbnail_search_query: str
     scenes: list[Scene]
     chapters: list[Chapter]
     shorts: list[ShortClip]
@@ -52,12 +58,13 @@ Structure:
 - Context, then three or four acts that each end on a small open question, then the payoff and a one-line closing thought.
 
 Output fields:
-- scenes: the full narration split into scenes of about {words_per_scene} words (one or two sentences). Each scene's `visual` is an image-generation prompt for a single still image that illustrates that moment: subject, setting, era, camera angle, mood. Describe the image only; no art-style words (style is added later), and no text, captions, logos or real living people's faces in the image.
+- scenes: the full narration split into scenes of about {words_per_scene} words (one or two sentences). Each scene's `visual` is an image-generation prompt for a single still image that illustrates that moment: subject, setting, era, camera angle, mood. Describe the image only; no art-style words (style is added later), and no text, captions, logos or real living people's faces in the image. Each scene's `search_query` is 2 to 4 plain keywords for finding matching stock footage on Pexels or Pixabay (e.g. "suspension bridge wind", "factory workers 1950s", "stock market screen"): generic, visual and likely to exist as stock, never a specific event name.
 - titles: three title options under 60 characters, curiosity-driven but truthful.
 - description: two or three sentences summarising the video for the YouTube description (no hashtags, no links, no timestamps).
 - tags: 8 to 12 search tags.
 - thumbnail_texts: three options of 2 to 4 punchy words each.
 - thumbnail_visual: an image prompt for a striking thumbnail background (same rules as scene visuals).
+- thumbnail_search_query: 2 to 4 stock-photo keywords for the same thumbnail background.
 - chapters: 4 to 7 chapters; the first must have start_scene 0; start_scene values are increasing 0-based scene indexes.
 - shorts: {num_shorts} self-contained moments for 30 to 55 second vertical Shorts, as inclusive 0-based scene ranges that make sense without the rest of the video, each with a hook_title under 60 characters.
 - fact_check: every specific factual claim in the narration (names, dates, numbers, causes) with the source a human should check it against."""
@@ -73,13 +80,18 @@ def _user_prompt(topic: str, angle: str, cfg: dict) -> str:
     return "\n".join(lines)
 
 
-def generate_script(topic: str, angle: str, cfg: dict) -> VideoScript:
+def _system_prompt(cfg: dict) -> str:
     s, ch = cfg["script"], cfg["channel"]
-    system = SYSTEM_PROMPT.format(
+    return SYSTEM_PROMPT.format(
         name=ch["name"], niche=ch["niche"], audience=ch["audience"], tone=ch["tone"],
         language=ch["language"], words_per_scene=s["words_per_scene"],
         num_shorts=s["num_shorts"],
     )
+
+
+def generate_script(topic: str, angle: str, cfg: dict) -> VideoScript:
+    s = cfg["script"]
+    system = _system_prompt(cfg)
     client = anthropic.Anthropic(timeout=900.0)
     log(f"Writing script with {s['model']} (effort={s['effort']})...")
     try:
@@ -154,16 +166,75 @@ def dummy_script(topic: str, angle: str, cfg: dict) -> VideoScript:
         "Chapters, thumbnails and Shorts are generated automatically.",
         "Nothing is uploaded until you review the video and approve it.",
     ]
-    scenes = [Scene(narration=b, visual=f"Illustration {i + 1} for {topic}") for i, b in enumerate(beats)]
+    scenes = [Scene(narration=b, visual=f"Illustration {i + 1} for {topic}", search_query="city skyline")
+              for i, b in enumerate(beats)]
     return validate_script(VideoScript(
         titles=[f"{topic} (dry run)"[:60]],
         description=f"Dry-run description for {topic}. {angle}".strip(),
         tags=["dry run", "test"],
         thumbnail_texts=["DRY RUN", "TEST ONLY", "NOT REAL"],
         thumbnail_visual=f"Thumbnail background for {topic}",
+        thumbnail_search_query="dramatic sky",
         scenes=scenes,
         chapters=[Chapter(title="Start", start_scene=0), Chapter(title="How it works", start_scene=2),
                   Chapter(title="Review", start_scene=4)],
         shorts=[ShortClip(hook_title="Dry-run Short", start_scene=1, end_scene=3)],
         fact_check=[FactClaim(claim="(dry run - no claims)", source="n/a")],
     ), cfg)
+
+
+# ---- manual mode: free, via the Claude.ai chat app -------------------------------------
+
+MANUAL_PROMPT = "PROMPT_FOR_CLAUDE.txt"
+MANUAL_REPLY = "claude_reply.txt"
+
+EXAMPLE_JSON = {
+    "titles": ["...", "...", "..."],
+    "description": "...",
+    "tags": ["...", "..."],
+    "thumbnail_texts": ["...", "...", "..."],
+    "thumbnail_visual": "...",
+    "thumbnail_search_query": "...",
+    "scenes": [{"narration": "...", "visual": "...", "search_query": "..."}],
+    "chapters": [{"title": "...", "start_scene": 0}],
+    "shorts": [{"hook_title": "...", "start_scene": 0, "end_scene": 4}],
+    "fact_check": [{"claim": "...", "source": "..."}],
+}
+
+
+def write_manual_prompt(topic: str, angle: str, run_dir: Path, cfg: dict) -> Path:
+    path = run_dir / MANUAL_PROMPT
+    path.write_text(
+        _system_prompt(cfg) + "\n\n" + _user_prompt(topic, angle, cfg) + "\n\n"
+        "Reply with ONLY a JSON object (no other text) in exactly this shape, with every field filled in:\n"
+        + json.dumps(EXAMPLE_JSON, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return path
+
+
+def parse_manual_reply(text: str, cfg: dict) -> VideoScript:
+    """Accepts the reply as pasted: tolerates ```json fences and text around the JSON."""
+    text = re.sub(r"```(?:json)?", "", text)
+    start, end = text.find("{"), text.rfind("}")
+    if start < 0 or end <= start:
+        raise RuntimeError(f"No JSON found in {MANUAL_REPLY}; paste Claude's whole reply into it")
+    try:
+        data = json.loads(text[start:end + 1])
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"{MANUAL_REPLY} isn't valid JSON ({e}). If the reply was cut off, "
+                           "ask Claude to 'continue', paste the rest after it, and re-run") from e
+    try:
+        return validate_script(load_script_dict(data), cfg)
+    except ValidationError as e:
+        raise RuntimeError(f"The reply is missing or has wrong fields:\n{e}\n"
+                           "Ask Claude to fix those fields and resend the full JSON") from e
+
+
+def load_script_dict(data: dict) -> VideoScript:
+    """Validate a stored/pasted script, filling fields that older versions didn't have."""
+    data.setdefault("thumbnail_search_query", data.get("thumbnail_visual", ""))
+    for scene in data.get("scenes", []):
+        if isinstance(scene, dict):
+            scene.setdefault("search_query", " ".join(scene.get("visual", "").split()[:4]))
+    return VideoScript.model_validate(data)

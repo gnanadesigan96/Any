@@ -17,6 +17,7 @@ DEFAULTS = {
         "language": "English",
     },
     "script": {
+        "provider": "api",  # api (Claude API, paid) | manual (paste into the free Claude.ai chat)
         "model": "claude-opus-5-5",
         "effort": "high",
         "target_words": 1500,
@@ -32,6 +33,13 @@ DEFAULTS = {
         "similarity_boost": 0.8,
         "style": 0.15,
         "workers": 3,
+        "kokoro": {
+            "voice": "am_michael",
+            "speed": 1.0,
+            "lang": "en-us",
+            "model_dir": "models",
+            "model_file": "kokoro-v1.0.onnx",
+        },
     },
     "images": {
         "provider": "openai",
@@ -41,6 +49,10 @@ DEFAULTS = {
         "style": "detailed digital illustration, cinematic documentary look, muted colours, "
                  "soft dramatic lighting, no text, no logos, no watermarks",
         "workers": 4,
+        "stock": {
+            "sources": ["pexels", "pixabay"],
+            "prefer_video": True,
+        },
     },
     "video": {
         "width": 1920,

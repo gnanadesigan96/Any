@@ -10,7 +10,9 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from vidpipe import bank, images, script as script_mod, voice  # noqa: E402
+from vidpipe import bank, images, script as script_mod, stock, voice  # noqa: E402
+from vidpipe.pipeline import ManualStepNeeded  # noqa: E402
+from vidpipe.render import render_scene_clip  # noqa: E402
 from vidpipe.captions import group_words, write_ass  # noqa: E402
 from vidpipe.config import load_config  # noqa: E402
 from vidpipe.pipeline import make_video  # noqa: E402
@@ -33,7 +35,9 @@ def cfg(tmp_path):
 def _script(n_scenes=6, **kw):
     base = dict(
         titles=["T"], description="D", tags=["a"], thumbnail_texts=["X"], thumbnail_visual="v",
-        scenes=[Scene(narration=f"Scene {i} words here.", visual=f"v{i}") for i in range(n_scenes)],
+        thumbnail_search_query="q",
+        scenes=[Scene(narration=f"Scene {i} words here.", visual=f"v{i}", search_query=f"q{i}")
+                for i in range(n_scenes)],
         chapters=[Chapter(title="A", start_scene=0)], shorts=[], fact_check=[],
     )
     base.update(kw)
@@ -209,3 +213,143 @@ def test_dry_run_end_to_end_and_resume(cfg):
 
     # Dry runs never mark a bank topic as used.
     assert bank.used_topics(cfg) == set()
+
+
+# ---- free providers ---------------------------------------------------------------------
+
+def test_distribute_words_fills_sentence_span():
+    words = voice.distribute_words("Hello there, big world.", 1.0, 3.0)
+    assert [w[0] for w in words] == ["Hello", "there,", "big", "world."]
+    assert words[0][1] == 1.0 and abs(words[-1][2] - 3.0) < 1e-6
+    assert all(a[2] <= b[1] + 1e-6 for a, b in zip(words, words[1:]))
+    assert voice.split_sentences("One. Two? Three!") == ["One.", "Two?", "Three!"]
+
+
+def test_manual_script_flow(cfg, tmp_path):
+    cfg["script"]["provider"] = "manual"
+    with pytest.raises(ManualStepNeeded):
+        make_video("Manual Topic", "", cfg)
+    run_dir = Path(cfg["runs_dir"]) / "manual-topic"
+    prompt = (run_dir / "PROMPT_FOR_CLAUDE.txt").read_text()
+    assert "search_query" in prompt and "Manual Topic" in prompt
+
+    # A pasted reply with chat chatter and code fences around the JSON is accepted.
+    good = _script(4).model_dump()
+    reply = "Here you go!\n```json\n" + json.dumps(good) + "\n```\nLet me know if..."
+    parsed = script_mod.parse_manual_reply(reply, cfg)
+    assert len(parsed.scenes) == 4
+
+    with pytest.raises(RuntimeError, match="missing or has wrong fields"):
+        script_mod.parse_manual_reply('{"titles": ["x"]}', cfg)
+    with pytest.raises(RuntimeError, match="No JSON"):
+        script_mod.parse_manual_reply("sorry, no", cfg)
+
+
+def test_old_script_json_still_loads():
+    data = _script(2).model_dump()
+    del data["thumbnail_search_query"]
+    for sc in data["scenes"]:
+        del sc["search_query"]
+    loaded = script_mod.load_script_dict(data)
+    assert loaded.scenes[0].search_query == "v0"
+
+
+def test_pick_file_prefers_smallest_big_enough():
+    files = [{"url": "a", "width": 3840, "height": 2160}, {"url": "b", "width": 1920, "height": 1080},
+             {"url": "c", "width": 1280, "height": 720}, {"url": "d", "width": 1080, "height": 1920}]
+    assert stock.pick_file(files, 1920)["url"] == "b"
+    assert stock.pick_file(files[2:], 1920)["url"] == "c"
+
+
+def test_fetch_visuals_with_mocked_pexels(tmp_path, cfg, monkeypatch):
+    clip = tmp_path / "clip.mp4"
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=640x360:rate=25",
+                    "-t", "2", "-pix_fmt", "yuv420p", str(clip)], check=True)
+    calls = []
+
+    def fake_get(url, headers=None, params=None, timeout=None, stream=False):
+        calls.append((url, params))
+        if stream:
+            return _Download(clip.read_bytes())
+        q = params["query"]
+        if "videos" in url and q == "bridge wind storm":
+            return _Json({"videos": [{"id": 1, "url": "p1", "user": {"name": "Ann"}, "duration": 20,
+                                      "video_files": [{"file_type": "video/mp4", "link": "v1", "width": 1920, "height": 1080}]}]})
+        if "videos" in url:
+            return _Json({"videos": []})
+        if q == "nothing here at":
+            return _Json({"photos": []})
+        return _Json({"photos": [{"id": 9, "url": "p9", "photographer": "Bo", "src": {"large2x": "i9"}}]})
+
+    monkeypatch.setenv("PEXELS_API_KEY", "k")
+    monkeypatch.delenv("PIXABAY_API_KEY", raising=False)
+    monkeypatch.setattr(stock.requests, "get", fake_get)
+    scenes = [Scene(narration="a", visual="v", search_query="bridge wind storm"),
+              Scene(narration="b", visual="v", search_query="old photo"),
+              Scene(narration="c", visual="v", search_query="nothing here at all")]
+    img_dir = tmp_path / "img"
+    img_dir.mkdir()
+    paths = stock.fetch_visuals(scenes, [5, 5, 5], img_dir, cfg)
+    assert [p.suffix for p in paths] == [".mp4", ".jpg", ".jpg"]
+    # Scene 3 had no fresh match (photo 9 already used) -> previous visual reused.
+    assert paths[2].read_bytes() == paths[1].read_bytes()
+    assert stock.credit_lines(img_dir) == ["Ann (Pexels)", "Bo (Pexels)"]
+    # Second call downloads nothing.
+    n = len(calls)
+    stock.fetch_visuals(scenes, [5, 5, 5], img_dir, cfg)
+    assert len(calls) == n
+
+
+class _Json:
+    status_code = 200
+
+    def __init__(self, data):
+        self.data = data
+
+    def raise_for_status(self):
+        pass
+
+    def json(self):
+        return self.data
+
+
+class _Download:
+    def __init__(self, data):
+        self.data = data
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        pass
+
+    def raise_for_status(self):
+        pass
+
+    def iter_content(self, n):
+        yield self.data
+
+
+@pytest.mark.parametrize("vertical", [False, True])
+def test_render_scene_from_stock_video(tmp_path, cfg, vertical):
+    clip = tmp_path / "in.mp4"
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=1280x720:rate=25",
+                    "-t", "1", "-pix_fmt", "yuv420p", str(clip)], check=True)
+    out = tmp_path / "out.mp4"
+    render_scene_clip(clip, 60, "zoom_in", out, cfg, vertical=vertical)  # 2.5s from a 1s clip: loops
+    probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-count_frames", "-show_entries",
+                            "stream=width,height,nb_read_frames", "-of", "csv=p=0", str(out)],
+                           capture_output=True, text=True).stdout.strip()
+    assert probe == ("360,640,60" if vertical else "640,360,60")
+
+
+@pytest.mark.skipif(not (ROOT / "models" / "kokoro-v1.0.onnx").exists()
+                    and not (ROOT / "models" / "kokoro-v1.0.int8.onnx").exists(),
+                    reason="Kokoro model not downloaded")
+def test_kokoro_real_synthesis(tmp_path, cfg):
+    if not (ROOT / "models" / "kokoro-v1.0.onnx").exists():
+        cfg["voice"]["kokoro"]["model_file"] = "kokoro-v1.0.int8.onnx"
+    out = tmp_path / "k.mp3"
+    words = voice.KokoroVoice(cfg).synthesize("The bridge twisted. Then it fell.", "", "", out)
+    assert [w[0] for w in words] == ["The", "bridge", "twisted.", "Then", "it", "fell."]
+    assert media_duration(out) > words[-1][2]

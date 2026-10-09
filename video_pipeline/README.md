@@ -23,6 +23,40 @@ YouTube's rules on mass-produced content.
 Every stage saves its output in `runs/<topic>/`. If anything fails, fix it and re-run the same
 command: finished stages are reused, so you only pay for what's missing.
 
+## Free setup ($0 per video)
+
+Every paid part has a free replacement. Start with this; switch any piece to the paid option later
+by changing one line in `config.yaml`.
+
+| Part | Free option | Paid option |
+|---|---|---|
+| Script | `script.provider: manual`: the pipeline writes a prompt, you paste it into the free **Claude.ai** chat and paste the reply back (about 5 minutes) | `api`: Claude API, fully automatic |
+| Voice | `voice.provider: kokoro`: open-source voice that runs on your computer (Apache-2.0, commercial use allowed) | `elevenlabs` |
+| Visuals | `images.provider: stock`: real stock **video clips** and photos from Pexels and Pixabay (free API keys, free for commercial use) | `openai`: AI illustrations |
+
+1. Do steps 1–3 of Setup below.
+2. `cp config.free.example.yaml config.yaml` and edit the `channel` section.
+3. Get two free keys and put them in `.env` (`cp .env.example .env`):
+   - Pexels: sign up at pexels.com, then go to pexels.com/api and click "Your API Key".
+   - Pixabay: sign up at pixabay.com; your key is shown on pixabay.com/api/docs.
+4. Pick a voice: `python make_video.py voices` writes a sample of each voice to `voice_samples/`.
+   Put your favourite in `voice.kokoro.voice`. The first run downloads the voice model (~350 MB, one time).
+5. Make a video:
+   ```
+   python make_video.py next --niche "Engineering Disasters"
+   ```
+   The first run stops and tells you to paste `PROMPT_FOR_CLAUDE.txt` into claude.ai and save the
+   reply as `claude_reply.txt` in the run folder. Run the same command again and it finishes the video.
+   If Claude's reply gets cut off, type "continue" in the chat and paste the rest after it.
+
+Notes:
+- **Captions:** Kokoro doesn't report exact word timings, so captions are timed per sentence and spread
+  across the words. They can run up to a fraction of a second ahead of or behind the voice.
+- **Visual matching:** stock footage is matched by keywords, so check the visuals during review. Generic
+  shots work for most scenes; for rare events you may want to swap a few clips by hand (replace
+  `images/scene_NNN.mp4` or `.jpg`, delete `video.mp4`, and re-run).
+- **Credits:** stock creators are credited automatically in the video description.
+
 ## Setup (one time, ~30 minutes)
 
 1. **Install Python 3.10+ and ffmpeg** (macOS: `brew install ffmpeg`).
@@ -93,13 +127,15 @@ Then open the run folder:
 
 | Problem | Command |
 |---|---|
-| A few images look wrong | Delete those `images/scene_NNN.png` files and `video.mp4`, then re-run `make` |
+| A few visuals look wrong | Delete (or replace) those `images/scene_NNN.*` files, delete `video.mp4`, then re-run `make` |
 | Rewrite the whole script | `--redo script` (regenerates everything) |
 | New voice settings | `--redo voice` |
 | New image style | `--redo images` |
 | Re-render only (new music, captions, fonts) | `--redo video` |
 
-## Rough cost per 10-minute video
+## Rough cost per 10-minute video (paid setup)
+
+The free setup costs $0.
 
 Prices change, so check each provider's current pricing.
 

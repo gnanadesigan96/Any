@@ -10,18 +10,28 @@ from .config import resolve
 from .images import generate_images
 from .render import check_output, render_main, render_shorts
 from .review import write_review
-from .script import VideoScript, dummy_script, generate_script
+from .script import (MANUAL_REPLY, dummy_script, generate_script, load_script_dict, parse_manual_reply,
+                     write_manual_prompt)
+from .stock import fetch_thumbnail_photo, fetch_visuals
 from .thumbnail import make_thumbnails
 from .util import log, read_json, require_binary, slugify, write_json
 from .voice import narrate_scenes
 
 # Downstream outputs to delete when a stage is redone.
 REDO = {
-    "script": ["script.json", "metadata.json", "audio", "images", "work", "video.mp4", "short_*.mp4", "thumbnail_*.jpg"],
+    "script": ["script.json", "claude_reply.txt", "PROMPT_FOR_CLAUDE.txt", "metadata.json", "audio", "images", "work", "video.mp4", "short_*.mp4", "thumbnail_*.jpg"],
     "voice": ["audio", "work", "video.mp4", "short_*.mp4"],
     "images": ["images", "work", "video.mp4", "short_*.mp4", "thumbnail_*.jpg"],
     "video": ["work", "video.mp4", "short_*.mp4"],
 }
+
+
+class ManualStepNeeded(Exception):
+    """Raised (not an error) when the free manual-script mode is waiting for you."""
+
+
+def _uses_paid_services(cfg: dict) -> bool:
+    return cfg["voice"]["provider"] == "elevenlabs" or cfg["images"]["provider"] == "openai"
 
 
 def _clear(run_dir: Path, patterns: list) -> None:
@@ -30,14 +40,14 @@ def _clear(run_dir: Path, patterns: list) -> None:
             shutil.rmtree(p) if p.is_dir() else p.unlink()
 
 
-def _confirm_spend(script: VideoScript, run_dir: Path, cfg: dict, assume_yes: bool) -> None:
+def _confirm_spend(script, run_dir: Path, cfg: dict, assume_yes: bool) -> None:
     chars = sum(len(s.narration) for s in script.scenes)
     images = len(script.scenes) + 1
     missing_images = sum(1 for i in range(len(script.scenes)) if not (run_dir / "images" / f"scene_{i:03d}.png").exists())
     words = sum(len(s.narration.split()) for s in script.scenes)
     log(f"Script ready: {len(script.scenes)} scenes, {words} words (~{words / 150:.1f} min). "
         f"Voice: {chars} characters. Images: {images} total, {missing_images} still to generate.")
-    if assume_yes or not sys.stdin.isatty():
+    if assume_yes or not sys.stdin.isatty() or not _uses_paid_services(cfg):
         return
     if input("Generate voice and images now (uses paid API credits)? [y/N] ").strip().lower() != "y":
         raise SystemExit("Stopped after the script. Read script.json, then re-run the same command to continue.")
@@ -60,9 +70,24 @@ def make_video(topic: str, angle: str, cfg: dict, dry_run: bool = False, redo: s
     script_path = run_dir / "script.json"
     regenerated = False
     if script_path.exists():
-        script = VideoScript.model_validate(read_json(script_path))
+        script = load_script_dict(read_json(script_path))
     else:
-        script = dummy_script(topic, angle, cfg) if dry_run else generate_script(topic, angle, cfg)
+        if dry_run:
+            script = dummy_script(topic, angle, cfg)
+        elif cfg["script"]["provider"] == "manual":
+            reply = run_dir / MANUAL_REPLY
+            if not reply.exists() or not reply.read_text(encoding="utf-8").strip():
+                prompt = write_manual_prompt(topic, angle, run_dir, cfg)
+                reply.touch()
+                raise ManualStepNeeded(
+                    "Free script step:\n"
+                    f"  1. Open {prompt} and copy all of it\n"
+                    "  2. Paste it into a new chat at claude.ai and send\n"
+                    f"  3. Paste Claude's whole reply into {reply} and save\n"
+                    "  4. Run the same command again")
+            script = parse_manual_reply(reply.read_text(encoding="utf-8"), cfg)
+        else:
+            script = generate_script(topic, angle, cfg)
         write_json(script_path, script.model_dump())
         regenerated = True
     if not dry_run:
@@ -71,13 +96,18 @@ def make_video(topic: str, angle: str, cfg: dict, dry_run: bool = False, redo: s
     # 2. Voice
     timing = narrate_scenes(script.scenes, run_dir, cfg, dry_run)
 
-    # 3. Images (scene stills + thumbnail background)
+    # 3. Visuals: AI images, or free stock clips/photos (plus a thumbnail background)
     img_dir = run_dir / "images"
     img_dir.mkdir(exist_ok=True)
-    image_paths = [img_dir / f"scene_{i:03d}.png" for i in range(len(script.scenes))]
-    thumb_bg = img_dir / "thumbnail_bg.png"
-    generate_images([(s.visual, p) for s, p in zip(script.scenes, image_paths)]
-                    + [(script.thumbnail_visual, thumb_bg)], cfg, dry_run)
+    if cfg["images"]["provider"] == "stock" and not dry_run:
+        image_paths = fetch_visuals(script.scenes, [t["duration"] for t in timing], img_dir, cfg)
+        thumb_bg = img_dir / "thumbnail_bg.jpg"
+        fetch_thumbnail_photo(script.thumbnail_search_query, thumb_bg, cfg)
+    else:
+        image_paths = [img_dir / f"scene_{i:03d}.png" for i in range(len(script.scenes))]
+        thumb_bg = img_dir / "thumbnail_bg.png"
+        generate_images([(s.visual, p) for s, p in zip(script.scenes, image_paths)]
+                        + [(script.thumbnail_visual, thumb_bg)], cfg, dry_run)
 
     # 4. Long-form video
     video = run_dir / "video.mp4"
