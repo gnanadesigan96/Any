@@ -17,7 +17,7 @@ script:
 voice:
   provider: "kokoro"        # free, runs on your computer; model (~350 MB) downloads on first use
   kokoro:
-    voice: "am_michael"     # preview others with: python make_video.py voices
+    voice: "am_adam"        # preview others with: python make_video.py voices
     speed: 1.0              # 0.9 = slower and calmer, 1.1 = faster
 
 images:
