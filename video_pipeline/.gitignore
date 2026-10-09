@@ -10,3 +10,5 @@ assets/music/*
 # Downloaded voice model and voice previews
 models/
 voice_samples/
+# Python virtual environment
+.venv/
