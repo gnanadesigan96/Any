@@ -14,7 +14,7 @@ from .script import (MANUAL_REPLY, dummy_script, generate_script, load_script_di
                      write_manual_prompt)
 from .stock import fetch_thumbnail_photo, fetch_visuals
 from .thumbnail import make_thumbnails
-from .util import log, read_json, require_binary, slugify, write_json
+from .util import check_ffmpeg_features, log, read_json, require_binary, slugify, write_json
 from .voice import narrate_scenes
 
 # Downstream outputs to delete when a stage is redone.
@@ -57,6 +57,7 @@ def make_video(topic: str, angle: str, cfg: dict, dry_run: bool = False, redo: s
                assume_yes: bool = False) -> Path:
     require_binary("ffmpeg")
     require_binary("ffprobe")
+    check_ffmpeg_features(cfg["video"]["captions"])
     run_dir = resolve(cfg["runs_dir"]) / (slugify(topic) + ("-dryrun" if dry_run else ""))
     run_dir.mkdir(parents=True, exist_ok=True)
     if redo:

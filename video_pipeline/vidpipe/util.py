@@ -22,6 +22,21 @@ def require_binary(name: str) -> None:
         raise RuntimeError(f"'{name}' is not installed or not on PATH")
 
 
+def check_ffmpeg_features(need_captions: bool) -> None:
+    """Fail early (before any paid work) if this ffmpeg build lacks what the renderer uses."""
+    out = subprocess.run(["ffmpeg", "-hide_banner", "-filters"], capture_output=True, text=True).stdout
+    missing = [f for f in (["subtitles"] if need_captions else []) + ["zoompan", "loudnorm"]
+               if f" {f} " not in out]
+    encoders = subprocess.run(["ffmpeg", "-hide_banner", "-encoders"], capture_output=True, text=True).stdout
+    missing += [e for e in ("libx264", "libmp3lame") if e not in encoders]
+    if missing:
+        raise RuntimeError(
+            f"Your ffmpeg is missing: {', '.join(missing)}. On a Mac, install the full build:\n"
+            "  brew uninstall ffmpeg && brew install ffmpeg-full\n"
+            "  export PATH=\"/opt/homebrew/opt/ffmpeg-full/bin:$PATH\"   (also add this line to ~/.zprofile)\n"
+            "Or set video.captions: false in config.yaml to skip burned-in captions.")
+
+
 def run_ffmpeg(args: list, cwd=None) -> None:
     cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *map(str, args)]
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd)
