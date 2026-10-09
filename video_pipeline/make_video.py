@@ -65,12 +65,17 @@ def main() -> int:
         if args.command == "make":
             make_video(args.topic, args.angle, cfg, args.dry_run, args.redo or "", args.yes)
         elif args.command == "next":
-            rows = bank.unused(cfg, args.niche, args.subcategory)
-            if not rows:
-                print("No unused topics left for that niche/subcategory.")
-                return 1
-            row = random.choice(rows) if args.random else rows[0]
-            print(f"Topic: {row['title']}\nAngle: {row['angle']}")
+            pending = [] if args.dry_run else bank.unfinished(cfg, args.niche)
+            if pending:
+                row = pending[0]
+                print(f"Resuming unfinished video: {row['title']}")
+            else:
+                rows = bank.unused(cfg, args.niche, args.subcategory)
+                if not rows:
+                    print("No unused topics left for that niche/subcategory.")
+                    return 1
+                row = random.choice(rows) if args.random else rows[0]
+                print(f"Topic: {row['title']}\nAngle: {row['angle']}")
             make_video(row["title"], row["angle"], cfg, args.dry_run, args.redo or "", args.yes)
         elif args.command == "topics":
             if not args.niche:

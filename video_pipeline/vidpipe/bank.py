@@ -37,3 +37,19 @@ def unused(cfg: dict, niche: str, subcategory: str = "") -> list:
     if not rows and niche.lower() not in {n.lower() for n in niches(cfg)}:
         raise RuntimeError(f"Unknown niche '{niche}'. Options: {', '.join(niches(cfg))}")
     return rows
+
+
+def unfinished(cfg: dict, niche: str) -> list:
+    """Real (non-dry) runs for this niche's bank topics that haven't produced a video yet,
+    e.g. one waiting for the manual Claude.ai script step. `next` resumes these first."""
+    bank_rows = {r["title"].strip().lower(): r for r in load_bank(cfg) if r["niche"].lower() == niche.lower()}
+    out = []
+    for run_json in sorted(resolve(cfg["runs_dir"]).glob("*/run.json")):
+        try:
+            run = json.loads(run_json.read_text())
+        except ValueError:
+            continue
+        row = bank_rows.get(str(run.get("topic", "")).strip().lower())
+        if row and not run.get("dry_run") and not (run_json.parent / "video.mp4").exists():
+            out.append(row)
+    return out

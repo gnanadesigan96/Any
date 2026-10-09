@@ -353,3 +353,14 @@ def test_kokoro_real_synthesis(tmp_path, cfg):
     words = voice.KokoroVoice(cfg).synthesize("The bridge twisted. Then it fell.", "", "", out)
     assert [w[0] for w in words] == ["The", "bridge", "twisted.", "Then", "it", "fell."]
     assert media_duration(out) > words[-1][2]
+
+
+def test_next_resumes_unfinished_manual_run(cfg, monkeypatch):
+    cfg["script"]["provider"] = "manual"
+    first = bank.unused(cfg, "Engineering Disasters")[0]
+    with pytest.raises(ManualStepNeeded):
+        make_video(first["title"], first["angle"], cfg)
+    # The waiting run is offered again instead of a new topic...
+    assert [r["title"] for r in bank.unfinished(cfg, "Engineering Disasters")] == [first["title"]]
+    # ...and it no longer counts as unused.
+    assert bank.unused(cfg, "Engineering Disasters")[0]["title"] != first["title"]
