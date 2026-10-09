@@ -1,0 +1,8 @@
+anthropic>=1.12
+pydantic>=2
+requests>=2.31
+pillow>=10
+PyYAML>=6
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.2
+pytest>=8
