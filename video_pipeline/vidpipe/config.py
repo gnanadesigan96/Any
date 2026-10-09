@@ -39,6 +39,9 @@ DEFAULTS = {
             "lang": "en-us",
             "model_dir": "models",
             "model_file": "kokoro-v1.0.onnx",
+            "sentence_pause": 0.22,  # silence between sentences (seconds)
+            "scene_pause": 0.25,     # silence after each scene
+            "clause_pause": 0.06,    # Kokoro's pause at commas/dashes
         },
     },
     "images": {
@@ -69,10 +72,21 @@ DEFAULTS = {
         "music_volume": 0.10,
         "loudness_lufs": -14,
     },
+    # "long": one long video (plus clips cut from it). "shorts": several standalone Shorts per topic.
+    "format": "long",
     "shorts": {
-        "enabled": True,
+        "enabled": True,          # long format only: also cut Shorts out of the long video
         "width": 1080,
         "height": 1920,
+        "per_topic": 3,           # shorts format: how many Shorts to write per topic
+        "target_words": 115,      # ~40-50 seconds each
+        "words_per_scene": 10,    # new visual every ~3-4 seconds
+        "max_scenes": 20,
+        "caption_max_words": 3,
+        "voice_speed": 1.08,      # Kokoro speed for Shorts (slightly brisker)
+        "sentence_pause": 0.12,
+        "scene_pause": 0.06,
+        "clause_pause": 0.04,
     },
     "thumbnail": {
         "font_file": "",

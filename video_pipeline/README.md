@@ -23,6 +23,19 @@ YouTube's rules on mass-produced content.
 Every stage saves its output in `runs/<topic>/`. If anything fails, fix it and re-run the same
 command: finished stages are reused, so you only pay for what's missing.
 
+## Shorts or long videos
+
+Set `format` in `config.yaml`:
+
+- `format: "shorts"` (default in `config.free.example.yaml`): each topic becomes **3 standalone vertical
+  Shorts** (`short_1.mp4` ... `short_3.mp4`), each with its own hook, ~35-45 seconds of narration, a new
+  visual every 3-4 seconds, big captions and the hook text on screen. Change the count with `shorts.per_topic`.
+- `format: "long"`: one ~10-minute video per topic plus a few Shorts cut from it.
+
+After rendering, the pipeline reports any silence longer than 1 second with its timestamp
+(`Warning: 1.4s of silence at 0:21.3 in short_2.mp4`) so you can spot voice dropouts without
+watching everything.
+
 ## Free setup ($0 per video)
 
 Every paid part has a free replacement. Start with this; switch any piece to the paid option later

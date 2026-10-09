@@ -1,6 +1,15 @@
 # $0 setup: script via the free Claude.ai chat, free Kokoro voice on your computer,
 # free stock footage from Pexels/Pixabay. Copy to config.yaml and edit the channel section.
 
+# "shorts": each topic becomes several standalone vertical Shorts (default here).
+# "long": one long YouTube video per topic, plus a few clips cut from it.
+format: "shorts"
+
+shorts:
+  per_topic: 3              # Shorts written per topic
+  target_words: 115         # ~35-45 seconds each
+  voice_speed: 1.08         # 1.0 = calmer, 1.15 = faster
+
 channel:
   name: "Rise & Fall Files"
   niche: "Engineering Disasters"

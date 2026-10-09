@@ -50,6 +50,7 @@ def unfinished(cfg: dict, niche: str) -> list:
         except ValueError:
             continue
         row = bank_rows.get(str(run.get("topic", "")).strip().lower())
-        if row and not run.get("dry_run") and not (run_json.parent / "video.mp4").exists():
+        # metadata.json is written last, once the video or Shorts are finished.
+        if row and not run.get("dry_run") and not (run_json.parent / "metadata.json").exists():
             out.append(row)
     return out

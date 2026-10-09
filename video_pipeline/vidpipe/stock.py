@@ -19,9 +19,10 @@ class Pexels:
     def __init__(self, key: str):
         self.headers = {"Authorization": key}
 
-    def videos(self, query: str) -> list:
+    def videos(self, query: str, portrait: bool = False) -> list:
         r = requests.get("https://api.pexels.com/videos/search", headers=self.headers, timeout=30,
-                         params={"query": query, "orientation": "landscape", "per_page": 15})
+                         params={"query": query, "orientation": "portrait" if portrait else "landscape",
+                                 "per_page": 15})
         r.raise_for_status()
         out = []
         for v in r.json().get("videos", []):
@@ -32,9 +33,10 @@ class Pexels:
                             "duration": v.get("duration") or 0, "files": files})
         return out
 
-    def photos(self, query: str) -> list:
+    def photos(self, query: str, portrait: bool = False) -> list:
         r = requests.get("https://api.pexels.com/v1/search", headers=self.headers, timeout=30,
-                         params={"query": query, "orientation": "landscape", "per_page": 15})
+                         params={"query": query, "orientation": "portrait" if portrait else "landscape",
+                                 "per_page": 15})
         r.raise_for_status()
         return [{"id": f"pexels-p{p['id']}", "page": p.get("url", ""), "author": p.get("photographer", ""),
                  "url": p["src"].get("large2x") or p["src"]["original"]}
@@ -53,7 +55,8 @@ class Pixabay:
         r.raise_for_status()
         return r.json().get("hits", [])
 
-    def videos(self, query: str) -> list:
+    def videos(self, query: str, portrait: bool = False) -> list:
+        # Pixabay's video search has no orientation filter; fetch_visuals ranks portrait clips first.
         out = []
         for h in self._get("https://pixabay.com/api/videos/", query, {}):
             files = [{"url": f["url"], "width": f.get("width") or 0, "height": f.get("height") or 0}
@@ -63,11 +66,11 @@ class Pixabay:
                             "duration": h.get("duration") or 0, "files": files})
         return out
 
-    def photos(self, query: str) -> list:
+    def photos(self, query: str, portrait: bool = False) -> list:
         return [{"id": f"pixabay-p{h['id']}", "page": h.get("pageURL", ""), "author": h.get("user", ""),
                  "url": h["largeImageURL"]}
                 for h in self._get("https://pixabay.com/api/", query,
-                                   {"image_type": "photo", "orientation": "horizontal"})
+                                   {"image_type": "photo", "orientation": "vertical" if portrait else "horizontal"})
                 if h.get("largeImageURL")]
 
 
@@ -83,11 +86,19 @@ def make_sources(cfg: dict) -> list:
     return sources
 
 
-def pick_file(files: list, target_width: int) -> dict:
-    """Smallest landscape file that is at least target_width wide, else the widest one."""
-    landscape = [f for f in files if f["width"] >= f["height"]] or files
-    big_enough = [f for f in landscape if f["width"] >= target_width]
-    return min(big_enough, key=lambda f: f["width"]) if big_enough else max(landscape, key=lambda f: f["width"])
+def pick_file(files: list, target_w: int, target_h: int) -> dict:
+    """The smallest file that fills the target frame without upscaling, else the sharpest one."""
+    def scale(f):  # how much this file must be enlarged to cover the frame
+        return max(target_w / max(f["width"], 1), target_h / max(f["height"], 1))
+    sharp_enough = [f for f in files if scale(f) <= 1.0]
+    if sharp_enough:
+        return min(sharp_enough, key=lambda f: f["width"] * f["height"])
+    return min(files, key=scale)
+
+
+def _is_portrait(clip: dict) -> bool:
+    f = clip["files"][0]
+    return f["height"] > f["width"]
 
 
 def _download(url: str, dest: Path) -> None:
@@ -125,13 +136,15 @@ def existing_asset(img_dir: Path, stem: str):
     return None
 
 
-def fetch_visuals(scenes: list, durations: list, img_dir: Path, cfg: dict) -> list:
-    """Returns one asset path per scene (.mp4 clip or .jpg photo), downloading what's missing."""
+def fetch_visuals(scenes: list, durations: list, img_dir: Path, cfg: dict, exclude: set = frozenset()) -> list:
+    """Returns one asset path per scene (.mp4 clip or .jpg photo), downloading what's missing.
+    `exclude` holds stock IDs already used elsewhere (e.g. by sibling Shorts of the same topic)."""
     st = cfg["images"]["stock"]
-    width = cfg["video"]["width"]
+    width, height = cfg["video"]["width"], cfg["video"]["height"]
+    portrait = height > width
     credits_path = img_dir / "credits.json"
     credits = read_json(credits_path, {}) or {}
-    used = {c["id"] for c in credits.values() if c.get("id")}
+    used = {c["id"] for c in credits.values() if c.get("id")} | set(exclude)
     paths = [existing_asset(img_dir, f"scene_{i:03d}") for i in range(len(scenes))]
     todo = [i for i, p in enumerate(paths) if p is None]
     if not todo:
@@ -146,15 +159,17 @@ def fetch_visuals(scenes: list, durations: list, img_dir: Path, cfg: dict) -> li
             for source in sources:
                 try:
                     if st["prefer_video"]:
-                        clips = [c for c in source.videos(query) if c["id"] not in used]
+                        clips = [c for c in source.videos(query, portrait) if c["id"] not in used]
+                        if portrait:  # stable sort: portrait clips first, original relevance otherwise
+                            clips.sort(key=lambda c: not _is_portrait(c))
                         long_enough = [c for c in clips if c["duration"] >= durations[i]]
                         if long_enough or clips:
                             c = (long_enough or clips)[0]
                             dest = stem.with_suffix(VIDEO_EXT)
-                            _download(pick_file(c["files"], width)["url"], dest)
+                            _download(pick_file(c["files"], width, height)["url"], dest)
                             found = (dest, c, source.name)
                             break
-                    photos = [p for p in source.photos(query) if p["id"] not in used]
+                    photos = [p for p in source.photos(query, portrait) if p["id"] not in used]
                     if photos:
                         dest = stem.with_suffix(PHOTO_EXT)
                         _download(photos[0]["url"], dest)
@@ -176,7 +191,7 @@ def fetch_visuals(scenes: list, durations: list, img_dir: Path, cfg: dict) -> li
         else:
             log(f"  No stock match for scene {i} ('{scenes[i].search_query}'); using a plain card")
             paths[i] = stem.with_suffix(PHOTO_EXT)
-            blank_card(paths[i], (cfg["video"]["width"], cfg["video"]["height"]))
+            blank_card(paths[i], (width, height))
         write_json(credits_path, credits)
     return paths
 
@@ -205,3 +220,12 @@ def credit_lines(img_dir: Path) -> list:
             seen.add(key)
             lines.append(f"{c['author']} ({c['source']})")
     return lines
+
+
+def used_ids(img_dirs) -> set:
+    ids = set()
+    for d in img_dirs:
+        for c in (read_json(Path(d) / "credits.json", {}) or {}).values():
+            if c.get("id"):
+                ids.add(c["id"])
+    return ids

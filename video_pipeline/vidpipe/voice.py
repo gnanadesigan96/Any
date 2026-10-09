@@ -117,9 +117,6 @@ def _download(url: str, dest: Path) -> None:
 class KokoroVoice:
     """Free, open-source voice that runs on your own computer (Apache-2.0 model)."""
 
-    SENTENCE_PAUSE = 0.28
-    SCENE_TAIL = 0.35
-
     def __init__(self, cfg: dict):
         try:
             from kokoro_onnx import Kokoro
@@ -140,7 +137,8 @@ class KokoroVoice:
     def _speak(self, text: str):
         with self.lock:
             return self.engine.create(text, voice=self.k["voice"], speed=self.k["speed"],
-                                      lang=self.k["lang"])
+                                      lang=self.k["lang"], clause_pause=self.k["clause_pause"],
+                                      sentence_pause=self.k["sentence_pause"])
 
     def synthesize(self, text: str, prev_text: str, next_text: str, out_mp3: Path) -> list:
         import numpy as np
@@ -153,7 +151,7 @@ class KokoroVoice:
             words += distribute_words(sentence, t, t + dur)
             pieces.append(audio)
             t += dur
-            pause = self.SENTENCE_PAUSE if i < len(sentences) - 1 else self.SCENE_TAIL
+            pause = self.k["sentence_pause"] if i < len(sentences) - 1 else self.k["scene_pause"]
             pieces.append(np.zeros(int(pause * sr), dtype=np.float32))
             t += pause
         samples = np.clip(np.concatenate(pieces) if pieces else np.zeros(sr, dtype=np.float32), -1, 1)

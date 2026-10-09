@@ -257,8 +257,10 @@ def test_old_script_json_still_loads():
 def test_pick_file_prefers_smallest_big_enough():
     files = [{"url": "a", "width": 3840, "height": 2160}, {"url": "b", "width": 1920, "height": 1080},
              {"url": "c", "width": 1280, "height": 720}, {"url": "d", "width": 1080, "height": 1920}]
-    assert stock.pick_file(files, 1920)["url"] == "b"
-    assert stock.pick_file(files[2:], 1920)["url"] == "c"
+    assert stock.pick_file(files, 1920, 1080)["url"] == "b"
+    assert stock.pick_file(files[2:], 1920, 1080)["url"] == "c"
+    # Vertical frame: the portrait file fills 1080x1920 without upscaling.
+    assert stock.pick_file(files, 1080, 1920)["url"] == "d"
 
 
 def test_fetch_visuals_with_mocked_pexels(tmp_path, cfg, monkeypatch):
@@ -364,3 +366,52 @@ def test_next_resumes_unfinished_manual_run(cfg, monkeypatch):
     assert [r["title"] for r in bank.unfinished(cfg, "Engineering Disasters")] == [first["title"]]
     # ...and it no longer counts as unused.
     assert bank.unused(cfg, "Engineering Disasters")[0]["title"] != first["title"]
+
+
+# ---- Shorts format ------------------------------------------------------------------------
+
+def test_shorts_dry_run_end_to_end(cfg):
+    cfg["format"] = "shorts"
+    cfg["shorts"].update(width=360, height=640, per_topic=2)
+    run_dir = make_video("Shorts Topic", "", cfg, dry_run=True)
+    outs = sorted(run_dir.glob("short_*.mp4"))
+    assert [o.name for o in outs] == ["short_1.mp4", "short_2.mp4"]
+    for o in outs:
+        probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries",
+                                "stream=width,height", "-of", "csv=p=0", str(o)], capture_output=True, text=True)
+        assert probe.stdout.strip() == "360,640"
+    meta = json.loads((run_dir / "metadata.json").read_text())
+    assert meta["format"] == "shorts" and len(meta["shorts"]) == 2
+    assert "#dryrun" in meta["shorts"][0]["description"]
+    assert not (run_dir / "video.mp4").exists()
+    assert "Short 2:" in (run_dir / "REVIEW.md").read_text()
+    # Re-running reuses everything.
+    mtime = outs[0].stat().st_mtime
+    make_video("Shorts Topic", "", cfg, dry_run=True)
+    assert outs[0].stat().st_mtime == mtime
+    # The same folder in the other format gives a clear message, not a crash.
+    cfg["format"] = "long"
+    with pytest.raises(RuntimeError, match="other format"):
+        make_video("Shorts Topic", "", cfg, dry_run=True)
+
+
+def test_shorts_manual_prompt_and_reply(cfg):
+    cfg["format"] = "shorts"
+    cfg["script"]["provider"] = "manual"
+    with pytest.raises(ManualStepNeeded):
+        make_video("Manual Shorts", "", cfg)
+    prompt = (Path(cfg["runs_dir"]) / "manual-shorts" / "PROMPT_FOR_CLAUDE.txt").read_text()
+    assert "3 separate Shorts" in prompt and "hook_text" in prompt
+    reply = {"shorts": [{"title": "T", "hook_text": "H", "description": "D", "hashtags": ["bridges", "#wind power"],
+                         "scenes": [{"narration": "A line.", "visual": "v", "search_query": "q"}],
+                         "fact_check": []}]}
+    pack = script_mod.parse_manual_reply(json.dumps(reply), cfg)
+    assert pack.shorts[0].hashtags == ["#bridges", "#windpower"]
+
+
+def test_shorts_config_is_vertical_and_brisk(cfg):
+    from vidpipe.pipeline import shorts_config
+    v = shorts_config(cfg)
+    assert (v["video"]["width"], v["video"]["height"]) == (cfg["shorts"]["width"], cfg["shorts"]["height"])
+    assert v["voice"]["kokoro"]["scene_pause"] < cfg["voice"]["kokoro"]["scene_pause"]
+    assert cfg["video"]["width"] == 640  # original config untouched

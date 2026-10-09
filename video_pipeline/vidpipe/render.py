@@ -9,7 +9,7 @@ from PIL import Image
 
 from .captions import group_words, write_ass
 from .config import resolve
-from .util import find_font_file, log, media_duration, run_ffmpeg
+from .util import find_font_file, find_silences, log, media_duration, run_ffmpeg
 
 MOTIONS = ["zoom_in", "pan_right", "zoom_out", "pan_left"]
 VIDEO_SUFFIXES = {".mp4", ".mov", ".webm", ".m4v"}
@@ -153,7 +153,7 @@ def _absolute_words(timing: list, timeline: list, scene_ids, offset: float, fps:
     return words
 
 
-def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict) -> Path:
+def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title: str = "") -> Path:
     v = cfg["video"]
     fps = v["fps"]
     work = run_dir / "work"
@@ -182,7 +182,8 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict) -> Pa
     if v["captions"]:
         words = _absolute_words(timing, timeline, range(len(timing)), 0.0, fps)
         write_ass(group_words(words, v["caption_max_words"]), work / "captions.ass",
-                  v["width"], v["height"], v["caption_font"], vertical=False)
+                  v["width"], v["height"], v["caption_font"], vertical=v["height"] > v["width"],
+                  title=title, duration=sum(t["frames"] for t in timeline) / fps)
         ass = "captions.ass"
     log("Mixing final video...")
     _final_mix(work, "video_noaudio.mp4", "narration.wav", ass, final.resolve(), cfg,
@@ -226,7 +227,9 @@ def render_shorts(run_dir: Path, image_paths: list, timing: list, shorts: list, 
     return outputs
 
 
-def check_output(path: Path) -> float:
+def check_output(path: Path, check_silence: bool = True) -> float:
     d = media_duration(path)
     log(f"Wrote {path.name} ({d:.1f}s)")
+    for start, length in (find_silences(path) if check_silence else []):
+        log(f"  Warning: {length:.1f}s of silence at {int(start // 60)}:{start % 60:04.1f} in {path.name}")
     return d

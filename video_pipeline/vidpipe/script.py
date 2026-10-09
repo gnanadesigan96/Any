@@ -32,6 +32,19 @@ class FactClaim(BaseModel):
     source: str
 
 
+class ShortVideo(BaseModel):
+    title: str
+    hook_text: str
+    description: str
+    hashtags: list[str]
+    scenes: list[Scene]
+    fact_check: list[FactClaim]
+
+
+class ShortsPack(BaseModel):
+    shorts: list[ShortVideo]
+
+
 class VideoScript(BaseModel):
     titles: list[str]
     description: str
@@ -70,7 +83,44 @@ Output fields:
 - fact_check: every specific factual claim in the narration (names, dates, numbers, causes) with the source a human should check it against."""
 
 
+SHORTS_PROMPT = """You write YouTube Shorts for "{name}", a faceless channel about {niche}.
+Audience: {audience}. Voice: {tone}. Language: {language}.
+
+The channel only survives if every Short is accurate, original and genuinely worth watching, so:
+- Use only well-documented facts. If a detail is disputed or uncertain, leave it out. Never invent quotes, names, numbers or dates.
+- Write for the ear: short, punchy sentences; concrete images; no filler.
+
+From the topic, write {count} separate Shorts. Each one covers a DIFFERENT surprising angle of the topic and must make complete sense on its own (viewers won't have seen the others).
+
+Each Short:
+- About {words} words of narration (roughly 40 to 50 seconds spoken).
+- The first sentence is the hook: a surprising fact, claim or question that stops the scroll within 2 seconds. No greetings, no "did you know", no "in this video", no "let's dive in".
+- Builds quickly to one satisfying payoff. The last line should land hard, ideally echoing the opening so the Short loops well.
+- No calls to action (no "like and subscribe", no "follow for more").
+
+Fields for each Short:
+- title: under 60 characters, curiosity-driven but truthful (do not add #Shorts).
+- hook_text: 2 to 5 words shown on screen during the Short (e.g. "The bridge that danced").
+- description: one or two sentences (no hashtags, no links).
+- hashtags: 3 to 5 relevant hashtags, each starting with # and without spaces.
+- scenes: the narration split into scenes of about {words_per_scene} words (one short sentence each), so the picture changes every 3 to 4 seconds. Each scene's `visual` describes a single image for that moment (subject, setting, era, mood; no text, logos or real living people's faces). Each scene's `search_query` is 2 to 4 plain keywords for finding matching stock video on Pexels or Pixabay (e.g. "suspension bridge wind", "storm clouds timelapse"): generic, visual and likely to exist as stock footage, never a specific event name.
+- fact_check: every specific factual claim (names, dates, numbers, causes) with the source a human should check it against."""
+
+
+def is_shorts(cfg: dict) -> bool:
+    return cfg.get("format") == "shorts"
+
+
+def script_model(cfg: dict):
+    return ShortsPack if is_shorts(cfg) else VideoScript
+
+
 def _user_prompt(topic: str, angle: str, cfg: dict) -> str:
+    if is_shorts(cfg):
+        lines = [f"Topic: {topic}"]
+        if angle:
+            lines.append(f"Background angle: {angle}")
+        return "\n".join(lines)
     s = cfg["script"]
     lines = [f"Topic: {topic}"]
     if angle:
@@ -82,6 +132,13 @@ def _user_prompt(topic: str, angle: str, cfg: dict) -> str:
 
 def _system_prompt(cfg: dict) -> str:
     s, ch = cfg["script"], cfg["channel"]
+    if is_shorts(cfg):
+        sh = cfg["shorts"]
+        return SHORTS_PROMPT.format(
+            name=ch["name"], niche=ch["niche"], audience=ch["audience"], tone=ch["tone"],
+            language=ch["language"], count=sh["per_topic"], words=sh["target_words"],
+            words_per_scene=sh["words_per_scene"],
+        )
     return SYSTEM_PROMPT.format(
         name=ch["name"], niche=ch["niche"], audience=ch["audience"], tone=ch["tone"],
         language=ch["language"], words_per_scene=s["words_per_scene"],
@@ -89,7 +146,7 @@ def _system_prompt(cfg: dict) -> str:
     )
 
 
-def generate_script(topic: str, angle: str, cfg: dict) -> VideoScript:
+def generate_script(topic: str, angle: str, cfg: dict):
     s = cfg["script"]
     system = _system_prompt(cfg)
     client = anthropic.Anthropic(timeout=900.0)
@@ -103,7 +160,7 @@ def generate_script(topic: str, angle: str, cfg: dict) -> VideoScript:
             output_config={"effort": s["effort"]},
             system=system,
             messages=[{"role": "user", "content": _user_prompt(topic, angle, cfg)}],
-            output_format=VideoScript,
+            output_format=script_model(cfg),
         )
     except anthropic.AuthenticationError as e:
         raise RuntimeError("Claude API authentication failed - set ANTHROPIC_API_KEY in .env") from e
@@ -122,7 +179,26 @@ def generate_script(topic: str, angle: str, cfg: dict) -> VideoScript:
     script = response.parsed_output
     if script is None:
         raise RuntimeError("Claude returned no parsable script; re-run the script stage")
-    return validate_script(script, cfg)
+    return finalize(script, cfg)
+
+
+def finalize(script, cfg: dict):
+    return validate_shorts(script, cfg) if is_shorts(cfg) else validate_script(script, cfg)
+
+
+def validate_shorts(pack: ShortsPack, cfg: dict) -> ShortsPack:
+    max_scenes = cfg["shorts"]["max_scenes"]
+    kept = []
+    for short in pack.shorts:
+        if not short.scenes:
+            continue
+        short.scenes = short.scenes[:max_scenes]
+        short.hashtags = ["#" + h.strip().lstrip("#").replace(" ", "") for h in short.hashtags if h.strip("# ")][:5]
+        kept.append(short)
+    if not kept:
+        raise RuntimeError("The script has no Shorts with scenes")
+    pack.shorts = kept[: cfg["shorts"]["per_topic"]]
+    return pack
 
 
 def validate_script(script: VideoScript, cfg: dict) -> VideoScript:
@@ -202,18 +278,31 @@ EXAMPLE_JSON = {
 }
 
 
+EXAMPLE_SHORTS_JSON = {
+    "shorts": [{
+        "title": "...",
+        "hook_text": "...",
+        "description": "...",
+        "hashtags": ["#...", "#..."],
+        "scenes": [{"narration": "...", "visual": "...", "search_query": "..."}],
+        "fact_check": [{"claim": "...", "source": "..."}],
+    }],
+}
+
+
 def write_manual_prompt(topic: str, angle: str, run_dir: Path, cfg: dict) -> Path:
     path = run_dir / MANUAL_PROMPT
+    example = EXAMPLE_SHORTS_JSON if is_shorts(cfg) else EXAMPLE_JSON
     path.write_text(
         _system_prompt(cfg) + "\n\n" + _user_prompt(topic, angle, cfg) + "\n\n"
         "Reply with ONLY a JSON object (no other text) in exactly this shape, with every field filled in:\n"
-        + json.dumps(EXAMPLE_JSON, indent=2) + "\n",
+        + json.dumps(example, indent=2) + "\n",
         encoding="utf-8",
     )
     return path
 
 
-def parse_manual_reply(text: str, cfg: dict) -> VideoScript:
+def parse_manual_reply(text: str, cfg: dict):
     """Accepts the reply as pasted: tolerates ```json fences and text around the JSON."""
     text = re.sub(r"```(?:json)?", "", text)
     start, end = text.find("{"), text.rfind("}")
@@ -225,7 +314,7 @@ def parse_manual_reply(text: str, cfg: dict) -> VideoScript:
         raise RuntimeError(f"{MANUAL_REPLY} isn't valid JSON ({e}). If the reply was cut off, "
                            "ask Claude to 'continue', paste the rest after it, and re-run") from e
     try:
-        return validate_script(load_script_dict(data), cfg)
+        return finalize(load_any(data, cfg), cfg)
     except ValidationError as e:
         raise RuntimeError(f"The reply is missing or has wrong fields:\n{e}\n"
                            "Ask Claude to fix those fields and resend the full JSON") from e
@@ -238,3 +327,29 @@ def load_script_dict(data: dict) -> VideoScript:
         if isinstance(scene, dict):
             scene.setdefault("search_query", " ".join(scene.get("visual", "").split()[:4]))
     return VideoScript.model_validate(data)
+
+
+def load_any(data: dict, cfg: dict):
+    """Load a stored or pasted script in whichever format the config uses."""
+    if not is_shorts(cfg):
+        return load_script_dict(data)
+    for short in data.get("shorts", []) if isinstance(data, dict) else []:
+        for scene in short.get("scenes", []) if isinstance(short, dict) else []:
+            if isinstance(scene, dict):
+                scene.setdefault("search_query", " ".join(scene.get("visual", "").split()[:4]))
+    return ShortsPack.model_validate(data)
+
+
+def dummy_shorts(topic: str, angle: str, cfg: dict) -> ShortsPack:
+    """Offline stand-in used by --dry-run in Shorts mode."""
+    shorts = []
+    for k in range(cfg["shorts"]["per_topic"]):
+        beats = [f"Dry-run Short {k + 1} about {topic}.", "This line would be the build-up.",
+                 "Here the facts land fast.", "And this is the payoff line."]
+        shorts.append(ShortVideo(
+            title=f"Dry run {k + 1}: {topic}"[:60], hook_text=f"Dry run {k + 1}",
+            description="Dry-run description.", hashtags=["#dryrun", "#test"],
+            scenes=[Scene(narration=b, visual=f"Visual {i}", search_query="city skyline") for i, b in enumerate(beats)],
+            fact_check=[FactClaim(claim="(dry run - no claims)", source="n/a")],
+        ))
+    return validate_shorts(ShortsPack(shorts=shorts), cfg)

@@ -45,7 +45,7 @@ def _ass_escape(text: str) -> str:
 def write_ass(phrases: list, path: Path, width: int, height: int, font: str, vertical: bool,
               title: str = "", duration: float = 0.0) -> None:
     if vertical:
-        size, margin_v, align, outline = int(height * 0.042), int(height * 0.30), 2, 6
+        size, margin_v, align, outline = int(height * 0.05), int(height * 0.30), 2, 7
     else:
         size, margin_v, align, outline = int(height * 0.062), int(height * 0.07), 2, 4
     header = f"""[Script Info]

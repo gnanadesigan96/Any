@@ -44,6 +44,16 @@ def run_ffmpeg(args: list, cwd=None) -> None:
         raise RuntimeError(f"ffmpeg failed: {' '.join(cmd)}\n{result.stderr.strip()}")
 
 
+def find_silences(path: Path, min_seconds: float = 1.0, noise_db: int = -40) -> list:
+    """[(start, duration)] for every stretch of near-silence at least min_seconds long."""
+    out = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(path), "-af",
+                          f"silencedetect=noise={noise_db}dB:d={min_seconds}", "-f", "null", "-"],
+                         capture_output=True, text=True).stderr
+    starts = [float(x) for x in re.findall(r"silence_start: ([\d.]+)", out)]
+    durations = [float(x) for x in re.findall(r"silence_duration: ([\d.]+)", out)]
+    return list(zip(starts, durations))
+
+
 def media_duration(path: Path) -> float:
     out = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",

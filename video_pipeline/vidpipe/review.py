@@ -115,3 +115,62 @@ def _write_review_md(run_dir, topic, script, timeline, thumbnails, shorts, metad
         lines.append(f"_Image: {scene.visual}_")
         lines.append("")
     (run_dir / "REVIEW.md").write_text("\n".join(lines), encoding="utf-8")
+
+
+# ---- Shorts format ----------------------------------------------------------------------
+
+def _short_description(short, credits: list) -> str:
+    parts = [short.description.strip()]
+    sources = sorted({f.source.strip() for f in short.fact_check if f.source.strip() and f.source != "n/a"})
+    if sources:
+        parts.append("Sources: " + "; ".join(sources))
+    if credits:
+        parts.append("Footage: " + ", ".join(credits))
+    if short.hashtags:
+        parts.append(" ".join(short.hashtags))
+    return "\n\n".join(parts)
+
+
+def write_shorts_review(run_dir: Path, topic: str, pack, outputs: list, credits: list, dry_run: bool,
+                        regenerate: bool) -> Path:
+    meta_path = run_dir / "metadata.json"
+    metadata = read_json(meta_path)
+    if metadata is None or regenerate:
+        metadata = {
+            "approved": False,
+            "dry_run": dry_run,
+            "topic": topic,
+            "format": "shorts",
+            "shorts": [
+                {"file": out.name, "title": short.title, "description": _short_description(short, cred),
+                 "tags": [h.lstrip("#") for h in short.hashtags], "youtube_video_id": None}
+                for out, short, cred in zip(outputs, pack.shorts, credits)
+            ],
+        }
+        write_json(meta_path, metadata)
+
+    lines = [
+        f"# Review: {topic} ({len(outputs)} Shorts)",
+        "",
+        "Nothing is uploaded until you finish this checklist and set `\"approved\": true` in `metadata.json`.",
+        "",
+        "## Checklist",
+        "- [ ] Watch every `short_N.mp4` (voice, footage that doesn't match, caption timing)",
+        "- [ ] Check every claim in the fact-check lists below",
+        "- [ ] Edit titles/descriptions in `metadata.json` if you want, then set `\"approved\": true`",
+        "",
+    ]
+    for k, (out, short) in enumerate(zip(outputs, pack.shorts), start=1):
+        lines += [
+            f"## Short {k}: {short.title}",
+            f"File: `{out.name}`  |  On-screen hook: \"{short.hook_text}\"  |  {' '.join(short.hashtags)}",
+            "",
+            "**Script**",
+            *[f"{i + 1}. {sc.narration}  _(footage: {sc.search_query})_" for i, sc in enumerate(short.scenes)],
+            "",
+            "**Fact-check**",
+            *[f"- {f.claim} - check against: {f.source}" for f in short.fact_check],
+            "",
+        ]
+    (run_dir / "REVIEW.md").write_text("\n".join(lines), encoding="utf-8")
+    return run_dir / "REVIEW.md"

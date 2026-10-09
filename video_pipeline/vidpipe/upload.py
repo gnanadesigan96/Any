@@ -76,6 +76,19 @@ def upload_run(run_dir: Path, cfg: dict, include_shorts: bool, publish_at: str) 
         raise RuntimeError("Not approved yet: review REVIEW.md, then set \"approved\": true in metadata.json")
 
     youtube = _youtube(cfg)
+    if meta.get("format") == "shorts":
+        for short in meta.get("shorts", []):
+            if short.get("youtube_video_id"):
+                log(f"{short['file']} already uploaded: https://youtu.be/{short['youtube_video_id']}")
+                continue
+            log(f"Uploading {short['file']} (private)...")
+            short["youtube_video_id"] = _insert(youtube, run_dir / short["file"], short["title"],
+                                                short.get("description", ""), short.get("tags", []), cfg,
+                                                publish_at)
+            write_json(meta_path, meta)
+            log(f"Uploaded: https://youtu.be/{short['youtube_video_id']} (private)")
+        return
+
     if meta.get("youtube_video_id"):
         log(f"Main video already uploaded: https://youtu.be/{meta['youtube_video_id']}")
     else:
