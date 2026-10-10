@@ -109,7 +109,43 @@ def _script_stage(run_dir: Path, topic: str, angle: str, cfg: dict, dry_run: boo
     return script, True
 
 
-def _visuals(scenes: list, timing: list, img_dir: Path, cfg: dict, dry_run: bool, exclude=frozenset()) -> list:
+def _lib_key(prompt: str) -> str:
+    return hashlib.sha1(prompt.strip().encode()).hexdigest()[:16]
+
+
+def _to_library(library: Path, prompt: str, picture: Path) -> None:
+    """Keep a picture (and its movie clip, if one was made) under its description, for reuse."""
+    if not library or not picture.exists():
+        return
+    library.mkdir(parents=True, exist_ok=True)
+    key = _lib_key(prompt)
+    for src, ext in ((picture, ".png"), (picture.with_suffix(".mp4"), ".mp4")):
+        dest = library / f"{key}{ext}"
+        if src.exists() and not dest.exists():
+            shutil.copyfile(src, dest)
+
+
+def _from_library(library: Path, prompt: str, picture: Path) -> bool:
+    if not library:
+        return False
+    key = _lib_key(prompt)
+    if not (library / f"{key}.png").exists():
+        return False
+    shutil.copyfile(library / f"{key}.png", picture)
+    if (library / f"{key}.mp4").exists():
+        shutil.copyfile(library / f"{key}.mp4", picture.with_suffix(".mp4"))
+    return True
+
+
+def index_library(run_dir: Path, library: Path) -> None:
+    """Before re-rendering a rewritten script, remember every picture already made in this run."""
+    for manifest_path in run_dir.glob("*/images/prompts.json"):
+        for name, prompt in (read_json(manifest_path, {}) or {}).items():
+            _to_library(library, prompt, manifest_path.parent / name)
+
+
+def _visuals(scenes: list, timing: list, img_dir: Path, cfg: dict, dry_run: bool, exclude=frozenset(),
+             library: Path = None) -> list:
     img_dir.mkdir(parents=True, exist_ok=True)
     if cfg["images"]["provider"] == "stock" and not dry_run:
         return fetch_visuals(scenes, [t["duration"] for t in timing], img_dir, cfg, exclude)
@@ -120,19 +156,28 @@ def _visuals(scenes: list, timing: list, img_dir: Path, cfg: dict, dry_run: bool
     manifest = read_json(manifest_path, {}) or {}
     own = [img_dir / f"scene_{i:03d}.png" for i in range(len(scenes))]
     for i, p in enumerate(own):
-        # A picture made for a different description is stale (e.g. the script was rewritten).
-        # Pictures from before this manifest existed are trusted as-is.
+        # A picture made for a different description is stale (e.g. the script was rewritten):
+        # keep it in the library for reuse, then replace it. Pictures from before the manifest
+        # existed are trusted as-is.
         if p.exists() and manifest.get(p.name, scenes[i].visual) != scenes[i].visual:
-            log(f"  {p.name}: scene description changed, regenerating")
-            p.unlink()
-            p.with_name(p.stem + ".depth.png").unlink(missing_ok=True)
+            _to_library(library, manifest[p.name], p)
+            for stale in (p, p.with_suffix(".mp4"), p.with_name(p.stem + ".depth.png")):
+                stale.unlink(missing_ok=True)
+            manifest.pop(p.name, None)
     paths = [p if p.exists() else own[i - i % k] for i, p in enumerate(own)]
     missing = sorted({p for p in paths if not p.exists()})
-    generate_images([(scenes[int(p.stem[6:])].visual, p) for p in missing], cfg, dry_run)
+    reused = [p for p in missing if _from_library(library, scenes[int(p.stem[6:])].visual, p)]
+    if reused:
+        log(f"  reused {len(reused)} existing picture(s)")
+    todo = [p for p in missing if p not in reused]
+    generate_images([(scenes[int(p.stem[6:])].visual, p) for p in todo], cfg, dry_run)
     for p in set(paths):
-        manifest.setdefault(p.name, scenes[int(p.stem[6:])].visual)
+        prompt = scenes[int(p.stem[6:])].visual
         if p in missing:
-            manifest[p.name] = scenes[int(p.stem[6:])].visual
+            manifest[p.name] = prompt
+        manifest.setdefault(p.name, prompt)
+        if p in todo:
+            _to_library(library, prompt, p)
     write_json(manifest_path, manifest)
     # A real video clip saved as scene_NNN.mp4 (e.g. made with an image-to-video app) wins.
     return [img_dir / f"scene_{i:03d}.mp4" if (img_dir / f"scene_{i:03d}.mp4").exists() else p
@@ -172,6 +217,7 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
     if not dry_run:
         _confirm_spend([sc for short in pack.shorts for sc in short.scenes], cfg, assume_yes)
     vcfg = shorts_config(cfg)
+    index_library(run_dir, run_dir / "library")
     names = [f"{prefix}_{k:02d}" if prefix != "short" else f"short_{k}" for k in range(1, len(pack.shorts) + 1)]
     todo = pack.shorts[:limit] if limit else pack.shorts
     outputs = []
@@ -181,7 +227,8 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
         log(f"{prefix.title()} {k}/{len(pack.shorts)}: {short.title}")
         timing = narrate_scenes(short.scenes, sub, vcfg, dry_run)
         siblings = [run_dir / n / "images" for j, n in enumerate(names, start=1) if j != k]
-        paths = _visuals(short.scenes, timing, sub / "images", vcfg, dry_run, used_ids(siblings))
+        paths = _visuals(short.scenes, timing, sub / "images", vcfg, dry_run, used_ids(siblings),
+                         library=run_dir / "library")
         out = run_dir / f"{names[k - 1]}.mp4"
         overlay = (overlays or [{}] * len(pack.shorts))[k - 1]
         stamp, fp = sub / "fingerprint.txt", _fingerprint(short, overlay, paths, vcfg)

@@ -66,9 +66,14 @@ COMMON_RULES = """Rules for retelling:
 def _outline_prompt(story: str, notes: str, cfg: dict) -> str:
     sr, ch = cfg["series"], cfg["channel"]
     style_hint = sr["style_hint"] or "pick a striking non-photorealistic illustration style that suits the story"
+    seconds = round(sr["target_words"] / 2.8)
+    acts = ("Structure the parts as acts: part 1 sets up the world and ends on the moment everything goes wrong; the "
+            "middle part(s) escalate with a major twist; the final part delivers the climax and a haunting resolution. "
+            if sr["parts"] <= 5 else "")
     return f"""You are adapting a story into a {sr['parts']}-part YouTube Shorts series for the channel "{ch['name']}".
-Each part is a vertical Short of about 40 seconds (about {sr['target_words']} words of narration). Watched in order,
-the parts tell the whole story from beginning to end; each part ends on a cliffhanger that makes people watch the next.
+Each part is a vertical Short of about {seconds} seconds (about {sr['target_words']} words of narration). Watched in
+order, the parts tell the whole story from beginning to end; each part ends on a cliffhanger that makes people
+desperate to watch the next. {acts}
 
 {COMMON_RULES}
 
@@ -107,12 +112,14 @@ def _parts_prompt(bible: SeriesBible, first: int, last: int, cfg: dict) -> str:
 
 Write parts {first} to {last} in full, following the outline exactly. Viewers swipe away within 2 seconds unless
 something grabs them, so every part must be built for retention:
-- Narration of about {sr['target_words']} words (about 35 seconds spoken), present tense, fast and vivid, written for the
-  ear: short punchy sentences, no filler, no slow scene-setting.
+- Narration of about {sr['target_words']} words (about {round(sr['target_words'] / 2.8)} seconds spoken), fast and vivid,
+  written for the ear: short punchy sentences, no filler, no slow scene-setting.
 - The FIRST sentence is the hook: drop the viewer into the most shocking, strange or dangerous moment of this part, or a
   question they must know the answer to. Never open with "Last time", a recap or background.
 - Weave any needed context in after the hook, in a few words, so the part makes sense on its own.
 - Keep an open question alive the whole way through, and escalate: each line should raise the stakes.
+- Re-hook every 15 to 20 seconds with a turn, a reveal or a new question ("Then he saw the boxes."), so nobody
+  swipes away halfway through.
 - End on the part's cliffhanger, then ONE short teaser line that names what is coming in the next part without
   revealing it (e.g. "And in Part 4, he finds out where the Count sleeps."). The final part ends the story with a
   satisfying, haunting close instead.
@@ -288,6 +295,10 @@ def make_series(story: str, notes: str, cfg: dict, dry_run: bool = False, redo: 
                 if dest.exists():
                     log(f"Script updated: {f.name}")
                 dest.write_bytes(f.read_bytes())
+        for old in run_dir.glob("parts_*.json"):  # parts files from an older version of the script
+            if not (src / old.name).exists():
+                log(f"Script updated: removed {old.name}")
+                old.unlink()
 
     bible, episodes = write_series(run_dir, story, notes, cfg, dry_run)
     regenerated = not (run_dir / "metadata.json").exists()
@@ -295,21 +306,35 @@ def make_series(story: str, notes: str, cfg: dict, dry_run: bool = False, redo: 
                           dry_run, assume_yes, regenerated, prefix="part", limit=first_n,
                           overlays=overlays_for(bible, episodes, cfg))
     write_shot_list(run_dir, bible, episodes, first_n or len(episodes))
+    _remove_extra_parts(run_dir, len(episodes))
     return result
+
+
+def _remove_extra_parts(run_dir: Path, parts: int) -> None:
+    """When a series is rewritten with fewer parts, delete the leftover videos so they can't be uploaded by
+    mistake. Their pictures were already saved to library/ and are reused wherever the same shot appears."""
+    import shutil
+    for path in run_dir.glob("part_*"):
+        num = path.name[5:].split(".")[0]
+        if num.isdigit() and int(num) > parts:
+            shutil.rmtree(path) if path.is_dir() else path.unlink()
 
 
 # ---- real motion for key scenes (free image-to-video apps) ---------------------------------
 
-KEY_SHOTS = 3
-
-
 def key_scenes(episode: Episode) -> list:
-    """The hook, the most crowded mid scene, and the cliffhanger: where motion matters most."""
+    """The hook, the most crowded scene in each half, and the cliffhanger: where motion matters most."""
     n = len(episode.scenes)
-    if n <= KEY_SHOTS:
+    if n <= 4:
         return list(range(n))
-    middle = max(range(1, n - 1), key=lambda i: (len(episode.scenes[i].characters), -abs(i - n // 2)))
-    return sorted({0, middle, n - 2})
+
+    def busiest(lo, hi):
+        return max(range(lo, hi), key=lambda i: (len(episode.scenes[i].characters), -abs(i - (lo + hi) // 2)))
+
+    picks = {0, n - 2, busiest(1, n // 2)}
+    if n >= 12:
+        picks.add(busiest(n // 2, n - 2))
+    return sorted(picks)
 
 
 def motion_prompt(scene: StoryScene) -> str:

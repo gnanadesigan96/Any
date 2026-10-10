@@ -40,6 +40,6 @@ video:
 
 # Story series (python make_video.py series "Dracula by Bram Stoker"):
 series:
-  parts: 20                 # 20 Shorts of ~40 seconds that tell the whole story
+  parts: 3                  # the whole story in 3 Shorts of ~70-80 seconds each
   style_hint: ""            # e.g. "anime", "graphic novel", "watercolour storybook"
   images_provider: "local"  # free AI illustrations made on your Mac (Apple Silicon)

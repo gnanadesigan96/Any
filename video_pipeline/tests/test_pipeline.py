@@ -513,10 +513,24 @@ def test_dracula_script_dir_is_valid_and_used(cfg):
     cfg["shorts"].update(width=360, height=640)
     run_dir = make_series("Dracula", "", cfg, dry_run=True, first_n=1, script_dir="stories/dracula")
     bible, episodes = write_series(run_dir, "Dracula", "", cfg, dry_run=True)
-    assert bible.series_title == "Dracula" and len(episodes) == 20
-    assert [e.part for e in episodes] == list(range(1, 21))
+    assert bible.series_title == "Dracula" and len(episodes) == 3
+    assert [e.part for e in episodes] == [1, 2, 3]
     names = {c.name for c in bible.characters}
     assert all(set(s.characters) <= names for e in episodes for s in e.scenes)
+    assert (run_dir / "part_01.mp4").exists()
+
+
+def test_rewritten_series_drops_old_parts(cfg):
+    from vidpipe.series import make_series
+    cfg["shorts"].update(width=360, height=640)
+    run_dir = make_series("Dracula", "", cfg, dry_run=True, first_n=1, script_dir="stories/dracula")
+    # Leftovers from the earlier 20-part version of the script.
+    (run_dir / "parts_16-20.json").write_text("{}")
+    (run_dir / "part_07" / "images").mkdir(parents=True)
+    (run_dir / "part_07.mp4").write_bytes(b"old")
+    make_series("Dracula", "", cfg, dry_run=True, first_n=1, script_dir="stories/dracula")
+    assert not (run_dir / "parts_16-20.json").exists()
+    assert not (run_dir / "part_07").exists() and not (run_dir / "part_07.mp4").exists()
     assert (run_dir / "part_01.mp4").exists()
 
 
@@ -584,7 +598,7 @@ def test_series_overlays_and_shot_list(cfg, tmp_path):
     eps = [e for f in sorted((ROOT / "stories/dracula").glob("parts_*.json"))
            for e in series.EpisodeBatch.model_validate(json.loads(f.read_text())).episodes]
     ov = series.overlays_for(bible, eps, cfg)
-    assert ov[0] == {"hook": "DON'T SAY HIS NAME", "end_text": "Part 2 →", "end_sub": "Next: The Man With No Reflection"}
+    assert ov[0] == {"hook": "HE CAN'T LEAVE", "end_text": "Part 2 →", "end_sub": "Next: The Lady in White"}
     assert ov[-1]["end_text"] == "The End"
     assert all(not e.scenes[0].narration.lower().startswith("last time") for e in eps)
     path = series.write_shot_list(tmp_path, bible, eps, 2)
@@ -635,6 +649,20 @@ def test_movie_clip_replaces_picture(cfg, tmp_path):
     (img_dir / "scene_000.png").write_bytes(b"x")
     (img_dir / "scene_000.mp4").write_bytes(b"clip")
     assert pipeline._visuals(scenes, [], img_dir, cfg, dry_run=True)[0].suffix == ".mp4"
+
+
+def test_rewritten_script_reuses_pictures_from_library(cfg, tmp_path):
+    from vidpipe import pipeline
+    old_dir, new_dir, library = tmp_path / "part_01/images", tmp_path / "part_02/images", tmp_path / "library"
+    castle = Scene(narration="n", visual="A castle at night", search_query="")
+    pipeline._visuals([castle], [], old_dir, cfg, dry_run=True)
+    (old_dir / "scene_000.png").write_bytes(b"made on the Mac")
+    pipeline.index_library(tmp_path, library)
+    # The same shot now sits in another part, at another position: it is copied, not regenerated.
+    other = Scene(narration="n", visual="A ship in a storm", search_query="")
+    pics = pipeline._visuals([other, castle], [], new_dir, cfg, dry_run=True, library=library)
+    assert pics[1].read_bytes() == b"made on the Mac"
+    assert pics[0].read_bytes() != b"made on the Mac"
 
 
 def test_video_from_older_version_without_stamp_is_rebuilt(cfg):

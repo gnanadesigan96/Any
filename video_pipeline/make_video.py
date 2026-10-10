@@ -4,7 +4,7 @@
   python make_video.py make "How the Tacoma Narrows Bridge Tore Itself Apart"
   python make_video.py next --niche "Engineering Disasters"
   python make_video.py topics --niche "Engineering Disasters" --limit 20
-  python make_video.py series "Dracula by Bram Stoker" --parts 20 --style "graphic novel"
+  python make_video.py series "Dracula by Bram Stoker" --parts 3 --style "graphic novel"
   python make_video.py upload runs/<run-folder> [--shorts] [--publish-at 2026-11-01T14:30:00Z]
 
 Add --dry-run to make/next to test everything offline (placeholder images, silent voice).
@@ -57,7 +57,7 @@ def main() -> int:
 
     p_series = sub.add_parser("series", help="retell one story as a numbered series of Shorts")
     p_series.add_argument("story", help='e.g. "Dracula by Bram Stoker" or a movie title')
-    p_series.add_argument("--parts", type=int, help="number of parts (default from config: 20)")
+    p_series.add_argument("--parts", type=int, help="number of parts (default from config: 3)")
     p_series.add_argument("--style", default="", help='visual style hint, e.g. "anime", "watercolour storybook"')
     p_series.add_argument("--notes", default="", help="anything Claude should know (focus, tone, ending)")
     p_series.add_argument("--first", type=int, default=0, help="only render the first N parts this run")

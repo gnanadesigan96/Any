@@ -36,39 +36,41 @@ After rendering, the pipeline reports any silence longer than 1 second with its 
 (`Warning: 1.4s of silence at 0:21.3 in short_2.mp4`) so you can spot voice dropouts without
 watching everything.
 
-## Story series (one story, 20 Shorts)
+## Story series (one story, 3 Shorts)
 
 ```
-python make_video.py series "Dracula by Bram Stoker" --parts 20 --style "graphic novel"
+python make_video.py series "Dracula by Bram Stoker" --style "graphic novel"
 ```
 
-Retells one story as a numbered series of ~40-second Shorts (`part_01.mp4` ... `part_20.mp4`). Each part opens
-with a one-line recap and ends on a cliffhanger, the top of the screen shows "Series · Part 3/20", and every image
-uses the same art style and character designs, so the series looks like one world.
+Retells a whole story in 3 vertical Shorts of about 1 to 1:20 minutes each (`part_01.mp4` ... `part_03.mp4`):
+a beginning, a middle and an ending, each on its own cliffhanger. The top of the screen shows "Series · Part 2/3",
+and every image uses the same art style and character designs, so the series looks like one world. Change the
+count with `--parts` (or `series.parts` in config.yaml) if a story needs more room.
 
 - **Script (free):** the command writes `PROMPT_1_outline.txt`. Paste it into a new claude.ai chat and save the reply
-  as `reply_1_outline.txt`, then re-run. It then asks for the parts in batches of 5 (`PROMPT_2_...`, `PROMPT_3_...`),
-  so a 20-part series takes 5 paste rounds in total. Use a new chat for each prompt.
+  as `reply_1_outline.txt`, then re-run. It then asks for the parts (`PROMPT_2_...`), so a 3-part series takes
+  2 paste rounds. Use a new chat for each prompt.
 - **Images (free):** illustrations are generated on your Mac by Z-Image-Turbo through mflux (Apache-2.0, commercial
   use allowed). It needs an Apple Silicon Mac with 16 GB+ memory and about 20 GB free disk for the one-time model
-  download. Expect very roughly 30-90 seconds per image, so a 20-part series (about 160-200 images) takes a few
-  hours. Leave it running; it resumes where it stopped if interrupted.
-- **Ready-made script:** `stories/dracula/` holds a complete 20-part Dracula script (outline, character designs and
+  download. Expect very roughly 30-90 seconds per image (much longer if the Mac is swapping, so close other apps),
+  about 50 images for a 3-part series. Leave it running; it resumes where it stopped if interrupted.
+- **Ready-made script:** `stories/dracula/` holds a complete 3-part Dracula script (outline, character designs and
   every part), so you can skip the Claude.ai steps:
-  `python make_video.py series "Dracula" --script-dir stories/dracula --first 2`
+  `python make_video.py series "Dracula" --script-dir stories/dracula`
 - **Animation (free):** series images are animated in 2.5D. A small depth model (Depth Anything V2 Small,
   Apache-2.0, ~100 MB, downloaded once) works out what is near and far, so the camera moves through each
   illustration with real parallax, and fog, rain, snow, embers, candle flicker or lightning are added when the scene
   mentions them. Set `video.animation: "parallax"` to use this for any Shorts with still images too.
 - **Built for retention:** every part opens on its most dramatic moment (no slow recaps), shows a big hook line for
   the first 2 seconds, ends on a cliffhanger plus a spoken teaser, and shows a "PART N+1 → Next: ..." end card. A
-  generated score adds a dark drone, a whoosh on every cut, a boom on the hook and the cliffhanger, and a riser into it.
-- **Real movement for key shots (free):** after each run, `ANIMATE_ME.md` lists the 3 key shots of every part with the
+  generated score adds a dark drone, a boom on the hook and the cliffhanger, and a riser into it.
+- **Real movement for key shots (free):** after each run, `ANIMATE_ME.md` lists up to 4 key shots of every part with the
   image file and a ready motion prompt. Turn them into clips with a free image-to-video app (Meta AI, Kling, Hailuo,
   Gemini), save each clip next to its image as `scene_NNN.mp4`, and re-run: clips replace the stills automatically.
-- **Editing is safe:** if the script changes, only the affected voice lines, pictures and videos are redone; pictures
-  whose descriptions didn't change are kept.
-- **Try it small first:** `--first 2` renders only parts 1-2 so you can check the style before committing hours.
+- **Editing is safe:** if the script changes, only the affected voice lines, pictures and videos are redone. Every
+  picture already made is kept in `library/` under its description, so a shot that moves to another scene or part
+  is copied instead of generated again.
+- **Try it small first:** `--first 1` renders only part 1 so you can check the style before committing hours.
   Run again without `--first` to render the rest.
 - **Choosing stories:** public-domain stories (classic novels, myths, folk tales, films from the 1920s) are safe to
   retell in full. For recent movies, never use real footage, posters or actors' likenesses; your own narration over

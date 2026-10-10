@@ -46,123 +46,21 @@
   "episodes": [
     {
       "part": 1,
-      "title": "Don't Say His Name",
-      "summary": "Jonathan Harker travels to Transylvania to help Count Dracula buy a London house. Villagers warn him and give him a crucifix; a coachman with glowing eyes collects him at midnight.",
-      "cliffhanger": "The coachman silences a pack of wolves with one gesture."
+      "title": "The Guest Who Couldn't Leave",
+      "summary": "Jonathan Harker travels to Castle Dracula, discovers the Count has no reflection and is a prisoner, survives the three vampire women, and finds the Count asleep in a box of earth just as fifty boxes leave for London.",
+      "cliffhanger": "The Count is on his way to London, and Jonathan is left behind with the three women."
     },
     {
       "part": 2,
-      "title": "The Man With No Reflection",
-      "summary": "The Count welcomes Jonathan. He never eats and is never seen by day. While shaving, Jonathan sees no reflection of the Count, who lunges at a drop of blood and recoils from the crucifix.",
-      "cliffhanger": "Every door in the castle is locked. Jonathan is a prisoner."
+      "title": "The Lady in White",
+      "summary": "The Demeter runs aground in Whitby with a dead captain and fifty boxes of earth. The Count feeds on Lucy; Van Helsing's garlic fails, a wolf breaks in, and Lucy dies, then rises as the lady in white who lures children.",
+      "cliffhanger": "Lucy's tomb is empty, and the hunters must face what she has become."
     },
     {
       "part": 3,
-      "title": "The Women in the Moonlight",
-      "summary": "Jonathan sees the Count crawl head-first down the castle wall. He falls asleep in a forbidden wing and wakes to three vampire women; the Count stops them and claims Jonathan.",
-      "cliffhanger": "The Count isn't saving Jonathan. He is saving him for later."
-    },
-    {
-      "part": 4,
-      "title": "Where the Count Sleeps",
-      "summary": "Jonathan climbs down the wall into a crypt and finds the Count lying in a box of earth, gorged with blood. He strikes with a shovel; fifty boxes leave for London.",
-      "cliffhanger": "The boxes leave for London, and Jonathan is left behind with the three women."
-    },
-    {
-      "part": 5,
-      "title": "She Was Next",
-      "summary": "Mina waits for Jonathan while staying with Lucy in Whitby. Lucy accepts Arthur over Dr. Seward and Quincey Morris, and starts sleepwalking. A storm brings a ship.",
-      "cliffhanger": "A ship is driven toward Whitby by a terrible storm."
-    },
-    {
-      "part": 6,
-      "title": "The Ship With No Crew",
-      "summary": "The Demeter runs aground with its dead captain tied to the wheel. A huge dog leaps ashore. The log tells of sailors vanishing one by one; the cargo is fifty boxes of earth.",
-      "cliffhanger": "The Count has arrived in England."
-    },
-    {
-      "part": 7,
-      "title": "Something on the Bench",
-      "summary": "Lucy sleepwalks to the clifftop churchyard. Mina sees a dark figure with red eyes bending over her. Lucy is alone when Mina arrives, with two tiny marks on her throat.",
-      "cliffhanger": "Mina blames a pin for the marks. She is wrong."
-    },
-    {
-      "part": 8,
-      "title": "The Man Who Eats Flies",
-      "summary": "Dr. Seward's patient Renfield eats flies, spiders and birds, and senses his Master at Carfax next door. Mina finds Jonathan in a Budapest hospital and marries him. Lucy is dying in London.",
-      "cliffhanger": "Lucy is dying, and no one knows why."
-    },
-    {
-      "part": 9,
-      "title": "The Professor's Warning",
-      "summary": "Lucy is wasting away. Dr. Seward calls Professor Van Helsing, who finds terrible blood loss. Arthur gives blood; Van Helsing fills her room with garlic flowers, which her mother throws away.",
-      "cliffhanger": "The window is opened, and the garlic is gone."
-    },
-    {
-      "part": 10,
-      "title": "That Wasn't Lucy",
-      "summary": "A wolf smashes Lucy's window and her mother dies of fright. Dying, Lucy's teeth grow sharp and she begs Arthur for a kiss; Van Helsing stops him. Lucy dies.",
-      "cliffhanger": "Van Helsing says Lucy's death is only the beginning."
-    },
-    {
-      "part": 11,
-      "title": "The Lady in White",
-      "summary": "Newspapers report children lured away at night by a lady in white and found with throat wounds. Van Helsing and Seward find Lucy's coffin empty and see her carrying a child.",
-      "cliffhanger": "Lucy returns from the dark with blood on her lips."
-    },
-    {
-      "part": 12,
-      "title": "The Hardest Goodbye",
-      "summary": "Van Helsing brings Arthur, Quincey and Seward to the tomb. Undead Lucy calls to Arthur but is driven back by a crucifix and the sealed door. Arthur drives the stake and Lucy finds peace.",
-      "cliffhanger": "Now they know what they are hunting."
-    },
-    {
-      "part": 13,
-      "title": "Fifty Coffins",
-      "summary": "Jonathan and Mina join the hunters. Jonathan has seen the Count, younger, in London. Mina compiles every record; the Count must rest in his fifty boxes of earth hidden around London. The men leave Mina out.",
-      "cliffhanger": "Mina wakes paler every morning."
-    },
-    {
-      "part": 14,
-      "title": "The House of Rats",
-      "summary": "The men break into Carfax and seal the boxes with holy bread; thousands of rats swarm until Arthur's terriers drive them off. Renfield, refused his release, is found broken in his cell.",
-      "cliffhanger": "Renfield's last words change everything."
-    },
-    {
-      "part": 15,
-      "title": "Unclean",
-      "summary": "Dying, Renfield confesses he let the Count in to visit Mina. The men break into the Harkers' room to find the Count forcing Mina to drink his blood; he escapes as mist.",
-      "cliffhanger": "Mina cries out that she is unclean."
-    },
-    {
-      "part": 16,
-      "title": "One Box Left",
-      "summary": "Holy bread burns a scar onto Mina's forehead. The men destroy box after box and ambush the Count in Piccadilly; Jonathan's knife slashes his coat and gold spills out, but he escapes.",
-      "cliffhanger": "One box of earth is still missing."
-    },
-    {
-      "part": 17,
-      "title": "Through His Eyes",
-      "summary": "Mina asks Van Helsing to hypnotise her at dawn. In a trance she senses the Count: dark water and creaking chains. He is on the ship Czarina Catherine, fleeing home.",
-      "cliffhanger": "The link works both ways."
-    },
-    {
-      "part": 18,
-      "title": "One Step Ahead",
-      "summary": "The ship docks secretly at another port and the Count's box is carried upriver. The hunters split up: Jonathan and Arthur by steam launch, Seward and Quincey on horseback, Van Helsing and Mina by carriage to the castle.",
-      "cliffhanger": "Mina is changing, and the three sisters are waiting."
-    },
-    {
-      "part": 19,
-      "title": "The Circle in the Snow",
-      "summary": "Near the castle Van Helsing draws a circle of holy bread around Mina. The three women call to her but cannot cross. At dawn he enters the castle, destroys the women and seals the Count's tomb.",
-      "cliffhanger": "A wagon carrying the last box races toward the castle."
-    },
-    {
-      "part": 20,
-      "title": "Sunset",
-      "summary": "At sunset the hunters converge on the wagon. Quincey is wounded. Jonathan cuts the Count's throat and Quincey stabs his heart; the Count turns to dust, Mina's scar vanishes, and Quincey dies smiling.",
-      "cliffhanger": "Years later, the Harkers name their son Quincey."
+      "title": "The Final Hunt",
+      "summary": "Arthur frees undead Lucy with a stake. The hunters destroy the Count's boxes, the Count attacks Mina, and through her hypnotic link they chase him home, defeat the three women and destroy him at sunset.",
+      "cliffhanger": "The Count turns to dust and Mina is free."
     }
   ]
 }

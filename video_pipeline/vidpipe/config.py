@@ -66,10 +66,10 @@ DEFAULTS = {
         },
     },
     "series": {
-        "parts": 20,
-        "per_batch": 5,           # parts written per Claude.ai prompt (keeps each reply short enough)
-        "target_words": 100,      # ~40 seconds of narration per part
-        "words_per_scene": 12,
+        "parts": 3,               # a whole story in 3 gripping parts (beginning, escalation, finale)
+        "per_batch": 3,           # parts written per Claude.ai prompt (keeps each reply short enough)
+        "target_words": 200,      # ~70-80 seconds of narration per part
+        "words_per_scene": 13,
         "style_hint": "",         # e.g. "anime", "graphic novel", "watercolour storybook"
         "images_provider": "local",  # local (free, Apple Silicon) or openai (paid)
         "animation": "parallax",  # 2.5D animated illustrations for story series

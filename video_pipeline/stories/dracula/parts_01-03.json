@@ -1,0 +1,388 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "The Guest Who Couldn't Leave",
+      "hook_text": "HE CAN'T LEAVE",
+      "description": "A young lawyer visits Count Dracula's castle, and discovers he is never meant to leave.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Jonathan looked into the mirror. The Count was standing right behind him. The mirror showed no one.",
+          "visual": "A small hand mirror reflecting only Jonathan and an empty room behind him",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "Three days earlier, an entire village had begged him not to come here.",
+          "visual": "Frightened villagers crowding around a young traveller in a candlelit mountain inn",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "An old woman pushed a crucifix into his hand. Evil walks tonight, she whispered.",
+          "visual": "An old peasant woman pressing a small silver crucifix into Jonathan's palm",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "At midnight, a black carriage came for him. Its driver's eyes glowed red.",
+          "visual": "A tall cloaked coachman holding the reins, face in shadow, eyes glowing red",
+          "characters": []
+        },
+        {
+          "narration": "Wolves circled them in the dark, until the driver raised one hand, and every wolf went silent.",
+          "visual": "The coachman raising a pale hand as wolves cower in a ring around the carriage",
+          "characters": []
+        },
+        {
+          "narration": "At the castle, Count Dracula welcomed him. Tall. Pale. Ice cold to the touch.",
+          "visual": "A tall old nobleman holding an antique oil lamp in an arched stone doorway",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "He never ate, and Jonathan never saw him by day.",
+          "visual": "Jonathan dining alone at a long candlelit table while the Count watches from the shadows",
+          "characters": [
+            "Jonathan",
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Then came the mirror. The razor slipped, and the Count lunged at the blood on his throat.",
+          "visual": "The Count lunging forward with blazing red eyes and clawed hands",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Only the crucifix stopped him.",
+          "visual": "The Count recoiling from a small glowing crucifix on Jonathan's chest",
+          "characters": [
+            "Count Dracula",
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "That night, Jonathan tried the doors. Every single one was locked.",
+          "visual": "Jonathan pulling at a heavy iron-bound locked door in a dark stone corridor",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "From his window, he watched the Count crawl head first down the castle wall, like a lizard.",
+          "visual": "The Count crawling face-down down a sheer stone wall, cloak spread like bat wings",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Desperate, he slept in a forbidden room, and woke to three women bending over him, teeth bared.",
+          "visual": "Three pale women in flowing white gowns leaning over a sleeping man in moonlight",
+          "characters": [
+            "The Three Sisters",
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "The Count hurled them back. This man is mine, he snarled. When I am done, you may have him.",
+          "visual": "The Count furious, eyes blazing, flinging the women away from the couch",
+          "characters": [
+            "Count Dracula",
+            "The Three Sisters"
+          ]
+        },
+        {
+          "narration": "So Jonathan climbed down the wall himself, and found the Count asleep in a box of earth, lips red with blood.",
+          "visual": "The Count lying in a box of earth in a crypt, eyes open, blood on his lips",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Fifty boxes like it were loaded onto wagons that morning. Bound for London.",
+          "visual": "Workmen loading large wooden crates onto horse wagons in a castle courtyard",
+          "characters": []
+        },
+        {
+          "narration": "And Jonathan was left behind with the three women. In Part 2, the Count reaches England, and chooses his victim.",
+          "visual": "Jonathan at a window as three pale figures appear in the dark corridor behind him",
+          "characters": [
+            "Jonathan",
+            "The Three Sisters"
+          ]
+        }
+      ]
+    },
+    {
+      "part": 2,
+      "title": "The Lady in White",
+      "hook_text": "HE CHOSE HER",
+      "description": "The Count reaches England and fixes his eyes on one young woman. Nobody can save her.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "The ship crashed into the harbour with a dead captain tied to the wheel, and no crew at all.",
+          "visual": "A dead sea captain lashed to a ship's wheel in a raging storm, a crucifix bound in his hands",
+          "characters": []
+        },
+        {
+          "narration": "A huge black dog leapt from the deck and vanished into the graveyard.",
+          "visual": "A huge black dog leaping from a ship's bow onto a beach at night",
+          "characters": []
+        },
+        {
+          "narration": "Its only cargo: fifty boxes of earth. The Count had arrived in England.",
+          "visual": "Rows of wooden crates in a dark ship's hold",
+          "characters": []
+        },
+        {
+          "narration": "In that same town, Lucy had just said yes to Arthur, the man she loved.",
+          "visual": "Arthur kneeling before Lucy in a sunlit garden",
+          "characters": [
+            "Arthur Holmwood",
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "But she had started walking in her sleep.",
+          "visual": "Lucy in a white nightgown walking with closed eyes down a dark hallway",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "One night, her best friend Mina found her bed empty, and ran to the clifftop graveyard.",
+          "visual": "Mina in a shawl running through cobbled night streets toward a ruined abbey",
+          "characters": [
+            "Mina"
+          ]
+        },
+        {
+          "narration": "Something dark was bent over Lucy's throat. It lifted a face with burning red eyes.",
+          "visual": "A long dark figure bending over a woman in white on a graveyard bench, red eyes glowing",
+          "characters": [
+            "Count Dracula",
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "On her neck were two tiny red marks.",
+          "visual": "Close-up of two small puncture marks on a pale throat",
+          "characters": []
+        },
+        {
+          "narration": "Back in London, Lucy lost blood every night, and no doctor could say why.",
+          "visual": "Lucy deathly pale in bed in a Victorian bedroom, Arthur holding her hand",
+          "characters": [
+            "Lucy",
+            "Arthur Holmwood"
+          ]
+        },
+        {
+          "narration": "Only one man guessed the truth. Professor Van Helsing.",
+          "visual": "An elderly professor with a doctor's bag arriving at a London townhouse at night",
+          "characters": [
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "He hung garlic flowers around her window, and made everyone swear not to touch them.",
+          "visual": "Van Helsing hanging wreaths of white garlic flowers around a window",
+          "characters": [
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "That night, her mother threw them away, and opened the window.",
+          "visual": "An open window at night, garlic flowers scattered on the floor, curtains blowing",
+          "characters": []
+        },
+        {
+          "narration": "A wolf smashed through the glass.",
+          "visual": "A great grey wolf crashing through a bedroom window in a shower of glass",
+          "characters": []
+        },
+        {
+          "narration": "Dying, Lucy begged Arthur for a kiss, in a voice that wasn't hers. Her teeth had grown sharp.",
+          "visual": "Lucy reaching up toward Arthur with half-closed eyes, sharp teeth glinting",
+          "characters": [
+            "Lucy",
+            "Arthur Holmwood"
+          ]
+        },
+        {
+          "narration": "Van Helsing dragged him back. Moments later, Lucy was dead.",
+          "visual": "Van Helsing seizing Arthur's arm and pulling him away from the bed",
+          "characters": [
+            "Van Helsing",
+            "Arthur Holmwood"
+          ]
+        },
+        {
+          "narration": "Days later, children began to vanish at night, led away by a beautiful lady in white.",
+          "visual": "Lucy in a white burial gown leading a small child through a misty graveyard",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "In Part 3, the final part, they open Lucy's coffin, and the hunt for the Count begins.",
+          "visual": "An open empty coffin in a crypt, lantern light",
+          "characters": []
+        }
+      ]
+    },
+    {
+      "part": 3,
+      "title": "The Final Hunt",
+      "hook_text": "ONE CHANCE LEFT",
+      "description": "The hunters chase the Count across Europe in a race against the setting sun.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Arthur raised the stake over the woman he loved.",
+          "visual": "Arthur holding a wooden stake and a hammer, hands shaking",
+          "characters": [
+            "Arthur Holmwood"
+          ]
+        },
+        {
+          "narration": "Lucy had risen from her grave to feed on children. This was the only way to set her free.",
+          "visual": "Lucy in white, arms outstretched, smiling coldly by a tomb door at night",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "One blow, and she was at peace. Now the hunters knew what they were facing.",
+          "visual": "Lucy's face serene and gentle in her coffin, warm light",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "The Count slept by day in fifty boxes of earth, hidden across London.",
+          "visual": "A map of London marked with pins and small drawings of crates",
+          "characters": []
+        },
+        {
+          "narration": "Box by box, they sealed them with holy bread.",
+          "visual": "Van Helsing crumbling a white wafer into an open crate of earth",
+          "characters": [
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "But while they hunted him, he was hunting Mina.",
+          "visual": "Silhouette of the Count gripping a woman by a moonlit window, cloak swirling",
+          "characters": [
+            "Count Dracula",
+            "Mina"
+          ]
+        },
+        {
+          "narration": "They burst in to find him forcing her to drink his blood. He vanished as mist.",
+          "visual": "The Count recoiling and snarling from a raised white wafer",
+          "characters": [
+            "Count Dracula",
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "Mina was left with a burning red scar on her forehead.",
+          "visual": "A red burn mark on Mina's forehead, her eyes closed in pain",
+          "characters": [
+            "Mina"
+          ]
+        },
+        {
+          "narration": "Cornered, the Count fled for home with his last box.",
+          "visual": "The Count leaping through a window in a burst of glass",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "But his bite had linked his mind to Mina's. In a trance, she could hear him: water, chains, a ship.",
+          "visual": "Van Helsing hypnotising Mina by candlelight, moving his hands before her eyes",
+          "characters": [
+            "Van Helsing",
+            "Mina"
+          ]
+        },
+        {
+          "narration": "The hunters raced across Europe after him.",
+          "visual": "A steam train racing through Eastern European countryside",
+          "characters": []
+        },
+        {
+          "narration": "Below his castle, three women rose from the snow, calling Mina their sister. A circle of holy bread held them back.",
+          "visual": "Mina inside a faintly glowing circle in the snow, the women outside it",
+          "characters": [
+            "Mina",
+            "The Three Sisters"
+          ]
+        },
+        {
+          "narration": "Then, at sunset, the wagon carrying his box raced for the castle gates. If the sun set first, he would wake.",
+          "visual": "A red sun sinking behind snowy peaks, a wagon racing below",
+          "characters": []
+        },
+        {
+          "narration": "They tore off the lid. His red eyes snapped open.",
+          "visual": "The Count lying in a box of earth, red eyes snapping open in the sunset glow",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Jonathan's knife cut his throat. Quincey's blade found his heart.",
+          "visual": "Two blades striking down into a box, silhouetted against the setting sun",
+          "characters": [
+            "Jonathan",
+            "Quincey Morris"
+          ]
+        },
+        {
+          "narration": "The Count crumbled to dust. The scar vanished from Mina's forehead.",
+          "visual": "A figure crumbling into dust that drifts away in red sunset light",
+          "characters": []
+        },
+        {
+          "narration": "Quincey, mortally wounded, died smiling. They had won.",
+          "visual": "Quincey lying in the snow smiling, friends kneeling around him",
+          "characters": [
+            "Quincey Morris",
+            "Jonathan",
+            "Mina"
+          ]
+        }
+      ]
+    }
+  ]
+}
