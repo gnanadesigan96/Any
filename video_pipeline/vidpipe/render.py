@@ -73,13 +73,17 @@ def _render_video_clip(src: Path, frames: int, out: Path, cfg: dict, vertical: b
 
 
 def render_scene_clip(image: Path, frames: int, motion: str, out: Path, cfg: dict,
-                      vertical: bool = False) -> None:
+                      vertical: bool = False, index: int = 0, text: str = "") -> None:
     v = cfg["video"]
     fps, zoom = v["fps"], v["zoom"]
     enc = ["-c:v", "libx264", "-preset", v["preset"], "-crf", v["crf"], "-pix_fmt", "yuv420p",
            "-frames:v", frames, "-an", out]
     if image.suffix.lower() in VIDEO_SUFFIXES:
         _render_video_clip(image, frames, out, cfg, vertical, enc)
+        return
+    if v.get("animation") == "parallax" and not vertical:
+        from .animate import render_parallax_clip
+        render_parallax_clip(image, frames, index, out, cfg, text)
         return
     if not vertical:
         w, h = v["width"], v["height"]
@@ -153,7 +157,8 @@ def _absolute_words(timing: list, timeline: list, scene_ids, offset: float, fps:
     return words
 
 
-def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title: str = "") -> Path:
+def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title: str = "",
+                scene_texts: list = None) -> Path:
     v = cfg["video"]
     fps = v["fps"]
     work = run_dir / "work"
@@ -166,7 +171,9 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
 
     def work_scene(i):
         if not clips[i].exists():
-            render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)], clips[i], cfg)
+            text = scene_texts[i] if scene_texts else timing[i].get("text", "")
+            render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)], clips[i], cfg,
+                              index=i, text=text)
         if not wavs[i].exists():
             _scene_wav(run_dir / "audio" / timing[i]["audio"], timeline[i]["frames"], fps, wavs[i])
 

@@ -149,7 +149,8 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
         if not out.exists():
             video = sub / "video.mp4"
             if not video.exists():
-                render_main(sub, paths, timing, vcfg, title=short.hook_text)
+                render_main(sub, paths, timing, vcfg, title=short.hook_text,
+                            scene_texts=[f"{sc.visual} {sc.narration}" for sc in short.scenes])
             shutil.copyfile(video, out)
         duration = check_output(out, check_silence=not dry_run)
         if duration > 180:

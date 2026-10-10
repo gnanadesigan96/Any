@@ -513,3 +513,43 @@ def test_dracula_script_dir_is_valid_and_used(cfg):
     names = {c.name for c in bible.characters}
     assert all(set(s.characters) <= names for e in episodes for s in e.scenes)
     assert (run_dir / "part_01.mp4").exists()
+
+
+# ---- 2.5D animation -----------------------------------------------------------------------
+
+def test_effects_picked_from_scene_text():
+    from vidpipe.animate import effects_for
+    assert effects_for("A ship in a raging storm") == ["rain", "lightning"]
+    assert effects_for("Van Helsing by a campfire in the snow") == ["snow", "embers"]
+    assert effects_for("Mina writing by candlelight") == ["flicker"]
+    assert effects_for("A quiet sunny garden") == []
+
+
+def test_parallax_clip_renders_exact_frames(tmp_path, cfg, monkeypatch):
+    import numpy as np
+    from PIL import Image
+    from vidpipe import animate
+    img = tmp_path / "scene.png"
+    Image.new("RGB", (360, 640), (90, 60, 40)).save(img)
+    # Stand-in depth model: a vertical gradient (top far, bottom near).
+    monkeypatch.setattr(animate._Depth, "get", classmethod(lambda cls: (lambda rgb: np.tile(
+        np.linspace(0, 1, 518, dtype=np.float32)[:, None], (1, 518)))))
+    cfg["video"].update(width=360, height=640, animation="parallax")
+    out = tmp_path / "clip.mp4"
+    render_scene_clip(img, 24, "zoom_in", out, cfg, index=2, text="a foggy night in the snow")
+    probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-count_frames", "-show_entries",
+                            "stream=width,height,nb_read_frames", "-of", "csv=p=0", str(out)],
+                           capture_output=True, text=True).stdout.strip()
+    assert probe == "360,640,24"
+    assert (tmp_path / "scene.depth.png").exists()  # depth is cached for re-renders
+
+
+@pytest.mark.skipif(not (ROOT / "models" / "depth_anything_v2_vits.onnx").exists(),
+                    reason="depth model not downloaded")
+def test_real_depth_model(tmp_path):
+    import numpy as np
+    from vidpipe.animate import depth_map
+    rgb = np.zeros((200, 120, 3), np.uint8)
+    rgb[100:, :] = 200  # bright lower half
+    d = depth_map(tmp_path / "x.png", rgb)
+    assert d.shape == (200, 120) and 0 <= d.min() and d.max() <= 1

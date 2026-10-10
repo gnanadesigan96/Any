@@ -72,6 +72,7 @@ DEFAULTS = {
         "words_per_scene": 12,
         "style_hint": "",         # e.g. "anime", "graphic novel", "watercolour storybook"
         "images_provider": "local",  # local (free, Apple Silicon) or openai (paid)
+        "animation": "parallax",  # 2.5D animated illustrations for story series
         "voice_speed": 0.95,      # storytelling pace: a little slower and more dramatic than fact Shorts
         "sentence_pause": 0.2,
     },
@@ -82,6 +83,10 @@ DEFAULTS = {
         "crf": 20,
         "preset": "veryfast",
         "zoom": 0.12,
+        # Still images: "kenburns" = slow zoom/pan; "parallax" = 2.5D depth animation + weather/light effects
+        "animation": "kenburns",
+        "parallax": {"strength": 1.0},
+        "effects": True,          # parallax only: fog, rain, snow, embers, flicker, lightning from scene text
         "captions": True,
         "caption_font": "Inter",
         "caption_font_file": "",

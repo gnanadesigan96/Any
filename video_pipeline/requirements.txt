@@ -7,5 +7,6 @@ google-api-python-client>=2.100
 google-auth-oauthlib>=1.2
 kokoro-onnx>=0.6
 # Free local illustrated images for story series (Apple Silicon Macs only)
+opencv-python-headless>=4.8
 mflux>=0.22; sys_platform == "darwin" and platform_machine == "arm64"
 pytest>=8
