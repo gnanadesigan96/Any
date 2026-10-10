@@ -56,6 +56,22 @@ DEFAULTS = {
             "sources": ["pexels", "pixabay"],
             "prefer_video": True,
         },
+        "local": {                # images.provider: local (free, Apple Silicon Macs only)
+            "model": "z-image-turbo",
+            "quantize": 4,        # 4-bit keeps memory use low enough for a 16 GB Mac
+            "steps": 9,
+            "width": 720,         # vertical 9:16; upscaled to 1080x1920 when rendering
+            "height": 1280,
+            "seed": 42,           # a fixed seed keeps the look more consistent across images
+        },
+    },
+    "series": {
+        "parts": 20,
+        "per_batch": 5,           # parts written per Claude.ai prompt (keeps each reply short enough)
+        "target_words": 100,      # ~40 seconds of narration per part
+        "words_per_scene": 12,
+        "style_hint": "",         # e.g. "anime", "graphic novel", "watercolour storybook"
+        "images_provider": "local",  # local (free, Apple Silicon) or openai (paid)
     },
     "video": {
         "width": 1920,

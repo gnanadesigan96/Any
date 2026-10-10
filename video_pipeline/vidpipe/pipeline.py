@@ -124,23 +124,28 @@ def shorts_config(cfg: dict) -> dict:
     vcfg["voice"]["kokoro"].update(speed=sh["voice_speed"], sentence_pause=sh["sentence_pause"],
                                    scene_pause=sh["scene_pause"], clause_pause=sh["clause_pause"])
     vcfg["images"]["size"] = "1024x1536"  # portrait AI images when the paid image provider is used
+    if cfg["images"]["provider"] == "local":
+        vcfg["images"]["workers"] = 1
     return vcfg
 
 
 def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assume_yes: bool,
-                 regenerated: bool) -> Path:
+                 regenerated: bool, prefix: str = "short", limit: int = 0) -> Path:
+    """Renders each item of pack.shorts as <prefix>_<k>.mp4. `limit` renders only the first N."""
     if not dry_run:
         _confirm_spend([sc for short in pack.shorts for sc in short.scenes], cfg, assume_yes)
     vcfg = shorts_config(cfg)
+    names = [f"{prefix}_{k:02d}" if prefix != "short" else f"short_{k}" for k in range(1, len(pack.shorts) + 1)]
+    todo = pack.shorts[:limit] if limit else pack.shorts
     outputs = []
-    for k, short in enumerate(pack.shorts, start=1):
-        sub = run_dir / f"short_{k}"
+    for k, short in enumerate(todo, start=1):
+        sub = run_dir / names[k - 1]
         sub.mkdir(exist_ok=True)
-        log(f"Short {k}/{len(pack.shorts)}: {short.title}")
+        log(f"{prefix.title()} {k}/{len(pack.shorts)}: {short.title}")
         timing = narrate_scenes(short.scenes, sub, vcfg, dry_run)
-        siblings = [run_dir / f"short_{j}" / "images" for j in range(1, len(pack.shorts) + 1) if j != k]
+        siblings = [run_dir / n / "images" for j, n in enumerate(names, start=1) if j != k]
         paths = _visuals(short.scenes, timing, sub / "images", vcfg, dry_run, used_ids(siblings))
-        out = run_dir / f"short_{k}.mp4"
+        out = run_dir / f"{names[k - 1]}.mp4"
         if not out.exists():
             video = sub / "video.mp4"
             if not video.exists():
@@ -148,9 +153,12 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
             shutil.copyfile(video, out)
         duration = check_output(out, check_silence=not dry_run)
         if duration > 180:
-            log(f"  Warning: short_{k}.mp4 is {duration:.0f}s; YouTube Shorts must be 3 minutes or less")
+            log(f"  Warning: {out.name} is {duration:.0f}s; YouTube Shorts must be 3 minutes or less")
         outputs.append(out)
-    credits = [credit_lines(run_dir / f"short_{k}" / "images") for k in range(1, len(pack.shorts) + 1)]
+    if len(outputs) < len(pack.shorts):
+        log(f"Rendered {len(outputs)} of {len(pack.shorts)}. Run the same command without --first to finish.")
+        return run_dir
+    credits = [credit_lines(run_dir / n / "images") for n in names]
     review = write_shorts_review(run_dir, topic, pack, outputs, credits, dry_run, regenerated)
     log(f"Done: {len(outputs)} Shorts. Review {review} before uploading.")
     return run_dir

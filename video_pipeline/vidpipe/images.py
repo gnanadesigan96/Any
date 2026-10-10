@@ -3,6 +3,8 @@
 import base64
 import os
 import textwrap
+import threading
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -61,12 +63,44 @@ class PlaceholderImages:
         img.save(out_path)
 
 
+class LocalImages:
+    """Free AI images generated on your own Apple Silicon Mac with Z-Image-Turbo (Apache-2.0,
+    commercial use allowed) through mflux. The model loads once and is reused for every image."""
+
+    def __init__(self, cfg: dict):
+        try:
+            from mflux.models.z_image.variants.z_image import ZImage
+        except ImportError as e:
+            raise RuntimeError("Local images need mflux on an Apple Silicon Mac: pip install mflux") from e
+        self.l = cfg["images"]["local"]
+        log("Loading the local image model (the first run downloads it once, roughly 20 GB)...")
+        self.model = ZImage(quantize=self.l["quantize"])
+        self.lock = threading.Lock()
+
+    def generate(self, prompt: str, out_path: Path) -> None:
+        with self.lock:  # one image at a time; the GPU is the bottleneck anyway
+            started = time.time()
+            image = self.model.generate_image(seed=self.l["seed"], prompt=prompt,
+                                              num_inference_steps=self.l["steps"],
+                                              width=self.l["width"], height=self.l["height"])
+            image.save(out_path, overwrite=True)
+            log(f"  {out_path.name} ({time.time() - started:.0f}s)")
+
+
+_PROVIDERS = {}  # reuse heavy providers (the local model) across parts of a run
+
+
 def make_image_provider(cfg: dict, dry_run: bool):
     if dry_run:
         return PlaceholderImages(cfg)
     provider = cfg["images"]["provider"]
     if provider == "openai":
         return OpenAIImages(cfg)
+    if provider == "local":
+        key = ("local", tuple(sorted(cfg["images"]["local"].items())))
+        if key not in _PROVIDERS:
+            _PROVIDERS[key] = LocalImages(cfg)
+        return _PROVIDERS[key]
     raise RuntimeError(f"Unknown images.provider '{provider}'")
 
 

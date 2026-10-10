@@ -415,3 +415,89 @@ def test_shorts_config_is_vertical_and_brisk(cfg):
     assert (v["video"]["width"], v["video"]["height"]) == (cfg["shorts"]["width"], cfg["shorts"]["height"])
     assert v["voice"]["kokoro"]["scene_pause"] < cfg["voice"]["kokoro"]["scene_pause"]
     assert cfg["video"]["width"] == 640  # original config untouched
+
+
+# ---- story series -------------------------------------------------------------------------
+
+def test_series_manual_steps(cfg):
+    from vidpipe import series
+    cfg["script"]["provider"] = "manual"
+    cfg["series"].update(parts=6, per_batch=5)
+    run_dir = Path(cfg["runs_dir"]) / "series-x"
+    run_dir.mkdir(parents=True)
+
+    with pytest.raises(series.SeriesStepNeeded, match="step 1"):
+        series.write_series(run_dir, "Dracula", "", cfg, dry_run=False)
+    assert "exactly 6 entries" in (run_dir / "PROMPT_1_outline.txt").read_text()
+    outline = {"series_title": "Dracula", "art_style": "ink comic",
+               "characters": [{"name": "Jonathan", "look": "young clerk in a brown suit"}],
+               "episodes": [{"part": p, "title": f"T{p}", "summary": "s", "cliffhanger": "c"} for p in range(1, 7)]}
+    (run_dir / "reply_1_outline.txt").write_text("Sure!\n```json\n" + json.dumps(outline) + "\n```")
+
+    with pytest.raises(series.SeriesStepNeeded, match="step 2"):
+        series.write_series(run_dir, "Dracula", "", cfg, dry_run=False)
+    assert "parts 1 to 5" in (run_dir / "PROMPT_2_parts_01-05.txt").read_text()
+
+    def batch(parts):
+        return json.dumps({"episodes": [{"part": p, "title": "t", "hook_text": "h", "description": "d",
+                                         "hashtags": ["dracula"], "scenes": [
+                                             {"narration": "A line.", "visual": "castle at night",
+                                              "characters": ["Jonathan"]}]} for p in parts]})
+
+    (run_dir / "reply_2_parts_01-05.txt").write_text(batch([1, 2, 3]))  # wrong parts -> clear error
+    with pytest.raises(RuntimeError, match="Expected parts 1-5"):
+        series.write_series(run_dir, "Dracula", "", cfg, dry_run=False)
+    (run_dir / "reply_2_parts_01-05.txt").write_text(batch(range(1, 6)))
+    with pytest.raises(series.SeriesStepNeeded, match="step 3"):
+        series.write_series(run_dir, "Dracula", "", cfg, dry_run=False)
+    (run_dir / "reply_3_parts_06-06.txt").write_text(batch([6]))
+    bible, episodes = series.write_series(run_dir, "Dracula", "", cfg, dry_run=False)
+    assert [e.part for e in episodes] == list(range(1, 7))
+
+    pack = series.to_pack(bible, episodes)
+    assert pack.shorts[5].hook_text == "Dracula · Part 6/6"
+    assert "young clerk in a brown suit" in pack.shorts[0].scenes[0].visual
+    assert pack.shorts[0].hashtags == ["#dracula"]
+
+
+def test_series_dry_run_partial_then_full(cfg):
+    from vidpipe.series import make_series
+    cfg["series"].update(parts=3)
+    cfg["shorts"].update(width=360, height=640)
+    run_dir = make_series("Test Story", "", cfg, dry_run=True, first_n=1)
+    assert [p.name for p in sorted(run_dir.glob("part_*.mp4"))] == ["part_01.mp4"]
+    assert not (run_dir / "metadata.json").exists()
+    make_series("Test Story", "", cfg, dry_run=True)
+    assert len(list(run_dir.glob("part_*.mp4"))) == 3
+    meta = json.loads((run_dir / "metadata.json").read_text())
+    assert meta["format"] == "shorts" and meta["shorts"][2]["file"] == "part_03.mp4"
+
+
+def test_local_images_uses_mflux_once(tmp_path, cfg, monkeypatch):
+    import types
+    created, calls = [], []
+
+    class FakeImage:
+        def save(self, path, overwrite=False):
+            Path(path).write_bytes(b"PNG")
+
+    class FakeZImage:
+        def __init__(self, quantize=None):
+            created.append(quantize)
+
+        def generate_image(self, **kw):
+            calls.append(kw)
+            return FakeImage()
+
+    mod = types.ModuleType("mflux.models.z_image.variants.z_image")
+    mod.ZImage = FakeZImage
+    for name in ["mflux", "mflux.models", "mflux.models.z_image", "mflux.models.z_image.variants"]:
+        monkeypatch.setitem(sys.modules, name, types.ModuleType(name))
+    monkeypatch.setitem(sys.modules, "mflux.models.z_image.variants.z_image", mod)
+    monkeypatch.setattr(images, "_PROVIDERS", {})
+    cfg["images"]["provider"] = "local"
+    images.generate_images([("a castle", tmp_path / "a.png"), ("a ship", tmp_path / "b.png")], cfg, False)
+    images.generate_images([("a wolf", tmp_path / "c.png")], cfg, False)
+    assert created == [4]  # model loaded once, 4-bit
+    assert [c["width"] for c in calls] == [720] * 3 and calls[0]["num_inference_steps"] == 9
+    assert "Style:" in calls[0]["prompt"]

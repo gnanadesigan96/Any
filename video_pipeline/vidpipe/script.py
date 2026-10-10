@@ -147,10 +147,15 @@ def _system_prompt(cfg: dict) -> str:
 
 
 def generate_script(topic: str, angle: str, cfg: dict):
+    script = call_claude(_system_prompt(cfg), _user_prompt(topic, angle, cfg), script_model(cfg), cfg)
+    return finalize(script, cfg)
+
+
+def call_claude(system: str, user: str, model_cls, cfg: dict):
+    """One structured-output request; returns a validated instance of model_cls."""
     s = cfg["script"]
-    system = _system_prompt(cfg)
     client = anthropic.Anthropic(timeout=900.0)
-    log(f"Writing script with {s['model']} (effort={s['effort']})...")
+    log(f"Writing with {s['model']} (effort={s['effort']})...")
     try:
         response = client.beta.messages.parse(
             model=s["model"],
@@ -159,8 +164,8 @@ def generate_script(topic: str, angle: str, cfg: dict):
             fallbacks="default",
             output_config={"effort": s["effort"]},
             system=system,
-            messages=[{"role": "user", "content": _user_prompt(topic, angle, cfg)}],
-            output_format=script_model(cfg),
+            messages=[{"role": "user", "content": user}],
+            output_format=model_cls,
         )
     except anthropic.AuthenticationError as e:
         raise RuntimeError("Claude API authentication failed - set ANTHROPIC_API_KEY in .env") from e
@@ -173,13 +178,12 @@ def generate_script(topic: str, angle: str, cfg: dict):
 
     if response.stop_reason == "refusal":
         category = response.stop_details.category if response.stop_details else None
-        raise RuntimeError(f"Claude declined this topic (category: {category}); pick another topic")
+        raise RuntimeError(f"Claude declined this request (category: {category}); try another topic")
     if response.stop_reason == "max_tokens":
-        raise RuntimeError("Script was cut off at max_tokens; lower script.target_words and retry")
-    script = response.parsed_output
-    if script is None:
-        raise RuntimeError("Claude returned no parsable script; re-run the script stage")
-    return finalize(script, cfg)
+        raise RuntimeError("The reply was cut off at max_tokens; ask for less per request and retry")
+    if response.parsed_output is None:
+        raise RuntimeError("Claude returned no parsable reply; re-run")
+    return response.parsed_output
 
 
 def finalize(script, cfg: dict):
@@ -302,17 +306,22 @@ def write_manual_prompt(topic: str, angle: str, run_dir: Path, cfg: dict) -> Pat
     return path
 
 
-def parse_manual_reply(text: str, cfg: dict):
-    """Accepts the reply as pasted: tolerates ```json fences and text around the JSON."""
+def extract_json(text: str, filename: str = MANUAL_REPLY) -> dict:
+    """Pull the JSON object out of a pasted chat reply (tolerates ```json fences and chatter)."""
     text = re.sub(r"```(?:json)?", "", text)
     start, end = text.find("{"), text.rfind("}")
     if start < 0 or end <= start:
-        raise RuntimeError(f"No JSON found in {MANUAL_REPLY}; paste Claude's whole reply into it")
+        raise RuntimeError(f"No JSON found in {filename}; paste Claude's whole reply into it")
     try:
-        data = json.loads(text[start:end + 1])
+        return json.loads(text[start:end + 1])
     except json.JSONDecodeError as e:
-        raise RuntimeError(f"{MANUAL_REPLY} isn't valid JSON ({e}). If the reply was cut off, "
+        raise RuntimeError(f"{filename} isn't valid JSON ({e}). If the reply was cut off, "
                            "ask Claude to 'continue', paste the rest after it, and re-run") from e
+
+
+def parse_manual_reply(text: str, cfg: dict):
+    """Accepts the reply as pasted: tolerates ```json fences and text around the JSON."""
+    data = extract_json(text)
     try:
         return finalize(load_any(data, cfg), cfg)
     except ValidationError as e:

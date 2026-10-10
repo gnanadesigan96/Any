@@ -36,6 +36,29 @@ After rendering, the pipeline reports any silence longer than 1 second with its 
 (`Warning: 1.4s of silence at 0:21.3 in short_2.mp4`) so you can spot voice dropouts without
 watching everything.
 
+## Story series (one story, 20 Shorts)
+
+```
+python make_video.py series "Dracula by Bram Stoker" --parts 20 --style "graphic novel"
+```
+
+Retells one story as a numbered series of ~40-second Shorts (`part_01.mp4` ... `part_20.mp4`). Each part opens
+with a one-line recap and ends on a cliffhanger, the top of the screen shows "Series · Part 3/20", and every image
+uses the same art style and character designs, so the series looks like one world.
+
+- **Script (free):** the command writes `PROMPT_1_outline.txt`. Paste it into a new claude.ai chat and save the reply
+  as `reply_1_outline.txt`, then re-run. It then asks for the parts in batches of 5 (`PROMPT_2_...`, `PROMPT_3_...`),
+  so a 20-part series takes 5 paste rounds in total. Use a new chat for each prompt.
+- **Images (free):** illustrations are generated on your Mac by Z-Image-Turbo through mflux (Apache-2.0, commercial
+  use allowed). It needs an Apple Silicon Mac with 16 GB+ memory and about 20 GB free disk for the one-time model
+  download. Expect very roughly 30-90 seconds per image, so a 20-part series (about 160-200 images) takes a few
+  hours. Leave it running; it resumes where it stopped if interrupted.
+- **Try it small first:** `--first 2` renders only parts 1-2 so you can check the style before committing hours.
+  Run again without `--first` to render the rest.
+- **Choosing stories:** public-domain stories (classic novels, myths, folk tales, films from the 1920s) are safe to
+  retell in full. For recent movies, never use real footage, posters or actors' likenesses; your own narration over
+  your own illustrations is much safer, but retelling a whole recent film still carries some copyright risk.
+
 ## Free setup ($0 per video)
 
 Every paid part has a free replacement. Start with this; switch any piece to the paid option later

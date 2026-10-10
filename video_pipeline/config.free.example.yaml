@@ -37,3 +37,9 @@ images:
 
 video:
   music_dir: "assets/music" # free tracks from the YouTube Audio Library
+
+# Story series (python make_video.py series "Dracula by Bram Stoker"):
+series:
+  parts: 20                 # 20 Shorts of ~40 seconds that tell the whole story
+  style_hint: ""            # e.g. "anime", "graphic novel", "watercolour storybook"
+  images_provider: "local"  # free AI illustrations made on your Mac (Apple Silicon)
