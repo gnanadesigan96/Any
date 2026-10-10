@@ -111,8 +111,13 @@ def _visuals(scenes: list, timing: list, img_dir: Path, cfg: dict, dry_run: bool
     img_dir.mkdir(parents=True, exist_ok=True)
     if cfg["images"]["provider"] == "stock" and not dry_run:
         return fetch_visuals(scenes, [t["duration"] for t in timing], img_dir, cfg, exclude)
-    paths = [img_dir / f"scene_{i:03d}.png" for i in range(len(scenes))]
-    generate_images([(s.visual, p) for s, p in zip(scenes, paths)], cfg, dry_run)
+    # scenes_per_image > 1 reuses each picture for that many consecutive scenes (each still gets its
+    # own camera move), dividing generation time; pictures that already exist are always kept.
+    k = max(1, int(cfg["images"].get("scenes_per_image", 1)))
+    own = [img_dir / f"scene_{i:03d}.png" for i in range(len(scenes))]
+    paths = [p if p.exists() else own[i - i % k] for i, p in enumerate(own)]
+    missing = sorted({p for p in paths if not p.exists()})
+    generate_images([(scenes[int(p.stem[6:])].visual, p) for p in missing], cfg, dry_run)
     return paths
 
 

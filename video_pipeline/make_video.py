@@ -11,9 +11,14 @@ Add --dry-run to make/next to test everything offline (placeholder images, silen
 """
 
 import argparse
+import os
 import random
 import sys
 from pathlib import Path
+
+# macOS prints a harmless "MallocStackLogging" line for every subprocess when these are inherited.
+for _var in ("MallocStackLogging", "MallocStackLoggingNoCompact"):
+    os.environ.pop(_var, None)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -57,6 +62,8 @@ def main() -> int:
     p_series.add_argument("--notes", default="", help="anything Claude should know (focus, tone, ending)")
     p_series.add_argument("--first", type=int, default=0, help="only render the first N parts this run")
     p_series.add_argument("--script-dir", default="", help="use a ready-made script, e.g. stories/dracula")
+    p_series.add_argument("--scenes-per-image", type=int, default=0,
+                          help="reuse each picture for N scenes (2 halves image-generation time)")
     add_make_flags(p_series)
 
     p_voices = sub.add_parser("voices", help="preview the free Kokoro voices (writes one mp3 per voice)")
@@ -93,6 +100,8 @@ def main() -> int:
                 cfg["series"]["parts"] = args.parts
             if args.style:
                 cfg["series"]["style_hint"] = args.style
+            if args.scenes_per_image:
+                cfg["series"]["scenes_per_image"] = args.scenes_per_image
             make_series(args.story, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first,
                         args.script_dir)
         elif args.command == "topics":

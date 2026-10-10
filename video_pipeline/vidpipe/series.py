@@ -232,6 +232,7 @@ def series_config(cfg: dict, bible: SeriesBible) -> dict:
     scfg["images"]["provider"] = cfg["series"]["images_provider"]  # illustrations, not stock footage
     scfg["shorts"].update(voice_speed=cfg["series"]["voice_speed"], sentence_pause=cfg["series"]["sentence_pause"])
     scfg["video"]["animation"] = cfg["series"]["animation"]
+    scfg["images"]["scenes_per_image"] = cfg["series"]["scenes_per_image"]
     scfg["images"]["style"] = f"{bible.art_style.strip().rstrip('.')}, vertical 9:16 composition, no text, no lettering"
     return scfg
 

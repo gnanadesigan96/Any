@@ -73,6 +73,7 @@ DEFAULTS = {
         "style_hint": "",         # e.g. "anime", "graphic novel", "watercolour storybook"
         "images_provider": "local",  # local (free, Apple Silicon) or openai (paid)
         "animation": "parallax",  # 2.5D animated illustrations for story series
+        "scenes_per_image": 1,    # 2 = one picture per two scenes (half the image-generation time)
         "voice_speed": 0.95,      # storytelling pace: a little slower and more dramatic than fact Shorts
         "sentence_pause": 0.2,
     },

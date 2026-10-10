@@ -558,3 +558,19 @@ def test_real_depth_model(tmp_path):
     rgb[100:, :] = 200  # bright lower half
     d = depth_map(tmp_path / "x.png", rgb)
     assert d.shape == (200, 120) and 0 <= d.min() and d.max() <= 1
+
+
+def test_scenes_per_image_halves_generation_and_keeps_existing(tmp_path, cfg, monkeypatch):
+    from vidpipe import pipeline
+    made = []
+    monkeypatch.setattr(pipeline, "generate_images",
+                        lambda jobs, c, d: [made.append(p.name) or p.write_bytes(b"x") for _, p in jobs])
+    cfg["images"]["scenes_per_image"] = 2
+    scenes = [Scene(narration=f"n{i}", visual=f"v{i}", search_query="") for i in range(5)]
+    img_dir = tmp_path / "images"
+    img_dir.mkdir()
+    (img_dir / "scene_001.png").write_bytes(b"old")  # made earlier at one-per-scene: keep using it
+    paths = pipeline._visuals(scenes, [], img_dir, cfg, dry_run=False)
+    assert [p.name for p in paths] == ["scene_000.png", "scene_001.png", "scene_002.png", "scene_002.png",
+                                       "scene_004.png"]
+    assert made == ["scene_000.png", "scene_002.png", "scene_004.png"]
