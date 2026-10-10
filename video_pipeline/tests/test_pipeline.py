@@ -635,3 +635,17 @@ def test_movie_clip_replaces_picture(cfg, tmp_path):
     (img_dir / "scene_000.png").write_bytes(b"x")
     (img_dir / "scene_000.mp4").write_bytes(b"clip")
     assert pipeline._visuals(scenes, [], img_dir, cfg, dry_run=True)[0].suffix == ".mp4"
+
+
+def test_video_from_older_version_without_stamp_is_rebuilt(cfg):
+    cfg["format"] = "shorts"
+    cfg["shorts"].update(width=360, height=640, per_topic=1)
+    run_dir = make_video("Legacy Topic", "", cfg, dry_run=True)
+    out = run_dir / "short_1.mp4"
+    (run_dir / "short_1" / "fingerprint.txt").unlink()
+    before = out.stat().st_mtime_ns
+    make_video("Legacy Topic", "", cfg, dry_run=True)
+    assert out.stat().st_mtime_ns != before
+    after = out.stat().st_mtime_ns
+    make_video("Legacy Topic", "", cfg, dry_run=True)  # now stamped: no more rebuilds
+    assert out.stat().st_mtime_ns == after

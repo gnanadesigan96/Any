@@ -182,7 +182,8 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
         out = run_dir / f"{names[k - 1]}.mp4"
         overlay = (overlays or [{}] * len(pack.shorts))[k - 1]
         stamp, fp = sub / "fingerprint.txt", _fingerprint(short, overlay, paths, vcfg)
-        if stamp.exists() and stamp.read_text() != fp:
+        # No stamp = rendered by an older version of the pipeline: rebuild it too, to be safe.
+        if (stamp.exists() and stamp.read_text() != fp) or (not stamp.exists() and out.exists()):
             log("  script or settings changed since the last render; re-rendering this one")
             _clear(sub, ["work", "video.mp4"])
             out.unlink(missing_ok=True)
