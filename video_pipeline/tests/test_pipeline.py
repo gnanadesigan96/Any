@@ -481,11 +481,16 @@ def test_local_images_uses_mflux_once(tmp_path, cfg, monkeypatch):
         def save(self, path, overwrite=False):
             Path(path).write_bytes(b"PNG")
 
+    import threading
+
     class FakeZImage:
         def __init__(self, quantize=None):
             created.append(quantize)
+            self.thread = threading.get_ident()
 
         def generate_image(self, **kw):
+            # Like MLX: the model only works on the thread that loaded it.
+            assert threading.get_ident() == self.thread, "There is no Stream(cpu, 0) in current thread."
             calls.append(kw)
             return FakeImage()
 

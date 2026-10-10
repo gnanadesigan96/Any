@@ -65,7 +65,10 @@ class PlaceholderImages:
 
 class LocalImages:
     """Free AI images generated on your own Apple Silicon Mac with Z-Image-Turbo (Apache-2.0,
-    commercial use allowed) through mflux. The model loads once and is reused for every image."""
+    commercial use allowed) through mflux. The model loads once and is reused for every image.
+    MLX ties the model to the thread that loaded it, so images must be generated on that thread."""
+
+    same_thread = True
 
     def __init__(self, cfg: dict):
         try:
@@ -124,7 +127,11 @@ def generate_images(jobs: list, cfg: dict, dry_run: bool) -> None:
         except Exception as e:  # keep going; report all failures together
             failures.append(f"{out.name}: {e}")
 
-    with ThreadPoolExecutor(max_workers=max(1, cfg["images"]["workers"])) as pool:
-        list(pool.map(work, todo))
+    if getattr(provider, "same_thread", False):
+        for job in todo:
+            work(job)
+    else:
+        with ThreadPoolExecutor(max_workers=max(1, cfg["images"]["workers"])) as pool:
+            list(pool.map(work, todo))
     if failures:
         raise RuntimeError("Some images failed (re-run to retry only these):\n  " + "\n  ".join(failures))
