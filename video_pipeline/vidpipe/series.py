@@ -202,7 +202,8 @@ def write_series(run_dir: Path, story: str, notes: str, cfg: dict, dry_run: bool
 
 def image_prompt(scene: StoryScene, bible: SeriesBible) -> str:
     looks = {c.name.lower(): c for c in bible.characters}
-    cast = [looks[n.lower()] for n in scene.characters if n.lower() in looks]
+    # At most 3 designs: the image model reads only the first few hundred words of a prompt.
+    cast = [looks[n.lower()] for n in scene.characters if n.lower() in looks][:3]
     text = scene.visual.strip().rstrip(".")
     if cast:
         text += ". " + " ".join(f"{c.name}: {c.look.strip().rstrip('.')}." for c in cast)
@@ -229,12 +230,13 @@ def to_pack(bible: SeriesBible, episodes: list) -> ShortsPack:
 def series_config(cfg: dict, bible: SeriesBible) -> dict:
     scfg = copy.deepcopy(cfg)
     scfg["images"]["provider"] = cfg["series"]["images_provider"]  # illustrations, not stock footage
+    scfg["shorts"].update(voice_speed=cfg["series"]["voice_speed"], sentence_pause=cfg["series"]["sentence_pause"])
     scfg["images"]["style"] = f"{bible.art_style.strip().rstrip('.')}, vertical 9:16 composition, no text, no lettering"
     return scfg
 
 
 def make_series(story: str, notes: str, cfg: dict, dry_run: bool = False, redo: str = "",
-                assume_yes: bool = False, first_n: int = 0) -> Path:
+                assume_yes: bool = False, first_n: int = 0, script_dir: str = "") -> Path:
     from .pipeline import REDO, _clear, _make_shorts
     from .util import check_ffmpeg_features, require_binary
 
@@ -250,6 +252,14 @@ def make_series(story: str, notes: str, cfg: dict, dry_run: bool = False, redo: 
     if not (run_dir / "run.json").exists():
         write_json(run_dir / "run.json", {"topic": story, "notes": notes, "dry_run": dry_run, "series": True})
     log(f"Series folder: {run_dir}")
+    if script_dir:  # a ready-made script (bible.json + parts_*.json) skips the Claude steps
+        src = resolve(script_dir)
+        files = [src / "bible.json", *sorted(src.glob("parts_*.json"))]
+        if not files[0].exists():
+            raise RuntimeError(f"No bible.json in {src}")
+        for f in files:
+            if not (run_dir / f.name).exists():
+                (run_dir / f.name).write_bytes(f.read_bytes())
 
     bible, episodes = write_series(run_dir, story, notes, cfg, dry_run)
     regenerated = not (run_dir / "metadata.json").exists()

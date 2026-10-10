@@ -1,0 +1,425 @@
+{
+  "episodes": [
+    {
+      "part": 11,
+      "title": "The Beautiful Lady",
+      "hook_text": "She lures children",
+      "description": "Children are vanishing at night, and they all describe the same lady in white.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Last time, Lucy died, but Van Helsing feared it was not the end.",
+          "visual": "A white marble tomb in a misty London churchyard",
+          "characters": []
+        },
+        {
+          "narration": "Days later, London newspapers report a strange mystery.",
+          "visual": "A Victorian newspaper being read under a gas lamp",
+          "characters": []
+        },
+        {
+          "narration": "Children in Hampstead are vanishing at night and found at dawn.",
+          "visual": "Children playing at the edge of a heath at twilight",
+          "characters": []
+        },
+        {
+          "narration": "Each one has tiny wounds on the throat.",
+          "visual": "A worried mother holding a sleepy child with a bandaged neck",
+          "characters": []
+        },
+        {
+          "narration": "They all say a beautiful lady in white led them away.",
+          "visual": "A small child pointing toward misty woods, a faint white figure among the trees",
+          "characters": []
+        },
+        {
+          "narration": "Van Helsing takes Seward to Lucy's tomb at night.",
+          "visual": "Van Helsing and Seward with a lantern at a stone tomb door at night",
+          "characters": [
+            "Van Helsing",
+            "Dr. Seward"
+          ]
+        },
+        {
+          "narration": "They open her coffin. It is empty.",
+          "visual": "An open empty coffin in a crypt, lantern light",
+          "characters": []
+        },
+        {
+          "narration": "They wait in the graveyard until a white figure appears in the fog.",
+          "visual": "Two men hiding behind gravestones as a white figure drifts through fog",
+          "characters": [
+            "Van Helsing",
+            "Dr. Seward"
+          ]
+        },
+        {
+          "narration": "It is Lucy, carrying a sleeping child.",
+          "visual": "Lucy in a white burial gown carrying a child through a misty graveyard",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "And her lips are red with blood.",
+          "visual": "Close-up of Lucy's pale face with blood-red lips and cold eyes",
+          "characters": [
+            "Lucy"
+          ]
+        }
+      ]
+    },
+    {
+      "part": 12,
+      "title": "The Hardest Goodbye",
+      "hook_text": "The hardest goodbye",
+      "description": "Arthur must free the woman he loves from the curse.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Last time, they saw Lucy, now undead, hunting children.",
+          "visual": "Lucy's silhouette in white among gravestones",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "Van Helsing brings Arthur and Quincey to the tomb at midnight.",
+          "visual": "Men with lanterns at a churchyard gate at midnight",
+          "characters": [
+            "Van Helsing",
+            "Arthur Holmwood",
+            "Quincey Morris"
+          ]
+        },
+        {
+          "narration": "Lucy appears and calls to Arthur, arms open, in that same sweet voice.",
+          "visual": "Lucy in white, arms outstretched, smiling coldly by the tomb door",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "Van Helsing raises a crucifix, and she shrinks back, snarling.",
+          "visual": "Van Helsing raising a golden crucifix as Lucy snarls and recoils",
+          "characters": [
+            "Van Helsing",
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "She cannot enter her tomb, because its door is sealed with holy bread.",
+          "visual": "Lucy hissing at a tomb door sealed with white paste",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "The next day, they find her asleep in her coffin.",
+          "visual": "Lucy lying in her coffin, flushed and beautiful, lit by lanterns",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "Arthur must do it himself.",
+          "visual": "Arthur holding a wooden stake and a hammer, hands shaking",
+          "characters": [
+            "Arthur Holmwood"
+          ]
+        },
+        {
+          "narration": "With one blow, he drives the stake through her heart.",
+          "visual": "Silhouette of a raised hammer above a coffin in a dark crypt",
+          "characters": [
+            "Arthur Holmwood"
+          ]
+        },
+        {
+          "narration": "Her face softens, and she is Lucy again, at peace.",
+          "visual": "Lucy's face serene and gentle in her coffin, warm light",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "Then the four men swear to destroy the Count.",
+          "visual": "Four men clasping hands in a candlelit crypt",
+          "characters": [
+            "Van Helsing",
+            "Arthur Holmwood",
+            "Quincey Morris"
+          ]
+        }
+      ]
+    },
+    {
+      "part": 13,
+      "title": "The Hunters Gather",
+      "hook_text": "Fifty boxes",
+      "description": "The hunters piece together the Count's plan, and Mina starts to change.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Last time, Arthur freed Lucy, and the men swore revenge.",
+          "visual": "Four men walking out of a churchyard at dawn",
+          "characters": [
+            "Van Helsing",
+            "Arthur Holmwood",
+            "Quincey Morris"
+          ]
+        },
+        {
+          "narration": "Jonathan and Mina return to England and join the hunters.",
+          "visual": "Jonathan and Mina arriving at a Victorian house, greeted by Van Helsing",
+          "characters": [
+            "Jonathan",
+            "Mina",
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "In London, Jonathan glimpses the Count in the street, looking years younger.",
+          "visual": "Jonathan frozen in shock on a busy London street, a tall dark figure in a top hat in the crowd",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "Mina types every diary and letter into one complete record.",
+          "visual": "Mina at a typewriter surrounded by diaries and letters",
+          "characters": [
+            "Mina"
+          ]
+        },
+        {
+          "narration": "Together, they finally see the Count's plan.",
+          "visual": "The group gathered around a table covered in papers and a map of London",
+          "characters": [
+            "Van Helsing",
+            "Jonathan",
+            "Mina"
+          ]
+        },
+        {
+          "narration": "He brought fifty boxes of his native earth to England.",
+          "visual": "Rows of wooden crates in a dark cellar",
+          "characters": []
+        },
+        {
+          "narration": "He must rest in them by day, and he has hidden them across London.",
+          "visual": "A map of London marked with pins and small drawings of crates",
+          "characters": []
+        },
+        {
+          "narration": "Destroy the boxes, and he will have nowhere left to hide.",
+          "visual": "Van Helsing tapping the map with his finger, eyes fierce",
+          "characters": [
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "To protect Mina, the men leave her out of the hunt.",
+          "visual": "Mina standing alone in a doorway as the men leave with lanterns",
+          "characters": [
+            "Mina"
+          ]
+        },
+        {
+          "narration": "But Mina is waking pale and tired, with no idea why.",
+          "visual": "Mina waking in bed at dawn, pale, touching her throat",
+          "characters": [
+            "Mina"
+          ]
+        }
+      ]
+    },
+    {
+      "part": 14,
+      "title": "The House of Rats",
+      "hook_text": "A thousand rats",
+      "description": "The hunters raid the Count's lair, and Renfield pays the price.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Last time, the hunters learned the Count hides in boxes of earth.",
+          "visual": "Wooden crates of earth in a dark cellar, lantern light",
+          "characters": []
+        },
+        {
+          "narration": "That evening, Renfield begs Seward to release him at once.",
+          "visual": "Renfield at the bars of his cell, pleading desperately",
+          "characters": [
+            "Renfield"
+          ]
+        },
+        {
+          "narration": "He seems calm, sane, and terrified, but Seward refuses.",
+          "visual": "Seward turning away from the cell door, troubled",
+          "characters": [
+            "Dr. Seward"
+          ]
+        },
+        {
+          "narration": "At night, the men break into Carfax, the ruined house next door.",
+          "visual": "Men with lanterns forcing open the oak door of a decaying mansion",
+          "characters": [
+            "Jonathan",
+            "Arthur Holmwood",
+            "Quincey Morris"
+          ]
+        },
+        {
+          "narration": "The air inside is thick with the smell of death.",
+          "visual": "A dusty chapel interior piled with wooden crates in dim lantern light",
+          "characters": []
+        },
+        {
+          "narration": "They find the boxes and seal each one with holy bread.",
+          "visual": "Van Helsing crumbling a white wafer into an open crate of earth",
+          "characters": [
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "Suddenly, the floor comes alive with rats, thousands of them.",
+          "visual": "Thousands of rats with glowing eyes swarming across a stone floor",
+          "characters": []
+        },
+        {
+          "narration": "Arthur whistles, and his terriers drive them off.",
+          "visual": "Terrier dogs charging into a swarm of rats",
+          "characters": [
+            "Arthur Holmwood"
+          ]
+        },
+        {
+          "narration": "Back at the asylum, a guard hears a terrible scream.",
+          "visual": "A guard running down a dark asylum corridor with a lamp",
+          "characters": []
+        },
+        {
+          "narration": "Renfield lies broken on the floor of his cell.",
+          "visual": "A broken man lying on a cell floor in deep shadow",
+          "characters": [
+            "Renfield"
+          ]
+        }
+      ]
+    },
+    {
+      "part": 15,
+      "title": "Unclean",
+      "hook_text": "Mina's nightmare",
+      "description": "Renfield's dying confession leads the hunters to the Count, and to Mina.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Last time, Renfield was found dying in his cell.",
+          "visual": "Renfield lying on the floor of his cell, Seward kneeling beside him",
+          "characters": [
+            "Renfield",
+            "Dr. Seward"
+          ]
+        },
+        {
+          "narration": "With his last breath, he confesses that he let the Count in.",
+          "visual": "Renfield whispering to Seward and Van Helsing with his last strength",
+          "characters": [
+            "Renfield",
+            "Dr. Seward",
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "And the Count has been visiting Mina.",
+          "visual": "Van Helsing's face filled with horror in lamplight",
+          "characters": [
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "The men race to the Harkers' room and break down the door.",
+          "visual": "Men bursting through a bedroom door at night",
+          "characters": [
+            "Van Helsing",
+            "Arthur Holmwood",
+            "Quincey Morris"
+          ]
+        },
+        {
+          "narration": "Jonathan lies in a deep trance on the bed.",
+          "visual": "Jonathan lying unconscious on a bed in moonlight",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "And the Count holds Mina, forcing her to drink his blood.",
+          "visual": "Silhouette of the Count gripping a woman by a moonlit window, cloak swirling",
+          "characters": [
+            "Count Dracula",
+            "Mina"
+          ]
+        },
+        {
+          "narration": "Van Helsing raises the holy bread, and the Count backs away, hissing.",
+          "visual": "The Count recoiling and snarling from a raised white wafer",
+          "characters": [
+            "Count Dracula",
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "He turns to mist and vanishes under the door.",
+          "visual": "A cloud of pale mist drifting under a door",
+          "characters": []
+        },
+        {
+          "narration": "Mina covers her face in shame.",
+          "visual": "Mina weeping with her hands over her face",
+          "characters": [
+            "Mina"
+          ]
+        },
+        {
+          "narration": "Unclean, she cries. Unclean.",
+          "visual": "Close-up of Mina's tear-streaked face in shadow",
+          "characters": [
+            "Mina"
+          ]
+        }
+      ]
+    }
+  ]
+}

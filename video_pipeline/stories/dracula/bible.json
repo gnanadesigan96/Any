@@ -1,0 +1,168 @@
+{
+  "series_title": "Dracula",
+  "art_style": "dark gothic graphic-novel illustration, bold black ink lines, heavy shadows, muted crimson and slate-blue palette, moonlit dramatic lighting, textured paper grain",
+  "characters": [
+    {
+      "name": "Jonathan",
+      "look": "young Englishman in his mid-twenties, slim build, clean-shaven, short neat brown hair, earnest brown eyes, dark brown three-piece Victorian travelling suit, white high-collared shirt, dark green tie, small silver crucifix on a chain"
+    },
+    {
+      "name": "Count Dracula",
+      "look": "very tall gaunt old nobleman, pale waxy skin, sharp hooked nose, thick white moustache, bushy white eyebrows, pointed ears, sharp white teeth, red-tinged eyes, long black cloak with a high collar over black clothes"
+    },
+    {
+      "name": "Mina",
+      "look": "young Englishwoman in her early twenties, dark auburn hair in a neat Victorian bun, intelligent green eyes, calm determined expression, high-necked deep blue Victorian dress with a white lace collar, small silver brooch"
+    },
+    {
+      "name": "Lucy",
+      "look": "young Englishwoman of nineteen, long wavy golden-blonde hair with a pale pink ribbon, porcelain skin, light blue eyes, delicate features, flowing white Victorian dress with lace sleeves"
+    },
+    {
+      "name": "Van Helsing",
+      "look": "elderly Dutch professor in his sixties, stocky build, broad forehead, bushy grey eyebrows, short grey beard, deep-set blue eyes behind round spectacles, black frock coat, grey waistcoat, black leather doctor's bag"
+    },
+    {
+      "name": "Dr. Seward",
+      "look": "serious Englishman around thirty, tall and thin, short dark hair, neatly trimmed dark moustache, tired grey eyes, charcoal-grey Victorian suit, white doctor's coat over it"
+    },
+    {
+      "name": "Arthur Holmwood",
+      "look": "aristocratic young Englishman, tall and broad-shouldered, wavy light-brown hair, clean-shaven square jaw, hazel eyes, elegant black tailcoat, burgundy cravat, silver tie pin"
+    },
+    {
+      "name": "Quincey Morris",
+      "look": "rugged young Texan, tall and lean, sun-tanned face, sandy-blond hair, short beard, wide-brimmed brown cowboy hat, long tan leather duster coat, large bowie knife on his belt"
+    },
+    {
+      "name": "Renfield",
+      "look": "wild-eyed thin man in his fifties, gaunt unshaven face, messy thinning grey hair, frantic darting eyes, stained loose grey asylum shirt and trousers"
+    },
+    {
+      "name": "The Three Sisters",
+      "look": "three pale ghostly women, two with dark hair and one with golden hair, blood-red lips, sharp gleaming teeth, faintly glowing eyes, long sheer flowing white gowns"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "Do Not Go to the Castle",
+      "summary": "Jonathan Harker travels to Transylvania to help Count Dracula buy a London house. Villagers warn him and give him a crucifix; a sinister coachman collects him at midnight.",
+      "cliffhanger": "The coachman silences a pack of wolves with one gesture."
+    },
+    {
+      "part": 2,
+      "title": "No Reflection",
+      "summary": "The Count welcomes Jonathan. He never eats and is never seen by day. While shaving, Jonathan sees no reflection of the Count, who lunges at a drop of blood and recoils from the crucifix.",
+      "cliffhanger": "Every door in the castle is locked. Jonathan is a prisoner."
+    },
+    {
+      "part": 3,
+      "title": "The Three Sisters",
+      "summary": "Jonathan watches the Count crawl head-first down the castle wall. Exploring forbidden rooms, he falls asleep and wakes to three vampire women; the Count stops them and claims Jonathan.",
+      "cliffhanger": "The Count promises the women they can have Jonathan when he is done with him."
+    },
+    {
+      "part": 4,
+      "title": "The Box of Earth",
+      "summary": "Workers load fifty boxes of earth. Jonathan climbs down the wall into a crypt and finds the Count lying in a box, gorged with blood. He strikes with a shovel; the Count is leaving for England.",
+      "cliffhanger": "The boxes leave for London, and Jonathan is left behind with the three women."
+    },
+    {
+      "part": 5,
+      "title": "Meanwhile, in England",
+      "summary": "Mina waits for news of Jonathan while staying with Lucy in Whitby. Lucy accepts Arthur's proposal over Dr. Seward and Quincey Morris. Lucy starts sleepwalking.",
+      "cliffhanger": "A Russian ship is driven toward Whitby by a terrible storm."
+    },
+    {
+      "part": 6,
+      "title": "The Ghost Ship",
+      "summary": "The Demeter runs aground with its dead captain tied to the wheel. A huge dog leaps ashore. The log tells of sailors vanishing one by one; the cargo is fifty boxes of earth.",
+      "cliffhanger": "The Count has arrived in England."
+    },
+    {
+      "part": 7,
+      "title": "The Figure on the Bench",
+      "summary": "Lucy sleepwalks to the clifftop churchyard. Mina sees a dark figure with red eyes bending over her. Lucy is alone when Mina arrives, with two tiny marks on her throat.",
+      "cliffhanger": "Mina blames a safety pin for the marks. She is wrong."
+    },
+    {
+      "part": 8,
+      "title": "The Man Who Eats Flies",
+      "summary": "Mina learns Jonathan is in a Budapest hospital and marries him there. In England, Dr. Seward's patient Renfield eats flies, spiders and birds, and senses his master next door at Carfax.",
+      "cliffhanger": "Renfield whispers that the Master is at hand."
+    },
+    {
+      "part": 9,
+      "title": "The Professor Arrives",
+      "summary": "In London Lucy wastes away. Dr. Seward calls Professor Van Helsing, who finds terrible blood loss. Arthur gives blood; Van Helsing fills her room with garlic flowers.",
+      "cliffhanger": "Lucy's mother throws away the garlic and opens the window."
+    },
+    {
+      "part": 10,
+      "title": "Lucy's Last Night",
+      "summary": "Despite more transfusions Lucy weakens. A wolf smashes her window and her mother dies of shock. Dying, Lucy's teeth grow sharp and she begs Arthur for a kiss; Van Helsing stops him.",
+      "cliffhanger": "Lucy dies, and Van Helsing says this is only the beginning."
+    },
+    {
+      "part": 11,
+      "title": "The Beautiful Lady",
+      "summary": "Newspapers report children lured away at night by a beautiful lady in white, returned with throat wounds. Van Helsing and Seward find Lucy's coffin empty and see her carrying a child.",
+      "cliffhanger": "Lucy returns from the dark with blood on her lips."
+    },
+    {
+      "part": 12,
+      "title": "The Hardest Goodbye",
+      "summary": "Van Helsing brings Arthur and Quincey to the tomb. Undead Lucy calls to Arthur but is driven back by a crucifix and the sealed door. Next day Arthur drives the stake and Lucy finds peace.",
+      "cliffhanger": "The four men swear to destroy the Count."
+    },
+    {
+      "part": 13,
+      "title": "The Hunters Gather",
+      "summary": "Jonathan and Mina join the group. Jonathan sees the Count, younger, in London. Mina compiles every diary; they realise the Count must rest in his fifty boxes of earth hidden around London.",
+      "cliffhanger": "The men leave Mina out of the hunt, but she is waking pale and tired."
+    },
+    {
+      "part": 14,
+      "title": "The House of Rats",
+      "summary": "Renfield begs to be released but Seward refuses. The men break into Carfax and seal the boxes with holy bread; thousands of rats swarm until Arthur's terriers drive them off.",
+      "cliffhanger": "Renfield is found broken on his cell floor."
+    },
+    {
+      "part": 15,
+      "title": "Unclean",
+      "summary": "Dying, Renfield confesses he let the Count in and that the Count has been visiting Mina. The men break into the Harkers' room to find the Count forcing Mina to drink his blood; he escapes as mist.",
+      "cliffhanger": "Mina cries out that she is unclean."
+    },
+    {
+      "part": 16,
+      "title": "One Box Left",
+      "summary": "Holy bread burns a scar onto Mina's forehead. The men destroy box after box and ambush the Count in Piccadilly; Jonathan's knife slashes his coat and gold spills out, but he escapes.",
+      "cliffhanger": "The Count vows revenge, and one box is still missing."
+    },
+    {
+      "part": 17,
+      "title": "Through His Eyes",
+      "summary": "Mina asks Van Helsing to hypnotise her at dawn. In a trance she senses the Count: dark water and creaking chains. He is on the ship Czarina Catherine, fleeing home to Varna.",
+      "cliffhanger": "The hunters vow to follow him to his castle, because his death will free Mina."
+    },
+    {
+      "part": 18,
+      "title": "The Race East",
+      "summary": "The hunters wait for the ship at Varna, but it docks at Galatz instead, and the Count's box is carried upriver. They split up: Jonathan and Arthur by steam launch, Seward and Quincey on horseback, Van Helsing and Mina by carriage to the castle.",
+      "cliffhanger": "Mina sleeps more and more, and she is changing."
+    },
+    {
+      "part": 19,
+      "title": "The Circle in the Snow",
+      "summary": "Near the castle Van Helsing draws a circle of holy bread around Mina. The three women appear and call to her but cannot cross. At dawn he enters the castle, destroys the women and seals the Count's tomb.",
+      "cliffhanger": "A wagon carrying the last box races up the mountain toward the castle."
+    },
+    {
+      "part": 20,
+      "title": "Sunset",
+      "summary": "At sunset the hunters converge on the wagon. Quincey is wounded. Jonathan cuts the Count's throat and Quincey stabs his heart; the Count turns to dust, Mina's scar vanishes, and Quincey dies smiling.",
+      "cliffhanger": "Years later, the Harkers name their son Quincey."
+    }
+  ]
+}

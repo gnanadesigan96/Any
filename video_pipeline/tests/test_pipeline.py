@@ -501,3 +501,15 @@ def test_local_images_uses_mflux_once(tmp_path, cfg, monkeypatch):
     assert created == [4]  # model loaded once, 4-bit
     assert [c["width"] for c in calls] == [720] * 3 and calls[0]["num_inference_steps"] == 9
     assert "Style:" in calls[0]["prompt"]
+
+
+def test_dracula_script_dir_is_valid_and_used(cfg):
+    from vidpipe.series import make_series, write_series
+    cfg["shorts"].update(width=360, height=640)
+    run_dir = make_series("Dracula", "", cfg, dry_run=True, first_n=1, script_dir="stories/dracula")
+    bible, episodes = write_series(run_dir, "Dracula", "", cfg, dry_run=True)
+    assert bible.series_title == "Dracula" and len(episodes) == 20
+    assert [e.part for e in episodes] == list(range(1, 21))
+    names = {c.name for c in bible.characters}
+    assert all(set(s.characters) <= names for e in episodes for s in e.scenes)
+    assert (run_dir / "part_01.mp4").exists()

@@ -53,6 +53,9 @@ uses the same art style and character designs, so the series looks like one worl
   use allowed). It needs an Apple Silicon Mac with 16 GB+ memory and about 20 GB free disk for the one-time model
   download. Expect very roughly 30-90 seconds per image, so a 20-part series (about 160-200 images) takes a few
   hours. Leave it running; it resumes where it stopped if interrupted.
+- **Ready-made script:** `stories/dracula/` holds a complete 20-part Dracula script (outline, character designs and
+  every part), so you can skip the Claude.ai steps:
+  `python make_video.py series "Dracula" --script-dir stories/dracula --first 2`
 - **Try it small first:** `--first 2` renders only parts 1-2 so you can check the style before committing hours.
   Run again without `--first` to render the rest.
 - **Choosing stories:** public-domain stories (classic novels, myths, folk tales, films from the 1920s) are safe to

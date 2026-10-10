@@ -1,0 +1,410 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "Do Not Go to the Castle",
+      "hook_text": "The warning",
+      "description": "A young lawyer ignores every warning on his way to Castle Dracula.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "The villagers begged him not to go.",
+          "visual": "Frightened villagers crowding around a young traveller in a candlelit mountain inn",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "Jonathan Harker, a young English solicitor, had come to Transylvania on business.",
+          "visual": "Jonathan stepping off a coach in a misty Carpathian village square at dusk",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "A nobleman, Count Dracula, wanted to buy a house in London.",
+          "visual": "A wax-sealed letter with a dark crest lying on a map of London",
+          "characters": []
+        },
+        {
+          "narration": "At the inn, an old woman pressed a crucifix into his hand.",
+          "visual": "An old peasant woman pressing a small silver crucifix into Jonathan's palm",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "Tonight, she whispered, evil things walk the earth.",
+          "visual": "Extreme close-up of an old woman's frightened eyes lit by firelight",
+          "characters": []
+        },
+        {
+          "narration": "At midnight, a black carriage met him at the mountain pass.",
+          "visual": "A black four-horse carriage waiting on a snowy mountain pass under a full moon",
+          "characters": []
+        },
+        {
+          "narration": "Its tall driver had a grip of steel and eyes that glowed red.",
+          "visual": "A tall cloaked coachman holding the reins, face in shadow, eyes glowing red",
+          "characters": []
+        },
+        {
+          "narration": "Wolves howled in the dark forest all around them.",
+          "visual": "A pack of wolves with glowing eyes among dark pine trees in moonlight",
+          "characters": []
+        },
+        {
+          "narration": "Then the driver raised one arm, and the wolves fell silent.",
+          "visual": "The coachman raising a pale hand as wolves cower in a ring around the carriage",
+          "characters": []
+        },
+        {
+          "narration": "Jonathan would soon learn who that driver really was.",
+          "visual": "The carriage disappearing up a winding road toward a huge dark castle on a cliff",
+          "characters": []
+        }
+      ]
+    },
+    {
+      "part": 2,
+      "title": "No Reflection",
+      "hook_text": "No reflection",
+      "description": "Jonathan meets his host, and notices something impossible in the mirror.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Last time, a strange coachman delivered Jonathan to the castle.",
+          "visual": "A vast ruined castle on a cliff edge under a full moon, a carriage at its gate",
+          "characters": []
+        },
+        {
+          "narration": "Count Dracula greets him at the door, a tall old man dressed all in black.",
+          "visual": "A tall old nobleman holding an antique oil lamp in an arched stone doorway",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "His hand is ice cold, and his grip is shockingly strong.",
+          "visual": "Close-up of a pale clawlike hand gripping a younger man's hand",
+          "characters": [
+            "Count Dracula",
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "He never eats, and Jonathan never sees him in daylight.",
+          "visual": "Jonathan dining alone at a long candlelit table while the Count watches from the shadows",
+          "characters": [
+            "Jonathan",
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "One morning, shaving at a small mirror, Jonathan feels a hand on his shoulder.",
+          "visual": "Jonathan shaving at a small mirror beside a window in pale morning light",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "The Count stands right behind him, but the mirror shows an empty room.",
+          "visual": "A small hand mirror reflecting only Jonathan and an empty room behind him",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "The razor slips, and a drop of blood runs down his chin.",
+          "visual": "Close-up of a thin trickle of blood on a young man's chin, razor in hand",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "The Count's eyes blaze, and he lunges for Jonathan's throat.",
+          "visual": "The Count lunging forward with blazing red eyes and clawed hands",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "His hand brushes the crucifix, and he recoils as if burned.",
+          "visual": "The Count recoiling from a small glowing crucifix on Jonathan's chest",
+          "characters": [
+            "Count Dracula",
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "That night, Jonathan tries the castle doors. Every single one is locked.",
+          "visual": "Jonathan pulling at a heavy iron-bound locked door in a dark stone corridor",
+          "characters": [
+            "Jonathan"
+          ]
+        }
+      ]
+    },
+    {
+      "part": 3,
+      "title": "The Three Sisters",
+      "hook_text": "Three pale women",
+      "description": "Jonathan sees the Count crawl down a wall, then meets the castle's other residents.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Last time, Jonathan discovered he was a prisoner in the castle.",
+          "visual": "Jonathan peering from a high castle window at night",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "One night, he sees the Count climb out of a window below.",
+          "visual": "A dark figure emerging from a castle window far below, moonlight on the stone",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Head first, the Count crawls down the sheer castle wall like a lizard.",
+          "visual": "The Count crawling face-down down a sheer stone wall, cloak spread like bat wings",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Desperate, Jonathan explores and finds a wing left unlocked.",
+          "visual": "Jonathan entering a dusty moonlit room full of old furniture",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "Against the Count's warning, he falls asleep there.",
+          "visual": "Jonathan asleep on an old couch in a shaft of moonlight",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "He wakes to three pale women standing over him.",
+          "visual": "Three pale women in flowing white gowns standing over a sleeping man",
+          "characters": [
+            "The Three Sisters"
+          ]
+        },
+        {
+          "narration": "Their teeth gleam as one bends slowly toward his throat.",
+          "visual": "Close-up of a pale woman with sharp gleaming teeth leaning down",
+          "characters": [
+            "The Three Sisters"
+          ]
+        },
+        {
+          "narration": "Then the Count storms in, furious, and hurls her back.",
+          "visual": "The Count furious, eyes blazing, flinging the women away from the couch",
+          "characters": [
+            "Count Dracula",
+            "The Three Sisters"
+          ]
+        },
+        {
+          "narration": "This man belongs to me, he snarls.",
+          "visual": "Close-up of the Count's snarling face, eyes burning red",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "When I am finished with him, he tells them, you may have him.",
+          "visual": "The three women smiling hungrily in the dark as Jonathan lies frozen in fear",
+          "characters": [
+            "The Three Sisters",
+            "Jonathan"
+          ]
+        }
+      ]
+    },
+    {
+      "part": 4,
+      "title": "The Box of Earth",
+      "hook_text": "What sleeps below",
+      "description": "Jonathan finds where the Count sleeps by day, and learns he is heading for London.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Last time, the Count saved Jonathan, but only for himself.",
+          "visual": "The Count standing in a dark doorway, watching Jonathan",
+          "characters": [
+            "Count Dracula",
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "Jonathan watches workers load fifty great wooden boxes onto wagons.",
+          "visual": "Workmen loading large wooden crates onto horse wagons in a castle courtyard",
+          "characters": []
+        },
+        {
+          "narration": "Each box is filled with earth from the castle grounds.",
+          "visual": "Close-up of an open wooden crate filled with dark soil",
+          "characters": []
+        },
+        {
+          "narration": "He climbs down the outer wall himself to find the Count's room.",
+          "visual": "Jonathan climbing barefoot down the outside of the castle wall above a deep gorge",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "A passage leads to a ruined chapel and an open box.",
+          "visual": "A ruined chapel crypt, broken stone, an open wooden box in a shaft of light",
+          "characters": []
+        },
+        {
+          "narration": "Inside lies the Count, looking younger, his lips wet with fresh blood.",
+          "visual": "The Count lying in a box of earth, eyes open, blood on his lips",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Horrified, Jonathan raises a shovel and strikes.",
+          "visual": "Jonathan raising a shovel over the open box in the dark crypt",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "The Count's head turns, and his dead eyes stare straight at him.",
+          "visual": "Extreme close-up of the Count's staring red eyes",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Days later, the boxes are nailed shut and carted away to the sea.",
+          "visual": "Crates nailed shut on a wagon heading down a winding mountain road",
+          "characters": []
+        },
+        {
+          "narration": "And Jonathan is left behind, alone with the three women.",
+          "visual": "Jonathan at a window as three pale figures appear in the dark corridor behind him",
+          "characters": [
+            "Jonathan",
+            "The Three Sisters"
+          ]
+        }
+      ]
+    },
+    {
+      "part": 5,
+      "title": "Meanwhile, in England",
+      "hook_text": "Meanwhile in England",
+      "description": "In a seaside town, Mina and Lucy have no idea what is coming.",
+      "hashtags": [
+        "#Dracula",
+        "#HorrorStory",
+        "#GothicHorror",
+        "#ClassicBooks",
+        "#Storytime"
+      ],
+      "scenes": [
+        {
+          "narration": "Last time, the Count's boxes of earth left for England.",
+          "visual": "A cargo ship sailing out of a misty harbour at dawn",
+          "characters": []
+        },
+        {
+          "narration": "In England, Jonathan's fiancée, Mina, waits for letters that never come.",
+          "visual": "Mina writing a letter at a window in a seaside town",
+          "characters": [
+            "Mina"
+          ]
+        },
+        {
+          "narration": "She is staying with her best friend, Lucy, in the seaside town of Whitby.",
+          "visual": "Two young women walking on a clifftop above a harbour town with a ruined abbey",
+          "characters": [
+            "Mina",
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "Lucy has just received three marriage proposals in a single day.",
+          "visual": "Lucy laughing, holding three letters fanned out in her hand",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "A doctor, a Texan adventurer, and Arthur Holmwood, the man she loves.",
+          "visual": "Three men in Victorian clothes standing side by side in a drawing room",
+          "characters": [
+            "Dr. Seward",
+            "Quincey Morris",
+            "Arthur Holmwood"
+          ]
+        },
+        {
+          "narration": "She says yes to Arthur.",
+          "visual": "Arthur kneeling before Lucy in a sunlit garden",
+          "characters": [
+            "Arthur Holmwood",
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "But at night, Lucy has begun to sleepwalk.",
+          "visual": "Lucy in a white nightgown walking with closed eyes down a dark hallway",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "Mina locks their bedroom door and hides the key.",
+          "visual": "Mina turning a key in a bedroom door, candle in her other hand",
+          "characters": [
+            "Mina"
+          ]
+        },
+        {
+          "narration": "Out at sea, a terrible storm is rising.",
+          "visual": "Huge waves crashing against cliffs, lightning over a black sea",
+          "characters": []
+        },
+        {
+          "narration": "And a Russian ship is being driven straight toward Whitby.",
+          "visual": "A sailing ship tossed by a storm, heading toward a harbour",
+          "characters": []
+        }
+      ]
+    }
+  ]
+}

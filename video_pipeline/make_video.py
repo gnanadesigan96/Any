@@ -56,6 +56,7 @@ def main() -> int:
     p_series.add_argument("--style", default="", help='visual style hint, e.g. "anime", "watercolour storybook"')
     p_series.add_argument("--notes", default="", help="anything Claude should know (focus, tone, ending)")
     p_series.add_argument("--first", type=int, default=0, help="only render the first N parts this run")
+    p_series.add_argument("--script-dir", default="", help="use a ready-made script, e.g. stories/dracula")
     add_make_flags(p_series)
 
     p_voices = sub.add_parser("voices", help="preview the free Kokoro voices (writes one mp3 per voice)")
@@ -92,7 +93,8 @@ def main() -> int:
                 cfg["series"]["parts"] = args.parts
             if args.style:
                 cfg["series"]["style_hint"] = args.style
-            make_series(args.story, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first)
+            make_series(args.story, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first,
+                        args.script_dir)
         elif args.command == "topics":
             if not args.niche:
                 print("Niches:\n  " + "\n  ".join(bank.niches(cfg)))
