@@ -75,7 +75,9 @@ DEFAULTS = {
         "animation": "parallax",  # 2.5D animated illustrations for story series
         "scenes_per_image": 1,
         "score": True,            # dark drone, whooshes on cuts, booms on the hook and the cliffhanger
-        "hook_card": True,        # big hook text for the first 2 seconds + "PART N+1 →" end card    # 2 = one picture per two scenes (half the image-generation time)
+        "hook_card": True,
+        # Livelier 2.5D motion for story series: 2x camera moves, handheld drift, lens blur, floating dust
+        "motion": {"strength": 2.0, "handheld": 1.0, "depth_of_field": 0.8, "dust": True},        # big hook text for the first 2 seconds + "PART N+1 →" end card    # 2 = one picture per two scenes (half the image-generation time)
         "voice_speed": 0.95,      # storytelling pace: a little slower and more dramatic than fact Shorts
         "sentence_pause": 0.2,
     },
@@ -88,7 +90,7 @@ DEFAULTS = {
         "zoom": 0.12,
         # Still images: "kenburns" = slow zoom/pan; "parallax" = 2.5D depth animation + weather/light effects
         "animation": "kenburns",
-        "parallax": {"strength": 1.0},
+        "parallax": {"strength": 1.0, "handheld": 0.0, "depth_of_field": 0.0, "dust": False},
         "effects": True,          # parallax only: fog, rain, snow, embers, flicker, lightning from scene text
         "captions": True,
         "caption_font": "Inter",
@@ -98,6 +100,7 @@ DEFAULTS = {
         "music_volume": 0.10,
         "score": False,           # generated drone + whoosh/boom/riser score (series turn this on)
         "score_volume": 0.35,
+        "score_whoosh": False,    # a whoosh on every cut (off: it gets tiring)
         "loudness_lufs": -14,
     },
     # "long": one long video (plus clips cut from it). "shorts": several standalone Shorts per topic.

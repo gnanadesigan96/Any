@@ -205,7 +205,7 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
         from .sound import build_score
         cuts = [t["start"] for t in timeline[1:]]
         music = build_score(work / "score.wav", duration, cuts, timeline[-1]["start"],
-                            seed=sum(map(ord, run_dir.name))).name
+                            seed=sum(map(ord, run_dir.name)), whoosh=v.get("score_whoosh", False)).name
         score = True
     log("Mixing final video...")
     _final_mix(work, "video_noaudio.mp4", "narration.wav", ass, final.resolve(), cfg, music, duration, score)

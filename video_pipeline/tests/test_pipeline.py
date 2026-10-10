@@ -649,3 +649,24 @@ def test_video_from_older_version_without_stamp_is_rebuilt(cfg):
     after = out.stat().st_mtime_ns
     make_video("Legacy Topic", "", cfg, dry_run=True)  # now stamped: no more rebuilds
     assert out.stat().st_mtime_ns == after
+
+
+def test_score_has_no_cut_whoosh_by_default(tmp_path):
+    import wave
+    import numpy as np
+    from vidpipe.sound import build_score, SR
+
+    def level_around_cut(**kw):
+        path = build_score(tmp_path / "s.wav", 10.0, [5.0], 9.5, seed=1, **kw)
+        with wave.open(str(path)) as w:
+            data = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float)
+        return np.abs(data[int(4.7 * SR):int(5.0 * SR)]).mean()
+
+    assert level_around_cut(whoosh=True) > 1.5 * level_around_cut()
+
+
+def test_series_motion_is_livelier(cfg):
+    from vidpipe import series
+    bible = series.SeriesBible.model_validate(json.loads((ROOT / "stories/dracula/bible.json").read_text()))
+    p = series.series_config(cfg, bible)["video"]["parallax"]
+    assert p["strength"] >= 2 and p["handheld"] > 0 and p["dust"] is True

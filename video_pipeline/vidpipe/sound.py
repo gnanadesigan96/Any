@@ -1,5 +1,5 @@
-"""Generated score for story Shorts: a dark drone bed, a whoosh on every cut, a deep boom on the
-hook and on the cliffhanger, and a rising tension sound into it. Synthesised here, so it is free
+"""Generated score for story Shorts: a dark drone bed, a deep boom on the hook and on the
+cliffhanger, and a rising tension sound into it (optionally a whoosh on every cut). Synthesised here, so it is free
 and royalty-free, and it is timed to the actual scene cuts of each video."""
 
 import wave
@@ -45,7 +45,8 @@ def _riser(seconds: float, rng) -> np.ndarray:
     return (tone + noise) * ramp
 
 
-def build_score(path: Path, duration: float, cut_times: list, climax_time: float, seed: int = 0) -> Path:
+def build_score(path: Path, duration: float, cut_times: list, climax_time: float, seed: int = 0,
+                whoosh: bool = False) -> Path:
     """Writes a mono 44.1 kHz WAV `duration` seconds long."""
     rng = np.random.default_rng(seed)
     n = int(duration * SR)
@@ -66,7 +67,7 @@ def build_score(path: Path, duration: float, cut_times: list, climax_time: float
         score[start:start + len(seg)] += seg * gain
 
     place(_boom(rng), 0.0, 0.9)
-    for cut in cut_times:
+    for cut in (cut_times if whoosh else []):
         if 0.5 < cut < duration - 0.3:
             place(_whoosh(rng), max(cut - 0.35, 0), 0.5)
     if climax_time > 3.5:

@@ -255,6 +255,7 @@ def series_config(cfg: dict, bible: SeriesBible) -> dict:
     scfg["video"]["animation"] = cfg["series"]["animation"]
     scfg["images"]["scenes_per_image"] = cfg["series"]["scenes_per_image"]
     scfg["video"]["score"] = cfg["series"].get("score", True)
+    scfg["video"]["parallax"] = {**scfg["video"].get("parallax", {}), **cfg["series"].get("motion", {})}
     scfg["images"]["style"] = f"{bible.art_style.strip().rstrip('.')}, vertical 9:16 composition, no text, no lettering"
     return scfg
 

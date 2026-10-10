@@ -106,9 +106,9 @@ class _Effects:
             fog = cv2.resize(small, (w * 2, h), interpolation=cv2.INTER_CUBIC)
             self.fog = cv2.GaussianBlur(fog, (0, 0), sigmaX=w / 25)
             self.fog = (self.fog - self.fog.min()) / max(np.ptp(self.fog), 1e-6)
-        n = {"rain": 700, "snow": 350, "embers": 90}
+        n = {"rain": 700, "snow": 350, "embers": 90, "dust": 70}
         self.particles = {}
-        for name in ("rain", "snow", "embers"):
+        for name in ("rain", "snow", "embers", "dust"):
             if name in names:
                 self.particles[name] = np.column_stack([rng.random(n[name]) * w, rng.random(n[name]) * h,
                                                         0.5 + rng.random(n[name])])
@@ -148,6 +148,13 @@ class _Effects:
             p[:, 0] = (p[:, 0] + 2 * np.sin(i * 0.1 + p[:, 2] * 9)) % w
             for x, y, s in p:
                 cv2.circle(overlay, (int(x), int(y)), int(2 + 2 * s), (40, 140, 255), -1, cv2.LINE_AA)
+        if "dust" in self.particles:
+            p = self.particles["dust"]
+            p[:, 1] = (p[:, 1] - 0.8 * p[:, 2]) % h
+            p[:, 0] = (p[:, 0] + 0.6 * np.sin(i * 0.03 + p[:, 2] * 7)) % w
+            for x, y, s in p:
+                glow = int(110 + 90 * (0.5 + 0.5 * np.sin(i * 0.08 + s * 11)))
+                cv2.circle(overlay, (int(x), int(y)), int(1 + 2 * s), (glow, glow, glow), -1, cv2.LINE_AA)
         if overlay.any():
             out = out + overlay.astype(np.float32) * 0.8
         if i in self.flashes:
@@ -177,11 +184,16 @@ def render_parallax_clip(image: Path, frames: int, index: int, out: Path, cfg: d
     rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
     depth = depth_map(image, rgb)
     # Cover-fit to the output frame with a little margin, so camera moves never reveal an edge.
-    margin = 1.12
+    margin = 1.12 + 0.08 * max(strength - 1, 0)
     scale = max(w / bgr.shape[1], h / bgr.shape[0]) * margin
     size = (int(round(bgr.shape[1] * scale)), int(round(bgr.shape[0] * scale)))
     src = cv2.resize(bgr, size, interpolation=cv2.INTER_CUBIC)
     dep = cv2.resize(depth, size, interpolation=cv2.INTER_LINEAR)
+    dof = float(a.get("depth_of_field", 0.0))
+    if dof > 0:  # soften the far background so the characters pop, like a real lens
+        blurred = cv2.GaussianBlur(src, (0, 0), sigmaX=max(size[0] / 220, 1.5))
+        k = (np.clip((0.6 - dep) / 0.6, 0, 1) ** 1.2 * dof)[..., None]
+        src = (src * (1 - k) + blurred * k).astype(np.uint8)
     ox, oy = (size[0] - w) / 2, (size[1] - h) / 2
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
     d = dep[int(oy):int(oy) + h, int(ox):int(ox) + w]
@@ -191,7 +203,12 @@ def render_parallax_clip(image: Path, frames: int, index: int, out: Path, cfg: d
     motion = MOTIONS[index % len(MOTIONS)]
     zoom = 0.10 * strength
     pan = 0.045 * w * strength
-    effects = _Effects(effects_for(text) if v.get("effects", True) else [], w, h, frames, seed=index)
+    names = effects_for(text) if v.get("effects", True) else []
+    if a.get("dust") and not {"rain", "snow"} & set(names):
+        names.append("dust")  # floating motes: nothing on screen is ever completely still
+    effects = _Effects(names, w, h, frames, seed=index)
+    sway = float(a.get("handheld", 0.0))
+    phase = index * 1.7
     cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24",
            "-s", f"{w}x{h}", "-r", str(fps), "-i", "-", "-frames:v", str(frames),
            "-c:v", "libx264", "-preset", str(v["preset"]), "-crf", str(v["crf"]), "-pix_fmt", "yuv420p", str(out)]
@@ -209,6 +226,11 @@ def render_parallax_clip(image: Path, frames: int, index: int, out: Path, cfg: d
                 s, dx, dy = 1 + 0.03 * near, -pan * (t - 0.5) * near, 0.0
             else:  # drift_up
                 s, dx, dy = 1 + 0.04 * t * near, 0.0, -0.6 * pan * (t - 0.5) * near
+            if sway:  # slow, breathing handheld drift; near things drift more (keeps the depth alive)
+                sec = i / fps
+                weight = 0.5 + 0.5 * near
+                dx = dx + sway * 0.010 * w * np.sin(2 * np.pi * 0.31 * sec + phase) * weight
+                dy = dy + sway * 0.007 * h * np.sin(2 * np.pi * 0.23 * sec + phase * 0.6) * weight
             map_x = (cx + (xx - cx) / s - dx + ox).astype(np.float32)
             map_y = (cy + (yy - cy) / s - dy + oy).astype(np.float32)
             frame = cv2.remap(src, map_x, map_y, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)

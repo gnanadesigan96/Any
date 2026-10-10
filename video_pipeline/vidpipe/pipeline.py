@@ -152,12 +152,15 @@ def shorts_config(cfg: dict) -> dict:
     return vcfg
 
 
+RENDER_VERSION = 2  # bump when the look/sound of renders changes, so existing videos are rebuilt
+
+
 def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
     """Changes whenever anything that affects the rendered Short changes."""
     v = cfg["video"]
-    data = [[s.narration for s in short.scenes], short.hook_text, overlay,
+    data = [RENDER_VERSION, [s.narration for s in short.scenes], short.hook_text, overlay,
             [f"{p.name}:{p.stat().st_mtime_ns}" for p in paths],
-            {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "width",
+            {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "score_whoosh", "width",
                                     "height", "fps", "captions", "caption_max_words")},
             cfg["voice"].get("kokoro"), cfg["voice"].get("provider")]
     return hashlib.sha1(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()
