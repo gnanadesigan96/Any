@@ -2,9 +2,9 @@
   "episodes": [
     {
       "part": 6,
-      "title": "The Ghost Ship",
-      "hook_text": "Captain tied to the wheel",
-      "description": "A ship crashes into Whitby harbour with a dead captain and no crew.",
+      "title": "The Ship With No Crew",
+      "hook_text": "THE CREW HAD VANISHED",
+      "description": "A ship crashes into Whitby with a dead captain tied to the wheel and no crew at all.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -14,52 +14,52 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, a storm drove a strange ship toward Whitby.",
-          "visual": "A storm-lashed harbour at night, a ship looming out of the rain",
+          "narration": "The ship crashed into the harbour with a dead man tied to the wheel.",
+          "visual": "A dead sea captain lashed to a ship's wheel in a raging storm, a crucifix bound in his hands",
           "characters": []
         },
         {
-          "narration": "The Demeter crashes into the harbour in the dead of night.",
-          "visual": "A schooner running aground in a raging storm, waves breaking over it",
-          "characters": []
-        },
-        {
-          "narration": "Not a single sailor is on deck.",
+          "narration": "Not one sailor was left on board.",
           "visual": "The empty deck of a ship in pouring rain",
           "characters": []
         },
         {
-          "narration": "Only the captain, dead, his hands tied to the wheel around a crucifix.",
-          "visual": "A dead sea captain lashed to a ship's wheel, a crucifix bound in his hands",
+          "narration": "As it hit the shore, a huge black dog leapt from the deck.",
+          "visual": "A huge black dog leaping from a ship's bow onto a beach at night",
           "characters": []
         },
         {
-          "narration": "As the ship hits the shore, a huge black dog leaps from the deck.",
-          "visual": "A huge black dog leaping from a ship's bow onto a beach",
-          "characters": []
-        },
-        {
-          "narration": "It races up the steps to the clifftop graveyard and vanishes.",
+          "narration": "It raced up to the clifftop graveyard, and vanished.",
           "visual": "A dark dog bounding up stone steps toward a clifftop churchyard",
           "characters": []
         },
         {
-          "narration": "The captain's log tells a nightmare.",
+          "narration": "The captain's log told a nightmare.",
           "visual": "An open water-stained logbook beside a candle",
           "characters": []
         },
         {
-          "narration": "Night after night, his crew vanished, one by one.",
+          "narration": "Night after night, another sailor disappeared.",
           "visual": "A lone sailor on watch in fog, a tall dark shape standing behind him",
           "characters": []
         },
         {
-          "narration": "The only cargo was fifty boxes of earth.",
+          "narration": "The crew swore a tall, thin stranger was walking the deck.",
+          "visual": "A tall thin silhouette standing on a foggy ship's deck at night",
+          "characters": []
+        },
+        {
+          "narration": "The captain tied himself to the wheel with a crucifix, so it couldn't take him.",
+          "visual": "A desperate captain tying his hands to the wheel during a storm",
+          "characters": []
+        },
+        {
+          "narration": "The only cargo: fifty boxes of earth.",
           "visual": "Rows of wooden crates in a dark ship's hold",
           "characters": []
         },
         {
-          "narration": "The Count has arrived in England.",
+          "narration": "The Count had arrived. In Part 7, he finds Lucy.",
           "visual": "A dark silhouette with red eyes on a clifftop above the town",
           "characters": [
             "Count Dracula"
@@ -69,9 +69,9 @@
     },
     {
       "part": 7,
-      "title": "The Figure on the Bench",
-      "hook_text": "Who is with Lucy?",
-      "description": "Mina follows a sleepwalking Lucy and sees something terrible in the graveyard.",
+      "title": "Something on the Bench",
+      "hook_text": "WHAT WAS BITING HER?",
+      "description": "Mina follows a sleepwalking Lucy into a graveyard, and sees something bent over her throat.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -81,52 +81,48 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, the Count came ashore in Whitby as a great black dog.",
-          "visual": "A black dog's silhouette on a cliff against the moon",
-          "characters": []
+          "narration": "Something was bent over Lucy's throat. And it lifted a face with red eyes.",
+          "visual": "A long dark figure bending over a woman in white on a graveyard bench, red eyes glowing",
+          "characters": [
+            "Count Dracula",
+            "Lucy"
+          ]
         },
         {
-          "narration": "One night, Mina wakes to find Lucy's bed empty.",
+          "narration": "Minutes earlier, Mina had woken to find Lucy's bed empty.",
           "visual": "Mina waking in a dark bedroom, staring at an empty bed",
           "characters": [
             "Mina"
           ]
         },
         {
-          "narration": "The door is open. Lucy has sleepwalked out into the night.",
+          "narration": "The bedroom door was wide open.",
           "visual": "An open bedroom door, moonlight spilling into the hallway",
           "characters": []
         },
         {
-          "narration": "Mina runs through the streets to the clifftop churchyard.",
+          "narration": "Mina ran through the dark streets to the clifftop graveyard.",
           "visual": "Mina in a shawl running through cobbled night streets toward a ruined abbey",
           "characters": [
             "Mina"
           ]
         },
         {
-          "narration": "There, on their favourite bench, lies a white figure.",
+          "narration": "There, on their favourite bench, lay a white figure.",
           "visual": "A figure in white lying on a bench in a moonlit graveyard",
           "characters": [
             "Lucy"
           ]
         },
         {
-          "narration": "Something dark is bending over her.",
+          "narration": "And something dark was leaning over her.",
           "visual": "A long dark shape bending over a bench, silhouetted against the moon",
           "characters": [
             "Count Dracula"
           ]
         },
         {
-          "narration": "As Mina calls out, it lifts a pale face with gleaming red eyes.",
-          "visual": "A pale face with glowing red eyes turning in the moonlight",
-          "characters": [
-            "Count Dracula"
-          ]
-        },
-        {
-          "narration": "When she reaches the bench, Lucy is alone and cold.",
+          "narration": "When Mina reached the bench, Lucy was alone. And ice cold.",
           "visual": "Mina wrapping her shawl around a sleeping Lucy on the bench",
           "characters": [
             "Mina",
@@ -134,24 +130,29 @@
           ]
         },
         {
-          "narration": "On her throat are two tiny red marks.",
+          "narration": "On her throat were two tiny red marks.",
           "visual": "Close-up of two small puncture marks on a pale throat",
           "characters": []
         },
         {
-          "narration": "Mina thinks she pricked her with a pin. She is wrong.",
+          "narration": "Mina told herself it was a pin.",
           "visual": "Mina frowning at a safety pin in her hand by candlelight",
           "characters": [
             "Mina"
           ]
+        },
+        {
+          "narration": "It wasn't. In Part 8, a madman starts calling for his Master.",
+          "visual": "The ruined abbey on the cliff under a blood-red moon",
+          "characters": []
         }
       ]
     },
     {
       "part": 8,
       "title": "The Man Who Eats Flies",
-      "hook_text": "He eats living things",
-      "description": "Mina finds Jonathan, while an asylum patient senses his master's arrival.",
+      "hook_text": "HE EATS THEM ALIVE",
+      "description": "An asylum patient eats living things, and senses his Master moving in next door.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -161,55 +162,16 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, Mina found two strange marks on Lucy's throat.",
-          "visual": "Mina looking worriedly at Lucy asleep in bed",
+          "narration": "He eats flies. Then spiders. Then birds. Alive.",
+          "visual": "A wild-eyed man in a cell holding a sparrow, flies on the barred window",
           "characters": [
-            "Mina",
-            "Lucy"
+            "Renfield"
           ]
         },
         {
-          "narration": "Then a letter arrives. Jonathan is alive, in a hospital in Budapest.",
-          "visual": "Mina reading a letter with tears of relief",
-          "characters": [
-            "Mina"
-          ]
-        },
-        {
-          "narration": "He escaped the castle, but his mind is shattered by fever.",
-          "visual": "Jonathan pale and thin in a hospital bed, tended by nuns",
-          "characters": [
-            "Jonathan"
-          ]
-        },
-        {
-          "narration": "Mina rushes to him, and they marry at his bedside.",
-          "visual": "Mina holding Jonathan's hand at a bedside wedding with a priest",
-          "characters": [
-            "Mina",
-            "Jonathan"
-          ]
-        },
-        {
-          "narration": "Back in England, Dr. John Seward runs an asylum near London.",
+          "narration": "His name is Renfield, a patient in Dr. Seward's asylum near London.",
           "visual": "A gloomy Victorian asylum beside a walled estate at dusk",
-          "characters": [
-            "Dr. Seward"
-          ]
-        },
-        {
-          "narration": "His strangest patient, Renfield, eats flies.",
-          "visual": "A wild-eyed man in a cell catching flies against a barred window",
-          "characters": [
-            "Renfield"
-          ]
-        },
-        {
-          "narration": "Then spiders to eat the flies, and birds to eat the spiders.",
-          "visual": "Renfield cupping a sparrow in his hands, spider webs in the corner of his cell",
-          "characters": [
-            "Renfield"
-          ]
+          "characters": []
         },
         {
           "narration": "He believes every life he eats makes him stronger.",
@@ -219,26 +181,62 @@
           ]
         },
         {
-          "narration": "Lately, he stares at the old empty house next door, Carfax.",
+          "narration": "Lately, he stares for hours at the empty house next door.",
           "visual": "Renfield pressed against the bars, staring at a ruined mansion beyond the wall",
           "characters": [
             "Renfield"
           ]
         },
         {
-          "narration": "And he whispers, the Master is at hand.",
+          "narration": "And he whispers: the Master is at hand.",
           "visual": "Close-up of Renfield's face grinning in the dark",
           "characters": [
             "Renfield"
+          ]
+        },
+        {
+          "narration": "Dr. Seward has no idea what he means.",
+          "visual": "Seward writing notes in his study by lamplight, troubled",
+          "characters": [
+            "Dr. Seward"
+          ]
+        },
+        {
+          "narration": "Far away, Mina finally hears from Jonathan. He's alive, in a hospital in Budapest.",
+          "visual": "Mina reading a letter with tears of relief",
+          "characters": [
+            "Mina"
+          ]
+        },
+        {
+          "narration": "He escaped the castle, but his mind is shattered.",
+          "visual": "Jonathan pale and thin in a hospital bed, tended by nuns",
+          "characters": [
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "Mina marries him right there, at his bedside.",
+          "visual": "Mina holding Jonathan's hand at a bedside wedding with a priest",
+          "characters": [
+            "Mina",
+            "Jonathan"
+          ]
+        },
+        {
+          "narration": "But back in London, Lucy is dying. In Part 9, a professor finds out why.",
+          "visual": "Lucy pale in bed in a dark Victorian bedroom",
+          "characters": [
+            "Lucy"
           ]
         }
       ]
     },
     {
       "part": 9,
-      "title": "The Professor Arrives",
-      "hook_text": "Blood from a lover",
-      "description": "Lucy is fading fast, and a Dutch professor suspects the truth.",
+      "title": "The Professor's Warning",
+      "hook_text": "SHE'S LOSING BLOOD",
+      "description": "Lucy loses blood every night, and only one man suspects where it's going.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -248,27 +246,22 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, a madman sensed his master moving in next door.",
-          "visual": "The ruined Carfax mansion under a stormy sky",
-          "characters": []
-        },
-        {
-          "narration": "In London, Lucy is wasting away, pale and weak, and no one knows why.",
-          "visual": "Lucy pale in bed in a Victorian bedroom, Arthur at her side",
+          "narration": "Lucy is losing blood every night, and nobody knows where it's going.",
+          "visual": "Lucy deathly pale in bed in a Victorian bedroom, Arthur holding her hand",
           "characters": [
             "Lucy",
             "Arthur Holmwood"
           ]
         },
         {
-          "narration": "Dr. Seward sends for his old teacher, Professor Van Helsing, from Amsterdam.",
-          "visual": "An elderly professor with a doctor's bag arriving at a London townhouse",
+          "narration": "Dr. Seward sends for his old teacher in Amsterdam, Professor Van Helsing.",
+          "visual": "An elderly professor with a doctor's bag arriving at a London townhouse at night",
           "characters": [
             "Van Helsing"
           ]
         },
         {
-          "narration": "Van Helsing examines her, and goes very quiet.",
+          "narration": "Van Helsing looks at her throat, and goes silent.",
           "visual": "Van Helsing examining Lucy's throat with a magnifying glass",
           "characters": [
             "Van Helsing",
@@ -276,7 +269,7 @@
           ]
         },
         {
-          "narration": "She has lost a terrible amount of blood.",
+          "narration": "He orders a blood transfusion. Now.",
           "visual": "Seward and Van Helsing exchanging grave looks beside the bed",
           "characters": [
             "Dr. Seward",
@@ -284,7 +277,7 @@
           ]
         },
         {
-          "narration": "Arthur gives his own blood to save her.",
+          "narration": "Arthur gives his own blood to save the woman he loves.",
           "visual": "Arthur lying beside Lucy's bed during a Victorian blood transfusion",
           "characters": [
             "Arthur Holmwood",
@@ -292,36 +285,43 @@
           ]
         },
         {
-          "narration": "Then Van Helsing fills her room with garlic flowers.",
+          "narration": "Then Van Helsing does something strange.",
+          "visual": "Van Helsing opening a box of white garlic flowers",
+          "characters": [
+            "Van Helsing"
+          ]
+        },
+        {
+          "narration": "He fills her room with garlic flowers, and makes everyone swear not to touch them.",
           "visual": "Van Helsing hanging wreaths of white garlic flowers around a window",
           "characters": [
             "Van Helsing"
           ]
         },
         {
-          "narration": "He makes them promise not to remove them.",
+          "narration": "He won't say why.",
           "visual": "Van Helsing raising a stern finger in warning in a dim bedroom",
           "characters": [
             "Van Helsing"
           ]
         },
         {
-          "narration": "That night, Lucy's mother finds the room stuffy.",
+          "narration": "That night, Lucy's mother can't stand the smell.",
           "visual": "An elderly lady in a nightcap frowning at the garlic flowers",
           "characters": []
         },
         {
-          "narration": "She opens the window, and throws the garlic away.",
-          "visual": "An open window, garlic flowers scattered on the floor, curtains blowing",
+          "narration": "She opens the window, and throws the garlic out. In Part 10, something comes through that window.",
+          "visual": "An open window at night, garlic flowers scattered on the floor, curtains blowing",
           "characters": []
         }
       ]
     },
     {
       "part": 10,
-      "title": "Lucy's Last Night",
-      "hook_text": "Kiss me, Arthur",
-      "description": "A wolf, a death, and a terrifying change in Lucy.",
+      "title": "That Wasn't Lucy",
+      "hook_text": "THAT'S NOT LUCY",
+      "description": "Lucy begs Arthur for one last kiss, in a voice that isn't hers.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -331,53 +331,52 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, the garlic protecting Lucy was thrown away.",
-          "visual": "Garlic flowers lying scattered on a moonlit floor",
-          "characters": []
-        },
-        {
-          "narration": "Night after night, Lucy grows weaker, despite more transfusions.",
-          "visual": "Van Helsing and Seward giving a transfusion by candlelight",
-          "characters": [
-            "Van Helsing",
-            "Dr. Seward",
-            "Lucy"
-          ]
-        },
-        {
-          "narration": "One night, a huge grey wolf smashes through her window.",
-          "visual": "A great grey wolf crashing through a bedroom window in a shower of glass",
-          "characters": []
-        },
-        {
-          "narration": "Her mother dies of fright, and Lucy is left alone until morning.",
-          "visual": "Lucy alone in a moonlit room with torn curtains, tears on her face",
-          "characters": [
-            "Lucy"
-          ]
-        },
-        {
-          "narration": "Now she lies dying, but something in her is changing.",
-          "visual": "Lucy lying in bed, deathly pale, lips slightly parted",
-          "characters": [
-            "Lucy"
-          ]
-        },
-        {
-          "narration": "Her teeth look longer, and sharper.",
-          "visual": "Close-up of sharp teeth behind pale lips",
-          "characters": []
-        },
-        {
-          "narration": "In a strange, soft voice, she begs Arthur to kiss her.",
-          "visual": "Lucy reaching up toward Arthur with half-closed eyes",
+          "narration": "Lucy begs Arthur to kiss her, in a voice that isn't hers.",
+          "visual": "Lucy reaching up toward Arthur with half-closed eyes, sharp teeth glinting",
           "characters": [
             "Lucy",
             "Arthur Holmwood"
           ]
         },
         {
-          "narration": "Van Helsing pulls him back with surprising strength.",
+          "narration": "Days earlier, a huge grey wolf smashed through her window.",
+          "visual": "A great grey wolf crashing through a bedroom window in a shower of glass",
+          "characters": []
+        },
+        {
+          "narration": "Her mother died of fright.",
+          "visual": "An overturned candle and torn curtains in a dark bedroom",
+          "characters": []
+        },
+        {
+          "narration": "Lucy was left alone with it until dawn.",
+          "visual": "Lucy alone in a moonlit room with torn curtains, tears on her face",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "Now she's dying. And she's changing.",
+          "visual": "Lucy lying in bed, deathly pale, lips slightly parted",
+          "characters": [
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "Her teeth are longer. Sharper.",
+          "visual": "Close-up of sharp teeth behind pale lips",
+          "characters": []
+        },
+        {
+          "narration": "Arthur leans in to kiss her goodbye.",
+          "visual": "Arthur leaning toward Lucy's face in candlelight",
+          "characters": [
+            "Arthur Holmwood",
+            "Lucy"
+          ]
+        },
+        {
+          "narration": "Van Helsing hurls him back with shocking strength.",
           "visual": "Van Helsing seizing Arthur's arm and pulling him away from the bed",
           "characters": [
             "Van Helsing",
@@ -392,7 +391,7 @@
           ]
         },
         {
-          "narration": "But Van Helsing whispers to Seward that this is only the beginning.",
+          "narration": "But Van Helsing whispers: this is only the beginning. In Part 11, children start vanishing.",
           "visual": "Van Helsing speaking quietly to Seward in a dim hallway, faces grave",
           "characters": [
             "Van Helsing",

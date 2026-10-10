@@ -105,17 +105,24 @@ def _parts_prompt(bible: SeriesBible, first: int, last: int, cfg: dict) -> str:
 
 {COMMON_RULES}
 
-Write parts {first} to {last} in full, following the outline exactly. For each part:
-- Narration of about {sr['target_words']} words (about 40 seconds spoken), present tense, vivid and fast-paced, written
-  for the ear: short sentences, no filler.
-- Part 1 opens with a hook. Every later part opens with ONE short recap line of at most 12 words
-  (e.g. "Last time, the count's ship arrived empty."), then goes straight into the action.
-- End on that part's cliffhanger from the outline (the final part ends the story with a satisfying close).
+Write parts {first} to {last} in full, following the outline exactly. Viewers swipe away within 2 seconds unless
+something grabs them, so every part must be built for retention:
+- Narration of about {sr['target_words']} words (about 35 seconds spoken), present tense, fast and vivid, written for the
+  ear: short punchy sentences, no filler, no slow scene-setting.
+- The FIRST sentence is the hook: drop the viewer into the most shocking, strange or dangerous moment of this part, or a
+  question they must know the answer to. Never open with "Last time", a recap or background.
+- Weave any needed context in after the hook, in a few words, so the part makes sense on its own.
+- Keep an open question alive the whole way through, and escalate: each line should raise the stakes.
+- End on the part's cliffhanger, then ONE short teaser line that names what is coming in the next part without
+  revealing it (e.g. "And in Part 4, he finds out where the Count sleeps."). The final part ends the story with a
+  satisfying, haunting close instead.
 - scenes: the narration split into scenes of about {sr['words_per_scene']} words each (one sentence), so the picture
   changes every 3 to 5 seconds. For each scene: `narration`; `visual` = what the image shows (shot type, action,
   setting, lighting; no style words, no text in the image); `characters` = the names (exactly as in the plan) of
   characters visible in the image, or an empty list.
-- title: under 50 characters. hook_text: 2 to 5 words for the screen. description: one sentence.
+- title: under 50 characters, a curiosity gap (e.g. "The Man With No Reflection").
+  hook_text: 2 to 5 punchy words shown huge on screen in the first 2 seconds (e.g. "HE HAS NO REFLECTION").
+  description: one sentence.
   hashtags: 3 to 5, each starting with #.
 
 Reply with ONLY a JSON object (no other text) in exactly this shape:
@@ -227,12 +234,27 @@ def to_pack(bible: SeriesBible, episodes: list) -> ShortsPack:
     return ShortsPack(shorts=shorts)
 
 
+def overlays_for(bible: SeriesBible, episodes: list, cfg: dict) -> list:
+    if not cfg["series"].get("hook_card", True):
+        return [{} for _ in episodes]
+    out = []
+    for i, e in enumerate(episodes):
+        if i + 1 < len(episodes):
+            nxt = episodes[i + 1]
+            end = {"end_text": f"Part {nxt.part} →", "end_sub": f"Next: {nxt.title}"}
+        else:
+            end = {"end_text": "The End", "end_sub": "Follow for the next story"}
+        out.append({"hook": e.hook_text, **end})
+    return out
+
+
 def series_config(cfg: dict, bible: SeriesBible) -> dict:
     scfg = copy.deepcopy(cfg)
     scfg["images"]["provider"] = cfg["series"]["images_provider"]  # illustrations, not stock footage
     scfg["shorts"].update(voice_speed=cfg["series"]["voice_speed"], sentence_pause=cfg["series"]["sentence_pause"])
     scfg["video"]["animation"] = cfg["series"]["animation"]
     scfg["images"]["scenes_per_image"] = cfg["series"]["scenes_per_image"]
+    scfg["video"]["score"] = cfg["series"].get("score", True)
     scfg["images"]["style"] = f"{bible.art_style.strip().rstrip('.')}, vertical 9:16 composition, no text, no lettering"
     return scfg
 
@@ -260,13 +282,66 @@ def make_series(story: str, notes: str, cfg: dict, dry_run: bool = False, redo: 
         if not files[0].exists():
             raise RuntimeError(f"No bible.json in {src}")
         for f in files:
-            if not (run_dir / f.name).exists():
-                (run_dir / f.name).write_bytes(f.read_bytes())
+            dest = run_dir / f.name
+            if not dest.exists() or dest.read_bytes() != f.read_bytes():
+                if dest.exists():
+                    log(f"Script updated: {f.name}")
+                dest.write_bytes(f.read_bytes())
 
     bible, episodes = write_series(run_dir, story, notes, cfg, dry_run)
     regenerated = not (run_dir / "metadata.json").exists()
-    return _make_shorts(run_dir, bible.series_title, to_pack(bible, episodes), series_config(cfg, bible),
-                        dry_run, assume_yes, regenerated, prefix="part", limit=first_n)
+    result = _make_shorts(run_dir, bible.series_title, to_pack(bible, episodes), series_config(cfg, bible),
+                          dry_run, assume_yes, regenerated, prefix="part", limit=first_n,
+                          overlays=overlays_for(bible, episodes, cfg))
+    write_shot_list(run_dir, bible, episodes, first_n or len(episodes))
+    return result
+
+
+# ---- real motion for key scenes (free image-to-video apps) ---------------------------------
+
+KEY_SHOTS = 3
+
+
+def key_scenes(episode: Episode) -> list:
+    """The hook, the most crowded mid scene, and the cliffhanger: where motion matters most."""
+    n = len(episode.scenes)
+    if n <= KEY_SHOTS:
+        return list(range(n))
+    middle = max(range(1, n - 1), key=lambda i: (len(episode.scenes[i].characters), -abs(i - n // 2)))
+    return sorted({0, middle, n - 2})
+
+
+def motion_prompt(scene: StoryScene) -> str:
+    return (f"Animate this illustration as a short cinematic movie shot: {scene.visual.strip().rstrip('.')}. "
+            "The characters move naturally and react to each other; hair, clothes, smoke and light move; "
+            "slow camera push-in. Keep the exact art style, colours and faces. No text, no new characters.")
+
+
+def write_shot_list(run_dir: Path, bible: SeriesBible, episodes: list, parts: int) -> Path:
+    lines = [
+        f"# Make {bible.series_title} move like a movie (free)",
+        "",
+        "Each part is already animated in 2.5D. For real character movement, turn the key shots below into short",
+        "video clips with a free image-to-video app (Meta AI, Kling, Hailuo or Google Gemini all have free daily",
+        "generations), then re-run the same `series` command. Clips you add are used automatically.",
+        "",
+        "For each shot:",
+        "1. Upload the image file to the app and choose image-to-video, vertical 9:16, about 5 seconds.",
+        "2. Paste the motion prompt.",
+        "3. Download the video and save it NEXT TO the image with the same name but `.mp4`",
+        "   (e.g. `part_01/images/scene_000.png` -> `part_01/images/scene_000.mp4`).",
+        "",
+    ]
+    for e in episodes[:parts]:
+        lines += [f"## Part {e.part}: {e.title}", ""]
+        for i in key_scenes(e):
+            img = f"part_{e.part:02d}/images/scene_{i:03d}.png"
+            done = (run_dir / img).with_suffix(".mp4").exists()
+            lines += [f"- [{'x' if done else ' '}] `{img}`", f"  > {motion_prompt(e.scenes[i])}", ""]
+    path = run_dir / "ANIMATE_ME.md"
+    path.write_text("\n".join(lines), encoding="utf-8")
+    log(f"Shot list for real animated clips: {path}")
+    return path
 
 
 # ---- dry run ------------------------------------------------------------------------------

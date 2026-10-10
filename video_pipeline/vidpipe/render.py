@@ -125,7 +125,7 @@ def _pick_music(cfg: dict, seed: str):
 
 
 def _final_mix(work_dir: Path, video: str, narration: str, ass: str, out: Path, cfg: dict,
-               music, duration: float) -> None:
+               music, duration: float, score: bool = False) -> None:
     """Burn captions, mix music under the voice, normalise loudness. Runs inside work_dir so
     the subtitles filter never needs path escaping."""
     v = cfg["video"]
@@ -133,7 +133,11 @@ def _final_mix(work_dir: Path, video: str, narration: str, ass: str, out: Path, 
     vf = f"[0:v]subtitles=filename={ass}:fontsdir={Path(find_font_file(v['caption_font'])).parent}[v]" \
         if ass else "[0:v]null[v]"
     loud = f"loudnorm=I={v['loudness_lufs']}:TP=-1.5:LRA=11"
-    if music:
+    if music and score:  # generated score is timed to this video: no looping, no fades
+        args += ["-i", music]
+        af = (f"[2:a]aformat=sample_rates=44100:channel_layouts=mono,volume={v.get('score_volume', 0.35)}[m];"
+              f"[1:a][m]amix=inputs=2:duration=first:normalize=0,{loud}[a]")
+    elif music:
         args += ["-stream_loop", "-1", "-i", music]
         fade_start = max(duration - 3, 0)
         af = (f"[2:a]aformat=sample_rates=44100:channel_layouts=mono,volume={v['music_volume']},"
@@ -158,7 +162,10 @@ def _absolute_words(timing: list, timeline: list, scene_ids, offset: float, fps:
 
 
 def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title: str = "",
-                scene_texts: list = None) -> Path:
+                scene_texts: list = None, overlay: dict = None) -> Path:
+    """overlay (optional): {"hook": big opening text, "end_text"/"end_sub": end card} and, with
+    video.score enabled, a generated drone/whoosh/boom score timed to the cuts."""
+    overlay = overlay or {}
     v = cfg["video"]
     fps = v["fps"]
     work = run_dir / "work"
@@ -190,11 +197,18 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
         words = _absolute_words(timing, timeline, range(len(timing)), 0.0, fps)
         write_ass(group_words(words, v["caption_max_words"]), work / "captions.ass",
                   v["width"], v["height"], v["caption_font"], vertical=v["height"] > v["width"],
-                  title=title, duration=sum(t["frames"] for t in timeline) / fps)
+                  title=title, duration=duration, hook=overlay.get("hook", ""),
+                  end_text=overlay.get("end_text", ""), end_sub=overlay.get("end_sub", ""))
         ass = "captions.ass"
+    music, score = _pick_music(cfg, run_dir.name), False
+    if v.get("score"):
+        from .sound import build_score
+        cuts = [t["start"] for t in timeline[1:]]
+        music = build_score(work / "score.wav", duration, cuts, timeline[-1]["start"],
+                            seed=sum(map(ord, run_dir.name))).name
+        score = True
     log("Mixing final video...")
-    _final_mix(work, "video_noaudio.mp4", "narration.wav", ass, final.resolve(), cfg,
-               _pick_music(cfg, run_dir.name), duration)
+    _final_mix(work, "video_noaudio.mp4", "narration.wav", ass, final.resolve(), cfg, music, duration, score)
     return final
 
 

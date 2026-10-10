@@ -2,6 +2,8 @@
 interrupted run picks up where it stopped (and you only pay for missing pieces)."""
 
 import copy
+import hashlib
+import json
 import shutil
 import sys
 from datetime import datetime, timezone
@@ -114,11 +116,27 @@ def _visuals(scenes: list, timing: list, img_dir: Path, cfg: dict, dry_run: bool
     # scenes_per_image > 1 reuses each picture for that many consecutive scenes (each still gets its
     # own camera move), dividing generation time; pictures that already exist are always kept.
     k = max(1, int(cfg["images"].get("scenes_per_image", 1)))
+    manifest_path = img_dir / "prompts.json"
+    manifest = read_json(manifest_path, {}) or {}
     own = [img_dir / f"scene_{i:03d}.png" for i in range(len(scenes))]
+    for i, p in enumerate(own):
+        # A picture made for a different description is stale (e.g. the script was rewritten).
+        # Pictures from before this manifest existed are trusted as-is.
+        if p.exists() and manifest.get(p.name, scenes[i].visual) != scenes[i].visual:
+            log(f"  {p.name}: scene description changed, regenerating")
+            p.unlink()
+            p.with_name(p.stem + ".depth.png").unlink(missing_ok=True)
     paths = [p if p.exists() else own[i - i % k] for i, p in enumerate(own)]
     missing = sorted({p for p in paths if not p.exists()})
     generate_images([(scenes[int(p.stem[6:])].visual, p) for p in missing], cfg, dry_run)
-    return paths
+    for p in set(paths):
+        manifest.setdefault(p.name, scenes[int(p.stem[6:])].visual)
+        if p in missing:
+            manifest[p.name] = scenes[int(p.stem[6:])].visual
+    write_json(manifest_path, manifest)
+    # A real video clip saved as scene_NNN.mp4 (e.g. made with an image-to-video app) wins.
+    return [img_dir / f"scene_{i:03d}.mp4" if (img_dir / f"scene_{i:03d}.mp4").exists() else p
+            for i, p in enumerate(paths)]
 
 
 def shorts_config(cfg: dict) -> dict:
@@ -134,8 +152,19 @@ def shorts_config(cfg: dict) -> dict:
     return vcfg
 
 
+def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
+    """Changes whenever anything that affects the rendered Short changes."""
+    v = cfg["video"]
+    data = [[s.narration for s in short.scenes], short.hook_text, overlay,
+            [f"{p.name}:{p.stat().st_mtime_ns}" for p in paths],
+            {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "width",
+                                    "height", "fps", "captions", "caption_max_words")},
+            cfg["voice"].get("kokoro"), cfg["voice"].get("provider")]
+    return hashlib.sha1(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()
+
+
 def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assume_yes: bool,
-                 regenerated: bool, prefix: str = "short", limit: int = 0) -> Path:
+                 regenerated: bool, prefix: str = "short", limit: int = 0, overlays: list = None) -> Path:
     """Renders each item of pack.shorts as <prefix>_<k>.mp4. `limit` renders only the first N."""
     if not dry_run:
         _confirm_spend([sc for short in pack.shorts for sc in short.scenes], cfg, assume_yes)
@@ -151,12 +180,19 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
         siblings = [run_dir / n / "images" for j, n in enumerate(names, start=1) if j != k]
         paths = _visuals(short.scenes, timing, sub / "images", vcfg, dry_run, used_ids(siblings))
         out = run_dir / f"{names[k - 1]}.mp4"
+        overlay = (overlays or [{}] * len(pack.shorts))[k - 1]
+        stamp, fp = sub / "fingerprint.txt", _fingerprint(short, overlay, paths, vcfg)
+        if stamp.exists() and stamp.read_text() != fp:
+            log("  script or settings changed since the last render; re-rendering this one")
+            _clear(sub, ["work", "video.mp4"])
+            out.unlink(missing_ok=True)
         if not out.exists():
             video = sub / "video.mp4"
             if not video.exists():
                 render_main(sub, paths, timing, vcfg, title=short.hook_text,
-                            scene_texts=[f"{sc.visual} {sc.narration}" for sc in short.scenes])
+                            scene_texts=[f"{sc.visual} {sc.narration}" for sc in short.scenes], overlay=overlay)
             shutil.copyfile(video, out)
+        stamp.write_text(fp)
         duration = check_output(out, check_silence=not dry_run)
         if duration > 180:
             log(f"  Warning: {out.name} is {duration:.0f}s; YouTube Shorts must be 3 minutes or less")

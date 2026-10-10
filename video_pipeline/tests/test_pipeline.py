@@ -574,3 +574,64 @@ def test_scenes_per_image_halves_generation_and_keeps_existing(tmp_path, cfg, mo
     assert [p.name for p in paths] == ["scene_000.png", "scene_001.png", "scene_002.png", "scene_002.png",
                                        "scene_004.png"]
     assert made == ["scene_000.png", "scene_002.png", "scene_004.png"]
+
+
+# ---- retention: hook card, end card, score, cache invalidation -----------------------------
+
+def test_series_overlays_and_shot_list(cfg, tmp_path):
+    from vidpipe import series
+    bible = series.SeriesBible.model_validate(json.loads((ROOT / "stories/dracula/bible.json").read_text()))
+    eps = [e for f in sorted((ROOT / "stories/dracula").glob("parts_*.json"))
+           for e in series.EpisodeBatch.model_validate(json.loads(f.read_text())).episodes]
+    ov = series.overlays_for(bible, eps, cfg)
+    assert ov[0] == {"hook": "DON'T SAY HIS NAME", "end_text": "Part 2 →", "end_sub": "Next: The Man With No Reflection"}
+    assert ov[-1]["end_text"] == "The End"
+    assert all(not e.scenes[0].narration.lower().startswith("last time") for e in eps)
+    path = series.write_shot_list(tmp_path, bible, eps, 2)
+    text = path.read_text()
+    assert "part_01/images/scene_000.png" in text and "## Part 3" not in text
+
+
+def test_score_is_timed_and_audible(tmp_path):
+    import wave
+    import numpy as np
+    from vidpipe.sound import build_score, SR
+    path = build_score(tmp_path / "s.wav", 10.0, [3.0, 6.0], 8.0, seed=1)
+    with wave.open(str(path)) as w:
+        data = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float)
+    assert abs(len(data) / SR - 10.0) < 0.01
+    loud = lambda a, b: np.abs(data[int(a * SR):int(b * SR)]).mean()
+    assert loud(0, 0.4) > loud(1.5, 2.0)      # opening boom
+    assert loud(8.0, 8.4) > loud(4.5, 5.0)    # cliffhanger boom
+
+
+def test_changed_script_rerenders_but_keeps_pictures(cfg):
+    from vidpipe import pipeline
+    cfg["format"] = "shorts"
+    cfg["shorts"].update(width=360, height=640, per_topic=1)
+    run_dir = make_video("Rerender Topic", "", cfg, dry_run=True)
+    img = run_dir / "short_1" / "images" / "scene_000.png"
+    out = run_dir / "short_1.mp4"
+    img_mtime, out_mtime = img.stat().st_mtime_ns, out.stat().st_mtime_ns
+    # Rewrite one line of narration (same picture descriptions).
+    data = json.loads((run_dir / "script.json").read_text())
+    data["shorts"][0]["scenes"][1]["narration"] = "A brand new, much more gripping line."
+    (run_dir / "script.json").write_text(json.dumps(data))
+    make_video("Rerender Topic", "", cfg, dry_run=True)
+    assert out.stat().st_mtime_ns != out_mtime          # video rebuilt
+    assert img.stat().st_mtime_ns == img_mtime          # picture kept
+    # Changing a picture's description regenerates just that picture.
+    data["shorts"][0]["scenes"][0]["visual"] = "A completely different scene"
+    (run_dir / "script.json").write_text(json.dumps(data))
+    make_video("Rerender Topic", "", cfg, dry_run=True)
+    assert img.stat().st_mtime_ns != img_mtime
+
+
+def test_movie_clip_replaces_picture(cfg, tmp_path):
+    from vidpipe import pipeline
+    scenes = [Scene(narration="n", visual="v", search_query="")]
+    img_dir = tmp_path / "images"
+    img_dir.mkdir()
+    (img_dir / "scene_000.png").write_bytes(b"x")
+    (img_dir / "scene_000.mp4").write_bytes(b"clip")
+    assert pipeline._visuals(scenes, [], img_dir, cfg, dry_run=True)[0].suffix == ".mp4"

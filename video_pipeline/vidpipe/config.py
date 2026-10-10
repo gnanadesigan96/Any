@@ -73,7 +73,9 @@ DEFAULTS = {
         "style_hint": "",         # e.g. "anime", "graphic novel", "watercolour storybook"
         "images_provider": "local",  # local (free, Apple Silicon) or openai (paid)
         "animation": "parallax",  # 2.5D animated illustrations for story series
-        "scenes_per_image": 1,    # 2 = one picture per two scenes (half the image-generation time)
+        "scenes_per_image": 1,
+        "score": True,            # dark drone, whooshes on cuts, booms on the hook and the cliffhanger
+        "hook_card": True,        # big hook text for the first 2 seconds + "PART N+1 →" end card    # 2 = one picture per two scenes (half the image-generation time)
         "voice_speed": 0.95,      # storytelling pace: a little slower and more dramatic than fact Shorts
         "sentence_pause": 0.2,
     },
@@ -94,6 +96,8 @@ DEFAULTS = {
         "caption_max_words": 5,
         "music_dir": "assets/music",
         "music_volume": 0.10,
+        "score": False,           # generated drone + whoosh/boom/riser score (series turn this on)
+        "score_volume": 0.35,
         "loudness_lufs": -14,
     },
     # "long": one long video (plus clips cut from it). "shorts": several standalone Shorts per topic.

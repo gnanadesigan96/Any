@@ -43,7 +43,10 @@ def _ass_escape(text: str) -> str:
 
 
 def write_ass(phrases: list, path: Path, width: int, height: int, font: str, vertical: bool,
-              title: str = "", duration: float = 0.0) -> None:
+              title: str = "", duration: float = 0.0, hook: str = "", end_text: str = "",
+              end_sub: str = "", hook_seconds: float = 2.2, end_seconds: float = 2.6) -> None:
+    """Captions, plus optional overlays: `title` at the top for the whole video, `hook` as a big
+    punch-in card for the first seconds, and an end card (`end_text` / `end_sub`) at the end."""
     if vertical:
         size, margin_v, align, outline = int(height * 0.05), int(height * 0.30), 2, 7
     else:
@@ -59,6 +62,8 @@ ScaledBorderAndShadow: yes
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Cap,{font},{size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,{outline},1,{align},{int(width * 0.08)},{int(width * 0.08)},{margin_v},1
 Style: Title,{font},{int(size * 1.15)},&H0000D7FF,&H0000D7FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,{outline + 1},1,8,{int(width * 0.07)},{int(width * 0.07)},{int(height * 0.12)},1
+Style: Hook,{font},{int(size * 1.7)},&H0000D7FF,&H0000D7FF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,5,{int(width * 0.06)},{int(width * 0.06)},0,1
+Style: End,{font},{int(size * 1.6)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,5,{int(width * 0.06)},{int(width * 0.06)},0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -66,6 +71,16 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     lines = []
     if title and duration > 0:
         lines.append(f"Dialogue: 1,{_ass_time(0)},{_ass_time(duration)},Title,,0,0,0,,{_ass_escape(title)}")
+    if hook and duration > 0:
+        # Punch-in: starts oversized and snaps to size, then fades out.
+        lines.append(f"Dialogue: 2,{_ass_time(0)},{_ass_time(min(hook_seconds, duration))},Hook,,0,0,0,,"
+                     "{\\fscx135\\fscy135\\t(0,220,\\fscx100\\fscy100)\\fad(0,250)}"
+                     + _ass_escape(hook.upper()))
+    if end_text and duration > end_seconds + 1:
+        sub = (f"\\N{{\\fs{int(size * 0.85)}\\c&H0000D7FF&}}{_ass_escape(end_sub.upper())}" if end_sub else "")
+        lines.append(f"Dialogue: 2,{_ass_time(duration - end_seconds)},{_ass_time(duration)},End,,0,0,0,,"
+                     "{\\fad(200,0)\\fscx120\\fscy120\\t(0,200,\\fscx100\\fscy100)}"
+                     + _ass_escape(end_text.upper()) + sub)
     lines += [
         f"Dialogue: 0,{_ass_time(s)},{_ass_time(e)},Cap,,0,0,0,,{_ass_escape(text)}"
         for text, s, e in phrases if e > s

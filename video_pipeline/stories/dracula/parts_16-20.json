@@ -3,8 +3,8 @@
     {
       "part": 16,
       "title": "One Box Left",
-      "hook_text": "One box left",
-      "description": "The hunters corner the Count in London, but he slips away.",
+      "hook_text": "HE ESCAPED",
+      "description": "The hunters corner the Count in his London house. He doesn't stay cornered.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -14,39 +14,12 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, the Count attacked Mina and bound her to him.",
-          "visual": "Mina sitting on a bed, staring blankly, Jonathan holding her hand",
-          "characters": [
-            "Mina",
-            "Jonathan"
-          ]
+          "narration": "Jonathan's knife rips the Count's coat open, and gold pours across the floor.",
+          "visual": "Gold coins spilling from a slashed black coat onto floorboards, a curved knife flashing",
+          "characters": []
         },
         {
-          "narration": "Van Helsing touches Mina's forehead with the holy bread.",
-          "visual": "Van Helsing touching a white wafer to Mina's forehead",
-          "characters": [
-            "Van Helsing",
-            "Mina"
-          ]
-        },
-        {
-          "narration": "It burns her, leaving a red scar.",
-          "visual": "A red burn mark on Mina's forehead, her eyes closed in pain",
-          "characters": [
-            "Mina"
-          ]
-        },
-        {
-          "narration": "The hunters race across London, destroying box after box.",
-          "visual": "Men in a horse-drawn cab racing through foggy London streets",
-          "characters": [
-            "Jonathan",
-            "Arthur Holmwood",
-            "Quincey Morris"
-          ]
-        },
-        {
-          "narration": "In a house in Piccadilly, they wait for the Count to return.",
+          "narration": "The hunters had been waiting for him in his house in Piccadilly.",
           "visual": "Men waiting in a dark Victorian room, weapons ready",
           "characters": [
             "Jonathan",
@@ -55,7 +28,30 @@
           ]
         },
         {
-          "narration": "He bursts in, and Jonathan slashes at him with a great curved knife.",
+          "narration": "All day, they'd destroyed box after box across London.",
+          "visual": "Men in a horse-drawn cab racing through foggy London streets",
+          "characters": [
+            "Jonathan",
+            "Arthur Holmwood",
+            "Quincey Morris"
+          ]
+        },
+        {
+          "narration": "And Mina now carries a red scar where the holy bread touched her forehead.",
+          "visual": "A red burn mark on Mina's forehead, her eyes closed in pain",
+          "characters": [
+            "Mina"
+          ]
+        },
+        {
+          "narration": "When the Count walked in, they were ready.",
+          "visual": "The Count stepping through a doorway, eyes narrowing",
+          "characters": [
+            "Count Dracula"
+          ]
+        },
+        {
+          "narration": "Jonathan swings his great curved knife.",
           "visual": "Jonathan swinging a curved knife at the cloaked Count",
           "characters": [
             "Jonathan",
@@ -63,26 +59,30 @@
           ]
         },
         {
-          "narration": "The blade cuts his coat, and gold coins pour out.",
-          "visual": "Gold coins spilling from a slashed coat onto the floorboards",
-          "characters": []
-        },
-        {
-          "narration": "The Count leaps through the window into the courtyard below.",
+          "narration": "The Count leaps straight through the window.",
           "visual": "The Count leaping through a window in a burst of glass",
           "characters": [
             "Count Dracula"
           ]
         },
         {
-          "narration": "My revenge has only begun, he sneers.",
+          "narration": "From the courtyard he sneers up at them. His revenge, he says, has only begun.",
           "visual": "The Count looking up from a courtyard, sneering",
           "characters": [
             "Count Dracula"
           ]
         },
         {
-          "narration": "And one box of earth is still missing.",
+          "narration": "They count the boxes.",
+          "visual": "The hunters searching a cellar with lanterns, crates smashed open",
+          "characters": [
+            "Jonathan",
+            "Arthur Holmwood",
+            "Quincey Morris"
+          ]
+        },
+        {
+          "narration": "One is missing. In Part 17, Mina finds a way to track him.",
           "visual": "A single wooden crate on a dark London dock",
           "characters": []
         }
@@ -91,8 +91,8 @@
     {
       "part": 17,
       "title": "Through His Eyes",
-      "hook_text": "She can see him",
-      "description": "Mina turns the Count's curse against him.",
+      "hook_text": "SHE CAN SEE HIM",
+      "description": "Mina turns the Count's curse into a weapon.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -102,19 +102,21 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, the Count escaped, with one box still missing.",
-          "visual": "A dark London dock at dawn, an empty space where a crate stood",
-          "characters": []
+          "narration": "Mina closes her eyes, and she can see what the Count sees.",
+          "visual": "Mina in a trance, eyes glazed, faint red light around her",
+          "characters": [
+            "Mina"
+          ]
         },
         {
-          "narration": "Mina has an idea. The Count's bite connects her to him.",
+          "narration": "His bite linked their minds. Now she wants to use it against him.",
           "visual": "Mina sitting upright, determined, the red scar on her forehead",
           "characters": [
             "Mina"
           ]
         },
         {
-          "narration": "She asks Van Helsing to hypnotise her at dawn.",
+          "narration": "At dawn, Van Helsing hypnotises her.",
           "visual": "Van Helsing hypnotising Mina by candlelight, moving his hands before her eyes",
           "characters": [
             "Van Helsing",
@@ -122,24 +124,22 @@
           ]
         },
         {
-          "narration": "In a trance, she senses what the Count senses.",
-          "visual": "Mina in a trance, eyes glazed, faint red light around her",
-          "characters": [
-            "Mina"
-          ]
-        },
-        {
-          "narration": "All is dark. She hears water lapping and chains creaking.",
+          "narration": "Darkness. Water lapping. Chains creaking.",
           "visual": "Darkness inside a ship's hold, water dripping, heavy chains swaying",
           "characters": []
         },
         {
-          "narration": "The Count is on a ship, running home to his castle.",
+          "narration": "He's on a ship.",
           "visual": "A sailing ship gliding down a river at dawn",
           "characters": []
         },
         {
-          "narration": "The ship is the Czarina Catherine, bound for Varna on the Black Sea.",
+          "narration": "The Count is running home to his castle.",
+          "visual": "A huge dark castle on a cliff under storm clouds",
+          "characters": []
+        },
+        {
+          "narration": "The ship is the Czarina Catherine, bound for the Black Sea.",
           "visual": "An old map of Europe with a route traced to the Black Sea",
           "characters": []
         },
@@ -153,28 +153,26 @@
           ]
         },
         {
-          "narration": "They will follow him to the ends of the earth.",
-          "visual": "The group standing together at a railway platform in fog",
-          "characters": [
-            "Jonathan",
-            "Mina",
-            "Van Helsing"
-          ]
-        },
-        {
-          "narration": "Because if the Count dies, Mina's curse dies with him.",
+          "narration": "If the Count dies, Mina's curse dies with him.",
           "visual": "Mina touching the scar on her forehead, looking out at the dawn",
           "characters": [
             "Mina"
+          ]
+        },
+        {
+          "narration": "But the link works both ways. In Part 18, he starts reading them.",
+          "visual": "The Count's shadowy face looming in darkness, eyes glowing",
+          "characters": [
+            "Count Dracula"
           ]
         }
       ]
     },
     {
       "part": 18,
-      "title": "The Race East",
-      "hook_text": "He's one step ahead",
-      "description": "The hunters chase the Count across Europe, but he always seems to know their plans.",
+      "title": "One Step Ahead",
+      "hook_text": "HE KNOWS THEIR PLAN",
+      "description": "The hunters chase the Count across Europe, but he always seems to know their next move.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -184,17 +182,20 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, Mina's trance revealed the Count sailing home.",
-          "visual": "A ship on a dark sea under a crescent moon",
-          "characters": []
+          "narration": "Every move they make, the Count already knows.",
+          "visual": "The Count's shadowy face looming over Mina as she sleeps",
+          "characters": [
+            "Count Dracula",
+            "Mina"
+          ]
         },
         {
-          "narration": "The hunters cross Europe by train to meet his ship in Varna.",
+          "narration": "The hunters race across Europe by train to meet his ship.",
           "visual": "A steam train racing through Eastern European countryside",
           "characters": []
         },
         {
-          "narration": "They wait for days, but the ship never arrives.",
+          "narration": "They wait at the port for days.",
           "visual": "Men waiting on a misty harbour quay",
           "characters": [
             "Jonathan",
@@ -203,20 +204,12 @@
           ]
         },
         {
-          "narration": "It slips into a different port, Galatz, instead.",
+          "narration": "The ship never comes. It docks somewhere else, in secret.",
           "visual": "A ship docking at a river port at night",
           "characters": []
         },
         {
-          "narration": "The Count may be reading their plans through Mina's mind.",
-          "visual": "The Count's shadowy face looming over Mina as she sleeps",
-          "characters": [
-            "Count Dracula",
-            "Mina"
-          ]
-        },
-        {
-          "narration": "By the time they reach Galatz, his box is gone, carried upriver.",
+          "narration": "By the time they get there, his box is gone, carried up the river.",
           "visual": "An empty dock with drag marks where a crate was taken, a river beyond",
           "characters": []
         },
@@ -230,7 +223,7 @@
           ]
         },
         {
-          "narration": "Jonathan and Arthur chase by steam launch up the river.",
+          "narration": "Jonathan and Arthur chase him by steam launch.",
           "visual": "Two men on a small steam launch racing up a wide river",
           "characters": [
             "Jonathan",
@@ -238,7 +231,7 @@
           ]
         },
         {
-          "narration": "Seward and Quincey ride along the banks on horseback.",
+          "narration": "Seward and Quincey ride hard along the banks.",
           "visual": "Two riders galloping along a riverbank",
           "characters": [
             "Dr. Seward",
@@ -246,7 +239,7 @@
           ]
         },
         {
-          "narration": "Van Helsing takes Mina by carriage, straight to the castle.",
+          "narration": "Van Helsing takes Mina straight to the castle.",
           "visual": "A carriage driving through the snowy Carpathian mountains",
           "characters": [
             "Van Helsing",
@@ -254,7 +247,7 @@
           ]
         },
         {
-          "narration": "And Mina is changing. She sleeps nearly all day now.",
+          "narration": "But Mina is changing. She sleeps all day now. In Part 19, the sisters come for her.",
           "visual": "Mina asleep in a carriage, very pale",
           "characters": [
             "Mina"
@@ -265,8 +258,8 @@
     {
       "part": 19,
       "title": "The Circle in the Snow",
-      "hook_text": "The sisters return",
-      "description": "Van Helsing protects Mina from the three sisters, then enters the castle alone.",
+      "hook_text": "THEY WANT MINA",
+      "description": "Three vampire women rise out of the snow, calling Mina their sister.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -276,12 +269,14 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, the hunters split up to chase the Count home.",
-          "visual": "Riders and a carriage spread across a snowy valley",
-          "characters": []
+          "narration": "Three women rise out of the snow, calling Mina their sister.",
+          "visual": "Three pale women forming out of swirling snow at night, arms reaching",
+          "characters": [
+            "The Three Sisters"
+          ]
         },
         {
-          "narration": "Near the castle, Van Helsing makes camp in the snow.",
+          "narration": "Van Helsing has made camp below the Count's castle.",
           "visual": "Van Helsing and Mina at a campfire in snowy mountains, a castle in the distance",
           "characters": [
             "Van Helsing",
@@ -289,7 +284,7 @@
           ]
         },
         {
-          "narration": "He draws a circle around Mina with crumbs of holy bread.",
+          "narration": "Around Mina, he has drawn a circle of holy bread.",
           "visual": "Van Helsing scattering white crumbs in a circle around Mina in the snow",
           "characters": [
             "Van Helsing",
@@ -297,21 +292,14 @@
           ]
         },
         {
-          "narration": "At midnight, three figures form out of the swirling snow.",
-          "visual": "Three pale women forming out of swirling snow at night",
-          "characters": [
-            "The Three Sisters"
-          ]
-        },
-        {
-          "narration": "The Count's three women call to Mina, as if she were their sister.",
+          "narration": "The women beckon. Come, sister. Come to us.",
           "visual": "Three pale women beckoning with outstretched arms, smiling",
           "characters": [
             "The Three Sisters"
           ]
         },
         {
-          "narration": "Mina cannot leave the circle. And they cannot enter it.",
+          "narration": "Mina can't leave the circle. And they can't come in.",
           "visual": "Mina inside a faintly glowing circle in the snow, the women outside it",
           "characters": [
             "Mina",
@@ -319,14 +307,19 @@
           ]
         },
         {
-          "narration": "At dawn, Van Helsing enters the castle alone.",
+          "narration": "At dawn, Van Helsing walks into the castle alone.",
           "visual": "Van Helsing walking through a ruined castle gate at sunrise",
           "characters": [
             "Van Helsing"
           ]
         },
         {
-          "narration": "He finds the three women asleep in their tombs, and ends them one by one.",
+          "narration": "He finds the three women asleep in their tombs.",
+          "visual": "Three stone tombs in a dark chapel, pale faces visible inside",
+          "characters": []
+        },
+        {
+          "narration": "And ends them. One by one.",
           "visual": "Van Helsing standing over a stone tomb in a dark chapel, hammer in hand",
           "characters": [
             "Van Helsing"
@@ -340,7 +333,7 @@
           ]
         },
         {
-          "narration": "Far below, a wagon races up the mountain road carrying a single box.",
+          "narration": "Far below, a wagon with one box races for the castle. Part 20 is the final battle.",
           "visual": "A horse wagon racing up a snowy mountain road carrying a large crate",
           "characters": []
         }
@@ -349,8 +342,8 @@
     {
       "part": 20,
       "title": "Sunset",
-      "hook_text": "The final battle",
-      "description": "The hunters' last chance to stop the Count before the sun goes down.",
+      "hook_text": "THE SUN IS SETTING",
+      "description": "If the sun sets before they reach the box, the Count wakes up. The final part.",
       "hashtags": [
         "#Dracula",
         "#HorrorStory",
@@ -360,12 +353,7 @@
       ],
       "scenes": [
         {
-          "narration": "Last time, the Count's box raced toward the castle.",
-          "visual": "A wagon on a snowy mountain road at sunset",
-          "characters": []
-        },
-        {
-          "narration": "The sun is setting. If it sets before they reach him, the Count will wake.",
+          "narration": "If the sun sets before they reach that box, the Count wakes up.",
           "visual": "A red sun sinking behind snowy peaks, a wagon racing below",
           "characters": []
         },
@@ -379,7 +367,7 @@
           ]
         },
         {
-          "narration": "Jonathan and Quincey fight their way through to the box.",
+          "narration": "Jonathan and Quincey fight their way to the box.",
           "visual": "Jonathan and Quincey forcing their way through a crowd of men around a wagon",
           "characters": [
             "Jonathan",
@@ -387,21 +375,29 @@
           ]
         },
         {
-          "narration": "Quincey is wounded, but he will not stop.",
+          "narration": "Quincey is wounded. He doesn't stop.",
           "visual": "Quincey clutching his side, blood on his coat, still pushing forward",
           "characters": [
             "Quincey Morris"
           ]
         },
         {
-          "narration": "They throw the lid off. The Count's red eyes open in triumph.",
+          "narration": "They tear off the lid.",
+          "visual": "Hands tearing the lid off a wooden box in the snow",
+          "characters": [
+            "Jonathan",
+            "Quincey Morris"
+          ]
+        },
+        {
+          "narration": "The Count's red eyes open, in triumph.",
           "visual": "The Count lying in a box of earth, red eyes snapping open in the sunset glow",
           "characters": [
             "Count Dracula"
           ]
         },
         {
-          "narration": "Jonathan's knife slashes his throat. Quincey's blade pierces his heart.",
+          "narration": "Jonathan's knife slashes his throat. Quincey's blade drives into his heart.",
           "visual": "Two blades striking down into a box, silhouetted against the setting sun",
           "characters": [
             "Jonathan",
@@ -409,7 +405,7 @@
           ]
         },
         {
-          "narration": "The Count crumbles into dust, with a look of peace.",
+          "narration": "The Count crumbles to dust, with a look of peace.",
           "visual": "A figure crumbling into dust that drifts away in red sunset light",
           "characters": []
         },
@@ -421,7 +417,7 @@
           ]
         },
         {
-          "narration": "Quincey dies smiling, knowing they have won.",
+          "narration": "Quincey dies smiling. He knows they've won.",
           "visual": "Quincey lying in the snow smiling, friends kneeling around him",
           "characters": [
             "Quincey Morris",

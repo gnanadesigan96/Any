@@ -1,6 +1,7 @@
 """Stage 2: narration audio per scene, with word-level timestamps for captions."""
 
 import base64
+import json
 import os
 import re
 import threading
@@ -210,22 +211,30 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
     timing_path = audio_dir / "timing.json"
     cached = read_json(timing_path, {}) or {}
     voice = None
+    # Re-voice a scene when its text OR the voice settings change (speed, pauses, voice).
+    vc = cfg["voice"]
+    sig = "dry" if dry_run else json.dumps(
+        [vc["provider"], vc.get("voice_id"), vc.get("kokoro") if vc["provider"] == "kokoro" else None],
+        sort_keys=True)
+
+    def fresh(i):
+        entry = cached.get(str(i), {})
+        return ((audio_dir / f"scene_{i:03d}.mp3").exists() and entry.get("text") == scenes[i].narration
+                and entry.get("sig", sig) == sig)
 
     def work(i):
         nonlocal voice
         mp3 = audio_dir / f"scene_{i:03d}.mp3"
         key = str(i)
-        if mp3.exists() and cached.get(key, {}).get("text") == scenes[i].narration:
+        if fresh(i):
             return i, cached[key]
         prev_text = scenes[i - 1].narration if i > 0 else ""
         next_text = scenes[i + 1].narration if i + 1 < len(scenes) else ""
         words = voice.synthesize(scenes[i].narration, prev_text, next_text, mp3)
-        return i, {"text": scenes[i].narration, "audio": mp3.name,
+        return i, {"text": scenes[i].narration, "audio": mp3.name, "sig": sig,
                    "duration": media_duration(mp3), "words": words}
 
-    todo = [i for i in range(len(scenes))
-            if not ((audio_dir / f"scene_{i:03d}.mp3").exists()
-                    and cached.get(str(i), {}).get("text") == scenes[i].narration)]
+    todo = [i for i in range(len(scenes)) if not fresh(i)]
     if todo:
         voice = make_voice(cfg, dry_run)
         chars = sum(len(scenes[i].narration) for i in todo)

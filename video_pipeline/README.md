@@ -60,6 +60,14 @@ uses the same art style and character designs, so the series looks like one worl
   Apache-2.0, ~100 MB, downloaded once) works out what is near and far, so the camera moves through each
   illustration with real parallax, and fog, rain, snow, embers, candle flicker or lightning are added when the scene
   mentions them. Set `video.animation: "parallax"` to use this for any Shorts with still images too.
+- **Built for retention:** every part opens on its most dramatic moment (no slow recaps), shows a big hook line for
+  the first 2 seconds, ends on a cliffhanger plus a spoken teaser, and shows a "PART N+1 → Next: ..." end card. A
+  generated score adds a dark drone, a whoosh on every cut, a boom on the hook and the cliffhanger, and a riser into it.
+- **Real movement for key shots (free):** after each run, `ANIMATE_ME.md` lists the 3 key shots of every part with the
+  image file and a ready motion prompt. Turn them into clips with a free image-to-video app (Meta AI, Kling, Hailuo,
+  Gemini), save each clip next to its image as `scene_NNN.mp4`, and re-run: clips replace the stills automatically.
+- **Editing is safe:** if the script changes, only the affected voice lines, pictures and videos are redone; pictures
+  whose descriptions didn't change are kept.
 - **Try it small first:** `--first 2` renders only parts 1-2 so you can check the style before committing hours.
   Run again without `--first` to render the rest.
 - **Choosing stories:** public-domain stories (classic novels, myths, folk tales, films from the 1920s) are safe to
