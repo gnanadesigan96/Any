@@ -305,12 +305,14 @@ class GeminiVoice:
                 "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": self.g["voice"]}}},
             },
         }
+        err = ""
         for attempt in range(6):
+            wait = min(10 * 2 ** attempt, 60)
             try:
                 resp = requests.post(GEMINI_URL.format(model=self.g["model"]), json=body, timeout=180,
                                      headers={"x-goog-api-key": self.key, "Content-Type": "application/json"})
             except requests.RequestException as e:
-                resp, err = None, str(e)
+                resp, err = None, f"network error: {e}"
             if resp is not None and resp.status_code == 200:
                 try:
                     part = resp.json()["candidates"][0]["content"]["parts"][0]
@@ -318,12 +320,16 @@ class GeminiVoice:
                 except (KeyError, IndexError, ValueError):
                     err = f"no audio in the reply: {resp.text[:300]}"
             elif resp is not None:
-                err = f"Gemini error {resp.status_code}: {resp.text[:300]}"
+                info = gemini_error(resp)
+                err = f"Gemini error {resp.status_code}: {info['message']}"
+                if info["hopeless"]:
+                    raise RuntimeError(err + "\n" + info["hint"])
                 if resp.status_code not in (429, 500, 502, 503, 504):
                     break
-            if attempt < 5:  # the free tier allows only a few requests a minute: wait and retry
-                wait = min(10 * 2 ** attempt, 60)
-                log(f"  Gemini voice busy or rate-limited; retrying in {wait}s...")
+                wait = min(info["retry_after"] or wait, 90)
+            if attempt < 5:
+                log(f"  {err[:160]}")
+                log(f"  retrying in {wait:.0f}s...")
                 time.sleep(wait)
         raise RuntimeError(err)
 
@@ -342,15 +348,53 @@ class GeminiVoice:
         return _spread_sentences(text, media_duration(out_mp3) - self.g["scene_pause"])
 
 
+def gemini_error(resp) -> dict:
+    """Reads a Gemini error reply: its message, how long Google asks us to wait, and whether retrying is pointless
+    (the daily free quota is used up, or the free tier gives this model no quota at all)."""
+    try:
+        e = resp.json().get("error", {})
+    except ValueError:
+        e = {}
+    message = (e.get("message") or resp.text or "").strip().replace("\n", " ")
+    retry_after, quota_ids = 0.0, []
+    for d in e.get("details") or []:
+        if str(d.get("retryDelay", "")).endswith("s"):
+            try:
+                retry_after = float(d["retryDelay"][:-1]) + 1
+            except ValueError:
+                pass
+        quota_ids += [v.get("quotaId", "") for v in d.get("violations") or []]
+    daily = any("PerDay" in q for q in quota_ids)
+    no_quota = bool(re.search(r"limit:\s*0\b", message))
+    if no_quota:
+        hint = ("Your Google key has no free quota for this voice model. Turn on billing for the key's project at "
+                "aistudio.google.com, or set voice.gemini.model in config.yaml to another TTS model.")
+    elif daily:
+        hint = "The free daily Gemini voice quota is used up. Try again tomorrow, or turn on billing at aistudio.google.com."
+    elif resp.status_code in (401, 403):
+        hint = "Check GEMINI_API_KEY in .env (create one at aistudio.google.com/apikey)."
+    elif resp.status_code == 404:
+        hint = "Google doesn't recognise voice.gemini.model; set it to a current TTS model in config.yaml."
+    else:
+        hint = ""
+    return {"message": message[:400], "retry_after": retry_after,
+            "hopeless": no_quota or daily or resp.status_code in (400, 401, 403, 404), "hint": hint}
+
+
 def preview_gemini_voices(cfg: dict, text: str, out_dir: Path, voices: list) -> list:
     out_dir.mkdir(parents=True, exist_ok=True)
     outputs = []
     for v in voices:
         if v not in GEMINI_VOICES:
             raise RuntimeError(f"Unknown Gemini voice '{v}'. Choose from: {', '.join(GEMINI_VOICES)}")
-        engine = GeminiVoice({**cfg, "voice": {**cfg["voice"], "gemini": {**cfg["voice"]["gemini"], "voice": v}}})
+    for n, v in enumerate(voices, start=1):
         path = out_dir / f"gemini_{v}_{GEMINI_VOICES[v]}.mp3"
-        engine.synthesize(text, "", "", path)
+        if path.exists():  # made on an earlier try: don't spend free quota on it again
+            log(f"{n}/{len(voices)} {v}: already made")
+        else:
+            log(f"{n}/{len(voices)} {v} ({GEMINI_VOICES[v]})...")
+            engine = GeminiVoice({**cfg, "voice": {**cfg["voice"], "gemini": {**cfg["voice"]["gemini"], "voice": v}}})
+            engine.synthesize(text, "", "", path)
         outputs.append(path)
     return outputs
 

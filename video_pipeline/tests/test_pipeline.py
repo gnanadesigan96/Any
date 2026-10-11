@@ -923,3 +923,36 @@ def test_edge_preview_renders_every_voice_in_every_delivery(cfg, tmp_path, monke
     paths = preview_edge_voices(cfg, "ஒன்று இரண்டு.", tmp_path / "s", EDGE_SAMPLE_VOICES["tamil"])
     assert len(paths) == 8 * len(EDGE_STYLES) and all(p.exists() for p in paths)
     assert {(c[2]["rate"], c[2]["pitch"]) for c in calls} == {(s["rate"], s["pitch"]) for s in EDGE_STYLES.values()}
+
+
+@pytest.mark.parametrize("quota_id, message, retries", [
+    ("GenerateRequestsPerMinutePerProjectPerModel-FreeTier", "Quota exceeded, limit: 3. Please retry in 7s.", True),
+    ("GenerateRequestsPerDayPerProjectPerModel-FreeTier", "Quota exceeded, limit: 15.", False),
+    ("GenerateRequestsPerMinutePerProjectPerModel-FreeTier", "Quota exceeded, limit: 0, model: x-tts", False),
+])
+def test_gemini_rate_limits_wait_as_asked_or_stop(cfg, tmp_path, monkeypatch, quota_id, message, retries):
+    from vidpipe import voice
+    waits, calls = [], {"n": 0}
+
+    class Busy:
+        status_code, text = 429, "busy"
+
+        def json(self):
+            return {"error": {"code": 429, "message": message, "details": [
+                {"@type": "type.googleapis.com/google.rpc.QuotaFailure", "violations": [{"quotaId": quota_id}]},
+                {"@type": "type.googleapis.com/google.rpc.RetryInfo", "retryDelay": "7s"}]}}
+
+    def post(url, **kw):
+        calls["n"] += 1
+        return Busy()
+
+    monkeypatch.setenv("GEMINI_API_KEY", "g")
+    monkeypatch.setattr(voice.requests, "post", post)
+    monkeypatch.setattr("time.sleep", waits.append)
+    with pytest.raises(RuntimeError) as e:
+        voice.GeminiVoice(cfg).synthesize("ஒன்று.", "", "", tmp_path / "x.mp3")
+    assert "Gemini error 429: Quota exceeded" in str(e.value)
+    if retries:
+        assert calls["n"] == 6 and waits == [8.0] * 5
+    else:
+        assert calls["n"] == 1 and not waits and "aistudio.google.com" in str(e.value)
