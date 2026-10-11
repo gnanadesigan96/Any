@@ -85,25 +85,22 @@ def series_settings(cfg: dict, language: str = "") -> dict:
     return sr
 
 
-# How young viewers actually talk, per language: the narration should sound like today's top explainer channels.
+# How people actually talk, per language: the narration should sound like everyday speech, not writing.
 SLANG = {
-    "tamil": ("Write the way Tamil Gen Z creators talk in reels and movie-explainer Shorts today: casual Chennai "
-              "Tanglish, addressing the viewer as ப்ரோ (not the dated மச்சான்), casual verb endings (பண்ணிடுறான், "
-              "ஆகிடுறாங்க, போயிடுறான்), current slang (வேற மாறி, உருட்டு for fake or bluffing, கலாய் for roasting, சில், "
-              "சோலோ, பக்கா, \"என்ன ப்ரோ நடக்குது இங்க?!\") and the English words people really say, written in Tamil "
-              "script (கில்லர், டார்கெட், ப்ளாட் ட்விஸ்ட், ரெட் ஃப்ளாக், கேஸ், மிஸ்ஸிங், ரியல்). Go easy on 2010s words "
-              "that now sound old (செம்ம, வேற லெவல், மாஸ், கெத்து) and never use written-only Tamil (இலக்கு, தயாரிப்பாளர், "
-              "திருப்பம், அசாத்திய). "),
+    "tamil": ("Write plain everyday spoken Tamil, the way an ordinary person tells a story to family or friends "
+              "today: spoken verb forms (பண்ணிடுறான், போயிடுறா, கேக்கல, சொல்றாரு), simple common words, and only the "
+              "English words everyone already uses in Tamil, written in Tamil script (ஸ்கூல், போலீஸ், கேஸ், பார்ட்டி, "
+              "ட்விஸ்ட்). No forced slang or catchphrases (no ப்ரோ, மச்சான், செம்ம, வேற லெவல், மாஸ்) and no written or "
+              "literary Tamil (இலக்கு, தயாரிப்பாளர், திருப்பம், அசாத்திய). "),
 }
 
 
 def _language_rules(language: str) -> str:
     if language.lower() == "english":
         return ""
-    return (f"\nLanguage: write every `narration`, `title`, `hook_text` and `description` in {language}: today's "
-            f"casual, spoken {language} the way young people and the most popular {language} storytelling channels "
-            f"talk (gripping, everyday words and slang, mixing in the English words people really use; never formal, "
-            f"bookish or old-fashioned). {SLANG.get(language.lower(), '')}"
+    return (f"\nLanguage: write every `narration`, `title`, `hook_text` and `description` in {language}: "
+            f"natural, everyday spoken {language} as people talk today (gripping, simple words, with the English words "
+            f"everyone already uses; never formal, bookish or old-fashioned, and no forced slang). {SLANG.get(language.lower(), '')}"
             f"Keep character and place names as they are commonly said in {language}. "
             "Write `visual`, `art_style`, character `look`, `summary` and `cliffhanger` in English (they are only used to "
             "draw the pictures and plan the story). Hashtags: a mix of English and " + language + ".")
