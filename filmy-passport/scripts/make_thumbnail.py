@@ -161,8 +161,8 @@ def vertical():
     fan(im, (W / 2, 1190), 420, 622, 180, 9, 46)
     heart = emoji("💖", 96)
     im.alpha_composite(heart, (int(W / 2 + 250), 905))
-    text_shadow(im, (W / 2, 1590), "Can you guess #1?", font("InterDisplay-Bold", 66), CREAM)
-    text_shadow(im, (W / 2, 1672), "5 films that make you believe in love", font("InterDisplay-SemiBoldItalic", 44), SAFFRON)
+    text_shadow(im, (W / 2, 1590), "5 films that make you", font("InterDisplay-Bold", 62), CREAM)
+    text_shadow(im, (W / 2, 1668), "believe in love again", font("InterDisplay-BoldItalic", 62), SAFFRON)
     out = os.path.join(HERE, "thumbnail_feel_good_part1_vertical.png")
     im.convert("RGB").save(out)
     return out
@@ -181,8 +181,8 @@ def landscape():
     w = d.textlength("PART 1", font=f) + 64
     d.rounded_rectangle((x0 + 4, 448, x0 + 4 + w, 512), 32, fill=SAFFRON)
     d.text((x0 + 4 + w / 2, 480), "PART 1", font=f, fill=INK, anchor="mm")
-    text_shadow(im, (x0 + 4, 548), "Can you guess #1?", font("InterDisplay-Bold", 44), CREAM, anchor="la", blur=8)
-    text_shadow(im, (x0 + 4, 598), "5 films that make you believe in love", font("InterDisplay-SemiBoldItalic", 30), SAFFRON, anchor="la", blur=8)
+    text_shadow(im, (x0 + 4, 548), "5 films that make you", font("InterDisplay-Bold", 40), CREAM, anchor="la", blur=8)
+    text_shadow(im, (x0 + 4, 598), "believe in love again", font("InterDisplay-BoldItalic", 40), SAFFRON, anchor="la", blur=8)
     out = os.path.join(HERE, "thumbnail_feel_good_part1_16x9.png")
     im.convert("RGB").save(out)
     return out
