@@ -746,9 +746,10 @@ def test_tamil_series_uses_tamil_voice_font_and_prompts(cfg):
     bible = series.SeriesBible.model_validate(json.loads((ROOT / "stories/dracula/bible.json").read_text()))
     scfg = series.series_config(cfg, bible)
     assert scfg["voice"]["provider"] == "edge" and scfg["voice"]["edge"]["voice"] == "ta-IN-ValluvarNeural"
+    assert scfg["voice"]["edge"]["rate"] == "+15%" and scfg["voice"]["edge"]["pitch"] == "-4Hz"
     assert scfg["video"]["caption_font"] == "Tamil Sangam MN" and scfg["shorts"]["caption_max_words"] == 2
     outline = series._outline_prompt("Dracula", "", cfg)
-    assert "in Tamil" in outline and "about 150 words" in outline and "about 71 seconds" in outline
+    assert "in Tamil" in outline and "about 150 words" in outline and "about 62 seconds" in outline
     assert "`visual`" in series._parts_prompt(bible, 1, 3, cfg) and "in Tamil" in series._parts_prompt(bible, 1, 3, cfg)
     eps = [e for f in sorted((ROOT / "stories/dracula").glob("parts_*.json"))
            for e in series.EpisodeBatch.model_validate(json.loads(f.read_text())).episodes]
@@ -804,3 +805,44 @@ def test_ratsasan_script_is_tamil_with_english_subtitles(cfg):
     ass = (run_dir / "part_01" / "work" / "captions.ass").read_text()
     assert "PSYCHO" in ass.upper() and "SCHOOLGIRLS" in ass.upper()  # English subtitles burned in
     assert (run_dir / "part_01.mp4").exists()
+
+
+def test_series_voice_overrides_and_elevenlabs(cfg):
+    from vidpipe import series
+    cfg["series"].update(language="Tamil", voice_rate="+25%", voice_pitch="-8Hz")
+    bible = series.SeriesBible.model_validate(json.loads((ROOT / "stories/dracula/bible.json").read_text()))
+    edge = series.series_config(cfg, bible)["voice"]["edge"]
+    assert edge["rate"] == "+25%" and edge["pitch"] == "-8Hz"
+    cfg["series"].update(voice_provider="elevenlabs", voice_id="abc123")
+    scfg = series.series_config(cfg, bible)
+    assert scfg["voice"]["provider"] == "elevenlabs" and scfg["voice"]["voice_id"] == "abc123"
+    assert scfg["video"]["caption_font"] == "Tamil Sangam MN"  # language settings still apply
+
+
+@pytest.mark.parametrize("model", ["eleven_multilingual_v2", "eleven_v3"])
+def test_elevenlabs_request_fits_the_model(cfg, tmp_path, monkeypatch, model):
+    import base64
+    from vidpipe import voice
+    sent = {}
+
+    class Resp:
+        status_code = 200
+
+        def json(self):
+            mp3 = tmp_path / "src.mp3"
+            voice.run_ffmpeg(["-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", 1, "-c:a", "libmp3lame", mp3])
+            return {"audio_base64": base64.b64encode(mp3.read_bytes()).decode(), "alignment": {}}
+
+    def post(url, **kw):
+        sent.update(kw["json"])
+        return Resp()
+
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "k")
+    monkeypatch.setattr(voice.requests, "post", post)
+    cfg["voice"].update(voice_id="v", model_id=model, stability=0.45)
+    words = voice.ElevenLabsVoice(cfg).synthesize("ஒன்று இரண்டு", "முன்", "பின்", tmp_path / "out.mp3")
+    assert [w[0] for w in words] == ["ஒன்று", "இரண்டு"]
+    if model == "eleven_v3":
+        assert "previous_text" not in sent and sent["voice_settings"]["stability"] == 0.5
+    else:
+        assert sent["previous_text"] == "முன்" and sent["voice_settings"]["stability"] == 0.45

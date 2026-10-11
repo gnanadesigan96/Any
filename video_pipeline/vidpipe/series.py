@@ -307,10 +307,19 @@ def series_config(cfg: dict, bible: SeriesBible, episodes: list = ()) -> dict:
     scfg["video"]["parallax"] = {**scfg["video"].get("parallax", {}), **cfg["series"].get("motion", {})}
     scfg["images"]["style"] = f"{bible.art_style.strip().rstrip('.')}, vertical 9:16 composition, no text, no lettering"
     language = language_of(cfg, bible)
+    provider = cfg["series"].get("voice_provider", "auto")
+    if provider == "elevenlabs":  # expressive storyteller voice in any language (paid)
+        scfg["voice"]["provider"] = "elevenlabs"
+        if cfg["series"].get("voice_id"):
+            scfg["voice"]["voice_id"] = cfg["series"]["voice_id"]
     if language.lower() != "english":  # Kokoro speaks English only: use the free Edge voice for this language
         lang = series_settings(cfg, language)
-        scfg["voice"]["provider"] = "edge"
-        scfg["voice"]["edge"] = {**scfg["voice"]["edge"], "voice": cfg["series"].get("edge_voice") or lang.get("voice", scfg["voice"]["edge"]["voice"])}
+        if provider != "elevenlabs":
+            edge = scfg["voice"]["edge"]
+            scfg["voice"]["provider"] = "edge"
+            scfg["voice"]["edge"] = {**edge, "voice": cfg["series"].get("edge_voice") or lang.get("voice", edge["voice"]),
+                                     "rate": cfg["series"].get("voice_rate") or lang.get("rate", edge["rate"]),
+                                     "pitch": cfg["series"].get("voice_pitch") or lang.get("pitch", edge["pitch"])}
         if lang.get("font") and not has_subtitles(episodes):
             scfg["video"]["caption_font"] = lang["font"]
         if lang.get("caption_max_words") and not has_subtitles(episodes):

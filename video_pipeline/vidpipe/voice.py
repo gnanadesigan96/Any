@@ -56,18 +56,21 @@ class ElevenLabsVoice:
             raise RuntimeError("Set voice.voice_id in config.yaml (copy it from your ElevenLabs voice library)")
 
     def synthesize(self, text: str, prev_text: str, next_text: str, out_mp3: Path) -> list:
+        v3 = self.v["model_id"].startswith("eleven_v3")
+        stability = self.v["stability"]
+        if v3:  # v3 only takes 0 (creative), 0.5 (natural) or 1 (robust)
+            stability = min((0.0, 0.5, 1.0), key=lambda x: abs(x - stability))
         body = {
             "text": text,
             "model_id": self.v["model_id"],
             "voice_settings": {
-                "stability": self.v["stability"],
+                "stability": stability,
                 "similarity_boost": self.v["similarity_boost"],
                 "style": self.v["style"],
             },
-            # Neighbouring text keeps intonation continuous across separately generated scenes.
-            "previous_text": prev_text or None,
-            "next_text": next_text or None,
         }
+        if not v3:  # neighbouring text keeps intonation continuous across scenes (v3 doesn't support it)
+            body.update(previous_text=prev_text or None, next_text=next_text or None)
         resp = requests.post(
             ELEVEN_URL.format(voice_id=self.v["voice_id"]),
             params={"output_format": "mp3_44100_128"},
@@ -240,11 +243,13 @@ EDGE_SAMPLE_VOICES = {"tamil": ["ta-IN-ValluvarNeural", "ta-IN-PallaviNeural", "
                                 "ta-LK-SaranyaNeural", "ta-MY-SuryaNeural", "ta-MY-KaniNeural"]}
 
 
-def preview_edge_voices(cfg: dict, text: str, out_dir: Path, voices: list) -> list:
+def preview_edge_voices(cfg: dict, text: str, out_dir: Path, voices: list, settings: dict = None) -> list:
+    """settings: rate/pitch overrides, e.g. the language's storytelling pace from series.languages."""
     out_dir.mkdir(parents=True, exist_ok=True)
     outputs = []
+    edge = {**cfg["voice"]["edge"], **{k: v for k, v in (settings or {}).items() if k in ("rate", "pitch") and v}}
     for v in voices:
-        engine = EdgeVoice({**cfg, "voice": {**cfg["voice"], "edge": {**cfg["voice"]["edge"], "voice": v}}})
+        engine = EdgeVoice({**cfg, "voice": {**cfg["voice"], "edge": {**edge, "voice": v}}})
         path = out_dir / f"{v}.mp3"
         engine.synthesize(text, "", "", path)
         outputs.append(path)
@@ -287,7 +292,9 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
     # Re-voice a scene when its text OR the voice settings change (speed, pauses, voice).
     vc = cfg["voice"]
     sig = "dry" if dry_run else json.dumps(
-        [vc["provider"], vc.get("voice_id"), vc.get(vc["provider"]) if vc["provider"] in ("kokoro", "edge") else None],
+        [vc["provider"], vc.get("voice_id"), vc.get(vc["provider"]) if vc["provider"] in ("kokoro", "edge") else None]
+        + ([vc.get(k) for k in ("model_id", "stability", "similarity_boost", "style")]
+           if vc["provider"] == "elevenlabs" else []),
         sort_keys=True)
 
     def fresh(i):

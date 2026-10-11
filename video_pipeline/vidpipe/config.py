@@ -82,11 +82,14 @@ DEFAULTS = {
         "motion": {"strength": 2.0, "handheld": 1.0, "depth_of_field": 0.8, "dust": True},
         "voice_speed": 0.95,      # storytelling pace: a little slower and more dramatic than fact Shorts
         "sentence_pause": 0.2,
-        # Narration language. English uses Kokoro; other languages use the free Edge voices.
+        # Narration language. English uses Kokoro; other languages use the free Edge voices unless
+        # voice_provider is "elevenlabs" (paid, far more expressive, speaks Tamil too).
+        "voice_provider": "auto",
         "language": "English",
         "languages": {
-            "tamil": {"voice": "ta-IN-ValluvarNeural", "font": "Tamil Sangam MN", "target_words": 150,
-                      "words_per_scene": 9, "words_per_second": 2.1, "caption_max_words": 2},
+            # rate/pitch: Edge's default Tamil pace drags; a brisker, slightly deeper voice sounds like a storyteller.
+            "tamil": {"voice": "ta-IN-ValluvarNeural", "rate": "+15%", "pitch": "-4Hz", "font": "Tamil Sangam MN",
+                      "target_words": 150, "words_per_scene": 9, "words_per_second": 2.4, "caption_max_words": 2},
         },
     },
     "video": {

@@ -64,8 +64,13 @@ def main() -> int:
     p_series.add_argument("--notes", default="", help="anything Claude should know (focus, tone, ending)")
     p_series.add_argument("--first", type=int, default=0, help="only render the first N parts this run")
     p_series.add_argument("--language", default="", help='narration language, e.g. "Tamil" (default: English)')
-    p_series.add_argument("--voice", default="", help="Edge voice for non-English narration, e.g. ta-IN-PallaviNeural")
-    p_series.add_argument("--voice-rate", default="", help='speak faster/slower (non-English voices), e.g. +8%% or -5%%')
+    p_series.add_argument("--voice", default="",
+                          help="Edge voice for non-English narration, e.g. ta-IN-PallaviNeural (with "
+                               "--voice-provider elevenlabs: an ElevenLabs voice ID)")
+    p_series.add_argument("--voice-rate", default="", help='speak faster/slower (non-English voices), e.g. +20%% or -5%%')
+    p_series.add_argument("--voice-pitch", default="", help='deeper/higher (non-English voices), e.g. -6Hz or +2Hz')
+    p_series.add_argument("--voice-provider", choices=["auto", "edge", "elevenlabs"], default="",
+                          help="elevenlabs: expressive storyteller voice in any language (paid, ELEVENLABS_API_KEY)")
     p_series.add_argument("--script-dir", default="", help="use a ready-made script, e.g. stories/dracula")
     p_series.add_argument("--scenes-per-image", type=int, default=0,
                           help="reuse each picture for N scenes (2 halves image-generation time)")
@@ -108,10 +113,15 @@ def main() -> int:
                 cfg["series"]["style_hint"] = args.style
             if args.language:
                 cfg["series"]["language"] = args.language
+            if args.voice_provider:
+                cfg["series"]["voice_provider"] = args.voice_provider
             if args.voice:
-                cfg["series"]["edge_voice"] = args.voice
+                key = "voice_id" if cfg["series"].get("voice_provider") == "elevenlabs" else "edge_voice"
+                cfg["series"][key] = args.voice
             if args.voice_rate:
-                cfg["voice"]["edge"]["rate"] = args.voice_rate if args.voice_rate[0] in "+-" else "+" + args.voice_rate
+                cfg["series"]["voice_rate"] = args.voice_rate if args.voice_rate[0] in "+-" else "+" + args.voice_rate
+            if args.voice_pitch:
+                cfg["series"]["voice_pitch"] = args.voice_pitch if args.voice_pitch[0] in "+-" else "+" + args.voice_pitch
             if args.scenes_per_image:
                 cfg["series"]["scenes_per_image"] = args.scenes_per_image
             make_series(args.story, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first,
@@ -133,7 +143,8 @@ def main() -> int:
                 if lang not in EDGE_SAMPLE_VOICES and not args.only:
                     raise RuntimeError(f"No sample voices listed for {args.language}; pass them with --only")
                 say = args.say if "--say" in sys.argv else TAMIL_SAMPLE
-                for path in preview_edge_voices(cfg, say, out_dir, args.only or EDGE_SAMPLE_VOICES[lang]):
+                pace = cfg["series"].get("languages", {}).get(lang, {})
+                for path in preview_edge_voices(cfg, say, out_dir, args.only or EDGE_SAMPLE_VOICES[lang], pace):
                     print(path)
                 print(f"Listen, then set series.languages.{lang}.voice in config.yaml to the one you like.")
             else:

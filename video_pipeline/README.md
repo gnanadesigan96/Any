@@ -75,9 +75,15 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
 - **Tamil (or other languages):** `--language Tamil` writes the narration in natural spoken Tamil and voices it with
   Microsoft's free Tamil neural voices through `edge-tts` (`pip install edge-tts`; no key, needs internet). Kokoro
   speaks English only. Pictures are still described in English for the image model. Preview the voices with
-  `python make_video.py voices --language tamil`; pick one with `--voice ta-IN-PallaviNeural` and change the pace with
-  `--voice-rate +8%`. The log prints each part's real narration length before any pictures are made. Edge's voice
+  `python make_video.py voices --language tamil`; pick one with `--voice ta-IN-PallaviNeural`. Tamil is spoken at a
+  brisk storytelling pace by default (`+15%`, a little deeper at `-4Hz`); change it with `--voice-rate +25%` and
+  `--voice-pitch -8Hz`. The log prints each part's real narration length before any pictures are made. Edge's voice
   service is free but unofficial, so Microsoft could change or block it.
+- **A real storyteller voice (paid):** the free voices read evenly. For a gripping, emotional narrator in any
+  language (Tamil included), use ElevenLabs: put `ELEVENLABS_API_KEY=...` in `.env`, pick a voice in their Voice
+  Library (search "Tamil" or "storyteller") and run with `--voice-provider elevenlabs --voice <voice ID>`. Set
+  `voice.model_id: "eleven_v3"` in `config.yaml` for the most dramatic delivery. Changing the voice re-voices and
+  re-renders the parts but keeps every picture. The free plan is for testing only; monetised videos need a paid plan.
 - **English subtitles under another language:** give a scene a `subtitle` in the script JSON and that text is
   shown instead of the spoken words, timed to the narration; the title and end cards then stay in English.
   `stories/ratsasan/` is a ready-made example: Ratsasan (2018) in 3 thirty-second Tamil Shorts with English
