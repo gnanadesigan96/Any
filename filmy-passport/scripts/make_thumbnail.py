@@ -48,6 +48,40 @@ def card(key, w, h):
     return p
 
 
+def card_back(label, w, h, hero=False):
+    """Face-down mystery card: navy back, gold frame, rank number (or '?')."""
+    S = 2
+    W2, H2 = w * S, h * S
+    r = int(W2 * 0.06)
+    im = Image.new("RGBA", (W2, H2), (0, 0, 0, 0))
+    y, x = np.mgrid[0:H2, 0:W2]
+    t = ((x / W2 + y / H2) / 2)[..., None]
+    top, bot = (np.array((46, 40, 108)), np.array((22, 22, 54))) if not hero else (np.array((236, 78, 92)), np.array((150, 40, 70)))
+    body = Image.fromarray((top * (1 - t) + bot * t).astype(np.uint8)).convert("RGBA")
+    m = Image.new("L", (W2, H2), 0)
+    ImageDraw.Draw(m).rounded_rectangle((0, 0, W2 - 1, H2 - 1), r, fill=255)
+    im.paste(body, (0, 0), m)
+    d = ImageDraw.Draw(im)
+    gold = CREAM if hero else GOLD
+    ins = int(W2 * 0.06)
+    d.rounded_rectangle((ins, ins, W2 - ins, H2 - ins), int(r * 0.6), outline=gold + (200,), width=3 * S)
+    # subtle diagonal pattern
+    pat = Image.new("RGBA", (W2, H2), (0, 0, 0, 0))
+    pd = ImageDraw.Draw(pat)
+    for k in range(-H2, W2, 26 * S):
+        pd.line((k, 0, k + H2, H2), fill=(255, 255, 255, 14), width=2 * S)
+    pm = Image.new("L", (W2, H2), 0)
+    ImageDraw.Draw(pm).rounded_rectangle((ins + 8 * S, ins + 8 * S, W2 - ins - 8 * S, H2 - ins - 8 * S), int(r * 0.5), fill=255)
+    im.paste(pat, (0, 0), Image.composite(pat.getchannel("A"), Image.new("L", (W2, H2), 0), pm))
+    cx, cy = W2 / 2, H2 * 0.47
+    cr = W2 * 0.3
+    d.ellipse((cx - cr, cy - cr, cx + cr, cy + cr), outline=gold + (230,), width=4 * S)
+    f = font("InterDisplay-Black", int(cr * (1.45 if label == "?" else 1.25)))
+    d.text((cx, cy + (6 * S if label == "?" else 0)), label, font=f, fill=gold, anchor="mm")
+    d.text((cx, H2 * 0.86), "FILMY PASSPORT", font=font("Inter-Bold", int(W2 * 0.055)), fill=gold + (200,), anchor="mm")
+    return im.resize((w, h), Image.LANCZOS)
+
+
 def drop_shadow(img, blur=26, op=0.6, off=(0, 22)):
     pad = blur * 3
     sh = Image.new("RGBA", (img.width + 2 * pad, img.height + 2 * pad), (0, 0, 0, 0))
@@ -81,11 +115,11 @@ def fan(base, centre, cw, ch, spread, tilt, lift):
     """Five posters fanned like playing cards, #1 (About Time) on top in the middle."""
     order = [0, 4, 1, 3, 2]  # draw outer first; middle slot gets the best-rated
     slots = {0: -2, 1: -1, 2: 0, 3: 1, 4: 2}
-    keys = ["made_of_honor", "love_rosie", "about_time", "the_vow", "plus_one"]  # left -> right
+    keys = ["4", "2", "?", "3", "5"]  # left -> right; the #1 stays a mystery
     for i in [0, 4, 1, 3, 2]:
         k = slots[i]
         scale = 1.0 if k == 0 else (0.9 if abs(k) == 1 else 0.8)
-        c = card(keys[i], int(cw * scale), int(ch * scale)).rotate(-k * tilt, expand=True, resample=Image.BICUBIC)
+        c = card_back(keys[i], int(cw * scale), int(ch * scale), hero=(k == 0)).rotate(-k * tilt, expand=True, resample=Image.BICUBIC)
         x = centre[0] + k * spread
         y = centre[1] + abs(k) * lift
         sh, pad = drop_shadow(c)
@@ -127,8 +161,8 @@ def vertical():
     fan(im, (W / 2, 1190), 420, 622, 180, 9, 46)
     heart = emoji("💖", 96)
     im.alpha_composite(heart, (int(W / 2 + 250), 905))
-    text_shadow(im, (W / 2, 1590), "5 films that make you", font("InterDisplay-Bold", 62), CREAM)
-    text_shadow(im, (W / 2, 1668), "believe in love again", font("InterDisplay-BoldItalic", 62), SAFFRON)
+    text_shadow(im, (W / 2, 1590), "Can you guess #1?", font("InterDisplay-Bold", 66), CREAM)
+    text_shadow(im, (W / 2, 1672), "5 films that make you believe in love", font("InterDisplay-SemiBoldItalic", 44), SAFFRON)
     out = os.path.join(HERE, "thumbnail_feel_good_part1_vertical.png")
     im.convert("RGB").save(out)
     return out
@@ -147,9 +181,8 @@ def landscape():
     w = d.textlength("PART 1", font=f) + 64
     d.rounded_rectangle((x0 + 4, 448, x0 + 4 + w, 512), 32, fill=SAFFRON)
     d.text((x0 + 4 + w / 2, 480), "PART 1", font=f, fill=INK, anchor="mm")
-    text_shadow(im, (x0 + 4, 548), "5 films that make you", font("InterDisplay-Bold", 40), CREAM, anchor="la", blur=8)
-    text_shadow(im, (x0 + 4, 598), "believe in love again", font("InterDisplay-BoldItalic", 40), SAFFRON, anchor="la", blur=8)
-    im.alpha_composite(emoji("💖", 44), (int(x0 + 4 + ImageDraw.Draw(im).textlength("believe in love again ", font=font("InterDisplay-BoldItalic", 40))), 600))
+    text_shadow(im, (x0 + 4, 548), "Can you guess #1?", font("InterDisplay-Bold", 44), CREAM, anchor="la", blur=8)
+    text_shadow(im, (x0 + 4, 598), "5 films that make you believe in love", font("InterDisplay-SemiBoldItalic", 30), SAFFRON, anchor="la", blur=8)
     out = os.path.join(HERE, "thumbnail_feel_good_part1_16x9.png")
     im.convert("RGB").save(out)
     return out
