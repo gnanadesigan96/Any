@@ -750,6 +750,7 @@ def test_tamil_series_uses_tamil_voice_font_and_prompts(cfg):
     assert scfg["video"]["caption_font"] == "Tamil Sangam MN" and scfg["shorts"]["caption_max_words"] == 2
     outline = series._outline_prompt("Dracula", "", cfg)
     assert "in Tamil" in outline and "about 150 words" in outline and "about 62 seconds" in outline
+    assert "Tanglish" in series._parts_prompt(bible, 1, 3, cfg) and "never formal" in outline
     assert "`visual`" in series._parts_prompt(bible, 1, 3, cfg) and "in Tamil" in series._parts_prompt(bible, 1, 3, cfg)
     eps = [e for f in sorted((ROOT / "stories/dracula").glob("parts_*.json"))
            for e in series.EpisodeBatch.model_validate(json.loads(f.read_text())).episodes]

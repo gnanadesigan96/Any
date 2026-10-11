@@ -85,12 +85,24 @@ def series_settings(cfg: dict, language: str = "") -> dict:
     return sr
 
 
+# How young viewers actually talk, per language: the narration should sound like today's top explainer channels.
+SLANG = {
+    "tamil": ("Write today's Chennai-style spoken Tamil (Tanglish) the way popular Tamil movie-explainer YouTube "
+              "channels talk to friends: casual verb endings (பண்ணிடுறான், போயிடுறான், ஆகிடுறாங்க), friendly asides "
+              "(மச்சான், நம்ம ஹீரோ), everyday slang (செம்ம, வேற லெவல், பக்கா, மாஸ், கண்டுக்கவே இல்ல), and the English "
+              "words people really say, written in Tamil script (கில்லர், டார்கெட், ட்விஸ்ட், கேஸ், ஷூட், மிஸ்ஸிங், "
+              "ஃபேக், டேலண்ட்). Never use old or written-only Tamil (இலக்கு, தயாரிப்பாளர், திருப்பம், அசாத்திய). "),
+}
+
+
 def _language_rules(language: str) -> str:
     if language.lower() == "english":
         return ""
-    return (f"\nLanguage: write every `narration`, `title`, `hook_text` and `description` in {language}: natural, "
-            f"spoken {language} the way popular {language} storytelling channels narrate (clear, gripping, everyday "
-            f"words, not formal or literary). Keep character and place names as they are commonly said in {language}. "
+    return (f"\nLanguage: write every `narration`, `title`, `hook_text` and `description` in {language}: today's "
+            f"casual, spoken {language} the way young people and the most popular {language} storytelling channels "
+            f"talk (gripping, everyday words and slang, mixing in the English words people really use; never formal, "
+            f"bookish or old-fashioned). {SLANG.get(language.lower(), '')}"
+            f"Keep character and place names as they are commonly said in {language}. "
             "Write `visual`, `art_style`, character `look`, `summary` and `cliffhanger` in English (they are only used to "
             "draw the pictures and plan the story). Hashtags: a mix of English and " + language + ".")
 

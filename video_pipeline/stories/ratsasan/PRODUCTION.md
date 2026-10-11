@@ -14,32 +14,32 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 
 ### Part 1: The Nightmare Begins (66 words)
 
-ஒரு சைக்கோ கொலைகாரன். அவனோட இலக்கு… ஸ்கூல் பொண்ணுங்க மட்டும்தான்.
-அருணுக்கு சினிமா டைரக்டர் ஆகணும்னு கனவு. சைக்கோ கொலைகாரங்களை பத்தி வருஷக்கணக்கா ஆராய்ச்சி பண்ணான்.
-ஆனா எந்த தயாரிப்பாளரும் அவன் கதையை ஏத்துக்கல. குடும்ப அழுத்தத்துல, அவன் போலீஸ் ஆனான்.
-வேலைக்கு சேர்ந்த உடனே, பதினைஞ்சு வயசு பொண்ணு ஒருத்தி கொடூரமா கொல்லப்பட்டு கிடக்குறா.
-அருணுக்கு மட்டும் புரியுது. இது ஒரு சீரியல் கொலைகாரன். ஆனா மேலதிகாரிங்க கேக்கவே இல்ல.
-அப்போ அவனுக்குள்ள ஒரு பயம். அவனோட அக்கா பொண்ணு அம்முவும் ஒரு ஸ்கூல் பொண்ணுதான். அடுத்த பாகம் மிஸ் பண்ணாதீங்க.
+மச்சான், ஒரு சைக்கோ கில்லர். அவனோட டார்கெட்டே… ஸ்கூல் பொண்ணுங்க மட்டும்தான்!
+நம்ம அருணுக்கு டைரக்டர் ஆகணும்னு செம்ம ஆசை. சைக்கோ கில்லர்ஸ் பத்தி வருஷக்கணக்கா ரிசர்ச் பண்ணி வச்சிருக்கான்.
+ஆனா எந்த ப்ரொட்யூசரும் கதையை ஓகே பண்ணல. வீட்ல பிரஷர் ஏற, வேற வழியே இல்லாம போலீஸ் ஆகிடுறான்.
+டியூட்டில ஜாயின் பண்ண உடனே, பதினஞ்சு வயசு பொண்ணு ஒருத்தி ரொம்ப கொடூரமா கொல்லப்பட்டு கிடக்குறா.
+அருணுக்கு மட்டும் பக்காவா புரியுது, இது சீரியல் கில்லர் வேலைதான். ஆனா மேலதிகாரிங்க கண்டுக்கவே இல்ல.
+அப்போதான் உள்ளுக்குள்ள ஒரு பயம். அவன் அக்கா பொண்ணு அம்முவும் ஸ்கூல் பொண்ணுதானே! பார்ட் டூ மிஸ் பண்ணிடாதீங்க.
 
 
 ### Part 2: Who Is The Real Monster? (70 words)
 
-அம்மு படிக்கிற ஸ்கூல்லயே ஒரு வாத்தியார், இன்பராஜ். பொண்ணுங்களை தொந்தரவு பண்ற ஒரு மிருகம்.
-அவன்தான் கொலைகாரன்னு எல்லாரும் நம்புறாங்க. தப்பிக்க பார்க்கும்போது, அருண் அவனை சுட்டுடுறான்.
-கேஸ் முடிஞ்சதுன்னு நினைச்ச அதே ராத்திரி… அம்மு தன்னோட பிறந்தநாள் பார்ட்டியிலேயே காணாம போறா.
-அம்முவும் கொல்லப்படுறா. அப்போ உண்மையான கொலைகாரன்… இன்னும் வெளியதான் இருக்கான்.
-சஸ்பெண்ட் ஆன அருண் தனியா தேடுறான். கொல்லப்பட்ட மீராவோட காதுக்கருவியில ஒரு பியானோ இசை பதிவாகியிருக்கு.
-அந்த இசை… எல்லா ஸ்கூல்லயும் ஷோ பண்ண ஒரு மேஜிஷியன்கிட்ட கொண்டு போகுது. அன்னபெல்லா ஜார்ஜ். ஆனா அது பொய்யான பேரு. அப்போ அவ யாரு?
+அம்மு படிக்கிற அதே ஸ்கூல்ல, இன்பராஜ்னு ஒரு வாத்தியார். பொண்ணுங்ககிட்ட தப்பா நடந்துக்குற ஒரு மிருகம்.
+அவன்தான் கில்லர்னு எல்லாரும் ஃபிக்ஸ் ஆகிடுறாங்க. எஸ்கேப் ஆக பாக்கும்போது, அருண் அவனை ஷூட் பண்ணிடுறான்.
+கேஸ் க்ளோஸ்னு நினைச்ச அதே நைட்டு… அம்மு தன்னோட பர்த்டே பார்ட்டியிலேயே மிஸ்ஸிங்!
+அம்முவும் கொல்லப்படுறா. அப்போ உண்மையான கில்லர்… இன்னும் வெளியதான் சுத்திட்டு இருக்கான்!
+சஸ்பெண்ட் ஆன அருண் தனி ஆளா இறங்குறான். செத்துப்போன மீராவோட ஹியரிங் எய்ட்ல ஒரு பியானோ ட்யூன் ரெக்கார்ட் ஆகியிருக்கு.
+அந்த ட்யூன்… எல்லா ஸ்கூல்லயும் ஷோ பண்ண ஒரு மேஜிஷியன்கிட்ட கூட்டிட்டு போகுது. அன்னபெல்லா ஜார்ஜ். ஆனா அது ஃபேக் நேம். அப்போ அவ யாரு?
 
 
 ### Part 3: The Twist You Never Expected (76 words)
 
-ஓய்வு பெற்ற போலீஸ் ராஜமாணிக்கம் சொல்றாரு: அவ உண்மையான பேரு மேரி ஃபெர்னாண்டஸ். ஒரு பழைய கொலை வழக்குல சிக்கினவ.
-அவ மகன் கிறிஸ்டோபர். பியானோ, மேஜிக்ல அசாத்திய திறமை. ஆனா அரிய நோயால, சின்ன வயசுலயே கிழவன் மாதிரி இருந்தான்.
-எல்லாரும் அவனை கேலி பண்ணாங்க. அந்த அவமானம்தான்… ஒரு ராட்சசனை உருவாக்குச்சு.
-இதுதான் திருப்பம். மேரி எப்பவோ விபத்துல செத்துட்டா. அம்மா வேஷத்துல கொன்னது… கிறிஸ்டோபர்தான்!
-அவன் விஜியை தாக்கி, அவ வீட்டு குட்டி பொண்ணு கயலை கடத்துறான்.
-உயிரை பணயம் வச்சு போராடி, அருண் அந்த ராட்சசனை முடிக்கிறான். கயல் காப்பாத்தப்படுறா. ராட்சசன் பிறக்கிறதில்ல… நம்ம கொடுமைதான் உருவாக்குது. நீங்க என்ன நினைக்கிறீங்க?
+ரிட்டையர்டு போலீஸ் ராஜமாணிக்கம் சொல்றாரு: அவ ரியல் நேம் மேரி ஃபெர்னாண்டஸ். பழைய மர்டர் கேஸ்ல மாட்டினவ.
+அவ பையன் கிறிஸ்டோபர். பியானோ, மேஜிக் ரெண்டுலயும் வேற லெவல் டேலண்ட். ஆனா அரிய நோயால, சின்ன வயசுலயே கிழவன் மாதிரி இருந்தான்.
+எல்லாரும் அவனை கிண்டல் பண்ணி அசிங்கப்படுத்துனாங்க. அந்த அவமானம்தான்… ஒரு ராட்சசனை உருவாக்குச்சு.
+இப்போதான் ட்விஸ்ட்டே! மேரி எப்பவோ ஆக்ஸிடென்ட்ல செத்துட்டா. அம்மா கெட்டப்ல கொலை பண்ணது… கிறிஸ்டோபரேதான்!
+அவன் விஜியை அட்டாக் பண்ணி, அவ வீட்டு குட்டி பொண்ணு கயலை தூக்கிட்டு போயிடுறான்.
+உயிரை பணயம் வச்சு, அருண் அந்த ராட்சசனை முடிச்சு கட்டுறான். கயல் சேஃப். ராட்சசன் பிறக்கிறதில்ல… நம்மளோட கொடுமைதான் உருவாக்குது. நீங்க என்ன நினைக்கிறீங்க?
 
 
 ## 2. Timestamped shot list
@@ -54,7 +54,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow push-in down the corridor at child's eye level.
 - Light, atmosphere and grade: cold blue moonlight through barred windows, flickering tube light; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: "THE SCHOOLGIRL KILLER" (big, centre, first 2 seconds) + subtitles.
-- Tamil narration: ஒரு சைக்கோ கொலைகாரன். அவனோட இலக்கு… ஸ்கூல் பொண்ணுங்க மட்டும்தான்.
+- Tamil narration: மச்சான், ஒரு சைக்கோ கில்லர். அவனோட டார்கெட்டே… ஸ்கூல் பொண்ணுங்க மட்டும்தான்!
 - Sound: low cello drone hits at 0s, distant thunder, a music-box note.
 
 
@@ -64,7 +64,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow orbit around the desk.
 - Light, atmosphere and grade: single warm desk lamp, the rest of the room in darkness; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: அருணுக்கு சினிமா டைரக்டர் ஆகணும்னு கனவு. சைக்கோ கொலைகாரங்களை பத்தி வருஷக்கணக்கா ஆராய்ச்சி பண்ணான்.
+- Tamil narration: நம்ம அருணுக்கு டைரக்டர் ஆகணும்னு செம்ம ஆசை. சைக்கோ கில்லர்ஸ் பத்தி வருஷக்கணக்கா ரிசர்ச் பண்ணி வச்சிருக்கான்.
 - Sound: pen scratching, soft clock ticking.
 
 
@@ -74,7 +74,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: low-angle slow tilt up from boots to face.
 - Light, atmosphere and grade: grey dawn light, wet street reflections; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: ஆனா எந்த தயாரிப்பாளரும் அவன் கதையை ஏத்துக்கல. குடும்ப அழுத்தத்துல, அவன் போலீஸ் ஆனான்.
+- Tamil narration: ஆனா எந்த ப்ரொட்யூசரும் கதையை ஓகே பண்ணல. வீட்ல பிரஷர் ஏற, வேற வழியே இல்லாம போலீஸ் ஆகிடுறான்.
 - Sound: door slam, music shifts to a tense pulse.
 
 
@@ -84,7 +84,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: handheld slow walk toward the tape.
 - Light, atmosphere and grade: torch beams and red-blue police lights in the rain; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: வேலைக்கு சேர்ந்த உடனே, பதினைஞ்சு வயசு பொண்ணு ஒருத்தி கொடூரமா கொல்லப்பட்டு கிடக்குறா.
+- Tamil narration: டியூட்டில ஜாயின் பண்ண உடனே, பதினஞ்சு வயசு பொண்ணு ஒருத்தி ரொம்ப கொடூரமா கொல்லப்பட்டு கிடக்குறா.
 - Sound: rain, radio static, a deep boom on the cut.
 
 
@@ -94,7 +94,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow push-in on Arun's frustrated face.
 - Light, atmosphere and grade: harsh overhead fluorescent light, cigarette haze; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: அருணுக்கு மட்டும் புரியுது. இது ஒரு சீரியல் கொலைகாரன். ஆனா மேலதிகாரிங்க கேக்கவே இல்ல.
+- Tamil narration: அருணுக்கு மட்டும் பக்காவா புரியுது, இது சீரியல் கில்லர் வேலைதான். ஆனா மேலதிகாரிங்க கண்டுக்கவே இல்ல.
 - Sound: chairs scraping, muffled argument, rising strings.
 
 
@@ -104,7 +104,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow rack focus from Arun's eyes to the girl outside.
 - Light, atmosphere and grade: sodium-orange streetlight, deep shadows; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles + end card "PART 2 → Next: Who Is The Real Monster?".
-- Tamil narration: அப்போ அவனுக்குள்ள ஒரு பயம். அவனோட அக்கா பொண்ணு அம்முவும் ஒரு ஸ்கூல் பொண்ணுதான். அடுத்த பாகம் மிஸ் பண்ணாதீங்க.
+- Tamil narration: அப்போதான் உள்ளுக்குள்ள ஒரு பயம். அவன் அக்கா பொண்ணு அம்முவும் ஸ்கூல் பொண்ணுதானே! பார்ட் டூ மிஸ் பண்ணிடாதீங்க.
 - Sound: heartbeat, riser into a hard boom and silence.
 
 
@@ -117,7 +117,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow side dolly across the table.
 - Light, atmosphere and grade: a single hanging bulb swinging, hard shadows; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: "WHO IS THE REAL MONSTER?" (big, centre, first 2 seconds) + subtitles.
-- Tamil narration: அம்மு படிக்கிற ஸ்கூல்லயே ஒரு வாத்தியார், இன்பராஜ். பொண்ணுங்களை தொந்தரவு பண்ற ஒரு மிருகம்.
+- Tamil narration: அம்மு படிக்கிற அதே ஸ்கூல்ல, இன்பராஜ்னு ஒரு வாத்தியார். பொண்ணுங்ககிட்ட தப்பா நடந்துக்குற ஒரு மிருகம்.
 - Sound: bulb creak, low drone.
 
 
@@ -127,7 +127,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: fast push-in then freeze.
 - Light, atmosphere and grade: flashing emergency light, smoky haze; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: அவன்தான் கொலைகாரன்னு எல்லாரும் நம்புறாங்க. தப்பிக்க பார்க்கும்போது, அருண் அவனை சுட்டுடுறான்.
+- Tamil narration: அவன்தான் கில்லர்னு எல்லாரும் ஃபிக்ஸ் ஆகிடுறாங்க. எஸ்கேப் ஆக பாக்கும்போது, அருண் அவனை ஷூட் பண்ணிடுறான்.
 - Sound: gunshot on the cut, ringing silence.
 
 
@@ -137,7 +137,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow pull-out from the open door.
 - Light, atmosphere and grade: warm party lights fighting cold darkness outside; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: கேஸ் முடிஞ்சதுன்னு நினைச்ச அதே ராத்திரி… அம்மு தன்னோட பிறந்தநாள் பார்ட்டியிலேயே காணாம போறா.
+- Tamil narration: கேஸ் க்ளோஸ்னு நினைச்ச அதே நைட்டு… அம்மு தன்னோட பர்த்டே பார்ட்டியிலேயே மிஸ்ஸிங்!
 - Sound: party music warps and slows, a balloon pops.
 
 
@@ -147,7 +147,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow push-in on Arun's eyes.
 - Light, atmosphere and grade: pale blue dawn, drizzle; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: அம்முவும் கொல்லப்படுறா. அப்போ உண்மையான கொலைகாரன்… இன்னும் வெளியதான் இருக்கான்.
+- Tamil narration: அம்முவும் கொல்லப்படுறா. அப்போ உண்மையான கில்லர்… இன்னும் வெளியதான் சுத்திட்டு இருக்கான்!
 - Sound: a single piano note, thunder.
 
 
@@ -157,7 +157,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: macro slow slide across the evidence bag.
 - Light, atmosphere and grade: cold desk lamp, green glow of the screen; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: சஸ்பெண்ட் ஆன அருண் தனியா தேடுறான். கொல்லப்பட்ட மீராவோட காதுக்கருவியில ஒரு பியானோ இசை பதிவாகியிருக்கு.
+- Tamil narration: சஸ்பெண்ட் ஆன அருண் தனி ஆளா இறங்குறான். செத்துப்போன மீராவோட ஹியரிங் எய்ட்ல ஒரு பியானோ ட்யூன் ரெக்கார்ட் ஆகியிருக்கு.
 - Sound: eerie piano melody fades in from the recording.
 
 
@@ -167,7 +167,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow push-in on the shadowed face of the poster.
 - Light, atmosphere and grade: single spotlight, dust in the air; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles + end card "PART 3 → Next: The Twist You Never Expected".
-- Tamil narration: அந்த இசை… எல்லா ஸ்கூல்லயும் ஷோ பண்ண ஒரு மேஜிஷியன்கிட்ட கொண்டு போகுது. அன்னபெல்லா ஜார்ஜ். ஆனா அது பொய்யான பேரு. அப்போ அவ யாரு?
+- Tamil narration: அந்த ட்யூன்… எல்லா ஸ்கூல்லயும் ஷோ பண்ண ஒரு மேஜிஷியன்கிட்ட கூட்டிட்டு போகுது. அன்னபெல்லா ஜார்ஜ். ஆனா அது ஃபேக் நேம். அப்போ அவ யாரு?
 - Sound: piano melody turns discordant, hard boom, silence.
 
 
@@ -180,7 +180,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow push-in over Arun's shoulder onto the file.
 - Light, atmosphere and grade: warm tungsten lamp, dust particles; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: "THE TWIST YOU NEVER EXPECTED" (big, centre, first 2 seconds) + subtitles.
-- Tamil narration: ஓய்வு பெற்ற போலீஸ் ராஜமாணிக்கம் சொல்றாரு: அவ உண்மையான பேரு மேரி ஃபெர்னாண்டஸ். ஒரு பழைய கொலை வழக்குல சிக்கினவ.
+- Tamil narration: ரிட்டையர்டு போலீஸ் ராஜமாணிக்கம் சொல்றாரு: அவ ரியல் நேம் மேரி ஃபெர்னாண்டஸ். பழைய மர்டர் கேஸ்ல மாட்டினவ.
 - Sound: page rustle, ticking clock, low drone.
 
 
@@ -190,7 +190,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow orbit from his hands to his face.
 - Light, atmosphere and grade: single cold top light, black background; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: அவ மகன் கிறிஸ்டோபர். பியானோ, மேஜிக்ல அசாத்திய திறமை. ஆனா அரிய நோயால, சின்ன வயசுலயே கிழவன் மாதிரி இருந்தான்.
+- Tamil narration: அவ பையன் கிறிஸ்டோபர். பியானோ, மேஜிக் ரெண்டுலயும் வேற லெவல் டேலண்ட். ஆனா அரிய நோயால, சின்ன வயசுலயே கிழவன் மாதிரி இருந்தான்.
 - Sound: his piano melody plays, slow and sad.
 
 
@@ -200,7 +200,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow push-in on the lone figure as the others blur.
 - Light, atmosphere and grade: harsh backlight, silhouettes, desaturated; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: எல்லாரும் அவனை கேலி பண்ணாங்க. அந்த அவமானம்தான்… ஒரு ராட்சசனை உருவாக்குச்சு.
+- Tamil narration: எல்லாரும் அவனை கிண்டல் பண்ணி அசிங்கப்படுத்துனாங்க. அந்த அவமானம்தான்… ஒரு ராட்சசனை உருவாக்குச்சு.
 - Sound: echoing laughter warps into a drone.
 
 
@@ -210,7 +210,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow push-in to the mirror, then a quick snap zoom.
 - Light, atmosphere and grade: red practical light, deep black shadows; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: இதுதான் திருப்பம். மேரி எப்பவோ விபத்துல செத்துட்டா. அம்மா வேஷத்துல கொன்னது… கிறிஸ்டோபர்தான்!
+- Tamil narration: இப்போதான் ட்விஸ்ட்டே! மேரி எப்பவோ ஆக்ஸிடென்ட்ல செத்துட்டா. அம்மா கெட்டப்ல கொலை பண்ணது… கிறிஸ்டோபரேதான்!
 - Sound: riser, then a massive boom on 'Christopher'.
 
 
@@ -220,7 +220,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow push-in, slight handheld shake.
 - Light, atmosphere and grade: a single dim bulb, cold shadows; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: அவன் விஜியை தாக்கி, அவ வீட்டு குட்டி பொண்ணு கயலை கடத்துறான்.
+- Tamil narration: அவன் விஜியை அட்டாக் பண்ணி, அவ வீட்டு குட்டி பொண்ணு கயலை தூக்கிட்டு போயிடுறான்.
 - Sound: heartbeat, dripping water, music cuts out.
 
 
@@ -230,7 +230,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow pull-back wide, sunrise behind them.
 - Light, atmosphere and grade: golden dawn light breaking through rain clouds; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles + end card "THE END · Follow for the next story".
-- Tamil narration: உயிரை பணயம் வச்சு போராடி, அருண் அந்த ராட்சசனை முடிக்கிறான். கயல் காப்பாத்தப்படுறா. ராட்சசன் பிறக்கிறதில்ல… நம்ம கொடுமைதான் உருவாக்குது. நீங்க என்ன நினைக்கிறீங்க?
+- Tamil narration: உயிரை பணயம் வச்சு, அருண் அந்த ராட்சசனை முடிச்சு கட்டுறான். கயல் சேஃப். ராட்சசன் பிறக்கிறதில்ல… நம்மளோட கொடுமைதான் உருவாக்குது. நீங்க என்ன நினைக்கிறீங்க?
 - Sound: music swells to a warm, haunting resolve, final piano note.
 
 
