@@ -846,3 +846,13 @@ def test_elevenlabs_request_fits_the_model(cfg, tmp_path, monkeypatch, model):
         assert "previous_text" not in sent and sent["voice_settings"]["stability"] == 0.5
     else:
         assert sent["previous_text"] == "முன்" and sent["voice_settings"]["stability"] == 0.45
+
+
+def test_voice_rate_and_pitch_accept_values_starting_with_a_dash(monkeypatch):
+    import sys as _sys
+    import make_video
+    got = {}
+    monkeypatch.setattr(make_video, "make_series", lambda story, notes, cfg, *a: got.update(cfg["series"]))
+    monkeypatch.setattr(_sys, "argv", ["make_video.py", "series", "Test", "--voice-rate", "-5%", "--voice-pitch", "-6Hz"])
+    make_video.main()
+    assert got["voice_rate"] == "-5%" and got["voice_pitch"] == "-6Hz"

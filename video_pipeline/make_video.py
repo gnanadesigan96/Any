@@ -31,6 +31,19 @@ TAMIL_SAMPLE = "அவன் கண்ணாடியைப் பார்த�
 from vidpipe.upload import upload_run  # noqa: E402
 
 
+def _join_signed_values(argv: list) -> list:
+    """argparse reads "-6Hz" in `--voice-pitch -6Hz` as an option; pass it as `--voice-pitch=-6Hz` instead."""
+    out, i = [], 0
+    while i < len(argv):
+        if argv[i] in ("--voice-rate", "--voice-pitch") and i + 1 < len(argv):
+            out.append(f"{argv[i]}={argv[i + 1]}")
+            i += 2
+        else:
+            out.append(argv[i])
+            i += 1
+    return out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--config", help="path to config.yaml (default: ./config.yaml)")
@@ -87,7 +100,7 @@ def main() -> int:
     p_up.add_argument("--shorts", action="store_true", help="also upload the Shorts")
     p_up.add_argument("--publish-at", default="", help="ISO 8601 UTC time to go public, e.g. 2026-11-01T14:30:00Z")
 
-    args = parser.parse_args()
+    args = parser.parse_args(_join_signed_values(sys.argv[1:]))
     cfg = load_config(args.config)
 
     try:
