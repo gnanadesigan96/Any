@@ -280,7 +280,7 @@ def to_pack(bible: SeriesBible, episodes: list) -> ShortsPack:
         shorts.append(ShortVideo(
             title=f"{e.title} | {bible.series_title} Part {e.part}"[:100],
             hook_text=f"PART {e.part}",  # a small tag; the movie's name is never shown on screen
-            description=f"{e.description.strip()}\n\nPart {e.part} of {total} of {bible.series_title}.",
+            description=f"{e.description.strip()}\n\nPart {e.part} of {total}.",
             hashtags=hashtags,
             scenes=[Scene(narration=s.narration, visual=image_prompt(s, bible), search_query="") for s in e.scenes],
             fact_check=[FactClaim(claim="(story retelling - no factual claims)", source="n/a")],

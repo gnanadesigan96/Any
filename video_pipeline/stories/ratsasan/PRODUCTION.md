@@ -36,10 +36,10 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 
 ரிட்டையர் ஆன போலீஸ் சண்முகம் சொல்றாரு: அவ உண்மையான பேரு கிரேஸ் பெரேரா. பழைய கொலை கேஸ்ல மாட்டினவ.
 அவளோட பையன் டேனியல். பியானோ, மேஜிக் ரெண்டுலயும் பயங்கர திறமைசாலி. ஆனா அபூர்வ நோயால, சின்ன வயசுலயே கிழவன் மாதிரி இருந்தான்.
-எல்லாரும் அவனை கிண்டல் பண்ணி அசிங்கப்படுத்துனாங்க. அந்த அவமானம்தான்… ஒரு ராட்சசனை உருவாக்குச்சு.
+எல்லாரும் அவனை கிண்டல் பண்ணி அசிங்கப்படுத்துனாங்க. அந்த அவமானம்தான்… ஒரு அரக்கனை உருவாக்குச்சு.
 இங்கதான் ட்விஸ்ட். கிரேஸ் எப்பவோ ஆக்ஸிடென்ட்ல செத்துட்டா. அம்மா வேஷம் போட்டு கொலை பண்ணது… டேனியல்தான்!
 அவன் மலரை அடிச்சு போட்டுட்டு, அவ வீட்டு சின்ன பொண்ணு தென்றலை தூக்கிட்டு போயிடுறான்.
-உயிரை பணயம் வச்சு வெற்றி அந்த ராட்சசனை முடிக்கிறான். தென்றல் காப்பாத்தப்படுறா. ராட்சசன் பிறக்குறதில்ல… நம்ம கொடுமைதான் உருவாக்குது. நீங்க என்ன நினைக்கிறீங்க?
+உயிரை பணயம் வச்சு வெற்றி அந்த அரக்கனை முடிக்கிறான். தென்றல் காப்பாத்தப்படுறா. அரக்கன் பிறக்குறதில்ல… நம்ம கொடுமைதான் உருவாக்குது. நீங்க என்ன நினைக்கிறீங்க?
 
 
 ## 2. Timestamped shot list
@@ -200,7 +200,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow push-in on the lone figure as the others blur.
 - Light, atmosphere and grade: harsh backlight, silhouettes, desaturated; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles.
-- Tamil narration: எல்லாரும் அவனை கிண்டல் பண்ணி அசிங்கப்படுத்துனாங்க. அந்த அவமானம்தான்… ஒரு ராட்சசனை உருவாக்குச்சு.
+- Tamil narration: எல்லாரும் அவனை கிண்டல் பண்ணி அசிங்கப்படுத்துனாங்க. அந்த அவமானம்தான்… ஒரு அரக்கனை உருவாக்குச்சு.
 - Sound: echoing laughter warps into a drone.
 
 
@@ -230,7 +230,7 @@ Tamil narration, English on-screen text and subtitles, dark photorealistic cinem
 - Camera: slow pull-back wide, sunrise behind them.
 - Light, atmosphere and grade: golden dawn light breaking through rain clouds; teal-and-amber grade, crushed blacks, film grain.
 - English on-screen text: Subtitles + end card "THE END · Follow for the next story".
-- Tamil narration: உயிரை பணயம் வச்சு வெற்றி அந்த ராட்சசனை முடிக்கிறான். தென்றல் காப்பாத்தப்படுறா. ராட்சசன் பிறக்குறதில்ல… நம்ம கொடுமைதான் உருவாக்குது. நீங்க என்ன நினைக்கிறீங்க?
+- Tamil narration: உயிரை பணயம் வச்சு வெற்றி அந்த அரக்கனை முடிக்கிறான். தென்றல் காப்பாத்தப்படுறா. அரக்கன் பிறக்குறதில்ல… நம்ம கொடுமைதான் உருவாக்குது. நீங்க என்ன நினைக்கிறீங்க?
 - Sound: music swells to a warm, haunting resolve, final piano note.
 
 
@@ -476,25 +476,25 @@ Fighting for his life, Vetri ends the monster. Thendral is saved. Monsters aren'
 
 ### Part 1
 
-- **Title:** ராட்சசன் முழு கதை Part 1 😱 ஸ்கூல் பொண்ணுங்களை குறிவைக்கும் கொலைகாரன் | Ratsasan Explained in Tamil
-- **Description:** A psycho killer is hunting schoolgirls in Chennai, and only one rookie cop understands him. Ratsasan (2018) explained in Tamil, Part 1 of 3. ▶ Part 2: (link)  Ratsasan movie explained in Tamil, Tamil thriller movie story. This is a story explanation with original illustrations; all rights to the film belong to its makers.
-- **Hashtags:** #Ratsasan #ராட்சசன் #TamilMovieExplained #TamilThriller #Shorts #PsychoThriller #VishnuVishal
+- **Title:** ஸ்கூல் பொண்ணுங்களை மட்டும் குறிவைக்கும் சைக்கோ கொலைகாரன் 😱 Part 1 | Tamil Thriller Story
+- **Description:** A psycho killer is hunting schoolgirls in Chennai, and only one rookie cop understands him. Part 1 of 3. ▶ Part 2: (link)  Tamil thriller story explained, crime thriller in Tamil. Original illustrations and narration.
+- **Hashtags:** #TamilThriller #TamilShorts #TamilMovieExplained #CrimeThriller #Shorts #PsychoThriller #ThrillerStory #TamilStory #SuspenseThriller #TamilViral
 - **Thumbnail:** Vetri in police khaki in the left half, half his face lit amber; on the right, an empty rainy school corridor with a lone school bag and a tall shadow. Big yellow text: "WHO IS HE?". Dark photorealistic still from this part (the pipeline's picture works); no actors' faces or film posters.
 
 
 ### Part 2
 
-- **Title:** ராட்சசன் Part 2 🔍 பியானோ இசைக்குள்ள மறைஞ்சிருந்த க்ளூ | Ratsasan Explained in Tamil
-- **Description:** They caught a monster. Then the real killer struck again, closer to home than ever. Ratsasan (2018) explained in Tamil, Part 2 of 3. ▶ Part 3: (link)  Ratsasan movie explained in Tamil, Tamil thriller movie story. This is a story explanation with original illustrations; all rights to the film belong to its makers.
-- **Hashtags:** #Ratsasan #ராட்சசன் #TamilMovieExplained #TamilThriller #Shorts #PsychoThriller #VishnuVishal
+- **Title:** பியானோ இசைக்குள்ள மறைஞ்சிருந்த க்ளூ 🔍 Part 2 | Tamil Thriller Story
+- **Description:** They caught a monster. Then the real killer struck again, closer to home than ever. Part 2 of 3. ▶ Part 3: (link)  Tamil thriller story explained, crime thriller in Tamil. Original illustrations and narration.
+- **Hashtags:** #TamilThriller #TamilShorts #TamilMovieExplained #CrimeThriller #Shorts #PsychoThriller #ThrillerStory #TamilStory #SuspenseThriller #TamilViral
 - **Thumbnail:** Close-up of a hearing aid in an evidence bag in the foreground, the shadowed poster of an elderly woman magician in a wide-brimmed hat behind it. Big red text: "FAKE NAME?". Dark photorealistic still from this part (the pipeline's picture works); no actors' faces or film posters.
 
 
 ### Part 3
 
-- **Title:** ராட்சசன் Part 3 🤯 யாரும் எதிர்பார்க்காத ட்விஸ்ட் | Ratsasan Climax Explained in Tamil
-- **Description:** The magician, the mother, the monster: the truth behind the schoolgirl killer. Ratsasan (2018) explained in Tamil, Part 3 of 3. ▶ Watch from Part 1: (link)  Ratsasan movie explained in Tamil, Tamil thriller movie story. This is a story explanation with original illustrations; all rights to the film belong to its makers.
-- **Hashtags:** #Ratsasan #ராட்சசன் #TamilMovieExplained #TamilThriller #Shorts #PsychoThriller #VishnuVishal
+- **Title:** யாரும் எதிர்பார்க்காத ட்விஸ்ட் 🤯 Part 3 | Tamil Thriller Story
+- **Description:** The magician, the mother, the monster: the truth behind the schoolgirl killer. Part 3 of 3. ▶ Watch from Part 1: (link)  Tamil thriller story explained, crime thriller in Tamil. Original illustrations and narration.
+- **Hashtags:** #TamilThriller #TamilShorts #TamilMovieExplained #CrimeThriller #Shorts #PsychoThriller #ThrillerStory #TamilStory #SuspenseThriller #TamilViral
 - **Thumbnail:** Split face in a cracked mirror: a grey wig and black hat on one half, a gaunt pale man on the other. Big white text with red outline: "IT WAS HIM". Dark photorealistic still from this part (the pipeline's picture works); no actors' faces or film posters.
 
 Link each Short to the next with YouTube's **Related video** field (Part 1 → 2 → 3), and pin a comment: "Next part 👉 (link)".
