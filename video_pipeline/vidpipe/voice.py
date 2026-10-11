@@ -12,7 +12,7 @@ from pathlib import Path
 import requests
 
 from .config import resolve
-from .util import log, media_duration, read_json, run_ffmpeg, write_json
+from .util import find_silences, log, media_duration, read_json, run_ffmpeg, write_json
 
 ELEVEN_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps"
 
@@ -328,24 +328,47 @@ class GeminiVoice:
                     break
                 wait = min(info["retry_after"] or wait, 90)
             if attempt < 5:
-                log(f"  {err[:160]}")
+                log(f"  {err[:120]}...")
                 log(f"  retrying in {wait:.0f}s...")
                 time.sleep(wait)
         raise RuntimeError(err)
 
     def synthesize(self, text: str, prev_text: str, next_text: str, out_mp3: Path) -> list:
-        pcm = self._request(text)  # raw 16-bit mono PCM at 24 kHz
-        wav_path = out_mp3.with_suffix(".wav")
-        with wave.open(str(wav_path), "wb") as w:
+        return self.synthesize_many([text], [out_mp3])[0]
+
+    def synthesize_many(self, texts: list, out_mp3s: list) -> list:
+        """Voices several scenes in ONE request (the free tier allows only ~10 a day), then cuts the audio
+        into scenes at the pauses between them. Returns each scene's word timings."""
+        wav_path = out_mp3s[0].with_name(out_mp3s[0].stem + ".all.wav")
+        with wave.open(str(wav_path), "wb") as w:  # Gemini sends raw 16-bit mono PCM at 24 kHz
             w.setnchannels(1)
             w.setsampwidth(2)
             w.setframerate(24000)
-            w.writeframes(pcm)
-        run_ffmpeg(["-i", wav_path, "-af", f"apad=pad_dur={self.g['scene_pause']}", "-c:a", "libmp3lame", "-q:a", "2",
-                    out_mp3])
+            w.writeframes(self._request("\n\n".join(t.strip() for t in texts)))
+        cuts = scene_cuts(texts, media_duration(wav_path), find_silences(wav_path, 0.2, -35))
+        out = []
+        for text, mp3, start, end in zip(texts, out_mp3s, cuts, cuts[1:]):
+            run_ffmpeg(["-i", wav_path, "-ss", f"{start:.3f}", "-to", f"{end:.3f}", "-af",
+                        f"apad=pad_dur={self.g['scene_pause']}", "-c:a", "libmp3lame", "-q:a", "2", mp3])
+            # Gemini doesn't report word timings: spread the words over each sentence.
+            out.append(_spread_sentences(text, media_duration(mp3) - self.g["scene_pause"]))
         wav_path.unlink()
-        # Gemini doesn't report word timings: spread the words over each sentence.
-        return _spread_sentences(text, media_duration(out_mp3) - self.g["scene_pause"])
+        return out
+
+
+def scene_cuts(texts: list, total: float, silences: list) -> list:
+    """Where to cut audio of several scenes read back to back: at the pause nearest to where each scene should end
+    (judged by its share of the characters), or at that estimate when no pause is close. Returns len(texts)+1 times."""
+    lengths = [len(t.strip()) or 1 for t in texts]
+    gaps = [(s + d / 2, d) for s, d in silences if 0 < s and s + d < total]
+    cuts, done = [0.0], 0
+    for n in lengths[:-1]:
+        done += n
+        guess = total * done / sum(lengths)
+        reach = total * min(n, lengths[len(cuts)]) / sum(lengths) * 0.5  # never stray into a neighbouring scene
+        near = [(abs(mid - guess) - 0.2 * d, mid) for mid, d in gaps if abs(mid - guess) <= reach and mid > cuts[-1]]
+        cuts.append(round(min(near)[1] if near else max(guess, cuts[-1] + 0.1), 3))
+    return cuts + [round(total, 3)]
 
 
 def gemini_error(resp) -> dict:
@@ -464,6 +487,12 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
         voice = make_voice(cfg, dry_run)
         chars = sum(len(scenes[i].narration) for i in todo)
         log(f"Generating narration for {len(todo)} scenes ({chars} characters)...")
+        if hasattr(voice, "synthesize_many") and len(todo) > 1:  # one request for all of them
+            mp3s = [audio_dir / f"scene_{i:03d}.mp3" for i in todo]
+            for i, mp3, words in zip(todo, mp3s, voice.synthesize_many([scenes[i].narration for i in todo], mp3s)):
+                cached[str(i)] = {"text": scenes[i].narration, "audio": mp3.name, "sig": sig,
+                                  "duration": media_duration(mp3), "words": words}
+            write_json(timing_path, cached)
     with ThreadPoolExecutor(max_workers=max(1, cfg["voice"]["workers"])) as pool:
         for i, info in pool.map(work, range(len(scenes))):
             cached[str(i)] = info

@@ -957,3 +957,46 @@ def test_gemini_rate_limits_wait_as_asked_or_stop(cfg, tmp_path, monkeypatch, qu
         assert calls["n"] == 6 and waits == [8.0] * 5
     else:
         assert calls["n"] == 1 and not waits and "aistudio.google.com" in str(e.value)
+
+
+def test_gemini_voices_a_whole_part_in_one_request_and_cuts_at_the_pauses(cfg, tmp_path, monkeypatch):
+    import base64
+    import numpy as np
+    from vidpipe import voice
+
+    def tone(sec):
+        t = np.arange(int(sec * 24000)) / 24000
+        return (0.4 * np.sin(2 * np.pi * 220 * t) * 32767).astype(np.int16)
+
+    gap = lambda sec: np.zeros(int(sec * 24000), dtype=np.int16)  # noqa: E731
+    # Scene lengths 3s, 1.5s (+ a short pause inside), 3s, with longer pauses between scenes.
+    pcm = np.concatenate([gap(0.1), tone(3.0), gap(0.6), tone(0.6), gap(0.25), tone(0.9), gap(0.6), tone(3.0),
+                          gap(0.2)]).tobytes()
+    sent = []
+
+    class Resp:
+        status_code = 200
+
+        def json(self):
+            return {"candidates": [{"content": {"parts": [{"inlineData": {"data": base64.b64encode(pcm).decode()}}]}}]}
+
+    monkeypatch.setenv("GEMINI_API_KEY", "g")
+    monkeypatch.setattr(voice.requests, "post", lambda url, **kw: sent.append(kw["json"]) or Resp())
+    cfg["voice"]["provider"] = "gemini"
+    texts = ["அ" * 40 + ". முதல்.", "இ" * 10 + ". " + "உ" * 10 + ".", "எ" * 40 + ". கடைசி."]
+    import types
+    scenes = [types.SimpleNamespace(narration=t) for t in texts]
+    timing = voice.narrate_scenes(scenes, tmp_path, cfg, dry_run=False)
+    assert len(sent) == 1 and all(t in sent[0]["contents"][0]["parts"][0]["text"] for t in texts)
+    spoken = [t["duration"] - cfg["voice"]["gemini"]["scene_pause"] for t in timing]
+    assert abs(spoken[0] - 3.4) < 0.25 and abs(spoken[1] - 2.35) < 0.25 and abs(spoken[2] - 3.4) < 0.25
+    assert [w[0] for w in timing[1]["words"]] == texts[1].split()
+    # Nothing changed: no new request.
+    voice.narrate_scenes(scenes, tmp_path, cfg, dry_run=False)
+    assert len(sent) == 1
+
+
+def test_scene_cuts_fall_back_to_estimates_without_pauses():
+    from vidpipe.voice import scene_cuts
+    assert scene_cuts(["aaaa", "aaaa"], 8.0, []) == [0.0, 4.0, 8.0]
+    assert scene_cuts(["aaaa", "aaaa"], 8.0, [(1.0, 0.3), (3.7, 0.5)]) == [0.0, 3.95, 8.0]

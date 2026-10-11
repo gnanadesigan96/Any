@@ -86,8 +86,9 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
   style instruction. Get a free key at aistudio.google.com/apikey, put `GEMINI_API_KEY=...` in `.env`, preview 12
   story voices with `python make_video.py voices --provider gemini` (or any of the 30 with `--only Charon Fenrir`),
   then add `--voice-provider gemini --voice Charon` to the series command. Change the delivery with
-  `--voice-style "Whisper it like a ghost story, slow and tense"`. The free tier allows only a few requests a minute,
-  so the pipeline waits and retries; check Google's terms before monetising.
+  `--voice-style "Whisper it like a ghost story, slow and tense"`. The free tier allows only about 10 voice requests a day,
+  so each part is voiced in ONE request and cut into scenes at its pauses (a 3-part series uses 3); previews use one
+  request per voice, so preview a few at a time (`--only Charon Fenrir`). Check Google's terms before monetising.
 - **A real storyteller voice (paid):** the free voices read evenly. For a gripping, emotional narrator in any
   language (Tamil included), use ElevenLabs: put `ELEVENLABS_API_KEY=...` in `.env`, pick a voice in their Voice
   Library (search "Tamil" or "storyteller") and run with `--voice-provider elevenlabs --voice <voice ID>`. Set
