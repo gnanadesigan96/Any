@@ -71,6 +71,19 @@ MOVIES = [
      ["⏳", "✨", "🕰️"], "clock", (204, 64, 64)),
 ]
 
+# ---- per-part config: PART_DIR=<dir> with config.json + posters/ (defaults to Part 1 above)
+import json
+PART, POSTER_DIR, WORK_DIR = 1, os.path.join(HERE, "posters"), HERE
+if os.environ.get("PART_DIR"):
+    WORK_DIR = os.path.abspath(os.environ["PART_DIR"])
+    _cfg = json.load(open(os.path.join(WORK_DIR, "config.json")))
+    PART = _cfg["part"]
+    POSTER_DIR = os.path.join(WORK_DIR, "posters")
+    MOVIES = [(m["rank"], m["key"], m["title"], m["year"], m["cast"], m["genres"], 0.0, m["desc"],
+               m["particles"], m["motif"], tuple(m["accent"])) for m in _cfg["movies"]]
+    MOVIES.sort(key=lambda m: -m[0])  # 5 -> 1
+    OUT = os.path.join(WORK_DIR, f"filmy_passport_feel_good_part{PART}_HQ.mp4")
+
 
 # ------------------------------------------------------------------ utils
 def clamp(t):
@@ -179,7 +192,7 @@ SPEC = Image.fromarray((_band * 120).astype(np.uint8), "L")
 
 def load_assets(m):
     key = m[1]
-    src = Image.open(os.path.join(HERE, "posters", key + ".jpg")).convert("RGB")
+    src = Image.open(os.path.join(POSTER_DIR, key + ".jpg")).convert("RGB")
     s = max(W / src.width, H / src.height) * 1.15
     bg = src.resize((int(src.width * s), int(src.height * s)), Image.BICUBIC)
     bg = bg.filter(ImageFilter.GaussianBlur(50))
@@ -341,7 +354,11 @@ def draw_info(fr, m, lt):
     frosted(fr, (x0, y0 + dy, x1, y1 + dy), pin * a_out)
     lay = Image.new("RGBA", (W, y1 - y0), (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
-    tf = font("InterDisplay-Black", 92 if len(title) < 12 else 84)
+    size = 92 if len(title) < 12 else 84
+    tf = font("InterDisplay-Black", size)
+    while d.textlength(title, font=tf) > (x1 - x0 - 80) and size > 50:
+        size -= 4
+        tf = font("InterDisplay-Black", size)
     words = title.split()
     widths = [d.textlength(w_, font=tf) for w_ in words]
     gap = d.textlength(" ", font=tf)
@@ -387,7 +404,7 @@ def draw_info(fr, m, lt):
 def draw_header(fr, idx, a):
     lay = Image.new("RGBA", (W, 170), (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
-    spaced(d, W / 2, 62, "FEEL-GOOD MOVIES — PART 1", font("Inter-Bold", 32), INK, 5)
+    spaced(d, W / 2, 62, f"FEEL-GOOD MOVIES — PART {PART}", font("Inter-Bold", 32), INK, 5)
     for i in range(5):
         x0 = W / 2 - 2 * 70 + i * 70
         col = INK if i <= idx else (255, 255, 255, 170)
@@ -447,7 +464,7 @@ def text_line(fr, t, start, y, txt, f, col, a=1.0):
 def draw_intro(fr, t):
     a = 1 - ease_io((t - (INTRO - 0.5)) / 0.5)
     text_line(fr, t, 0.1, 300, "Bad day?", font("InterDisplay-SemiBoldItalic", 70), SOFT, a)
-    text_line(fr, t, 0.4, 410, "5 movies that will make", font("InterDisplay-Bold", 68), INK, a)
+    text_line(fr, t, 0.4, 410, "5 English movies that make", font("InterDisplay-Bold", 64), INK, a)
     text_line(fr, t, 0.6, 500, "you believe in love", font("InterDisplay-Black", 92), (214, 84, 104), a)
     text_line(fr, t, 0.8, 610, "again", font("InterDisplay-Black", 92), (214, 84, 104), a)
     draw_fan(fr, t - 1.0, 1130, a)
@@ -607,7 +624,7 @@ def render(t, fi=0):
 
 
 def main():
-    wav = os.path.join(HERE, "music.wav")
+    wav = os.path.join(WORK_DIR, "music.wav")
     make_music(wav, R_DURATION)
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
            "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-i", wav,
@@ -629,10 +646,10 @@ if __name__ == "__main__":
         ts = [float(x) for x in sys.argv[2:]] or [2.8, INTRO + 0.6, INTRO + 2.5, INTRO + 7.5,
                                                   INTRO + PER * 2 + 7.5, INTRO + PER * 4 + 3, DURATION - 1.5]
         for x in ts:
-            Image.fromarray(render(x)).save(os.path.join(HERE, f"preview_{x:.1f}.png"))
+            Image.fromarray(render(x)).save(os.path.join(WORK_DIR, f"preview_{x:.1f}.png"))
         print("ok")
     elif len(sys.argv) > 1 and sys.argv[1] == "music":
-        make_music(os.path.join(HERE, "music.wav"), R_DURATION)
+        make_music(os.path.join(WORK_DIR, "music.wav"), R_DURATION)
         print("music ok")
     else:
         main()

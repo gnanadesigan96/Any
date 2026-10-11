@@ -9,6 +9,8 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+PART = int(os.environ.get("PART", "1"))
+OUT_DIR = os.environ.get("OUT_DIR", os.path.dirname(os.path.abspath(__file__)))
 POSTERS = os.path.join(HERE, "..", "english", "posters")
 ORDER = ["made_of_honor", "plus_one", "the_vow", "love_rosie", "about_time"]
 FD = "/usr/share/fonts/opentype/inter/"
@@ -157,13 +159,13 @@ def vertical():
     spaced(d, W / 2, 150, "FILMY PASSPORT", font("Inter-Bold", 36), GOLD, 10)
     text_shadow(im, (W / 2, 230), "FEEL-GOOD", font("InterDisplay-Black", 164), CREAM)
     text_shadow(im, (W / 2, 405), "MOVIES", font("InterDisplay-Black", 222), CORAL)
-    pill(im, W / 2, 712, "PART 1", font("InterDisplay-Black", 54), SAFFRON, INK, padx=50, h=92)
+    pill(im, W / 2, 712, f"PART {PART}", font("InterDisplay-Black", 54), SAFFRON, INK, padx=50, h=92)
     fan(im, (W / 2, 1190), 420, 622, 180, 9, 46)
     heart = emoji("💖", 96)
     im.alpha_composite(heart, (int(W / 2 + 250), 905))
-    text_shadow(im, (W / 2, 1590), "5 films that make you", font("InterDisplay-Bold", 62), CREAM)
+    text_shadow(im, (W / 2, 1590), "5 English movies that make you", font("InterDisplay-Bold", 54), CREAM)
     text_shadow(im, (W / 2, 1668), "believe in love again", font("InterDisplay-BoldItalic", 62), SAFFRON)
-    out = os.path.join(HERE, "thumbnail_feel_good_part1_vertical.png")
+    out = os.path.join(OUT_DIR, f"thumbnail_feel_good_part{PART}_vertical.png")
     im.convert("RGB").save(out)
     return out
 
@@ -178,12 +180,12 @@ def landscape():
     text_shadow(im, (x0, 140), "FEEL-GOOD", font("InterDisplay-Black", 118), CREAM, anchor="la")
     text_shadow(im, (x0, 262), "MOVIES", font("InterDisplay-Black", 150), CORAL, anchor="la")
     f = font("InterDisplay-Black", 40)
-    w = d.textlength("PART 1", font=f) + 64
+    w = d.textlength(f"PART {PART}", font=f) + 64
     d.rounded_rectangle((x0 + 4, 448, x0 + 4 + w, 512), 32, fill=SAFFRON)
-    d.text((x0 + 4 + w / 2, 480), "PART 1", font=f, fill=INK, anchor="mm")
-    text_shadow(im, (x0 + 4, 548), "5 films that make you", font("InterDisplay-Bold", 40), CREAM, anchor="la", blur=8)
+    d.text((x0 + 4 + w / 2, 480), f"PART {PART}", font=f, fill=INK, anchor="mm")
+    text_shadow(im, (x0 + 4, 548), "5 English movies that make you", font("InterDisplay-Bold", 38), CREAM, anchor="la", blur=8)
     text_shadow(im, (x0 + 4, 598), "believe in love again", font("InterDisplay-BoldItalic", 40), SAFFRON, anchor="la", blur=8)
-    out = os.path.join(HERE, "thumbnail_feel_good_part1_16x9.png")
+    out = os.path.join(OUT_DIR, f"thumbnail_feel_good_part{PART}_16x9.png")
     im.convert("RGB").save(out)
     return out
 

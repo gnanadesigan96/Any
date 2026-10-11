@@ -1,0 +1,12 @@
+{"part": 3, "movies": [
+ {"rank": 5, "key": "overboard", "title": "Overboard", "year": 2018, "cast": "Eugenio Derbez · Anna Faris", "genres": ["Rom-Com", "Family"],
+  "desc": "A spoiled billionaire loses his memory — and the single mom he once fired convinces him he's her husband.", "particles": ["🛥️", "🌊", "😂"], "motif": "rise", "accent": [40, 140, 200]},
+ {"rank": 4, "key": "long_shot", "title": "Long Shot", "year": 2019, "cast": "Seth Rogen · Charlize Theron", "genres": ["Rom-Com", "Politics"],
+  "desc": "A clumsy journalist becomes the speechwriter for his old babysitter — who is now running for President.", "particles": ["🎤", "💼", "💗"], "motif": "fall", "accent": [228, 40, 140]},
+ {"rank": 3, "key": "the_age_of_adaline", "title": "The Age of Adaline", "year": 2015, "cast": "Blake Lively · Michiel Huisman", "genres": ["Romance", "Fantasy"],
+  "desc": "After a strange accident, Adaline stops ageing at 29 — and spends a century afraid to fall in love.", "particles": ["⏳", "✨", "🍂"], "motif": "clock", "accent": [170, 120, 150]},
+ {"rank": 2, "key": "notting_hill", "title": "Notting Hill", "year": 1999, "cast": "Julia Roberts · Hugh Grant", "genres": ["Rom-Com", "Classic"],
+  "desc": "A shy London bookshop owner's life turns upside down when the world's biggest movie star walks into his shop.", "particles": ["📚", "☕", "💙"], "motif": "rise", "accent": [40, 90, 170]},
+ {"rank": 1, "key": "silver_linings_playbook", "title": "Silver Linings Playbook", "year": 2012, "cast": "Bradley Cooper · Jennifer Lawrence", "genres": ["Rom-Com", "Drama"],
+  "desc": "Two wonderfully messy people help each other heal — one dance practice at a time.", "particles": ["💃", "🏈", "✨"], "motif": "heart", "accent": [200, 150, 40]}
+]}

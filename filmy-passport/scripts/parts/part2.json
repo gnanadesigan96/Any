@@ -1,0 +1,25 @@
+{
+  "part": 2,
+  "movies": [
+    {"rank": 5, "key": "the_choice", "title": "The Choice", "year": 2016,
+     "cast": "Benjamin Walker · Teresa Palmer", "genres": ["Romance", "Drama"],
+     "desc": "Two neighbours who can't stand each other slowly fall in love — until one choice changes everything.",
+     "particles": ["🌅", "🐶", "💛"], "motif": "heart", "accent": [226, 120, 84]},
+    {"rank": 4, "key": "what_if", "title": "What If", "year": 2013,
+     "cast": "Daniel Radcliffe · Zoe Kazan", "genres": ["Rom-Com", "Friendship"],
+     "desc": "Wallace and Chantry become instant best friends. The only problem? He's falling for her — and she has a boyfriend.",
+     "particles": ["❓", "💛", "✨"], "motif": "fall", "accent": [30, 150, 210]},
+    {"rank": 3, "key": "fifty_first_dates", "title": "50 First Dates", "year": 2004,
+     "cast": "Adam Sandler · Drew Barrymore", "genres": ["Rom-Com", "Hawaii"],
+     "desc": "She forgets him every single night — so he finds a new way to make her fall in love with him every single day.",
+     "particles": ["🌺", "🐧", "🌴"], "motif": "rise", "accent": [232, 112, 64]},
+    {"rank": 2, "key": "the_longest_ride", "title": "The Longest Ride", "year": 2015,
+     "cast": "Scott Eastwood · Britt Robertson", "genres": ["Romance", "Drama"],
+     "desc": "A bull rider and an art student fall in love — and an old man's letters show them what forever really means.",
+     "particles": ["🤠", "🐎", "💌"], "motif": "rise", "accent": [112, 140, 70]},
+    {"rank": 1, "key": "the_big_sick", "title": "The Big Sick", "year": 2017,
+     "cast": "Kumail Nanjiani · Zoe Kazan", "genres": ["Rom-Com", "True Story"],
+     "desc": "A stand-up comic falls for a student, then bonds with her parents while she lies in a coma. Based on a true story.",
+     "particles": ["🎈", "🦒", "❤️"], "motif": "rise", "accent": [214, 160, 10]}
+  ]
+}
