@@ -87,11 +87,13 @@ def series_settings(cfg: dict, language: str = "") -> dict:
 
 # How young viewers actually talk, per language: the narration should sound like today's top explainer channels.
 SLANG = {
-    "tamil": ("Write today's Chennai-style spoken Tamil (Tanglish) the way popular Tamil movie-explainer YouTube "
-              "channels talk to friends: casual verb endings (பண்ணிடுறான், போயிடுறான், ஆகிடுறாங்க), friendly asides "
-              "(மச்சான், நம்ம ஹீரோ), everyday slang (செம்ம, வேற லெவல், பக்கா, மாஸ், கண்டுக்கவே இல்ல), and the English "
-              "words people really say, written in Tamil script (கில்லர், டார்கெட், ட்விஸ்ட், கேஸ், ஷூட், மிஸ்ஸிங், "
-              "ஃபேக், டேலண்ட்). Never use old or written-only Tamil (இலக்கு, தயாரிப்பாளர், திருப்பம், அசாத்திய). "),
+    "tamil": ("Write the way Tamil Gen Z creators talk in reels and movie-explainer Shorts today: casual Chennai "
+              "Tanglish, addressing the viewer as ப்ரோ (not the dated மச்சான்), casual verb endings (பண்ணிடுறான், "
+              "ஆகிடுறாங்க, போயிடுறான்), current slang (வேற மாறி, உருட்டு for fake or bluffing, கலாய் for roasting, சில், "
+              "சோலோ, பக்கா, \"என்ன ப்ரோ நடக்குது இங்க?!\") and the English words people really say, written in Tamil "
+              "script (கில்லர், டார்கெட், ப்ளாட் ட்விஸ்ட், ரெட் ஃப்ளாக், கேஸ், மிஸ்ஸிங், ரியல்). Go easy on 2010s words "
+              "that now sound old (செம்ம, வேற லெவல், மாஸ், கெத்து) and never use written-only Tamil (இலக்கு, தயாரிப்பாளர், "
+              "திருப்பம், அசாத்திய). "),
 }
 
 

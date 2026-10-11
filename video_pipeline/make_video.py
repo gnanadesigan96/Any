@@ -27,7 +27,7 @@ from vidpipe.config import load_config  # noqa: E402
 from vidpipe.pipeline import REDO, ManualStepNeeded, make_video  # noqa: E402
 from vidpipe.series import SeriesStepNeeded, make_series  # noqa: E402
 
-TAMIL_SAMPLE = "மச்சான், அவன் கண்ணாடிய பாக்குறான். பின்னாடி ஒருத்தன் நிக்குறான். ஆனா கண்ணாடில… யாருமே இல்ல! செம்ம ட்விஸ்ட்டு."
+TAMIL_SAMPLE = "ப்ரோ, அவன் கண்ணாடிய பாக்குறான். பின்னாடி ஒருத்தன் நிக்குறான். ஆனா கண்ணாடில… யாருமே இல்ல! என்ன ப்ரோ நடக்குது இங்க?!"
 from vidpipe.upload import upload_run  # noqa: E402
 
 
