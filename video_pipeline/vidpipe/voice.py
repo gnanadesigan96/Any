@@ -4,6 +4,7 @@ import base64
 import json
 import os
 import re
+import shutil
 import threading
 import wave
 from concurrent.futures import ThreadPoolExecutor
@@ -563,6 +564,7 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
             return i, cached[key]
         prev_text = scenes[i - 1].narration if i > 0 else ""
         next_text = scenes[i + 1].narration if i + 1 < len(scenes) else ""
+        mp3.with_suffix(".voice.mp3").unlink(missing_ok=True)  # the old line's untouched copy is stale now
         words = voice.synthesize(scenes[i].narration, prev_text, next_text, mp3)
         return i, {"text": scenes[i].narration, "audio": mp3.name, "sig": sig,
                    "duration": media_duration(mp3), "words": words}
@@ -574,6 +576,8 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
         log(f"Generating narration for {len(todo)} scenes ({chars} characters)...")
         if hasattr(voice, "synthesize_many") and len(todo) > 1:  # one request for all of them
             mp3s = [audio_dir / f"scene_{i:03d}.mp3" for i in todo]
+            for mp3 in mp3s:
+                mp3.with_suffix(".voice.mp3").unlink(missing_ok=True)
             for i, mp3, words in zip(todo, mp3s, voice.synthesize_many([scenes[i].narration for i in todo], mp3s)):
                 cached[str(i)] = {"text": scenes[i].narration, "audio": mp3.name, "sig": sig,
                                   "duration": media_duration(mp3), "words": words}
@@ -581,5 +585,25 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
     with ThreadPoolExecutor(max_workers=max(1, cfg["voice"]["workers"])) as pool:
         for i, info in pool.map(work, range(len(scenes))):
             cached[str(i)] = info
+    tempo = float(cfg["voice"].get("tempo", 1.0))
+    for i in range(len(scenes)):
+        _apply_tempo(audio_dir / f"scene_{i:03d}.mp3", cached[str(i)], tempo)
     write_json(timing_path, cached)
     return [cached[str(i)] for i in range(len(scenes))]
+
+
+def _apply_tempo(mp3: Path, entry: dict, tempo: float) -> None:
+    """Speeds the narration up (or down) without changing the voice's pitch. The voice's own recording is kept as
+    scene_NNN.voice.mp3, so a new pace is applied to it again rather than re-recording (no new voice credits)."""
+    if abs(entry.get("tempo", 1.0) - tempo) < 1e-6:
+        return
+    original = mp3.with_suffix(".voice.mp3")
+    if not original.exists():
+        shutil.copyfile(mp3, original)
+        entry["voice_words"] = entry["words"]
+    if abs(tempo - 1.0) < 1e-6:
+        shutil.copyfile(original, mp3)
+    else:
+        run_ffmpeg(["-i", original, "-filter:a", f"atempo={tempo}", "-c:a", "libmp3lame", "-q:a", "2", mp3])
+    entry["words"] = [[w, round(a / tempo, 3), round(b / tempo, 3)] for w, a, b in entry["voice_words"]]
+    entry.update(duration=media_duration(mp3), tempo=tempo)

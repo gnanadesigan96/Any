@@ -87,7 +87,10 @@ DEFAULTS = {
         "score": True,            # dark drone, booms on the hook and the cliffhanger, a riser into it
         "hook_card": True,        # big hook text for the first 2 seconds + "PART N+1 →" end card
         # Livelier 2.5D motion for story series: 2x camera moves, handheld drift, lens blur, floating dust
-        "motion": {"strength": 2.0, "handheld": 1.0, "depth_of_field": 0.8, "dust": True},
+        # strength 1.2: stronger moves crop into the picture and cut off heads.
+        "motion": {"strength": 1.2, "handheld": 0.8, "depth_of_field": 0.8, "dust": True},
+        "title_style": "tag",     # a small, neat "PART N" label at the top ("banner" = big yellow title)
+        "voice_tempo": 1.1,       # narration a little quicker than the voice speaks (1.0 = as spoken)
         "voice_speed": 0.95,      # storytelling pace: a little slower and more dramatic than fact Shorts
         "sentence_pause": 0.2,
         # Narration language. English uses Kokoro; other languages use the free Edge voices unless

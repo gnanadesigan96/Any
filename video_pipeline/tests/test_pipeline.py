@@ -455,7 +455,7 @@ def test_series_manual_steps(cfg):
     assert [e.part for e in episodes] == list(range(1, 7))
 
     pack = series.to_pack(bible, episodes)
-    assert pack.shorts[5].hook_text == "Dracula · Part 6/6"
+    assert pack.shorts[5].hook_text == "PART 6"  # the story's name stays off screen
     assert "young clerk in a brown suit" in pack.shorts[0].scenes[0].visual
     assert pack.shorts[0].hashtags == ["#dracula"]
 
@@ -693,11 +693,40 @@ def test_score_has_no_cut_whoosh_by_default(tmp_path):
     assert level_around_cut(whoosh=True) > 1.5 * level_around_cut()
 
 
-def test_series_motion_is_livelier(cfg):
+def test_series_motion_is_livelier_but_keeps_heads_in_frame(cfg):
     from vidpipe import series
     bible = series.SeriesBible.model_validate(json.loads((ROOT / "stories/dracula/bible.json").read_text()))
-    p = series.series_config(cfg, bible)["video"]["parallax"]
-    assert p["strength"] >= 2 and p["handheld"] > 0 and p["dust"] is True
+    scfg = series.series_config(cfg, bible)
+    p = scfg["video"]["parallax"]
+    assert 1 < p["strength"] <= 1.5 and p["handheld"] > 0 and p["dust"] is True
+    assert scfg["video"]["title_style"] == "tag" and scfg["voice"]["tempo"] == 1.1
+    scene = series.StoryScene(narration="x", visual="a man at a desk", characters=[])
+    assert "whole head and face inside the frame" in series.image_prompt(scene, bible)
+
+
+def test_part_tag_is_small_and_neat(tmp_path):
+    from vidpipe.captions import write_ass
+    for style in ("banner", "tag"):
+        write_ass([("hello", 0.0, 1.0)], tmp_path / f"{style}.ass", 1080, 1920, "Arial", True, title="PART 1",
+                  duration=5.0, title_style=style)
+    banner, tag = ((tmp_path / f"{s}.ass").read_text() for s in ("banner", "tag"))
+    size = lambda ass: int(next(l for l in ass.splitlines() if l.startswith("Style: Title")).split(",")[2])  # noqa
+    assert size(tag) < size(banner) / 2 and ",3," in next(l for l in tag.splitlines() if l.startswith("Style: Title"))
+    assert "Title,,0,0,0,,PART 1" in tag
+
+
+def test_pace_speeds_narration_without_revoicing(cfg, tmp_path):
+    import types
+    from vidpipe.voice import narrate_scenes
+    scenes = [types.SimpleNamespace(narration="one two three four five six seven eight")]
+    first = narrate_scenes(scenes, tmp_path, cfg, dry_run=True)[0]
+    cfg["voice"]["tempo"] = 1.25
+    faster = narrate_scenes(scenes, tmp_path, cfg, dry_run=True)[0]
+    assert abs(faster["duration"] - first["duration"] / 1.25) < 0.15
+    assert abs(faster["words"][-1][2] - first["words"][-1][2] / 1.25) < 0.01
+    cfg["voice"]["tempo"] = 1.0  # back to the voice's own pace, from its kept recording
+    again = narrate_scenes(scenes, tmp_path, cfg, dry_run=True)[0]
+    assert abs(again["duration"] - first["duration"]) < 0.05 and again["words"] == first["words"]
 
 
 # ---- Tamil narration ----------------------------------------------------------------------

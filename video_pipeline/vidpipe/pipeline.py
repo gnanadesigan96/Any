@@ -206,8 +206,10 @@ def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
     data = [RENDER_VERSION, [s.narration for s in short.scenes], short.hook_text, overlay,
             [f"{p.name}:{p.stat().st_mtime_ns}" for p in paths],
             {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "score_whoosh", "width",
-                                    "height", "fps", "captions", "caption_max_words")},
+                                    "height", "fps", "captions", "caption_max_words", "title_style")},
             cfg["voice"].get("kokoro"), cfg["voice"].get("provider")]
+    if cfg["voice"].get("tempo", 1.0) != 1.0:
+        data.append({"tempo": cfg["voice"]["tempo"]})
     if cfg["voice"].get("provider") in ("edge", "gemini"):
         data.append(cfg["voice"].get(cfg["voice"]["provider"]))
     elif cfg["voice"].get("provider") == "elevenlabs":

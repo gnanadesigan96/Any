@@ -70,6 +70,9 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
 - **Editing is safe:** if the script changes, only the affected voice lines, pictures and videos are redone. Every
   picture already made is kept in `library/` under its description, so a shot that moves to another scene or part
   is copied instead of generated again.
+- **Neat and readable:** each part shows only a small "PART N" tag at the top (the story's name is never on
+  screen), pictures are prompted to keep every head and face in frame, and the narration plays at 1.1x speed
+  (`--pace 1.15` for quicker, `--pace 1.0` for the voice's own pace; changing it re-uses the recorded voice).
 - **Try it small first:** `--first 1` renders only part 1 so you can check the style before committing hours.
   Run again without `--first` to render the rest.
 - **Tamil (or other languages):** `--language Tamil` writes the narration in natural spoken Tamil and voices it with

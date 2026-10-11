@@ -44,13 +44,21 @@ def _ass_escape(text: str) -> str:
 
 def write_ass(phrases: list, path: Path, width: int, height: int, font: str, vertical: bool,
               title: str = "", duration: float = 0.0, hook: str = "", end_text: str = "",
-              end_sub: str = "", hook_seconds: float = 2.2, end_seconds: float = 2.6) -> None:
-    """Captions, plus optional overlays: `title` at the top for the whole video, `hook` as a big
-    punch-in card for the first seconds, and an end card (`end_text` / `end_sub`) at the end."""
+              end_sub: str = "", hook_seconds: float = 2.2, end_seconds: float = 2.6,
+              title_style: str = "banner") -> None:
+    """Captions, plus optional overlays: `title` at the top for the whole video ("banner": big yellow text;
+    "tag": a small, neat label on a soft dark box), `hook` as a big punch-in card for the first seconds,
+    and an end card (`end_text` / `end_sub`) at the end."""
     if vertical:
         size, margin_v, align, outline = int(height * 0.05), int(height * 0.30), 2, 7
     else:
         size, margin_v, align, outline = int(height * 0.062), int(height * 0.07), 2, 4
+    if title_style == "tag":
+        title_line = (f"Style: Title,{font},{int(size * 0.5)},&H00FFFFFF,&H00FFFFFF,&H5A000000,&H00000000,-1,0,0,0,"
+                      f"100,100,{max(1, size // 25)},0,3,{max(6, size // 5)},0,8,0,0,{int(height * 0.06)},1")
+    else:
+        title_line = (f"Style: Title,{font},{int(size * 1.15)},&H0000D7FF,&H0000D7FF,&H00000000,&H80000000,-1,0,0,0,"
+                      f"100,100,0,0,1,{outline + 1},1,8,{int(width * 0.07)},{int(width * 0.07)},{int(height * 0.12)},1")
     header = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {width}
@@ -61,7 +69,7 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Cap,{font},{size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,{outline},1,{align},{int(width * 0.08)},{int(width * 0.08)},{margin_v},1
-Style: Title,{font},{int(size * 1.15)},&H0000D7FF,&H0000D7FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,{outline + 1},1,8,{int(width * 0.07)},{int(width * 0.07)},{int(height * 0.12)},1
+{title_line}
 Style: Hook,{font},{int(size * 1.7)},&H0000D7FF,&H0000D7FF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,5,{int(width * 0.06)},{int(width * 0.06)},0,1
 Style: End,{font},{int(size * 1.6)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,5,{int(width * 0.06)},{int(width * 0.06)},0,1
 

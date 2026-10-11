@@ -263,7 +263,9 @@ def image_prompt(scene: StoryScene, bible: SeriesBible) -> str:
     looks = {c.name.lower(): c for c in bible.characters}
     # At most 3 designs: the image model reads only the first few hundred words of a prompt.
     cast = [looks[n.lower()] for n in scene.characters if n.lower() in looks][:3]
-    text = scene.visual.strip().rstrip(".")
+    # Framing first: the image model weighs the start of the prompt most, and the 2.5D camera moves crop the edges.
+    text = (f"{scene.visual.strip().rstrip('.')}. Framing: every person's whole head and face inside the frame with "
+            "clear space above the head, main subject in the centre of the frame, sharp natural faces")
     if cast:
         text += ". " + " ".join(f"{c.name}: {c.look.strip().rstrip('.')}." for c in cast)
     return text
@@ -277,7 +279,7 @@ def to_pack(bible: SeriesBible, episodes: list) -> ShortsPack:
         hashtags = ["#" + h.strip().lstrip("#").replace(" ", "") for h in e.hashtags if h.strip("# ")][:5]
         shorts.append(ShortVideo(
             title=f"{e.title} | {bible.series_title} Part {e.part}"[:100],
-            hook_text=f"{bible.series_title} · Part {e.part}/{total}",
+            hook_text=f"PART {e.part}",  # a small tag; the movie's name is never shown on screen
             description=f"{e.description.strip()}\n\nPart {e.part} of {total} of {bible.series_title}.",
             hashtags=hashtags,
             scenes=[Scene(narration=s.narration, visual=image_prompt(s, bible), search_query="") for s in e.scenes],
@@ -313,6 +315,8 @@ def series_config(cfg: dict, bible: SeriesBible, episodes: list = ()) -> dict:
     scfg["images"]["provider"] = cfg["series"]["images_provider"]  # illustrations, not stock footage
     scfg["shorts"].update(voice_speed=cfg["series"]["voice_speed"], sentence_pause=cfg["series"]["sentence_pause"])
     scfg["video"]["animation"] = cfg["series"]["animation"]
+    scfg["video"]["title_style"] = cfg["series"].get("title_style", "tag")
+    scfg["voice"]["tempo"] = cfg["series"].get("voice_tempo", 1.0)
     scfg["images"]["scenes_per_image"] = cfg["series"]["scenes_per_image"]
     scfg["video"]["score"] = cfg["series"].get("score", True)
     scfg["video"]["parallax"] = {**scfg["video"].get("parallax", {}), **cfg["series"].get("motion", {})}

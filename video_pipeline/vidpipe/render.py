@@ -198,7 +198,8 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
         write_ass(group_words(words, v["caption_max_words"]), work / "captions.ass",
                   v["width"], v["height"], v["caption_font"], vertical=v["height"] > v["width"],
                   title=title, duration=duration, hook=overlay.get("hook", ""),
-                  end_text=overlay.get("end_text", ""), end_sub=overlay.get("end_sub", ""))
+                  end_text=overlay.get("end_text", ""), end_sub=overlay.get("end_sub", ""),
+                  title_style=v.get("title_style", "banner"))
         ass = "captions.ass"
     music, score = _pick_music(cfg, run_dir.name), False
     if v.get("score"):

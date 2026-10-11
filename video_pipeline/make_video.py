@@ -85,6 +85,8 @@ def main() -> int:
     p_series.add_argument("--voice-provider", choices=["auto", "edge", "gemini", "elevenlabs"], default="",
                           help="gemini: expressive storyteller voice, free tier (GEMINI_API_KEY); "
                                "elevenlabs: most expressive (paid, ELEVENLABS_API_KEY)")
+    p_series.add_argument("--pace", type=float, default=0, help="narration speed, e.g. 1.1 (default) or 1.15; "
+                                                                 "1.0 = as the voice speaks; no new voice credits")
     p_series.add_argument("--voice-model", default="", help="ElevenLabs model, e.g. eleven_v3 (most expressive)")
     p_series.add_argument("--voice-style", default="",
                           help='how a Gemini voice should tell it, e.g. "Whisper it like a ghost story, slow and tense"')
@@ -142,6 +144,8 @@ def main() -> int:
                 key = {"elevenlabs": "voice_id", "gemini": "gemini_voice"}.get(cfg["series"].get("voice_provider"),
                                                                                   "edge_voice")
                 cfg["series"][key] = args.voice
+            if args.pace:
+                cfg["series"]["voice_tempo"] = args.pace
             if args.voice_model:
                 cfg["voice"]["model_id"] = args.voice_model
             if args.voice_style:
