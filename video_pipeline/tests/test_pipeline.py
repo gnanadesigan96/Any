@@ -698,3 +698,109 @@ def test_series_motion_is_livelier(cfg):
     bible = series.SeriesBible.model_validate(json.loads((ROOT / "stories/dracula/bible.json").read_text()))
     p = series.series_config(cfg, bible)["video"]["parallax"]
     assert p["strength"] >= 2 and p["handheld"] > 0 and p["dust"] is True
+
+
+# ---- Tamil narration ----------------------------------------------------------------------
+
+def _fake_edge_tts(tmp_path, with_words=True):
+    """Stand-in for the edge-tts package: real mp3 audio plus word timings, no network."""
+    import types
+    mp3 = tmp_path / "tone.mp3"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "sine=f=220:d=2", "-c:a", "libmp3lame", str(mp3)],
+                   check=True)
+    calls = []
+
+    class Communicate:
+        def __init__(self, text, voice, **kw):
+            calls.append((text, voice, kw))
+            self.text = text
+
+        async def stream(self):
+            yield {"type": "audio", "data": mp3.read_bytes()}
+            if with_words:
+                for i, w in enumerate(self.text.split()):
+                    yield {"type": "WordBoundary", "offset": int(i * 0.5e7), "duration": int(0.4e7), "text": w}
+
+    return types.SimpleNamespace(Communicate=Communicate), calls
+
+
+@pytest.mark.parametrize("with_words", [True, False])
+def test_edge_voice_speaks_tamil_with_word_timings(cfg, tmp_path, monkeypatch, with_words):
+    import sys as _sys
+    from vidpipe.voice import EdgeVoice
+    fake, calls = _fake_edge_tts(tmp_path, with_words)
+    monkeypatch.setitem(_sys.modules, "edge_tts", fake)
+    text = "அவன் கண்ணாடியைப் பார்த்தான். யாருமே இல்லை."
+    out = tmp_path / "scene.mp3"
+    words = EdgeVoice(cfg).synthesize(text, "", "", out)
+    assert calls[0][1] == "ta-IN-ValluvarNeural" and calls[0][2]["boundary"] == "WordBoundary"
+    assert [w[0] for w in words] == text.split()
+    assert all(a[2] <= b[1] + 1e-6 for a, b in zip(words, words[1:]))  # in order, no overlaps
+    assert 2.1 < media_duration(out) < 2.6                             # audio plus the scene pause
+    assert not (tmp_path / "scene.raw.mp3").exists()
+
+
+def test_tamil_series_uses_tamil_voice_font_and_prompts(cfg):
+    from vidpipe import series
+    cfg["series"]["language"] = "Tamil"
+    bible = series.SeriesBible.model_validate(json.loads((ROOT / "stories/dracula/bible.json").read_text()))
+    scfg = series.series_config(cfg, bible)
+    assert scfg["voice"]["provider"] == "edge" and scfg["voice"]["edge"]["voice"] == "ta-IN-ValluvarNeural"
+    assert scfg["video"]["caption_font"] == "Tamil Sangam MN" and scfg["shorts"]["caption_max_words"] == 2
+    outline = series._outline_prompt("Dracula", "", cfg)
+    assert "in Tamil" in outline and "about 150 words" in outline and "about 71 seconds" in outline
+    assert "`visual`" in series._parts_prompt(bible, 1, 3, cfg) and "in Tamil" in series._parts_prompt(bible, 1, 3, cfg)
+    eps = [e for f in sorted((ROOT / "stories/dracula").glob("parts_*.json"))
+           for e in series.EpisodeBatch.model_validate(json.loads(f.read_text())).episodes]
+    ov = series.overlays_for(bible, eps, cfg)
+    assert ov[0]["end_text"] == "பாகம் 2 →" and ov[-1]["end_text"] == "முடிவு"
+    # English stays on Kokoro.
+    cfg["series"]["language"] = "English"
+    assert series.series_config(cfg, bible)["voice"]["provider"] == cfg["voice"]["provider"]
+    assert "Tamil" not in series._outline_prompt("Dracula", "", cfg)
+
+
+def test_tamil_series_gets_its_own_folder(cfg):
+    from vidpipe.series import make_series
+    cfg["shorts"].update(width=360, height=640)
+    cfg["series"].update(language="Tamil", parts=2)
+    run_dir = make_series("Test Story", "", cfg, dry_run=True, first_n=1)
+    assert run_dir.name == "series-test-story-tamil-dryrun"
+    assert json.loads((run_dir / "bible.json").read_text())["language"] == "Tamil"
+    assert (run_dir / "part_01.mp4").exists()
+
+
+def test_english_subtitles_under_tamil_narration(cfg):
+    from vidpipe import pipeline, series
+    timing = [{"duration": 3.0, "words": [["ஒன்று", 0.1, 1.0], ["இரண்டு", 1.1, 2.6]]}]
+    words = pipeline._subtitle_timing(["Who is the real monster?"], timing)[0]["words"]
+    assert [w[0] for w in words] == ["Who", "is", "the", "real", "monster?"]
+    assert words[0][1] == 0.1 and abs(words[-1][2] - 2.6) < 1e-6
+    bible = series.SeriesBible.model_validate(json.loads((ROOT / "stories/dracula/bible.json").read_text()))
+    bible.language = "Tamil"
+    eps = [series.Episode(part=i, title=f"T{i}", hook_text="H", description="d", hashtags=[],
+                          scenes=[series.StoryScene(narration="தமிழ்", visual="v", characters=[], subtitle="English")])
+           for i in (1, 2)]
+    ov = series.overlays_for(bible, eps, cfg)
+    assert ov[0]["end_text"] == "Part 2 →" and ov[0]["subtitles"] == ["English"]  # on-screen text stays English
+    scfg = series.series_config(cfg, bible, eps)
+    assert scfg["voice"]["provider"] == "edge" and scfg["video"]["caption_font"] == cfg["video"]["caption_font"]
+
+
+def test_ratsasan_script_is_tamil_with_english_subtitles(cfg):
+    from vidpipe.series import make_series, write_series
+    cfg["shorts"].update(width=360, height=640)
+    run_dir = make_series("Ratsasan", "", cfg, dry_run=True, first_n=1, script_dir="stories/ratsasan")
+    assert run_dir.name == "series-ratsasan-tamil-dryrun"
+    bible, episodes = write_series(run_dir, "Ratsasan", "", cfg, dry_run=True)
+    assert bible.language == "Tamil" and [e.hook_text for e in episodes] == [
+        "THE SCHOOLGIRL KILLER", "WHO IS THE REAL MONSTER?", "THE TWIST YOU NEVER EXPECTED"]
+    for e in episodes:
+        assert 5 <= len(e.scenes) <= 6 and 60 <= sum(len(s.narration.split()) for s in e.scenes) <= 80
+        assert all(s.subtitle and not any("஀" <= ch <= "௿" for ch in s.subtitle) for s in e.scenes)
+        assert all(any("஀" <= ch <= "௿" for ch in s.narration) for s in e.scenes)
+    names = {c.name for c in bible.characters}
+    assert all(set(s.characters) <= names for e in episodes for s in e.scenes)
+    ass = (run_dir / "part_01" / "work" / "captions.ass").read_text()
+    assert "PSYCHO" in ass.upper() and "SCHOOLGIRLS" in ass.upper()  # English subtitles burned in
+    assert (run_dir / "part_01.mp4").exists()

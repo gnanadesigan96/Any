@@ -26,6 +26,8 @@ from vidpipe import bank  # noqa: E402
 from vidpipe.config import load_config  # noqa: E402
 from vidpipe.pipeline import REDO, ManualStepNeeded, make_video  # noqa: E402
 from vidpipe.series import SeriesStepNeeded, make_series  # noqa: E402
+
+TAMIL_SAMPLE = "அவன் கண்ணாடியைப் பார்த்தான். பின்னால் அந்த மனிதன் நின்றுகொண்டிருந்தான். ஆனால் கண்ணாடியில் யாருமே இல்லை."
 from vidpipe.upload import upload_run  # noqa: E402
 
 
@@ -61,6 +63,9 @@ def main() -> int:
     p_series.add_argument("--style", default="", help='visual style hint, e.g. "anime", "watercolour storybook"')
     p_series.add_argument("--notes", default="", help="anything Claude should know (focus, tone, ending)")
     p_series.add_argument("--first", type=int, default=0, help="only render the first N parts this run")
+    p_series.add_argument("--language", default="", help='narration language, e.g. "Tamil" (default: English)')
+    p_series.add_argument("--voice", default="", help="Edge voice for non-English narration, e.g. ta-IN-PallaviNeural")
+    p_series.add_argument("--voice-rate", default="", help='speak faster/slower (non-English voices), e.g. +8%% or -5%%')
     p_series.add_argument("--script-dir", default="", help="use a ready-made script, e.g. stories/dracula")
     p_series.add_argument("--scenes-per-image", type=int, default=0,
                           help="reuse each picture for N scenes (2 halves image-generation time)")
@@ -70,6 +75,7 @@ def main() -> int:
     p_voices.add_argument("--say", default="In 1940, a brand new bridge began to twist in the wind. "
                                             "Within hours, it was gone.")
     p_voices.add_argument("--only", nargs="*", default=[], help="e.g. am_michael bm_george")
+    p_voices.add_argument("--language", default="", help='e.g. "Tamil": preview the free Tamil voices instead')
 
     p_up = sub.add_parser("upload", help="upload an approved run to YouTube (private)")
     p_up.add_argument("run_dir")
@@ -100,6 +106,12 @@ def main() -> int:
                 cfg["series"]["parts"] = args.parts
             if args.style:
                 cfg["series"]["style_hint"] = args.style
+            if args.language:
+                cfg["series"]["language"] = args.language
+            if args.voice:
+                cfg["series"]["edge_voice"] = args.voice
+            if args.voice_rate:
+                cfg["voice"]["edge"]["rate"] = args.voice_rate if args.voice_rate[0] in "+-" else "+" + args.voice_rate
             if args.scenes_per_image:
                 cfg["series"]["scenes_per_image"] = args.scenes_per_image
             make_series(args.story, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first,
@@ -114,11 +126,20 @@ def main() -> int:
             print(f"\n{len(rows)} unused topics in '{args.niche}'.")
         elif args.command == "voices":
             from vidpipe.config import resolve
-            from vidpipe.voice import preview_voices
+            from vidpipe.voice import EDGE_SAMPLE_VOICES, preview_edge_voices, preview_voices
             out_dir = resolve("voice_samples")
-            for path in preview_voices(cfg, args.say, out_dir, args.only):
-                print(path)
-            print("Listen, then set voice.kokoro.voice in config.yaml to the one you like.")
+            lang = args.language.lower()
+            if lang and lang != "english":
+                if lang not in EDGE_SAMPLE_VOICES and not args.only:
+                    raise RuntimeError(f"No sample voices listed for {args.language}; pass them with --only")
+                say = args.say if "--say" in sys.argv else TAMIL_SAMPLE
+                for path in preview_edge_voices(cfg, say, out_dir, args.only or EDGE_SAMPLE_VOICES[lang]):
+                    print(path)
+                print(f"Listen, then set series.languages.{lang}.voice in config.yaml to the one you like.")
+            else:
+                for path in preview_voices(cfg, args.say, out_dir, args.only):
+                    print(path)
+                print("Listen, then set voice.kokoro.voice in config.yaml to the one you like.")
         elif args.command == "upload":
             upload_run(Path(args.run_dir).resolve(), cfg, args.shorts, args.publish_at)
     except (ManualStepNeeded, SeriesStepNeeded) as e:

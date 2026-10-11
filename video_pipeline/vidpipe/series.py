@@ -36,12 +36,14 @@ class SeriesBible(BaseModel):
     art_style: str
     characters: list[Character]
     episodes: list[EpisodeOutline]
+    language: str = ""  # narration language; empty means the config's series.language
 
 
 class StoryScene(BaseModel):
     narration: str
     visual: str
     characters: list[str]
+    subtitle: str = ""  # on-screen caption in another language than the narration (e.g. English under Tamil)
 
 
 class Episode(BaseModel):
@@ -63,10 +65,40 @@ COMMON_RULES = """Rules for retelling:
 - Keep it suitable for a general YouTube audience: imply violence rather than describing gore."""
 
 
+# On-screen words of the end cards, per narration language.
+UI_TEXT = {
+    "english": {"part": "Part {n} →", "next": "Next: {title}", "end": "The End", "follow": "Follow for the next story"},
+    "tamil": {"part": "பாகம் {n} →", "next": "அடுத்து: {title}", "end": "முடிவு",
+              "follow": "அடுத்த கதைக்கு Follow பண்ணுங்க"},
+}
+
+
+def language_of(cfg: dict, bible: "SeriesBible" = None) -> str:
+    return ((bible.language if bible else "") or cfg["series"].get("language") or "English").strip()
+
+
+def series_settings(cfg: dict, language: str = "") -> dict:
+    """cfg["series"] with the narration language's overrides (length in words, scene size, speaking rate)."""
+    sr = dict(cfg["series"])
+    sr["words_per_second"] = 2.8
+    sr.update(cfg["series"].get("languages", {}).get((language or language_of(cfg)).lower(), {}))
+    return sr
+
+
+def _language_rules(language: str) -> str:
+    if language.lower() == "english":
+        return ""
+    return (f"\nLanguage: write every `narration`, `title`, `hook_text` and `description` in {language}: natural, "
+            f"spoken {language} the way popular {language} storytelling channels narrate (clear, gripping, everyday "
+            f"words, not formal or literary). Keep character and place names as they are commonly said in {language}. "
+            "Write `visual`, `art_style`, character `look`, `summary` and `cliffhanger` in English (they are only used to "
+            "draw the pictures and plan the story). Hashtags: a mix of English and " + language + ".")
+
+
 def _outline_prompt(story: str, notes: str, cfg: dict) -> str:
-    sr, ch = cfg["series"], cfg["channel"]
+    sr, ch = series_settings(cfg), cfg["channel"]
     style_hint = sr["style_hint"] or "pick a striking non-photorealistic illustration style that suits the story"
-    seconds = round(sr["target_words"] / 2.8)
+    seconds = round(sr["target_words"] / sr["words_per_second"])
     acts = ("Structure the parts as acts: part 1 sets up the world and ends on the moment everything goes wrong; the "
             "middle part(s) escalate with a major twist; the final part delivers the climax and a haunting resolution. "
             if sr["parts"] <= 5 else "")
@@ -75,7 +107,7 @@ Each part is a vertical Short of about {seconds} seconds (about {sr['target_word
 order, the parts tell the whole story from beginning to end; each part ends on a cliffhanger that makes people
 desperate to watch the next. {acts}
 
-{COMMON_RULES}
+{COMMON_RULES}{_language_rules(language_of(cfg))}
 
 Story: {story}
 {('Notes from the creator: ' + notes) if notes else ''}
@@ -101,18 +133,19 @@ Reply with ONLY a JSON object (no other text) in exactly this shape:
 
 
 def _parts_prompt(bible: SeriesBible, first: int, last: int, cfg: dict) -> str:
-    sr = cfg["series"]
+    language = language_of(cfg, bible)
+    sr = series_settings(cfg, language)
     plan = bible.model_dump()
     return f"""You are writing parts {first} to {last} of the {len(bible.episodes)}-part YouTube Shorts series
 "{bible.series_title}". Here is the series plan (characters and the outline of every part):
 
 {json.dumps(plan, indent=2, ensure_ascii=False)}
 
-{COMMON_RULES}
+{COMMON_RULES}{_language_rules(language)}
 
 Write parts {first} to {last} in full, following the outline exactly. Viewers swipe away within 2 seconds unless
 something grabs them, so every part must be built for retention:
-- Narration of about {sr['target_words']} words (about {round(sr['target_words'] / 2.8)} seconds spoken), fast and vivid,
+- Narration of about {sr['target_words']} words (about {round(sr['target_words'] / sr['words_per_second'])} seconds spoken), fast and vivid,
   written for the ear: short punchy sentences, no filler, no slow scene-setting.
 - The FIRST sentence is the hook: drop the viewer into the most shocking, strange or dangerous moment of this part, or a
   question they must know the answer to. Never open with "Last time", a recap or background.
@@ -181,7 +214,7 @@ def write_series(run_dir: Path, story: str, notes: str, cfg: dict, dry_run: bool
     sr = cfg["series"]
     bible_path = run_dir / "bible.json"
     if dry_run and not bible_path.exists():
-        write_json(bible_path, _dummy_bible(story, sr["parts"]).model_dump())
+        write_json(bible_path, {**_dummy_bible(story, sr["parts"]).model_dump(), "language": language_of(cfg)})
     if bible_path.exists():
         bible = SeriesBible.model_validate(read_json(bible_path))
     else:
@@ -189,6 +222,7 @@ def write_series(run_dir: Path, story: str, notes: str, cfg: dict, dry_run: bool
         bible.episodes = sorted(bible.episodes, key=lambda e: e.part)
         if not bible.episodes:
             raise RuntimeError("The outline has no episodes; ask Claude to redo it")
+        bible.language = bible.language or language_of(cfg)
         write_json(bible_path, bible.model_dump())
         log(f"Outline saved: '{bible.series_title}', {len(bible.episodes)} parts, "
             f"{len(bible.characters)} characters")
@@ -244,18 +278,26 @@ def to_pack(bible: SeriesBible, episodes: list) -> ShortsPack:
 def overlays_for(bible: SeriesBible, episodes: list, cfg: dict) -> list:
     if not cfg["series"].get("hook_card", True):
         return [{} for _ in episodes]
+    subtitled = has_subtitles(episodes)  # on-screen text in English, whatever language is spoken
+    ui = UI_TEXT["english"] if subtitled else UI_TEXT.get(language_of(cfg, bible).lower(), UI_TEXT["english"])
     out = []
     for i, e in enumerate(episodes):
         if i + 1 < len(episodes):
             nxt = episodes[i + 1]
-            end = {"end_text": f"Part {nxt.part} →", "end_sub": f"Next: {nxt.title}"}
+            end = {"end_text": ui["part"].format(n=nxt.part), "end_sub": ui["next"].format(title=nxt.title)}
         else:
-            end = {"end_text": "The End", "end_sub": "Follow for the next story"}
+            end = {"end_text": ui["end"], "end_sub": ui["follow"]}
         out.append({"hook": e.hook_text, **end})
+        if subtitled:
+            out[-1]["subtitles"] = [sc.subtitle for sc in e.scenes]
     return out
 
 
-def series_config(cfg: dict, bible: SeriesBible) -> dict:
+def has_subtitles(episodes: list) -> bool:
+    return any(sc.subtitle.strip() for e in episodes for sc in e.scenes)
+
+
+def series_config(cfg: dict, bible: SeriesBible, episodes: list = ()) -> dict:
     scfg = copy.deepcopy(cfg)
     scfg["images"]["provider"] = cfg["series"]["images_provider"]  # illustrations, not stock footage
     scfg["shorts"].update(voice_speed=cfg["series"]["voice_speed"], sentence_pause=cfg["series"]["sentence_pause"])
@@ -264,6 +306,15 @@ def series_config(cfg: dict, bible: SeriesBible) -> dict:
     scfg["video"]["score"] = cfg["series"].get("score", True)
     scfg["video"]["parallax"] = {**scfg["video"].get("parallax", {}), **cfg["series"].get("motion", {})}
     scfg["images"]["style"] = f"{bible.art_style.strip().rstrip('.')}, vertical 9:16 composition, no text, no lettering"
+    language = language_of(cfg, bible)
+    if language.lower() != "english":  # Kokoro speaks English only: use the free Edge voice for this language
+        lang = series_settings(cfg, language)
+        scfg["voice"]["provider"] = "edge"
+        scfg["voice"]["edge"] = {**scfg["voice"]["edge"], "voice": cfg["series"].get("edge_voice") or lang.get("voice", scfg["voice"]["edge"]["voice"])}
+        if lang.get("font") and not has_subtitles(episodes):
+            scfg["video"]["caption_font"] = lang["font"]
+        if lang.get("caption_max_words") and not has_subtitles(episodes):
+            scfg["shorts"]["caption_max_words"] = lang["caption_max_words"]
     return scfg
 
 
@@ -275,7 +326,11 @@ def make_series(story: str, notes: str, cfg: dict, dry_run: bool = False, redo: 
     require_binary("ffmpeg")
     require_binary("ffprobe")
     check_ffmpeg_features(cfg["video"]["captions"])
-    run_dir = resolve(cfg["runs_dir"]) / ("series-" + slugify(story) + ("-dryrun" if dry_run else ""))
+    language = language_of(cfg)
+    if script_dir and (resolve(script_dir) / "bible.json").exists():
+        language = (read_json(resolve(script_dir) / "bible.json", {}) or {}).get("language") or language
+    suffix = "" if language.lower() == "english" else "-" + slugify(language)
+    run_dir = resolve(cfg["runs_dir"]) / ("series-" + slugify(story) + suffix + ("-dryrun" if dry_run else ""))
     run_dir.mkdir(parents=True, exist_ok=True)
     if redo == "script":
         _clear(run_dir, ["bible.json", "parts_*.json", "PROMPT_*", "reply_*", "part_*", "metadata.json"])
@@ -302,7 +357,7 @@ def make_series(story: str, notes: str, cfg: dict, dry_run: bool = False, redo: 
 
     bible, episodes = write_series(run_dir, story, notes, cfg, dry_run)
     regenerated = not (run_dir / "metadata.json").exists()
-    result = _make_shorts(run_dir, bible.series_title, to_pack(bible, episodes), series_config(cfg, bible),
+    result = _make_shorts(run_dir, bible.series_title, to_pack(bible, episodes), series_config(cfg, bible, episodes),
                           dry_run, assume_yes, regenerated, prefix="part", limit=first_n,
                           overlays=overlays_for(bible, episodes, cfg))
     write_shot_list(run_dir, bible, episodes, first_n or len(episodes))

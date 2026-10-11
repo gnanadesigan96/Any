@@ -180,6 +180,77 @@ def preview_voices(cfg: dict, text: str, out_dir: Path, voices: list) -> list:
     return outputs
 
 
+class EdgeVoice:
+    """Free Microsoft neural voices through the edge-tts package (no key). Covers languages Kokoro can't speak,
+    such as Tamil (ta-IN-ValluvarNeural, ta-IN-PallaviNeural). Needs an internet connection."""
+
+    def __init__(self, cfg: dict):
+        try:
+            import edge_tts
+        except ImportError as e:
+            raise RuntimeError("The Tamil voice isn't installed: pip install edge-tts") from e
+        self.edge_tts = edge_tts
+        self.e = cfg["voice"]["edge"]
+
+    def _stream(self, text: str, raw: Path) -> list:
+        import asyncio
+
+        words = []
+
+        async def run():
+            com = self.edge_tts.Communicate(text, self.e["voice"], rate=self.e["rate"], pitch=self.e["pitch"],
+                                            boundary="WordBoundary")
+            with open(raw, "wb") as f:
+                async for chunk in com.stream():
+                    if chunk["type"] == "audio":
+                        f.write(chunk["data"])
+                    elif chunk["type"] == "WordBoundary":  # offsets are in 100-nanosecond units
+                        start = chunk["offset"] / 1e7
+                        words.append([chunk["text"], round(start, 3), round(start + chunk["duration"] / 1e7, 3)])
+
+        asyncio.run(run())
+        return words
+
+    def synthesize(self, text: str, prev_text: str, next_text: str, out_mp3: Path) -> list:
+        raw = out_mp3.with_suffix(".raw.mp3")
+        for attempt in range(3):
+            try:
+                words = self._stream(text, raw)
+                break
+            except Exception as e:  # network hiccups: retry, then explain
+                if attempt == 2:
+                    raise RuntimeError(f"The Edge voice failed ({e}). Check your internet connection and re-run.") from e
+        run_ffmpeg(["-i", raw, "-af", f"apad=pad_dur={self.e['scene_pause']}", "-c:a", "libmp3lame", "-q:a", "2",
+                    out_mp3])
+        raw.unlink()
+        if words:
+            return words
+        # No word timings for this voice: spread the words over each sentence instead.
+        sentences = split_sentences(text)
+        total = sum(len(x) for x in sentences) or 1
+        t, end, out = 0.1, max(media_duration(out_mp3) - self.e["scene_pause"], 0.2), []
+        for sentence in sentences:
+            span = (end - 0.1) * len(sentence) / total
+            out += distribute_words(sentence, t, t + span)
+            t += span
+        return out
+
+
+EDGE_SAMPLE_VOICES = {"tamil": ["ta-IN-ValluvarNeural", "ta-IN-PallaviNeural", "ta-LK-KumarNeural",
+                                "ta-LK-SaranyaNeural", "ta-MY-SuryaNeural", "ta-MY-KaniNeural"]}
+
+
+def preview_edge_voices(cfg: dict, text: str, out_dir: Path, voices: list) -> list:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    outputs = []
+    for v in voices:
+        engine = EdgeVoice({**cfg, "voice": {**cfg["voice"], "edge": {**cfg["voice"]["edge"], "voice": v}}})
+        path = out_dir / f"{v}.mp3"
+        engine.synthesize(text, "", "", path)
+        outputs.append(path)
+    return outputs
+
+
 class DummyVoice:
     """Silent audio paced at ~2.6 words/second; used by --dry-run."""
 
@@ -201,6 +272,8 @@ def make_voice(cfg: dict, dry_run: bool):
         return ElevenLabsVoice(cfg)
     if provider == "kokoro":
         return KokoroVoice(cfg)
+    if provider == "edge":
+        return EdgeVoice(cfg)
     raise RuntimeError(f"Unknown voice.provider '{provider}'")
 
 
@@ -214,7 +287,7 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
     # Re-voice a scene when its text OR the voice settings change (speed, pauses, voice).
     vc = cfg["voice"]
     sig = "dry" if dry_run else json.dumps(
-        [vc["provider"], vc.get("voice_id"), vc.get("kokoro") if vc["provider"] == "kokoro" else None],
+        [vc["provider"], vc.get("voice_id"), vc.get(vc["provider"]) if vc["provider"] in ("kokoro", "edge") else None],
         sort_keys=True)
 
     def fresh(i):

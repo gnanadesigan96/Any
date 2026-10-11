@@ -20,7 +20,7 @@ from .script import (MANUAL_REPLY, dummy_script, dummy_shorts, generate_script, 
 from .stock import credit_lines, fetch_thumbnail_photo, fetch_visuals, used_ids
 from .thumbnail import make_thumbnails
 from .util import check_ffmpeg_features, log, read_json, require_binary, slugify, write_json
-from .voice import narrate_scenes
+from .voice import distribute_words, narrate_scenes
 
 # Downstream outputs to delete when a stage is redone.
 # (Shorts mode keeps each Short's working files in a short_N/ folder, hence the short_*/ patterns.)
@@ -208,7 +208,20 @@ def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
             {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "score_whoosh", "width",
                                     "height", "fps", "captions", "caption_max_words")},
             cfg["voice"].get("kokoro"), cfg["voice"].get("provider")]
+    if cfg["voice"].get("provider") == "edge":
+        data.append(cfg["voice"].get("edge"))
     return hashlib.sha1(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def _subtitle_timing(subtitles: list, timing: list) -> list:
+    """Captions in another language than the narration (e.g. English subtitles under Tamil): each scene's
+    subtitle is spread over the time that scene's narration is spoken."""
+    out = []
+    for sub, t in zip(subtitles, timing):
+        if sub.strip() and t["words"]:
+            t = {**t, "words": distribute_words(sub.strip(), t["words"][0][1], t["words"][-1][2])}
+        out.append(t)
+    return out
 
 
 def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assume_yes: bool,
@@ -226,6 +239,7 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
         sub.mkdir(exist_ok=True)
         log(f"{prefix.title()} {k}/{len(pack.shorts)}: {short.title}")
         timing = narrate_scenes(short.scenes, sub, vcfg, dry_run)
+        log(f"  narration: {sum(t['duration'] for t in timing):.1f}s")
         siblings = [run_dir / n / "images" for j, n in enumerate(names, start=1) if j != k]
         paths = _visuals(short.scenes, timing, sub / "images", vcfg, dry_run, used_ids(siblings),
                          library=run_dir / "library")
@@ -240,8 +254,10 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
         if not out.exists():
             video = sub / "video.mp4"
             if not video.exists():
-                render_main(sub, paths, timing, vcfg, title=short.hook_text,
-                            scene_texts=[f"{sc.visual} {sc.narration}" for sc in short.scenes], overlay=overlay)
+                subs = overlay.get("subtitles")
+                render_main(sub, paths, _subtitle_timing(subs, timing) if subs else timing, vcfg,
+                            title=short.hook_text, scene_texts=[f"{sc.visual} {sc.narration}" for sc in short.scenes],
+                            overlay={k: v for k, v in overlay.items() if k != "subtitles"})
             shutil.copyfile(video, out)
         stamp.write_text(fp)
         duration = check_output(out, check_silence=not dry_run)

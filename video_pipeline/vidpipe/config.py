@@ -43,6 +43,8 @@ DEFAULTS = {
             "scene_pause": 0.25,     # silence after each scene
             "clause_pause": 0.06,    # Kokoro's pause at commas/dashes
         },
+        # Free Microsoft neural voices (no key), used for languages Kokoro can't speak, e.g. Tamil.
+        "edge": {"voice": "ta-IN-ValluvarNeural", "rate": "+0%", "pitch": "+0Hz", "scene_pause": 0.2},
     },
     "images": {
         "provider": "openai",
@@ -74,12 +76,18 @@ DEFAULTS = {
         "images_provider": "local",  # local (free, Apple Silicon) or openai (paid)
         "animation": "parallax",  # 2.5D animated illustrations for story series
         "scenes_per_image": 1,
-        "score": True,            # dark drone, whooshes on cuts, booms on the hook and the cliffhanger
-        "hook_card": True,
+        "score": True,            # dark drone, booms on the hook and the cliffhanger, a riser into it
+        "hook_card": True,        # big hook text for the first 2 seconds + "PART N+1 →" end card
         # Livelier 2.5D motion for story series: 2x camera moves, handheld drift, lens blur, floating dust
-        "motion": {"strength": 2.0, "handheld": 1.0, "depth_of_field": 0.8, "dust": True},        # big hook text for the first 2 seconds + "PART N+1 →" end card    # 2 = one picture per two scenes (half the image-generation time)
+        "motion": {"strength": 2.0, "handheld": 1.0, "depth_of_field": 0.8, "dust": True},
         "voice_speed": 0.95,      # storytelling pace: a little slower and more dramatic than fact Shorts
         "sentence_pause": 0.2,
+        # Narration language. English uses Kokoro; other languages use the free Edge voices.
+        "language": "English",
+        "languages": {
+            "tamil": {"voice": "ta-IN-ValluvarNeural", "font": "Tamil Sangam MN", "target_words": 150,
+                      "words_per_scene": 9, "words_per_second": 2.1, "caption_max_words": 2},
+        },
     },
     "video": {
         "width": 1920,

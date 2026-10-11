@@ -72,6 +72,17 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
   is copied instead of generated again.
 - **Try it small first:** `--first 1` renders only part 1 so you can check the style before committing hours.
   Run again without `--first` to render the rest.
+- **Tamil (or other languages):** `--language Tamil` writes the narration in natural spoken Tamil and voices it with
+  Microsoft's free Tamil neural voices through `edge-tts` (`pip install edge-tts`; no key, needs internet). Kokoro
+  speaks English only. Pictures are still described in English for the image model. Preview the voices with
+  `python make_video.py voices --language tamil`; pick one with `--voice ta-IN-PallaviNeural` and change the pace with
+  `--voice-rate +8%`. The log prints each part's real narration length before any pictures are made. Edge's voice
+  service is free but unofficial, so Microsoft could change or block it.
+- **English subtitles under another language:** give a scene a `subtitle` in the script JSON and that text is
+  shown instead of the spoken words, timed to the narration; the title and end cards then stay in English.
+  `stories/ratsasan/` is a ready-made example: Ratsasan (2018) in 3 thirty-second Tamil Shorts with English
+  subtitles, plus `PRODUCTION.md` (script, shot list, AI prompts, subtitles, sound design, YouTube metadata,
+  workflow).
 - **Choosing stories:** public-domain stories (classic novels, myths, folk tales, films from the 1920s) are safe to
   retell in full. For recent movies, never use real footage, posters or actors' likenesses; your own narration over
   your own illustrations is much safer, but retelling a whole recent film still carries some copyright risk.

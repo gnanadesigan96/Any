@@ -1,0 +1,51 @@
+{
+  "series_title": "RATSASAN",
+  "art_style": "dark photorealistic cinematic film still, moody teal and amber colour grade, low-key lighting, deep shadows, shallow depth of field, light rain and haze, 35mm film grain, psychological thriller atmosphere",
+  "characters": [
+    {
+      "name": "Arun",
+      "look": "Tamil man in his late twenties, lean build, short neat black hair, light stubble, intense dark eyes, khaki Tamil Nadu police sub-inspector uniform with a black belt, silver wristwatch"
+    },
+    {
+      "name": "Viji",
+      "look": "Tamil woman in her late twenties, school teacher, long black hair in a single braid, small black bindi, plain sky-blue cotton saree, thin gold chain, kind but worried face"
+    },
+    {
+      "name": "Christopher",
+      "look": "tall gaunt man whose rare illness makes him look prematurely old, pale deeply lined skin, sunken eyes, thin wispy grey hair, long black coat over a dark shirt, bony hands"
+    },
+    {
+      "name": "Doss",
+      "look": "Tamil police inspector in his early forties, stocky build, thick black moustache, receding hairline, khaki uniform with inspector shoulder badges, tired kind eyes"
+    },
+    {
+      "name": "Kayal",
+      "look": "Tamil girl about eight years old, two neat plaits with red ribbons, white and navy school uniform, small beige hearing aid behind her right ear, big frightened eyes"
+    },
+    {
+      "name": "Rajamanickam",
+      "look": "retired Tamil police officer in his sixties, white thick moustache, grey hair, gold-rimmed spectacles, crisp white half-sleeve shirt and white veshti"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "The Nightmare Begins",
+      "summary": "Arun, an aspiring filmmaker who researched psycho killers for years, becomes a sub-inspector under family pressure. A 15-year-old girl is found murdered; he sees a serial killer at work, but his superiors refuse to listen.",
+      "cliffhanger": "Arun fears for his own niece Ammu, a schoolgirl herself."
+    },
+    {
+      "part": 2,
+      "title": "Who Is The Real Monster?",
+      "summary": "Inbaraj, a teacher at Ammu's school, is exposed as a predator and shot dead by Arun while trying to escape. That night Ammu is abducted from her birthday party and killed. Suspended, Arun finds a piano tune on murdered girl Meera's hearing aid that leads to magician Annabella George, who performed at every victim's school.",
+      "cliffhanger": "Annabella George is a fake name. Who is she really?"
+    },
+    {
+      "part": 3,
+      "title": "The Twist You Never Expected",
+      "summary": "Retired officer Rajamanickam reveals Annabella George is Mary Fernandez, accused of murder years ago, whose son Christopher, a gifted pianist and magician, was mocked for a rare ageing disease. Mary died in an accident; Christopher kills disguised as her. He attacks Viji and kidnaps her niece Kayal; Arun tracks him down, kills him after a brutal fight and rescues Kayal.",
+      "cliffhanger": "The monster is dead and Kayal is safe."
+    }
+  ],
+  "language": "Tamil"
+}
