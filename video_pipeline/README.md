@@ -91,7 +91,8 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
   request per voice, so preview a few at a time (`--only Charon Fenrir`). Check Google's terms before monetising.
 - **Pick an ElevenLabs voice:** `python make_video.py voices --provider elevenlabs` reads the Tamil sample in the
   voices in your account and lists Tamil voices from ElevenLabs' Voice Library (add one on their site, then use
-  it by name). Add `--model eleven_v3` for the most expressive delivery. Each sample costs about 120 credits.
+  it by name). Add `--model eleven_v3` for the most expressive delivery and `--gender female` for female voices.
+  Each sample in your own voices costs about 120 credits; the Voice Library voices' own clips are downloaded free.
 - **A real storyteller voice (paid):** the free voices read evenly. For a gripping, emotional narrator in any
   language (Tamil included), use ElevenLabs: put `ELEVENLABS_API_KEY=...` in `.env`, pick a voice in their Voice
   Library (search "Tamil" or "storyteller") and run with `--voice-provider elevenlabs --voice <voice ID>`. Set

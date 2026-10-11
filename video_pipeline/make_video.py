@@ -102,6 +102,7 @@ def main() -> int:
                           help="gemini: Google's expressive voices (GEMINI_API_KEY); elevenlabs: your ElevenLabs "
                                "voices plus Tamil ones from their Voice Library (ELEVENLABS_API_KEY)")
     p_voices.add_argument("--model", default="", help="ElevenLabs model, e.g. eleven_v3 (most expressive)")
+    p_voices.add_argument("--gender", choices=["female", "male"], default="", help="ElevenLabs: only these voices")
     p_voices.add_argument("--style", default="", help="Gemini only: how to tell it (default from config)")
 
     p_up = sub.add_parser("upload", help="upload an approved run to YouTube (private)")
@@ -172,7 +173,7 @@ def main() -> int:
             if args.provider == "elevenlabs":
                 from vidpipe.voice import preview_eleven_voices
                 say = args.say if "--say" in sys.argv else TAMIL_SAMPLE
-                for path in preview_eleven_voices(cfg, say, out_dir, args.only):
+                for path in preview_eleven_voices(cfg, say, out_dir, args.only, gender=args.gender):
                     print(path)
                 print("Listen, then add --voice-provider elevenlabs --voice <name> to the series command.")
             elif args.provider == "gemini":

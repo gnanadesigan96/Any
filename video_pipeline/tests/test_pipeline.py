@@ -1018,8 +1018,15 @@ def _fake_eleven(monkeypatch, tmp_path):
 
     def get(url, params=None, headers=None, timeout=None):
         if url.endswith("/v1/voices"):
-            return R({"voices": [{"name": "Adam", "voice_id": "A" * 20}, {"name": "Kavitha - warm", "voice_id": "K" * 20}]})
-        return R({"voices": [{"name": "Tamil Storyteller", "voice_id": "T" * 20, "gender": "male", "description": "x"}]})
+            return R({"voices": [{"name": "Adam", "voice_id": "A" * 20, "labels": {"gender": "male"}},
+                                 {"name": "Kavitha - warm", "voice_id": "K" * 20, "labels": {"gender": "female"}}]})
+        if url.endswith("/clip.mp3"):
+            r = R({})
+            r.content = b"ID3clip"
+            return r
+        return R({"voices": [{"name": "Tamil Storyteller", "voice_id": "T" * 20, "gender": "male", "description": "x"},
+                             {"name": "Priya Tamil", "voice_id": "P" * 20, "gender": "female",
+                              "preview_url": "https://x/clip.mp3"}]})
 
     def post(url, **kw):
         posted.append(url)
@@ -1040,7 +1047,11 @@ def test_elevenlabs_voice_by_name_and_preview(cfg, tmp_path, monkeypatch, capsys
     with pytest.raises(RuntimeError, match="Adam, Kavitha"):
         voice.ElevenLabsVoice(cfg)
     paths = voice.preview_eleven_voices(cfg, "ஒன்று இரண்டு", tmp_path / "s", [])
-    assert [p.name for p in paths] == ["eleven_Adam_eleven_multilingual_v2.mp3",
+    assert [p.name for p in paths] == ["library_Priya_Tamil.mp3", "eleven_Adam_eleven_multilingual_v2.mp3",
                                        "eleven_Kavitha_warm_eleven_multilingual_v2.mp3"]
     assert all(p.exists() for p in paths) and len(posted) == 2
     assert "Tamil Storyteller [TTTTTTTTTTTTTTTTTTTT] male" in capsys.readouterr().out
+    # Only female voices: the male library voice and Adam are skipped.
+    paths = voice.preview_eleven_voices(cfg, "ஒன்று இரண்டு", tmp_path / "f", [], gender="female")
+    assert [p.name for p in paths] == ["library_Priya_Tamil.mp3", "eleven_Kavitha_warm_eleven_multilingual_v2.mp3"]
+    assert "Tamil Storyteller" not in capsys.readouterr().out

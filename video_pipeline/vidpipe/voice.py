@@ -61,9 +61,14 @@ def eleven_my_voices(key: str) -> list:
     return eleven_get("/v1/voices", key).get("voices", [])
 
 
-def eleven_library_voices(key: str, language: str, limit: int = 15) -> list:
+def eleven_library_voices(key: str, language: str, limit: int = 30, gender: str = "") -> list:
     """Voices other people shared in the Voice Library for a language (ISO code, e.g. "ta")."""
-    return eleven_get("/v1/shared-voices", key, language=language, page_size=limit).get("voices", [])
+    params = {"language": language, "page_size": limit, **({"gender": gender} if gender else {})}
+    return eleven_get("/v1/shared-voices", key, **params).get("voices", [])
+
+
+def _gender(v: dict) -> str:
+    return str(v.get("gender") or (v.get("labels") or {}).get("gender") or "").lower()
 
 
 class ElevenLabsVoice:
@@ -433,26 +438,43 @@ def gemini_error(resp) -> dict:
             "hopeless": no_quota or daily or resp.status_code in (400, 401, 403, 404), "hint": hint}
 
 
-def preview_eleven_voices(cfg: dict, text: str, out_dir: Path, voices: list, language: str = "ta") -> list:
-    """Reads the sample in your account's voices (or the names/IDs given), and prints Tamil voices from the
-    shared Voice Library that you can add to your account. Each sample costs about len(text) credits."""
+def preview_eleven_voices(cfg: dict, text: str, out_dir: Path, voices: list, language: str = "ta",
+                          gender: str = "") -> list:
+    """Reads the sample in your account's voices (or the names/IDs given; each costs about len(text) credits), and
+    downloads the free sample clip of each matching voice in the shared Voice Library so you can hear them first."""
     key = os.environ.get("ELEVENLABS_API_KEY", "")
     if not key:
         raise RuntimeError("Set ELEVENLABS_API_KEY in .env")
     out_dir.mkdir(parents=True, exist_ok=True)
+    gender = gender.lower()
     mine = eleven_my_voices(key)
+    outputs = []
     try:
-        library = eleven_library_voices(key, language)
+        library = [x for x in eleven_library_voices(key, language, gender=gender) if not gender or _gender(x) == gender]
     except RuntimeError as e:
         library = []
         log(f"(couldn't list Voice Library voices: {e})")
     if library:
-        print(f"\nVoice Library voices for '{language}' (add one at elevenlabs.io/app/voice-library, then use its name):")
-        for x in library:
-            desc = " ".join(str(x.get(k) or "") for k in ("gender", "age", "accent", "use_case")).strip()
-            print(f"  {x.get('name', '')} [{x.get('voice_id', '')}] {desc}\n    {(x.get('description') or '')[:110]}")
-    picked = voices or [x["name"] for x in mine[:6]]
-    outputs = []
+        print(f"\nVoice Library voices ({language}{', ' + gender if gender else ''}). Their own sample clips are saved "
+              "as library_*.mp3 (free).\nTo use one, add it at elevenlabs.io/app/voice-library, then use its name:")
+    for x in library:
+        name = x.get("name", "")
+        desc = " ".join(str(x.get(k) or "") for k in ("gender", "age", "accent", "use_case")).strip()
+        print(f"  {name} [{x.get('voice_id', '')}] {desc}\n    {(x.get('description') or '')[:110]}")
+        clip = out_dir / f"library_{re.sub(r'[^A-Za-z0-9]+', '_', name).strip('_')[:60]}.mp3"
+        if x.get("preview_url") and not clip.exists():
+            try:
+                r = requests.get(x["preview_url"], timeout=60)
+                if r.status_code == 200:
+                    clip.write_bytes(r.content)
+            except requests.RequestException:
+                pass
+        if clip.exists():
+            outputs.append(clip)
+    if voices:
+        picked = voices
+    else:
+        picked = [x["name"] for x in mine if not gender or _gender(x) == gender][:8]
     for n, v in enumerate(picked, start=1):
         engine = ElevenLabsVoice({**cfg, "voice": {**cfg["voice"], "voice_id": v}})
         name = next((x["name"] for x in mine if x["voice_id"] == engine.v["voice_id"]), v)
@@ -463,7 +485,7 @@ def preview_eleven_voices(cfg: dict, text: str, out_dir: Path, voices: list, lan
             log(f"{n}/{len(picked)} {name}...")
             engine.synthesize(text, "", "", path)
         outputs.append(path)
-    print("\nYour voices: " + ", ".join(x.get("name", "") for x in mine))
+    print("\nYour voices: " + ", ".join(f"{x.get('name', '')} ({_gender(x) or '?'})" for x in mine))
     return outputs
 
 
