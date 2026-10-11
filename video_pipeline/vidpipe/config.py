@@ -45,6 +45,14 @@ DEFAULTS = {
         },
         # Free Microsoft neural voices (no key), used for languages Kokoro can't speak, e.g. Tamil.
         "edge": {"voice": "ta-IN-ValluvarNeural", "rate": "+0%", "pitch": "+0Hz", "scene_pause": 0.2},
+        # Google Gemini voices (free tier, GEMINI_API_KEY): expressive, steered by the style instruction.
+        "gemini": {
+            "model": "gemini-2.5-flash-preview-tts",
+            "voice": "Charon",
+            "style": "Narrate this like a gripping storyteller telling a crime thriller: build suspense, "
+                     "vary your pace, drop your voice for dark moments and pause before each reveal",
+            "scene_pause": 0.15,
+        },
     },
     "images": {
         "provider": "openai",
@@ -83,7 +91,7 @@ DEFAULTS = {
         "voice_speed": 0.95,      # storytelling pace: a little slower and more dramatic than fact Shorts
         "sentence_pause": 0.2,
         # Narration language. English uses Kokoro; other languages use the free Edge voices unless
-        # voice_provider is "elevenlabs" (paid, far more expressive, speaks Tamil too).
+        # voice_provider is "gemini" (free tier, expressive) or "elevenlabs" (paid, most expressive).
         "voice_provider": "auto",
         "language": "English",
         "languages": {

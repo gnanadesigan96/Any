@@ -208,8 +208,8 @@ def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
             {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "score_whoosh", "width",
                                     "height", "fps", "captions", "caption_max_words")},
             cfg["voice"].get("kokoro"), cfg["voice"].get("provider")]
-    if cfg["voice"].get("provider") == "edge":
-        data.append(cfg["voice"].get("edge"))
+    if cfg["voice"].get("provider") in ("edge", "gemini"):
+        data.append(cfg["voice"].get(cfg["voice"]["provider"]))
     elif cfg["voice"].get("provider") == "elevenlabs":
         data.append({k: cfg["voice"].get(k) for k in ("voice_id", "model_id", "stability", "similarity_boost", "style")})
     return hashlib.sha1(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()

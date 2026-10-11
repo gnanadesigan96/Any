@@ -79,11 +79,14 @@ def main() -> int:
     p_series.add_argument("--language", default="", help='narration language, e.g. "Tamil" (default: English)')
     p_series.add_argument("--voice", default="",
                           help="Edge voice for non-English narration, e.g. ta-IN-PallaviNeural (with "
-                               "--voice-provider elevenlabs: an ElevenLabs voice ID)")
+                               "--voice-provider gemini: a Gemini voice such as Charon; elevenlabs: a voice ID)")
     p_series.add_argument("--voice-rate", default="", help='speak faster/slower (non-English voices), e.g. +20%% or -5%%')
     p_series.add_argument("--voice-pitch", default="", help='deeper/higher (non-English voices), e.g. -6Hz or +2Hz')
-    p_series.add_argument("--voice-provider", choices=["auto", "edge", "elevenlabs"], default="",
-                          help="elevenlabs: expressive storyteller voice in any language (paid, ELEVENLABS_API_KEY)")
+    p_series.add_argument("--voice-provider", choices=["auto", "edge", "gemini", "elevenlabs"], default="",
+                          help="gemini: expressive storyteller voice, free tier (GEMINI_API_KEY); "
+                               "elevenlabs: most expressive (paid, ELEVENLABS_API_KEY)")
+    p_series.add_argument("--voice-style", default="",
+                          help='how a Gemini voice should tell it, e.g. "Whisper it like a ghost story, slow and tense"')
     p_series.add_argument("--script-dir", default="", help="use a ready-made script, e.g. stories/dracula")
     p_series.add_argument("--scenes-per-image", type=int, default=0,
                           help="reuse each picture for N scenes (2 halves image-generation time)")
@@ -94,6 +97,9 @@ def main() -> int:
                                             "Within hours, it was gone.")
     p_voices.add_argument("--only", nargs="*", default=[], help="e.g. am_michael bm_george")
     p_voices.add_argument("--language", default="", help='e.g. "Tamil": preview the free Tamil voices instead')
+    p_voices.add_argument("--provider", choices=["edge", "gemini"], default="edge",
+                          help="gemini: preview Google's expressive voices (needs GEMINI_API_KEY)")
+    p_voices.add_argument("--style", default="", help="Gemini only: how to tell it (default from config)")
 
     p_up = sub.add_parser("upload", help="upload an approved run to YouTube (private)")
     p_up.add_argument("run_dir")
@@ -129,8 +135,11 @@ def main() -> int:
             if args.voice_provider:
                 cfg["series"]["voice_provider"] = args.voice_provider
             if args.voice:
-                key = "voice_id" if cfg["series"].get("voice_provider") == "elevenlabs" else "edge_voice"
+                key = {"elevenlabs": "voice_id", "gemini": "gemini_voice"}.get(cfg["series"].get("voice_provider"),
+                                                                                  "edge_voice")
                 cfg["series"][key] = args.voice
+            if args.voice_style:
+                cfg["voice"]["gemini"]["style"] = args.voice_style
             if args.voice_rate:
                 cfg["series"]["voice_rate"] = args.voice_rate if args.voice_rate[0] in "+-" else "+" + args.voice_rate
             if args.voice_pitch:
@@ -149,17 +158,25 @@ def main() -> int:
             print(f"\n{len(rows)} unused topics in '{args.niche}'.")
         elif args.command == "voices":
             from vidpipe.config import resolve
-            from vidpipe.voice import EDGE_SAMPLE_VOICES, preview_edge_voices, preview_voices
+            from vidpipe.voice import (EDGE_SAMPLE_VOICES, GEMINI_STORY_VOICES, preview_edge_voices,
+                                       preview_gemini_voices, preview_voices)
             out_dir = resolve("voice_samples")
             lang = args.language.lower()
-            if lang and lang != "english":
+            if args.provider == "gemini":
+                say = args.say if "--say" in sys.argv else TAMIL_SAMPLE if lang in ("", "tamil") else args.say
+                if args.style:
+                    cfg["voice"]["gemini"]["style"] = args.style
+                for path in preview_gemini_voices(cfg, say, out_dir, args.only or GEMINI_STORY_VOICES):
+                    print(path)
+                print("Listen, then add --voice-provider gemini --voice <Name> to the series command.")
+            elif lang and lang != "english":
                 if lang not in EDGE_SAMPLE_VOICES and not args.only:
                     raise RuntimeError(f"No sample voices listed for {args.language}; pass them with --only")
                 say = args.say if "--say" in sys.argv else TAMIL_SAMPLE
-                pace = cfg["series"].get("languages", {}).get(lang, {})
-                for path in preview_edge_voices(cfg, say, out_dir, args.only or EDGE_SAMPLE_VOICES[lang], pace):
+                for path in preview_edge_voices(cfg, say, out_dir, args.only or EDGE_SAMPLE_VOICES[lang]):
                     print(path)
-                print(f"Listen, then set series.languages.{lang}.voice in config.yaml to the one you like.")
+                print("Each voice is in 3 deliveries: story (+15%, -4Hz), thriller (+25%, -10Hz), dramatic "
+                      "(+5%, -14Hz).\nPick one, e.g. --voice ta-IN-ValluvarNeural --voice-rate +25% --voice-pitch -10Hz")
             else:
                 for path in preview_voices(cfg, args.say, out_dir, args.only):
                     print(path)

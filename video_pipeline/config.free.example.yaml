@@ -43,4 +43,4 @@ series:
   parts: 3                  # the whole story in 3 Shorts of ~70-80 seconds each
   style_hint: ""            # e.g. "anime", "graphic novel", "watercolour storybook"
   images_provider: "local"  # free AI illustrations made on your Mac (Apple Silicon)
-  voice_provider: "auto"    # "elevenlabs" for an expressive storyteller voice (paid; needs voice.voice_id)
+  voice_provider: "auto"    # "gemini" (free tier, expressive) or "elevenlabs" (paid; needs voice.voice_id)

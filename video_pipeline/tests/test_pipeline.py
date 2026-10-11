@@ -856,3 +856,70 @@ def test_voice_rate_and_pitch_accept_values_starting_with_a_dash(monkeypatch):
     monkeypatch.setattr(_sys, "argv", ["make_video.py", "series", "Test", "--voice-rate", "-5%", "--voice-pitch", "-6Hz"])
     make_video.main()
     assert got["voice_rate"] == "-5%" and got["voice_pitch"] == "-6Hz"
+
+
+def _fake_gemini(monkeypatch, tmp_path, fail_first=0):
+    import base64
+    from vidpipe import voice
+    sent, calls = [], {"n": 0}
+
+    class Resp:
+        def __init__(self, code):
+            self.status_code, self.text = code, "busy"
+
+        def json(self):
+            pcm = b"\x00\x00" * 24000 * 2  # two seconds of silence
+            return {"candidates": [{"content": {"parts": [{"inlineData": {"data": base64.b64encode(pcm).decode()}}]}}]}
+
+    def post(url, **kw):
+        calls["n"] += 1
+        sent.append((url, kw["json"], kw["headers"]))
+        return Resp(429 if calls["n"] <= fail_first else 200)
+
+    monkeypatch.setenv("GEMINI_API_KEY", "g")
+    monkeypatch.setattr(voice.requests, "post", post)
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    return sent
+
+
+def test_gemini_voice_tells_the_story_in_the_chosen_style(cfg, tmp_path, monkeypatch):
+    from vidpipe.voice import GeminiVoice
+    sent = _fake_gemini(monkeypatch, tmp_path, fail_first=1)
+    text = "அவன் கண்ணாடியைப் பார்த்தான். யாருமே இல்லை."
+    out = tmp_path / "scene.mp3"
+    words = GeminiVoice(cfg).synthesize(text, "", "", out)
+    assert len(sent) == 2  # rate-limited once, then retried
+    url, body, headers = sent[-1]
+    assert "gemini-2.5-flash-preview-tts:generateContent" in url and headers["x-goog-api-key"] == "g"
+    prompt = body["contents"][0]["parts"][0]["text"]
+    assert prompt.startswith("Narrate this like a gripping storyteller") and prompt.endswith(text)
+    assert body["generationConfig"]["speechConfig"]["voiceConfig"]["prebuiltVoiceConfig"]["voiceName"] == "Charon"
+    assert [w[0] for w in words] == text.split() and words[-1][2] <= 2.1
+    assert 2.0 < media_duration(out) < 2.4 and not (tmp_path / "scene.wav").exists()
+
+
+def test_gemini_series_and_cli_flags(cfg, monkeypatch):
+    import sys as _sys
+    import make_video
+    from vidpipe import series
+    got = {}
+    monkeypatch.setattr(make_video, "make_series", lambda story, notes, c, *a: got.update(c))
+    monkeypatch.setattr(_sys, "argv", ["make_video.py", "series", "Test", "--language", "Tamil",
+                                       "--voice-provider", "gemini", "--voice", "Fenrir",
+                                       "--voice-style", "Whisper it like a ghost story"])
+    make_video.main()
+    assert got["series"]["gemini_voice"] == "Fenrir"
+    bible = series.SeriesBible.model_validate(json.loads((ROOT / "stories/dracula/bible.json").read_text()))
+    scfg = series.series_config(got, bible)
+    assert scfg["voice"]["provider"] == "gemini" and scfg["voice"]["gemini"]["voice"] == "Fenrir"
+    assert scfg["voice"]["gemini"]["style"] == "Whisper it like a ghost story"
+
+
+def test_edge_preview_renders_every_voice_in_every_delivery(cfg, tmp_path, monkeypatch):
+    import sys as _sys
+    from vidpipe.voice import EDGE_SAMPLE_VOICES, EDGE_STYLES, preview_edge_voices
+    fake, calls = _fake_edge_tts(tmp_path, True)
+    monkeypatch.setitem(_sys.modules, "edge_tts", fake)
+    paths = preview_edge_voices(cfg, "ஒன்று இரண்டு.", tmp_path / "s", EDGE_SAMPLE_VOICES["tamil"])
+    assert len(paths) == 8 * len(EDGE_STYLES) and all(p.exists() for p in paths)
+    assert {(c[2]["rate"], c[2]["pitch"]) for c in calls} == {(s["rate"], s["pitch"]) for s in EDGE_STYLES.values()}

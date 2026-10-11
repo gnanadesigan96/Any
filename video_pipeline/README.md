@@ -79,6 +79,15 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
   brisk storytelling pace by default (`+15%`, a little deeper at `-4Hz`); change it with `--voice-rate +25%` and
   `--voice-pitch -8Hz`. The log prints each part's real narration length before any pictures are made. Edge's voice
   service is free but unofficial, so Microsoft could change or block it.
+- **More free samples:** `python make_video.py voices --language tamil` now renders all 8 free Tamil voices (India,
+  Sri Lanka, Malaysia, Singapore) in 3 deliveries each: `story`, `thriller` (faster, deeper) and `dramatic` (slow,
+  very deep). Use the one you like with `--voice`, `--voice-rate` and `--voice-pitch`.
+- **An expressive storyteller voice (free tier):** Google's Gemini voices speak Tamil and follow a plain-language
+  style instruction. Get a free key at aistudio.google.com/apikey, put `GEMINI_API_KEY=...` in `.env`, preview 12
+  story voices with `python make_video.py voices --provider gemini` (or any of the 30 with `--only Charon Fenrir`),
+  then add `--voice-provider gemini --voice Charon` to the series command. Change the delivery with
+  `--voice-style "Whisper it like a ghost story, slow and tense"`. The free tier allows only a few requests a minute,
+  so the pipeline waits and retries; check Google's terms before monetising.
 - **A real storyteller voice (paid):** the free voices read evenly. For a gripping, emotional narrator in any
   language (Tamil included), use ElevenLabs: put `ELEVENLABS_API_KEY=...` in `.env`, pick a voice in their Voice
   Library (search "Tamil" or "storyteller") and run with `--voice-provider elevenlabs --voice <voice ID>`. Set

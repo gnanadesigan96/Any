@@ -312,9 +312,13 @@ def series_config(cfg: dict, bible: SeriesBible, episodes: list = ()) -> dict:
         scfg["voice"]["provider"] = "elevenlabs"
         if cfg["series"].get("voice_id"):
             scfg["voice"]["voice_id"] = cfg["series"]["voice_id"]
+    elif provider == "gemini":  # expressive Google voice in any language (free tier)
+        scfg["voice"]["provider"] = "gemini"
+        if cfg["series"].get("gemini_voice"):
+            scfg["voice"]["gemini"] = {**scfg["voice"]["gemini"], "voice": cfg["series"]["gemini_voice"]}
     if language.lower() != "english":  # Kokoro speaks English only: use the free Edge voice for this language
         lang = series_settings(cfg, language)
-        if provider != "elevenlabs":
+        if provider not in ("elevenlabs", "gemini"):
             edge = scfg["voice"]["edge"]
             scfg["voice"]["provider"] = "edge"
             scfg["voice"]["edge"] = {**edge, "voice": cfg["series"].get("edge_voice") or lang.get("voice", edge["voice"]),

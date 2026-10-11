@@ -229,28 +229,127 @@ class EdgeVoice:
         if words:
             return words
         # No word timings for this voice: spread the words over each sentence instead.
-        sentences = split_sentences(text)
-        total = sum(len(x) for x in sentences) or 1
-        t, end, out = 0.1, max(media_duration(out_mp3) - self.e["scene_pause"], 0.2), []
-        for sentence in sentences:
-            span = (end - 0.1) * len(sentence) / total
-            out += distribute_words(sentence, t, t + span)
-            t += span
-        return out
+        return _spread_sentences(text, media_duration(out_mp3) - self.e["scene_pause"])
+
+
+def _spread_sentences(text: str, spoken: float) -> list:
+    """Stand-in word timings when a voice reports none: each sentence gets time in proportion to its length."""
+    sentences = split_sentences(text)
+    total = sum(len(x) for x in sentences) or 1
+    t, end, out = 0.1, max(spoken, 0.2), []
+    for sentence in sentences:
+        span = (end - 0.1) * len(sentence) / total
+        out += distribute_words(sentence, t, t + span)
+        t += span
+    return out
 
 
 EDGE_SAMPLE_VOICES = {"tamil": ["ta-IN-ValluvarNeural", "ta-IN-PallaviNeural", "ta-LK-KumarNeural",
-                                "ta-LK-SaranyaNeural", "ta-MY-SuryaNeural", "ta-MY-KaniNeural"]}
+                                "ta-LK-SaranyaNeural", "ta-MY-SuryaNeural", "ta-MY-KaniNeural",
+                                "ta-SG-AnbuNeural", "ta-SG-VenbaNeural"]}
+
+# Each free voice is previewed in a few deliveries, since pace and depth change how gripping it sounds.
+EDGE_STYLES = {"story": {"rate": "+15%", "pitch": "-4Hz"},
+               "thriller": {"rate": "+25%", "pitch": "-10Hz"},
+               "dramatic": {"rate": "+5%", "pitch": "-14Hz"}}
 
 
-def preview_edge_voices(cfg: dict, text: str, out_dir: Path, voices: list, settings: dict = None) -> list:
-    """settings: rate/pitch overrides, e.g. the language's storytelling pace from series.languages."""
+def preview_edge_voices(cfg: dict, text: str, out_dir: Path, voices: list, styles: dict = None) -> list:
+    """Renders each voice in each delivery: styles maps a name to rate/pitch (default EDGE_STYLES)."""
     out_dir.mkdir(parents=True, exist_ok=True)
     outputs = []
-    edge = {**cfg["voice"]["edge"], **{k: v for k, v in (settings or {}).items() if k in ("rate", "pitch") and v}}
     for v in voices:
-        engine = EdgeVoice({**cfg, "voice": {**cfg["voice"], "edge": {**edge, "voice": v}}})
-        path = out_dir / f"{v}.mp3"
+        for name, style in (styles or EDGE_STYLES).items():
+            edge = {**cfg["voice"]["edge"], **style, "voice": v}
+            path = out_dir / f"{v}_{name}.mp3"
+            EdgeVoice({**cfg, "voice": {**cfg["voice"], "edge": edge}}).synthesize(text, "", "", path)
+            outputs.append(path)
+    return outputs
+
+
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+
+# Gemini's prebuilt voices and the character Google gives each one. All of them speak Tamil.
+GEMINI_VOICES = {
+    "Zephyr": "bright", "Puck": "upbeat", "Charon": "informative", "Kore": "firm", "Fenrir": "excitable",
+    "Leda": "youthful", "Orus": "firm", "Aoede": "breezy", "Callirrhoe": "easy-going", "Autonoe": "bright",
+    "Enceladus": "breathy", "Iapetus": "clear", "Umbriel": "easy-going", "Algieba": "smooth", "Despina": "smooth",
+    "Erinome": "clear", "Algenib": "gravelly", "Rasalgethi": "informative", "Laomedeia": "upbeat",
+    "Achernar": "soft", "Alnilam": "firm", "Schedar": "even", "Gacrux": "mature", "Pulcherrima": "forward",
+    "Achird": "friendly", "Zubenelgenubi": "casual", "Vindemiatrix": "gentle", "Sadachbia": "lively",
+    "Sadaltager": "knowledgeable", "Sulafat": "warm",
+}
+# The ones that suit a gripping story; `voices --provider gemini --only <names>` previews any of the 30.
+GEMINI_STORY_VOICES = ["Charon", "Fenrir", "Algenib", "Enceladus", "Gacrux", "Orus", "Alnilam", "Iapetus",
+                       "Kore", "Sulafat", "Achernar", "Puck"]
+
+
+class GeminiVoice:
+    """Google Gemini text-to-speech: expressive voices steered by a plain-language style instruction
+    ("tell it like a gripping thriller"). Free tier with a key from aistudio.google.com (rate-limited)."""
+
+    def __init__(self, cfg: dict):
+        self.g = cfg["voice"]["gemini"]
+        self.key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY", "")
+        if not self.key:
+            raise RuntimeError("Set GEMINI_API_KEY in .env (free key from https://aistudio.google.com/apikey)")
+
+    def _request(self, text: str) -> bytes:
+        import time
+
+        style = self.g.get("style", "").strip()
+        body = {
+            "contents": [{"parts": [{"text": f"{style}: {text}" if style else text}]}],
+            "generationConfig": {
+                "responseModalities": ["AUDIO"],
+                "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": self.g["voice"]}}},
+            },
+        }
+        for attempt in range(6):
+            try:
+                resp = requests.post(GEMINI_URL.format(model=self.g["model"]), json=body, timeout=180,
+                                     headers={"x-goog-api-key": self.key, "Content-Type": "application/json"})
+            except requests.RequestException as e:
+                resp, err = None, str(e)
+            if resp is not None and resp.status_code == 200:
+                try:
+                    part = resp.json()["candidates"][0]["content"]["parts"][0]
+                    return base64.b64decode(part["inlineData"]["data"])
+                except (KeyError, IndexError, ValueError):
+                    err = f"no audio in the reply: {resp.text[:300]}"
+            elif resp is not None:
+                err = f"Gemini error {resp.status_code}: {resp.text[:300]}"
+                if resp.status_code not in (429, 500, 502, 503, 504):
+                    break
+            if attempt < 5:  # the free tier allows only a few requests a minute: wait and retry
+                wait = min(10 * 2 ** attempt, 60)
+                log(f"  Gemini voice busy or rate-limited; retrying in {wait}s...")
+                time.sleep(wait)
+        raise RuntimeError(err)
+
+    def synthesize(self, text: str, prev_text: str, next_text: str, out_mp3: Path) -> list:
+        pcm = self._request(text)  # raw 16-bit mono PCM at 24 kHz
+        wav_path = out_mp3.with_suffix(".wav")
+        with wave.open(str(wav_path), "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(24000)
+            w.writeframes(pcm)
+        run_ffmpeg(["-i", wav_path, "-af", f"apad=pad_dur={self.g['scene_pause']}", "-c:a", "libmp3lame", "-q:a", "2",
+                    out_mp3])
+        wav_path.unlink()
+        # Gemini doesn't report word timings: spread the words over each sentence.
+        return _spread_sentences(text, media_duration(out_mp3) - self.g["scene_pause"])
+
+
+def preview_gemini_voices(cfg: dict, text: str, out_dir: Path, voices: list) -> list:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    outputs = []
+    for v in voices:
+        if v not in GEMINI_VOICES:
+            raise RuntimeError(f"Unknown Gemini voice '{v}'. Choose from: {', '.join(GEMINI_VOICES)}")
+        engine = GeminiVoice({**cfg, "voice": {**cfg["voice"], "gemini": {**cfg["voice"]["gemini"], "voice": v}}})
+        path = out_dir / f"gemini_{v}_{GEMINI_VOICES[v]}.mp3"
         engine.synthesize(text, "", "", path)
         outputs.append(path)
     return outputs
@@ -279,6 +378,8 @@ def make_voice(cfg: dict, dry_run: bool):
         return KokoroVoice(cfg)
     if provider == "edge":
         return EdgeVoice(cfg)
+    if provider == "gemini":
+        return GeminiVoice(cfg)
     raise RuntimeError(f"Unknown voice.provider '{provider}'")
 
 
@@ -292,7 +393,7 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
     # Re-voice a scene when its text OR the voice settings change (speed, pauses, voice).
     vc = cfg["voice"]
     sig = "dry" if dry_run else json.dumps(
-        [vc["provider"], vc.get("voice_id"), vc.get(vc["provider"]) if vc["provider"] in ("kokoro", "edge") else None]
+        [vc["provider"], vc.get("voice_id"), vc.get(vc["provider"]) if vc["provider"] in ("kokoro", "edge", "gemini") else None]
         + ([vc.get(k) for k in ("model_id", "stability", "similarity_boost", "style")]
            if vc["provider"] == "elevenlabs" else []),
         sort_keys=True)
