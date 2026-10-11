@@ -89,6 +89,9 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
   `--voice-style "Whisper it like a ghost story, slow and tense"`. The free tier allows only about 10 voice requests a day,
   so each part is voiced in ONE request and cut into scenes at its pauses (a 3-part series uses 3); previews use one
   request per voice, so preview a few at a time (`--only Charon Fenrir`). Check Google's terms before monetising.
+- **Pick an ElevenLabs voice:** `python make_video.py voices --provider elevenlabs` reads the Tamil sample in the
+  voices in your account and lists Tamil voices from ElevenLabs' Voice Library (add one on their site, then use
+  it by name). Add `--model eleven_v3` for the most expressive delivery. Each sample costs about 120 credits.
 - **A real storyteller voice (paid):** the free voices read evenly. For a gripping, emotional narrator in any
   language (Tamil included), use ElevenLabs: put `ELEVENLABS_API_KEY=...` in `.env`, pick a voice in their Voice
   Library (search "Tamil" or "storyteller") and run with `--voice-provider elevenlabs --voice <voice ID>`. Set

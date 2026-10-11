@@ -46,14 +46,43 @@ def _even_words(text: str, duration: float, lead: float = 0.15) -> list:
     return [[t, round(lead + i * span, 3), round(lead + (i + 1) * span, 3)] for i, t in enumerate(tokens)]
 
 
+ELEVEN_API = "https://api.elevenlabs.io"
+
+
+def eleven_get(path: str, key: str, **params) -> dict:
+    resp = requests.get(ELEVEN_API + path, params=params, headers={"xi-api-key": key}, timeout=60)
+    if resp.status_code != 200:
+        raise RuntimeError(f"ElevenLabs error {resp.status_code}: {resp.text[:300]}")
+    return resp.json()
+
+
+def eleven_my_voices(key: str) -> list:
+    """The voices in your ElevenLabs account (premade ones plus any you added from the Voice Library)."""
+    return eleven_get("/v1/voices", key).get("voices", [])
+
+
+def eleven_library_voices(key: str, language: str, limit: int = 15) -> list:
+    """Voices other people shared in the Voice Library for a language (ISO code, e.g. "ta")."""
+    return eleven_get("/v1/shared-voices", key, language=language, page_size=limit).get("voices", [])
+
+
 class ElevenLabsVoice:
     def __init__(self, cfg: dict):
-        self.v = cfg["voice"]
+        self.v = dict(cfg["voice"])
         self.key = os.environ.get("ELEVENLABS_API_KEY", "")
         if not self.key:
             raise RuntimeError("Set ELEVENLABS_API_KEY in .env")
         if not self.v.get("voice_id"):
-            raise RuntimeError("Set voice.voice_id in config.yaml (copy it from your ElevenLabs voice library)")
+            raise RuntimeError("Choose a voice: --voice <name or ID> (see `python make_video.py voices --provider "
+                               "elevenlabs`), or set voice.voice_id in config.yaml")
+        if not re.fullmatch(r"[A-Za-z0-9]{20}", self.v["voice_id"]):  # a name: look up its ID in the account
+            voices = eleven_my_voices(self.key)
+            match = [x for x in voices if x.get("name", "").lower().startswith(self.v["voice_id"].lower())]
+            if not match:
+                names = ", ".join(x.get("name", "") for x in voices)
+                raise RuntimeError(f"No ElevenLabs voice called '{self.v['voice_id']}' in your account. "
+                                   f"Your voices: {names}")
+            self.v["voice_id"] = match[0]["voice_id"]
 
     def synthesize(self, text: str, prev_text: str, next_text: str, out_mp3: Path) -> list:
         v3 = self.v["model_id"].startswith("eleven_v3")
@@ -402,6 +431,40 @@ def gemini_error(resp) -> dict:
         hint = ""
     return {"message": message[:400], "retry_after": retry_after,
             "hopeless": no_quota or daily or resp.status_code in (400, 401, 403, 404), "hint": hint}
+
+
+def preview_eleven_voices(cfg: dict, text: str, out_dir: Path, voices: list, language: str = "ta") -> list:
+    """Reads the sample in your account's voices (or the names/IDs given), and prints Tamil voices from the
+    shared Voice Library that you can add to your account. Each sample costs about len(text) credits."""
+    key = os.environ.get("ELEVENLABS_API_KEY", "")
+    if not key:
+        raise RuntimeError("Set ELEVENLABS_API_KEY in .env")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    mine = eleven_my_voices(key)
+    try:
+        library = eleven_library_voices(key, language)
+    except RuntimeError as e:
+        library = []
+        log(f"(couldn't list Voice Library voices: {e})")
+    if library:
+        print(f"\nVoice Library voices for '{language}' (add one at elevenlabs.io/app/voice-library, then use its name):")
+        for x in library:
+            desc = " ".join(str(x.get(k) or "") for k in ("gender", "age", "accent", "use_case")).strip()
+            print(f"  {x.get('name', '')} [{x.get('voice_id', '')}] {desc}\n    {(x.get('description') or '')[:110]}")
+    picked = voices or [x["name"] for x in mine[:6]]
+    outputs = []
+    for n, v in enumerate(picked, start=1):
+        engine = ElevenLabsVoice({**cfg, "voice": {**cfg["voice"], "voice_id": v}})
+        name = next((x["name"] for x in mine if x["voice_id"] == engine.v["voice_id"]), v)
+        path = out_dir / f"eleven_{re.sub(r'[^A-Za-z0-9]+', '_', name).strip('_')}_{engine.v['model_id']}.mp3"
+        if path.exists():
+            log(f"{n}/{len(picked)} {name}: already made")
+        else:
+            log(f"{n}/{len(picked)} {name}...")
+            engine.synthesize(text, "", "", path)
+        outputs.append(path)
+    print("\nYour voices: " + ", ".join(x.get("name", "") for x in mine))
+    return outputs
 
 
 def preview_gemini_voices(cfg: dict, text: str, out_dir: Path, voices: list) -> list:

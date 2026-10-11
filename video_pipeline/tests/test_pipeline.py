@@ -123,11 +123,11 @@ def test_elevenlabs_request_and_parse(tmp_path, cfg, monkeypatch):
 
     monkeypatch.setenv("ELEVENLABS_API_KEY", "k")
     monkeypatch.setattr(voice.requests, "post", fake_post)
-    cfg["voice"]["voice_id"] = "VOICE123"
+    cfg["voice"]["voice_id"] = "VOICE123abcdefghijkl"
     out = tmp_path / "s.mp3"
     words = voice.ElevenLabsVoice(cfg).synthesize("Go now", "before", "", out)
     assert words == [["Go", 0, .2], ["now", .3, .6]]
-    assert seen["url"].endswith("/VOICE123/with-timestamps")
+    assert seen["url"].endswith("/VOICE123abcdefghijkl/with-timestamps")
     assert seen["headers"]["xi-api-key"] == "k"
     assert seen["body"]["previous_text"] == "before" and seen["body"]["next_text"] is None
     assert out.read_bytes() == mp3
@@ -840,7 +840,7 @@ def test_elevenlabs_request_fits_the_model(cfg, tmp_path, monkeypatch, model):
 
     monkeypatch.setenv("ELEVENLABS_API_KEY", "k")
     monkeypatch.setattr(voice.requests, "post", post)
-    cfg["voice"].update(voice_id="v", model_id=model, stability=0.45)
+    cfg["voice"].update(voice_id="V" * 20, model_id=model, stability=0.45)
     words = voice.ElevenLabsVoice(cfg).synthesize("ஒன்று இரண்டு", "முன்", "பின்", tmp_path / "out.mp3")
     assert [w[0] for w in words] == ["ஒன்று", "இரண்டு"]
     if model == "eleven_v3":
@@ -1000,3 +1000,47 @@ def test_scene_cuts_fall_back_to_estimates_without_pauses():
     from vidpipe.voice import scene_cuts
     assert scene_cuts(["aaaa", "aaaa"], 8.0, []) == [0.0, 4.0, 8.0]
     assert scene_cuts(["aaaa", "aaaa"], 8.0, [(1.0, 0.3), (3.7, 0.5)]) == [0.0, 3.95, 8.0]
+
+
+def _fake_eleven(monkeypatch, tmp_path):
+    import base64
+    from vidpipe import voice
+    mp3 = tmp_path / "src.mp3"
+    voice.run_ffmpeg(["-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", 1, "-c:a", "libmp3lame", mp3])
+    posted = []
+
+    class R:
+        def __init__(self, data):
+            self.status_code, self.data, self.text = 200, data, ""
+
+        def json(self):
+            return self.data
+
+    def get(url, params=None, headers=None, timeout=None):
+        if url.endswith("/v1/voices"):
+            return R({"voices": [{"name": "Adam", "voice_id": "A" * 20}, {"name": "Kavitha - warm", "voice_id": "K" * 20}]})
+        return R({"voices": [{"name": "Tamil Storyteller", "voice_id": "T" * 20, "gender": "male", "description": "x"}]})
+
+    def post(url, **kw):
+        posted.append(url)
+        return R({"audio_base64": base64.b64encode(mp3.read_bytes()).decode(), "alignment": {}})
+
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "k")
+    monkeypatch.setattr(voice.requests, "get", get)
+    monkeypatch.setattr(voice.requests, "post", post)
+    return posted
+
+
+def test_elevenlabs_voice_by_name_and_preview(cfg, tmp_path, monkeypatch, capsys):
+    from vidpipe import voice
+    posted = _fake_eleven(monkeypatch, tmp_path)
+    cfg["voice"]["voice_id"] = "kavitha"
+    assert voice.ElevenLabsVoice(cfg).v["voice_id"] == "K" * 20
+    cfg["voice"]["voice_id"] = "Nobody"
+    with pytest.raises(RuntimeError, match="Adam, Kavitha"):
+        voice.ElevenLabsVoice(cfg)
+    paths = voice.preview_eleven_voices(cfg, "ஒன்று இரண்டு", tmp_path / "s", [])
+    assert [p.name for p in paths] == ["eleven_Adam_eleven_multilingual_v2.mp3",
+                                       "eleven_Kavitha_warm_eleven_multilingual_v2.mp3"]
+    assert all(p.exists() for p in paths) and len(posted) == 2
+    assert "Tamil Storyteller [TTTTTTTTTTTTTTTTTTTT] male" in capsys.readouterr().out

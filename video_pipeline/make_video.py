@@ -85,6 +85,7 @@ def main() -> int:
     p_series.add_argument("--voice-provider", choices=["auto", "edge", "gemini", "elevenlabs"], default="",
                           help="gemini: expressive storyteller voice, free tier (GEMINI_API_KEY); "
                                "elevenlabs: most expressive (paid, ELEVENLABS_API_KEY)")
+    p_series.add_argument("--voice-model", default="", help="ElevenLabs model, e.g. eleven_v3 (most expressive)")
     p_series.add_argument("--voice-style", default="",
                           help='how a Gemini voice should tell it, e.g. "Whisper it like a ghost story, slow and tense"')
     p_series.add_argument("--script-dir", default="", help="use a ready-made script, e.g. stories/dracula")
@@ -97,8 +98,10 @@ def main() -> int:
                                             "Within hours, it was gone.")
     p_voices.add_argument("--only", nargs="*", default=[], help="e.g. am_michael bm_george")
     p_voices.add_argument("--language", default="", help='e.g. "Tamil": preview the free Tamil voices instead')
-    p_voices.add_argument("--provider", choices=["edge", "gemini"], default="edge",
-                          help="gemini: preview Google's expressive voices (needs GEMINI_API_KEY)")
+    p_voices.add_argument("--provider", choices=["edge", "gemini", "elevenlabs"], default="edge",
+                          help="gemini: Google's expressive voices (GEMINI_API_KEY); elevenlabs: your ElevenLabs "
+                               "voices plus Tamil ones from their Voice Library (ELEVENLABS_API_KEY)")
+    p_voices.add_argument("--model", default="", help="ElevenLabs model, e.g. eleven_v3 (most expressive)")
     p_voices.add_argument("--style", default="", help="Gemini only: how to tell it (default from config)")
 
     p_up = sub.add_parser("upload", help="upload an approved run to YouTube (private)")
@@ -138,6 +141,8 @@ def main() -> int:
                 key = {"elevenlabs": "voice_id", "gemini": "gemini_voice"}.get(cfg["series"].get("voice_provider"),
                                                                                   "edge_voice")
                 cfg["series"][key] = args.voice
+            if args.voice_model:
+                cfg["voice"]["model_id"] = args.voice_model
             if args.voice_style:
                 cfg["voice"]["gemini"]["style"] = args.voice_style
             if args.voice_rate:
@@ -162,7 +167,15 @@ def main() -> int:
                                        preview_gemini_voices, preview_voices)
             out_dir = resolve("voice_samples")
             lang = args.language.lower()
-            if args.provider == "gemini":
+            if args.model:
+                cfg["voice"]["model_id"] = args.model
+            if args.provider == "elevenlabs":
+                from vidpipe.voice import preview_eleven_voices
+                say = args.say if "--say" in sys.argv else TAMIL_SAMPLE
+                for path in preview_eleven_voices(cfg, say, out_dir, args.only):
+                    print(path)
+                print("Listen, then add --voice-provider elevenlabs --voice <name> to the series command.")
+            elif args.provider == "gemini":
                 say = args.say if "--say" in sys.argv else TAMIL_SAMPLE if lang in ("", "tamil") else args.say
                 if args.style:
                     cfg["voice"]["gemini"]["style"] = args.style
