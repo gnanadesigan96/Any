@@ -1,0 +1,12 @@
+{"part": 4, "movies": [
+ {"rank": 5, "key": "forever_my_girl", "title": "Forever My Girl", "year": 2018, "cast": "Alex Roe · Jessica Rothe", "genres": ["Romance", "Music"],
+  "desc": "A country star who left his bride at the altar comes home — and finds out she's been raising his daughter.", "particles": ["🎸", "🌻", "💛"], "motif": "rise", "accent": [220, 130, 60]},
+ {"rank": 4, "key": "just_go_with_it", "title": "Just Go With It", "year": 2011, "cast": "Adam Sandler · Jennifer Aniston", "genres": ["Rom-Com", "Hawaii"],
+  "desc": "One little lie to impress a girl spirals into a fake family holiday in Hawaii.", "particles": ["🌴", "🍹", "😂"], "motif": "rise", "accent": [50, 165, 200]},
+ {"rank": 3, "key": "friends_with_benefits", "title": "Friends With Benefits", "year": 2011, "cast": "Justin Timberlake · Mila Kunis", "genres": ["Rom-Com", "Friendship"],
+  "desc": "Two best friends agree to keep it simple — no feelings allowed. Feelings, of course, have other plans.", "particles": ["👌", "💬", "💗"], "motif": "fall", "accent": [210, 50, 60]},
+ {"rank": 2, "key": "life_as_we_know_it", "title": "Life As We Know It", "year": 2010, "cast": "Katherine Heigl · Josh Duhamel", "genres": ["Rom-Com", "Family"],
+  "desc": "Two people who can't stand each other suddenly have to raise their best friends' baby — together.", "particles": ["🍼", "🧸", "💛"], "motif": "rise", "accent": [80, 150, 210]},
+ {"rank": 1, "key": "game_night", "title": "Game Night", "year": 2018, "cast": "Jason Bateman · Rachel McAdams", "genres": ["Comedy", "Mystery"],
+  "desc": "A couple's weekly game night turns into a real mystery — and nobody knows what's part of the game.", "particles": ["🎲", "🃏", "🐶"], "motif": "fall", "accent": [220, 60, 60]}
+]}

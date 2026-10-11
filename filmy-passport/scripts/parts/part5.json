@@ -1,0 +1,12 @@
+{"part": 5, "movies": [
+ {"rank": 5, "key": "blended", "title": "Blended", "year": 2014, "cast": "Adam Sandler · Drew Barrymore", "genres": ["Rom-Com", "Family"],
+  "desc": "After a disastrous blind date, two single parents end up on the same African safari holiday — kids and all.", "particles": ["🦁", "🌅", "🦒"], "motif": "rise", "accent": [220, 110, 40]},
+ {"rank": 4, "key": "love_and_other_drugs", "title": "Love & Other Drugs", "year": 2010, "cast": "Jake Gyllenhaal · Anne Hathaway", "genres": ["Romance", "Drama"],
+  "desc": "A smooth-talking salesman meets a free spirit who refuses to fall in love — until she does.", "particles": ["💌", "🌹", "❤️"], "motif": "heart", "accent": [160, 60, 50]},
+ {"rank": 3, "key": "crazy_rich_asians", "title": "Crazy Rich Asians", "year": 2018, "cast": "Constance Wu · Henry Golding", "genres": ["Rom-Com", "Family"],
+  "desc": "Rachel discovers her boyfriend's family is one of the richest in Singapore — and his mother isn't impressed.", "particles": ["💎", "🏮", "💃"], "motif": "fall", "accent": [20, 140, 120]},
+ {"rank": 2, "key": "eternity", "title": "Eternity", "year": 2025, "cast": "Elizabeth Olsen · Miles Teller · Callum Turner", "genres": ["Rom-Com", "Fantasy"],
+  "desc": "In the afterlife, a woman gets one week to choose who she'll spend forever with: her husband or her first love.", "particles": ["☁️", "✨", "💕"], "motif": "rise", "accent": [230, 120, 90]},
+ {"rank": 1, "key": "definitely_maybe", "title": "Definitely, Maybe", "year": 2008, "cast": "Ryan Reynolds · Abigail Breslin", "genres": ["Rom-Com", "Drama"],
+  "desc": "A dad tells his daughter the story of his three great loves — and she has to guess which one is her mom.", "particles": ["💌", "📖", "✨"], "motif": "rise", "accent": [200, 90, 60]}
+]}
