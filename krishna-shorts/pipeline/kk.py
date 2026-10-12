@@ -269,6 +269,8 @@ def _gen_image(ctx, ident, path, prompt, refs, aspect):
             write(out, ctx.gm.image(prompt, refs, aspect))
             log(f"   {ident}: {os.path.relpath(out, ctx.work)}")
         except ApiError as e:
+            if e.status == 402 or "credits are depleted" in e.body:
+                sys.exit("\nGemini API credit is used up. Add credit in AI Studio → Billing, then run the same command again.")
             if e.status == 429 and ("limit: 0" in e.body or "free_tier" in e.body):
                 sys.exit("\nGemini API: your key is on the FREE tier, which allows no image/video generation.\n"
                          "Turn on billing for the key's project (aistudio.google.com/apikey → Set up billing), "
@@ -332,6 +334,10 @@ def step_clips(ctx):
                 write(out, ctx.gm.video(s["video_prompt"], frame, ctx.m["aspect"], s["veo_seconds"], NEG_SHORT, log=log))
                 log(f"   {s['id']}: {os.path.relpath(out, ctx.work)}")
             except ApiError as e:
+                if e.status == 402 or "credits are depleted" in e.body:
+                    sys.exit(f"\nGemini API credit is used up (stopped at {s['id']}). Add credit in AI Studio → Billing, "
+                             "or make the remaining clips in Flow with your Pro credits (python3 kk.py todo). "
+                             "Shots without a clip get a camera move in 'assemble'.")
                 if e.status == 429 and ("limit: 0" in e.body or "free_tier" in e.body):
                     sys.exit("\nGemini API: video generation isn't available on the free tier. Turn on billing, "
                              "or make the clips in Flow and save them as work/short01/clips/<shot id>.mp4.")
