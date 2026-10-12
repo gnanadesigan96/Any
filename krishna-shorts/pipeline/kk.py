@@ -382,12 +382,17 @@ def step_revoice(ctx):
             continue
         raw = ctx.p("revoice", s["id"] + "_raw", "wav")
         iso = ctx.p("revoice", s["id"] + "_iso", "mp3")
-        run(["ffmpeg", "-y", "-hide_banner", "-i", clip, "-t", str(s["dur"]), "-vn", "-ac", "1", "-ar", "44100", raw])
+        clip_len = duration(clip) or s["dur"]
+        # whole clip audio, padded to >= 5 s (Voice Isolator rejects audio shorter than 4.6 s)
+        run(["ffmpeg", "-y", "-hide_banner", "-i", clip, "-vn", "-ac", "1", "-ar", "44100",
+             "-af", f"apad=whole_dur={max(5.0, clip_len):.2f}", raw])
         try:
-            write(iso, ctx.el.isolate(raw))
+            iso_full = ctx.p("revoice", s["id"] + "_isofull", "mp3")
+            write(iso_full, ctx.el.isolate(raw))
+            run(["ffmpeg", "-y", "-hide_banner", "-i", iso_full, "-t", f"{clip_len:.3f}", iso])
         except ApiError as e:
             log(f"   {s['id']}: isolation failed ({e}); using raw audio")
-            shutil.copy(raw, iso)
+            run(["ffmpeg", "-y", "-hide_banner", "-i", raw, "-t", f"{clip_len:.3f}", iso])
         groups = group_regions(speech_regions(iso), len(s["lines"]))
         entry = {"onsets": [g[0] for g in groups], "lines": {}}
         if s["method"] == "A" and len(groups) == len(s["lines"]):
