@@ -14,7 +14,7 @@
     python kk.py assemble                # final MP4 + SRT with ffmpeg (works at any stage: missing
                                          #   clips become still frames or placeholder cards = animatic)
     python kk.py choose frames S03 2     # promote take 2 of a refs/frames/clips item to the main one
-    python kk.py link KK_Kannan <id>     # use a Voice Library voice for a character
+    python kk.py link KK_Kannan <id> [--pitch 3]   # use a Voice Library voice (optionally pitched up)
 
 Common options: --episode short01, --only S03,S08a (ids), --force (redo even if the file exists).
 Keys come from environment variables: ELEVENLABS_API_KEY, GEMINI_API_KEY.
@@ -111,6 +111,17 @@ def has_audio(path):
     return bool(out)
 
 
+def pitch_shift(path, semitones):
+    """Raise pitch in place (asetrate shifts pitch and formants together: younger, brighter voice)."""
+    if not semitones:
+        return
+    r = 2 ** (semitones / 12.0)
+    tmp = path + ".tmp" + os.path.splitext(path)[1]
+    run(["ffmpeg", "-y", "-hide_banner", "-i", path, "-af",
+         f"asetrate=44100*{r:.5f},aresample=44100,atempo={1 / r:.5f}", tmp])
+    os.replace(tmp, path)
+
+
 def speech_regions(path, noise_db=-32, min_sil=0.25):
     """[(start, end)] of non-silent regions, via ffmpeg silencedetect."""
     err = run(["ffmpeg", "-hide_banner", "-i", path, "-af", f"silencedetect=noise={noise_db}dB:d={min_sil}",
@@ -191,9 +202,10 @@ def step_link(ctx):
     name, vid = ctx.args.target
     path = os.path.join(HERE, "voice_map.json")
     data = json.load(open(path)) if os.path.exists(path) else {}
-    data[name] = vid
+    data[name] = {"id": vid, "pitch": ctx.args.pitch} if ctx.args.pitch else vid
     json.dump(data, open(path, "w"), indent=2)
-    log(f"linked {name} -> {vid}  (saved in voice_map.json)")
+    log(f"linked {name} -> {vid}" + (f" (+{ctx.args.pitch:g} semitones)" if ctx.args.pitch else "") +
+        "  (saved in voice_map.json). Re-run 'lines' with --force --only for this voice's lines to apply it.")
 
 
 def _gen_image(ctx, ident, path, prompt, refs, aspect):
@@ -273,6 +285,7 @@ def step_lines(ctx):
                 out = take_path(path, n)
                 try:
                     write(out, ctx.el.tts(ln["voice"], ln["text"]))
+                    pitch_shift(out, ctx.el.pitch(ln["voice"]))
                     log(f"   {ln['id']}: {os.path.relpath(out, ctx.work)} ({duration(out):.1f} s)")
                 except (ApiError, KeyError) as e:
                     log(f"   {ln['id']}: FAILED: {e}")
@@ -312,6 +325,7 @@ def step_revoice(ctx):
                 try:
                     out = ctx.p("revoice", ln["id"] + "_A", "mp3")
                     write(out, ctx.el.voice_change(ln["voice"], seg))
+                    pitch_shift(out, ctx.el.pitch(ln["voice"]))
                     entry["lines"][ln["id"]] = {"file": os.path.basename(out), "offset": round(max(0, g0 - 0.05), 3)}
                     log(f"   {ln['id']}: re-voiced at +{g0:.2f} s in {s['id']}")
                 except (ApiError, KeyError) as e:
@@ -627,6 +641,7 @@ def main(argv=None):
     ap.add_argument("--yes", action="store_true", help="allow paid video generation")
     ap.add_argument("--auto", action="store_true", help="voices: keep preview 1 without asking")
     ap.add_argument("--no-grade", action="store_true")
+    ap.add_argument("--pitch", type=float, default=0, help="link: raise this voice by N semitones (e.g. 3 for a boy)")
     args = ap.parse_args(argv)
     ctx = Ctx(args)
     if args.step == "choose" and len(args.target) != 3:

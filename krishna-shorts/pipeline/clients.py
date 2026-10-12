@@ -79,8 +79,15 @@ class ElevenLabs:
                 return json.load(f)
         return {}
 
+    def pitch(self, name):
+        """Semitones to raise a linked voice (used for the boys), 0 if none."""
+        m = self.linked().get(name)
+        return float(m.get("pitch", 0)) if isinstance(m, dict) else 0.0
+
     def voice_id(self, name):
         mapped = self.linked().get(name)
+        if isinstance(mapped, dict):
+            mapped = mapped.get("id")
         if mapped:
             return mapped
         if self._voices is None:
@@ -107,6 +114,13 @@ class ElevenLabs:
                                        "voice_settings": {"stability": 0.4, "similarity_boost": 0.75, "style": 0.4}},
                                       want="bytes")
             raise
+
+    def shared_voices(self, **params):
+        q = urllib.parse.urlencode({k: v for k, v in params.items() if v not in (None, "")})
+        return self.get_json(f"/v1/shared-voices?{q}").get("voices", [])
+
+    def add_shared(self, public_owner_id, voice_id, new_name):
+        return self.post_json(f"/v1/voices/add/{public_owner_id}/{voice_id}", {"new_name": new_name})["voice_id"]
 
     def sound_effect(self, prompt, seconds):
         return self.post_json("/v1/sound-generation?output_format=mp3_44100_192",

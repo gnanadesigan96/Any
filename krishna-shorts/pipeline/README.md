@@ -69,7 +69,9 @@ Useful options:
 ## Child voices (Kannan, Balarama, Shridama, Subala)
 ElevenLabs **does not allow designing children's voices** with Voice Design ("this prompt potentially doesn't follow our safety guidelines"). The script designs only the adult voices (Yashoda, Narrator) and asks you to pick the four boys' voices yourself. There are two approved ways:
 
-**A. Voice Library (fastest)**
+**Automatic:** `python3 boys.py auto` searches the Voice Library for Tamil child-like/character voices, picks 4 different ones, adds them to your account, makes a Tamil test line for each (as published and 3 semitones higher), links them, and writes `work/boys/report.md`. Change any pick with `python3 kk.py link KK_Kannan <voice_id> --pitch 3`.
+
+**A. Voice Library (by hand)**
 1. ElevenLabs → **Voices** → **Explore / Voice Library**.
 2. Search for **"cartoon"**, **"animated character"** or **"animation"**, and filter **Use case → Characters & Animation**. These are voices made for animated characters (performed by adult voice actors). Choose bright, youthful ones.
 3. For each boy, preview a few. Then click **Add to my voices**.
