@@ -11,6 +11,8 @@ Easiest (interactive, on your own computer):
 
 Two-step (no prompts; useful when someone else runs it for you):
     python create_elevenlabs_voices.py preview [KK_Kannan KK_Yashoda ...]
+    python create_elevenlabs_voices.py preview KK_Narrator:all          # every narrator style
+    python create_elevenlabs_voices.py preview KK_Narrator:cinematic+paati
         -> writes voice_previews/<name>_1.mp3 .. _3.mp3 and previews.json
     python create_elevenlabs_voices.py save KK_Kannan=2 KK_Yashoda=1 ...
         -> creates the chosen voices and writes voice_register.json
@@ -112,15 +114,21 @@ def save_voice(key, voice, generated_voice_id):
 
 
 def write_previews(voice, previews):
+    """Save previews as <name>_<n>.mp3. Variant rounds keep numbering on (e.g. _1.._15) so one 'save' picks any."""
     os.makedirs(PREVIEW_DIR, exist_ok=True)
+    store = load_json(PREVIEWS_FILE, {})
+    ids = store.get(voice["name"], []) if voice.get("variant") else []
+    descs = store.get("_desc_" + voice["name"], []) if voice.get("variant") else []
     paths = []
-    for i, p in enumerate(previews, 1):
-        path = os.path.join(PREVIEW_DIR, f"{voice['name']}_{i}.mp3")
+    for p in previews:
+        ids.append(p["generated_voice_id"])
+        descs.append(voice["description"])
+        path = os.path.join(PREVIEW_DIR, f"{voice['name']}_{len(ids)}.mp3")
         with open(path, "wb") as f:
             f.write(p["mp3"])
         paths.append(path)
-    store = load_json(PREVIEWS_FILE, {})
-    store[voice["name"]] = [p["generated_voice_id"] for p in previews]
+    store[voice["name"]] = ids
+    store["_desc_" + voice["name"]] = descs
     save_json(PREVIEWS_FILE, store)
     return paths
 
@@ -176,7 +184,32 @@ def cmd_check(voices):
     return 0 if ok else 1
 
 
+def expand_variants(voices, args):
+    """'KK_Narrator:cinematic' or 'KK_Narrator:all' -> copies of the voice using variant descriptions."""
+    out = []
+    by = {v["name"]: v for v in voices}
+    for a in args:
+        name, _, var = a.partition(":")
+        if name not in by:
+            sys.exit(f"Unknown voice {name}")
+        v = by[name]
+        if not var:
+            out.append(v)
+            continue
+        variants = v.get("variants", {})
+        names = list(variants) if var == "all" else var.split("+")
+        for vn in names:
+            if vn not in variants:
+                sys.exit(f"{name} has no variant '{vn}'. Available: {', '.join(variants) or 'none'}")
+            out.append(dict(v, description=variants[vn], variant=vn))
+    return out
+
+
 def cmd_preview(key, voices):
+    store = load_json(PREVIEWS_FILE, {})
+    for name in {v["name"] for v in voices if v.get("variant")}:
+        store.pop(name, None)  # fresh numbering for a variant round
+        save_json(PREVIEWS_FILE, store)
     for v in voices:
         if v.get("child"):
             print(f"\n{v['name']}: skipped (child voice; pick one from the Voice Library and link it, see pipeline/README.md)")
@@ -185,7 +218,7 @@ def cmd_preview(key, voices):
         try:
             paths = write_previews(v, make_previews(key, v))
             for p in paths:
-                print("   ", os.path.relpath(p))
+                print("   ", os.path.relpath(p), f"  [{v['variant']}]" if v.get("variant") else "")
         except Exception as e:  # keep going with the other characters
             print(f"    FAILED: {e}")
     print(f"\nListen to the files in {os.path.relpath(PREVIEW_DIR)}, then run e.g.:\n"
@@ -205,9 +238,11 @@ def cmd_save(key, voices, picks):
         if not 1 <= n <= len(ids):
             print(f"Skipping {name}: no preview #{n} (run 'preview' first)")
             continue
+        descs = store.get("_desc_" + name, [])
+        spec = dict(by[name], description=descs[n - 1]) if len(descs) >= n else by[name]
         try:
-            vid = save_voice(key, by[name], ids[n - 1])
-            register(by[name], vid)
+            vid = save_voice(key, spec, ids[n - 1])
+            register(spec, vid)
             print(f"Created {name}  voice_id={vid}")
         except Exception as e:
             print(f"FAILED {name}: {e}  (previews expire after a while; if so, run 'preview' again)")
@@ -262,7 +297,8 @@ def main():
     if cmd_check(voices) != 0:
         sys.exit("Fix voices.json first.")
     if cmd == "preview":
-        cmd_preview(get_key(False), select(voices, args[1:]))
+        sel = expand_variants(voices, args[1:]) if any(":" in a for a in args[1:]) else select(voices, args[1:])
+        cmd_preview(get_key(False), sel)
     elif cmd == "save":
         cmd_save(get_key(False), voices, args[1:])
     elif cmd == "list":

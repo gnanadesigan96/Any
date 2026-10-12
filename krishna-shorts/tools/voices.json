@@ -18,7 +18,14 @@
     "character": "கதைசொல்லி (Narrator), elderly man ~70",
     "description": "Warm, rich voice of a Tamil grandfather around 70 years old telling a bedtime story to his grandchildren, native Tamil speaker, clear natural colloquial Tamil, slow pace with dramatic pauses, gentle smile in the voice, wise and affectionate, slightly aged texture.",
     "text": "கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்! யசோதா அம்மா நினைச்சாங்க... பிரச்சனை முடிஞ்சதுன்னு. ஆனா கண்ணனுக்கு... இது ஆரம்பம் தான்!",
-    "child": false
+    "child": false,
+    "variants": {
+      "grandfather": "Warm, rich voice of a Tamil grandfather around 70 years old telling a bedtime story to his grandchildren, native Tamil speaker, clear natural colloquial Tamil, slow pace with dramatic pauses, gentle smile in the voice, wise and affectionate, slightly aged texture.",
+      "cinematic": "Deep, rich, resonant cinematic male narrator voice in his fifties, native Tamil speaker, like the narrator of a grand Tamil mythological film or TV serial, majestic and emotional, very clear Tamil diction, slow dramatic pacing with powerful pauses.",
+      "harikatha": "Lively traditional Tamil storyteller in his sixties, native Tamil speaker, harikatha and kathakalakshepam style, musical rise and fall in the voice, warm, devotional and playful, engaging like telling stories to a village temple audience, natural colloquial Tamil.",
+      "gentle": "Soft, gentle, smiling male voice in his forties, native Tamil speaker, calm and intimate like a loving father telling a bedtime story, clear natural colloquial Tamil, warm and kind, unhurried.",
+      "paati": "Warm, affectionate female storyteller in her late fifties, native Tamil speaker, like a Tamil grandmother telling bedtime stories to her grandchildren, expressive and smiling, clear natural colloquial Tamil, slow with lovely dramatic pauses."
+    }
   },
   {
     "name": "KK_Balarama",
