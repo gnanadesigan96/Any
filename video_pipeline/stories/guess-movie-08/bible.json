@@ -1,0 +1,23 @@
+{
+  "series_title": "60 விநாடியில் ஒரு படம்",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic crime thriller film still, Coimbatore on a rainy night, cold blue-grey colour grade, heavy rain, headlights, 35mm anamorphic lens, film grain, high detail, realistic expressions",
+  "characters": [
+    {
+      "name": "Officer",
+      "look": "Tamil man in his fifties, salt-and-pepper beard, calm sharp eyes, grey cardigan, walking with a wooden cane"
+    },
+    {
+      "name": "Listener",
+      "look": "Tamil man in his twenties, short hair, quiet watchful eyes, dark jacket"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #08",
+      "summary": "A guess-the-movie Short retelling Dhuruvangal Pathinaaru (துருவங்கள் பதினாறு, 2016) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "கதையை வச்சு படத்தைக் கண்டுபிடிங்க! #14",
+      "hook_text": "கதையைக் கேளுங்க!",
+      "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+      "description": "ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன?\n\nக்ளூ 1: அவளோட தோழி பேரு எமிலி\nக்ளூ 2: புதுமுகம் அதிதி பாலன் நடிச்ச படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! FilmSpeaks சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "FilmSpeaks",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "போலீஸ் ஒரு இளம் பெண்ணைத் தீவிரவாதியா சந்தேகப்பட்டு விசாரிக்குது. அவ யாரு? அவளோட கடந்த காலம் என்ன?",
+          "visual": "the heroine sitting calmly in a bare police interrogation room, officers watching through glass",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "பாசமா வளர்ந்த ஒரு நடுத்தரக் குடும்பத்துப் பொண்ணு. ஆனா ஒரு நாள், குடும்பமே அவளை வீட்டை விட்டுத் துரத்துது.",
+          "visual": "the heroine standing outside her family's front door with a small bag, the door closing on her",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "தனியா நிக்கிற அவளுக்கு, ஒரு திருநங்கைத் தோழி மட்டும்தான் துணை.",
+          "visual": "the heroine and Emily sharing a simple meal in a tiny hostel room, laughing",
+          "characters": [
+            "Heroine",
+            "Emily"
+          ]
+        },
+        {
+          "narration": "அவளுக்கு எச்ஐவி தொற்று. பல ஆண்கள் அவளை ஏமாத்தி, கொடுமைப்படுத்தியிருக்காங்க.",
+          "visual": "the heroine sitting alone on a hospital bench holding a medical report, eyes empty",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "நியாயம் கேட்டு, ஒரு பிரபல டிவி நிகழ்ச்சிக்குப் போறா.",
+          "visual": "a bright television studio set with an audience and cameras, the heroine walking onto the stage",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "அங்க அவளுக்கு அவமானம். அடுத்த நொடி, அவ கையில துப்பாக்கி! மொத்த ஸ்டுடியோவையும் பிணைக்கைதியா பிடிக்கிறா.",
+          "visual": "the heroine holding a pistol in a TV studio as frightened crew members raise their hands",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "கடைசியில, அவளோட கதை இந்தச் சமூகத்தையே கேள்வி கேக்குது.",
+          "visual": "the heroine sitting on a quiet green hilltop at sunrise, smiling softly",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! ஃபிலிம் ஸ்பீக்ஸ் சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "a camera flash capturing the heroine's smiling face",
+          "characters": [
+            "Heroine"
+          ]
+        }
+      ]
+    }
+  ]
+}

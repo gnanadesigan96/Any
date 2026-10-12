@@ -1,0 +1,71 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "கதையை வச்சு படத்தைக் கண்டுபிடிங்க! #08",
+      "hook_text": "கதையைக் கேளுங்க!",
+      "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+      "description": "ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன?\n\nக்ளூ 1: போலீஸ் அதிகாரி பேரு தீபக்\nக்ளூ 2: ரகுமான் நடிச்ச, இருபத்திரெண்டு வயசு இயக்குநரோட முதல் படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! FilmSpeaks சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "FilmSpeaks",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "ஒரு காலை இழந்த, ஓய்வுபெற்ற போலீஸ் அதிகாரி. போலீஸ் ஆகணும்னு வந்த ஒரு இளைஞன்கிட்ட, தன்னோட பழைய வழக்கைச் சொல்ல ஆரம்பிக்கிறாரு.",
+          "visual": "the officer sitting in a dim living room with a cane beside his chair, the listener seated across from him",
+          "characters": [
+            "Officer",
+            "Listener"
+          ]
+        },
+        {
+          "narration": "அஞ்சு வருஷம் முன்னாடி, கோயம்புத்தூர்ல மழை பெய்யுற ஒரு ராத்திரி.",
+          "visual": "a dark city street in pouring rain at night, a lone streetlight, empty road",
+          "characters": []
+        },
+        {
+          "narration": "மூணு நண்பர்கள் போன கார், ஒருத்தன் மேல மோதுது. பயத்துல, அந்த உடலை வீட்டுக்குள்ளேயே ஒளிச்சு வைக்கிறாங்க.",
+          "visual": "three panicked young men dragging something wrapped in a sheet into a house at night in the rain, a dented car behind them",
+          "characters": []
+        },
+        {
+          "narration": "அதே ராத்திரி, ஒரு பார்க் பக்கத்துல ஒரு உடல். இன்னொரு இளைஞன் தற்கொலை பண்ணிக்கிட்டதா தகவல்.",
+          "visual": "police torches lighting up a wet park at night, a covered shape on the ground, nothing graphic",
+          "characters": []
+        },
+        {
+          "narration": "ஒவ்வொரு தடயமும், ஒவ்வொருத்தர் சொல்ற கதையும் வேற வேற. ஒரே சம்பவம், பல பார்வைகள்!",
+          "visual": "the younger version of the officer standing before a board covered in photos and maps connected with string",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "விசாரணையில நடந்த ஒரு விபத்துல, அவர் தன்னோட காலை இழந்தாரு.",
+          "visual": "a police jeep crashed on its side on a rainy road at night, headlights still on",
+          "characters": []
+        },
+        {
+          "narration": "இப்போ, கதையைக் கேட்டுட்டு இருக்கிற அந்த இளைஞன் யாரு? கடைசி நிமிஷம் வரை யாராலயும் யூகிக்க முடியாது!",
+          "visual": "close-up of the listener's face half in shadow, an unreadable expression",
+          "characters": [
+            "Listener"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! ஃபிலிம் ஸ்பீக்ஸ் சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "the officer alone at a rain-streaked window, looking out into the night",
+          "characters": [
+            "Officer"
+          ]
+        }
+      ]
+    }
+  ]
+}

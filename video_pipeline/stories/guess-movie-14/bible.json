@@ -1,0 +1,23 @@
+{
+  "series_title": "60 விநாடியில் ஒரு படம்",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic drama film still, Chennai, warm natural colour grade, soft window light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Heroine",
+      "look": "young Tamil woman in her early twenties, short cropped hair, intense fearless eyes, plain kurta and jeans"
+    },
+    {
+      "name": "Emily",
+      "look": "Tamil trans woman in her late twenties, long hair, warm caring smile, colourful saree"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #14",
+      "summary": "A guess-the-movie Short retelling Aruvi (அருவி, 2017) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "கதையை வச்சு படத்தைக் கண்டுபிடிங்க! #05",
+      "hook_text": "கதையைக் கேளுங்க!",
+      "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+      "description": "ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன?\n\nக்ளூ 1: ஹீரோ பேரு சந்துரு\nக்ளூ 2: மிஷ்கின் இயக்கி, நடிச்ச படம்; இதுல பாட்டே கிடையாது\n\nபதிலை கமெண்ட்ல சொல்லுங்க! FilmSpeaks சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "FilmSpeaks",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "ராத்திரி நேரம். ரோட்டோரத்துல, குண்டடிபட்ட ஒருத்தன் ரத்த வெள்ளத்துல கிடக்குறான். யாருமே கண்டுக்கல.",
+          "visual": "an empty Chennai road at night, a wounded man lying by the roadside under a streetlight, cars passing by",
+          "characters": [
+            "Fugitive"
+          ]
+        },
+        {
+          "narration": "ஒரு மருத்துவ மாணவன் அவனைப் பார்க்கிறான். எங்கயும் உதவி கிடைக்கல. தன் வீட்டுக்கே தூக்கிட்டுப் போய், தானே ஆபரேஷன் பண்றான்.",
+          "visual": "the student operating on the wounded man on a kitchen table at night under a single bulb, sweat on his face",
+          "characters": [
+            "Student",
+            "Fugitive"
+          ]
+        },
+        {
+          "narration": "விடிஞ்சதும் தெரியுது... அவன் போலீசுக்குத் தப்பிச்சு ஓடின ஒரு பயங்கரமான குற்றவாளி!",
+          "visual": "the student staring at a television news report in shock at dawn, the fugitive's empty bloodstained bed behind him",
+          "characters": [
+            "Student"
+          ]
+        },
+        {
+          "narration": "உதவி பண்ணதுக்காக, அந்த மாணவனோட குடும்பத்தையே போலீஸ் பிடிச்சுட்டுப் போகுது.",
+          "visual": "police officers leading a frightened family out of a small house at night, the student pleading with them",
+          "characters": [
+            "Student"
+          ]
+        },
+        {
+          "narration": "போலீஸ் அவன் கையில ஒரு துப்பாக்கியைக் கொடுக்குது. அந்தக் குற்றவாளியைக் கொன்னாதான், குடும்பம் வெளிய வரும்!",
+          "visual": "a police officer pressing a pistol into the trembling hands of the student in a dark interrogation room",
+          "characters": [
+            "Student"
+          ]
+        },
+        {
+          "narration": "ஆனா அந்த ராத்திரி, அவன் கூடவே சுத்தும்போது... அந்தக் குற்றவாளியோட இன்னொரு முகம் தெரியுது. அவன் யாரையோ காப்பாத்தப் போராடுறான்.",
+          "visual": "the fugitive and the student walking through a dark empty railway yard at night, the fugitive looking back with sad eyes",
+          "characters": [
+            "Fugitive",
+            "Student"
+          ]
+        },
+        {
+          "narration": "யாரு கெட்டவன்? யாரு நல்லவன்? ஒரே இரவுல நடக்குற ஒரு உணர்ச்சிப் போராட்டம்!",
+          "visual": "a candlelit old cemetery at night, the fugitive standing among the graves, the student watching from a distance",
+          "characters": [
+            "Fugitive"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! ஃபிலிம் ஸ்பீக்ஸ் சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "the student alone on a misty road at dawn, holding a pistol at his side, exhausted",
+          "characters": [
+            "Student"
+          ]
+        }
+      ]
+    }
+  ]
+}

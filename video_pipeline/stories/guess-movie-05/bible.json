@@ -1,0 +1,23 @@
+{
+  "series_title": "60 விநாடியில் ஒரு படம்",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic neo-noir film still, Chennai at night, moody teal and amber colour grade, wet streets, deep shadows, 35mm anamorphic lens, film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Student",
+      "look": "Tamil man in his early twenties, thin, short black hair, clean-shaven, frightened earnest eyes, plain shirt and trousers"
+    },
+    {
+      "name": "Fugitive",
+      "look": "Tamil man in his forties, long unkempt black hair, thick beard, black clothes, a bandaged shoulder, calm unreadable face"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #05",
+      "summary": "A guess-the-movie Short retelling Onaayum Aattukkuttiyum (ஓநாயும் ஆட்டுக்குட்டியும், 2013) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

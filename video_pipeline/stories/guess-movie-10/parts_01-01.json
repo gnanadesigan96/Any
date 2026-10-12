@@ -1,0 +1,79 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "கதையை வச்சு படத்தைக் கண்டுபிடிங்க! #10",
+      "hook_text": "கதையைக் கேளுங்க!",
+      "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+      "description": "ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன?\n\nக்ளூ 1: ஹீரோ பேரு காந்தி பாபு\nக்ளூ 2: இயக்குநர் ஹெச். வினோத்தோட முதல் படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! FilmSpeaks சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "FilmSpeaks",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "ஒரு பக்கா ஏமாத்துக்காரன். பேச்சாலயே எல்லாரையும் மயக்கிடுவான்.",
+          "visual": "the conman smiling charmingly at a crowd of eager people in a rented hall, holding up a glossy brochure",
+          "characters": [
+            "Conman"
+          ]
+        },
+        {
+          "narration": "சாதாரண பாம்பை, கோடிக்கணக்கான மதிப்புள்ள அபூர்வ பாம்புன்னு விக்கிறான். சங்கிலித் தொடர் திட்டம் போட்டு, ஊரையே ஏமாத்துறான்.",
+          "visual": "the conman showing a snake in a glass box to two wide-eyed rich buyers in a dim room",
+          "characters": [
+            "Conman"
+          ]
+        },
+        {
+          "narration": "அவன்கிட்ட வேலைக்கு வந்த ஒரு ஏழைப் பொண்ணு, அவனையே காதலிக்கிறா. ஆனா மோசடி வெளிய வந்ததும், அவளைத் தனியா விட்டுட்டு ஓடிடுறான்.",
+          "visual": "the young woman standing alone in an empty office as angry people storm in, papers flying",
+          "characters": [
+            "Wife"
+          ]
+        },
+        {
+          "narration": "அவனால ஏமாந்த ஒருத்தர், ஒரு கும்பலை அனுப்பி அவனைக் கடத்துறாரு.",
+          "visual": "the conman being bundled into a van by rough men on a dusty road at night",
+          "characters": [
+            "Conman"
+          ]
+        },
+        {
+          "narration": "தப்பிச்சு வந்து, அந்தப் பொண்ணையே கல்யாணம் பண்ணிக்கிறான். நல்லவனா வாழ நினைக்கிறான்.",
+          "visual": "a simple temple wedding, the conman tying the thali around the young woman's neck, both smiling",
+          "characters": [
+            "Conman",
+            "Wife"
+          ]
+        },
+        {
+          "narration": "ஆனா அந்தக் கும்பல் மறுபடியும் அவனைப் பிடிக்குது. ஒரே ஒரு பெரிய மோசடி பண்ணணும். இல்லன்னா, அவனும் அவன் மனைவியும் சாவாங்க!",
+          "visual": "the conman tied to a chair in a warehouse, a gang leader holding up a photo of his wife",
+          "characters": [
+            "Conman"
+          ]
+        },
+        {
+          "narration": "கடைசி வேலை: ஒரு பெரிய பணக்காரனை ஏமாத்தி, நூறு கோடி! ஆனா அதுக்கப்புறம் நடக்கிறது...",
+          "visual": "stacks of cash on a table in a dark room, the conman staring at them, sweat on his face",
+          "characters": [
+            "Conman"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! ஃபிலிம் ஸ்பீக்ஸ் சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "the conman digging in the dirt at night under torchlight, men standing over him",
+          "characters": [
+            "Conman"
+          ]
+        }
+      ]
+    }
+  ]
+}

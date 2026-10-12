@@ -1,0 +1,23 @@
+{
+  "series_title": "60 விநாடியில் ஒரு படம்",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic horror film still, dim decaying interiors, cold blue-green colour grade with sickly yellow lamp light, deep shadows, mist, 35mm film grain, high detail, realistic expressions",
+  "characters": [
+    {
+      "name": "Writer",
+      "look": "Tamil man in his late twenties, short wavy hair, light beard, thoughtful eyes, casual linen shirt"
+    },
+    {
+      "name": "Girlfriend",
+      "look": "Tamil woman in her mid-twenties, shoulder-length hair, bright eyes, paint-stained hands, cotton kurti"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #09",
+      "summary": "A guess-the-movie Short retelling Pizza 2: Villa (பீட்சா 2: வில்லா, 2013) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

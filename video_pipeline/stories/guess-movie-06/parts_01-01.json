@@ -1,0 +1,77 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "கதையை வச்சு படத்தைக் கண்டுபிடிங்க! #06",
+      "hook_text": "கதையைக் கேளுங்க!",
+      "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+      "description": "ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன?\n\nக்ளூ 1: ஹீரோ பேரு குமரன்\nக்ளூ 2: சந்தீப் கிஷன் போலீஸா நடிச்ச சயின்ஸ் ஃபிக்ஷன் த்ரில்லர்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! FilmSpeaks சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "FilmSpeaks",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "ஒரு திருடனைத் துரத்திட்டுப் போற ஒரு போலீஸ் இன்ஸ்பெக்டர். அங்க ஒருத்தன், தன் மனைவியையே கொலை பண்றதைப் பார்க்கிறான்.",
+          "visual": "the cop bursting through the door of a dark apartment at night, a shadowy figure inside, rain on the window",
+          "characters": [
+            "Cop"
+          ]
+        },
+        {
+          "narration": "சண்டையில, அந்தக் கொலைகாரன் செத்துப்போறான். இன்ஸ்பெக்டருக்கு பலத்த காயம்.",
+          "visual": "the injured cop slumped against a wall in a corridor, bandaged arm, flashing police lights outside",
+          "characters": [
+            "Cop"
+          ]
+        },
+        {
+          "narration": "அந்த அதிர்ச்சியில இருந்து மீள, ஒரு மனநல மருத்துவர்கிட்ட சிகிச்சை எடுக்கிறான்.",
+          "visual": "the cop sitting across from the doctor in a quiet therapy room, rain streaking the window",
+          "characters": [
+            "Cop",
+            "Doctor"
+          ]
+        },
+        {
+          "narration": "திரும்ப வேலைக்கு வந்தா, அதே மாதிரி இன்னொரு கொலை! ஆனா இந்த முறை கொலைகாரன் வேற ஆளு.",
+          "visual": "the cop at a night crime scene under police tape, staring at an evidence board with two different suspects' photos",
+          "characters": [
+            "Cop"
+          ]
+        },
+        {
+          "narration": "ஒவ்வொரு கொலைகாரனும், கொலைக்கு முன்னாடி திடீர்னு வேற ஆளா மாறிட்டான்னு குடும்பத்தார் சொல்றாங்க.",
+          "visual": "a worried family sitting in a police station describing someone, the cop listening intently",
+          "characters": [
+            "Cop"
+          ]
+        },
+        {
+          "narration": "உண்மை அதிர்ச்சியானது. ஒரு விஞ்ஞானி, தன் நினைவுகளை ஒரு உடம்புல இருந்து இன்னொரு உடம்புக்கு மாத்தி... சாகாம வாழ்ந்துட்டு இருக்கான்!",
+          "visual": "a secret laboratory at night with a brain scan glowing on screens and a man lying under a metal headset",
+          "characters": []
+        },
+        {
+          "narration": "அவனைக் கொன்னா, அவன் அடுத்த உடம்புக்குத் தாவிடுவான். அப்போ அவனை எப்படித் தடுக்கிறது?",
+          "visual": "the cop standing in a dark basement looking at a locked steel door, a single bulb swinging overhead",
+          "characters": [
+            "Cop"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! ஃபிலிம் ஸ்பீக்ஸ் சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "the cop's face reflected in a cracked mirror, two different reflections looking back",
+          "characters": [
+            "Cop"
+          ]
+        }
+      ]
+    }
+  ]
+}

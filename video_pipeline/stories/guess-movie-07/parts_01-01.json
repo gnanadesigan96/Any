@@ -1,0 +1,75 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "கதையை வச்சு படத்தைக் கண்டுபிடிங்க! #07",
+      "hook_text": "கதையைக் கேளுங்க!",
+      "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+      "description": "ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன?\n\nக்ளூ 1: முக்கிய கதாபாத்திரம் பேரு சுப்பு\nக்ளூ 2: தேசிய விருது வாங்கின, தமிழோட முதல் நியோ-நாய்ர் படம்னு சொல்லப்படுற படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! FilmSpeaks சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "FilmSpeaks",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "ஒரு வயசான தாதா. அவனோட வீட்டுல, ஒரு இளம் பொண்ணு அடிமை மாதிரி சிக்கியிருக்கா.",
+          "visual": "the don sitting on a carved chair in a dim old house, the young woman standing silently by a barred window",
+          "characters": [
+            "Don",
+            "Woman"
+          ]
+        },
+        {
+          "narration": "அவனோட வலது கை, ஒரு எதிரி கும்பலோட போதைப்பொருள் சரக்கைப் பத்தி ஒரு டீல் கொண்டு வர்றான். தாதா வேண்டாம்னு சொல்றான். அவன் தனியா முடிக்கக் கிளம்புறான்.",
+          "visual": "a tough henchman leaning forward and talking to the don across a table full of cigarette smoke",
+          "characters": [
+            "Don"
+          ]
+        },
+        {
+          "narration": "ஆனா, டீல் முடிஞ்சதும் அவனைக் கொல்லச் சொல்லி, தாதா ரகசியமா ஆள் அனுப்புறான்.",
+          "visual": "the don whispering an order to a thin killer in a dark corridor, a knife glinting",
+          "characters": [
+            "Don"
+          ]
+        },
+        {
+          "narration": "அவன் தப்பிச்சு ஓடுறான். சரக்கு அவன்கிட்டதான் இருக்குன்னு நினைச்சு, ரெண்டு கும்பலும் அவனைத் துரத்துது.",
+          "visual": "a wounded man running through narrow lanes at night, two gangs with weapons chasing from different directions",
+          "characters": []
+        },
+        {
+          "narration": "ஆனா அந்தச் சரக்கு, சேவல் சண்டை நடத்துற ஒரு அப்பாவும் அவனோட சின்னப் பையனும் கையில மாட்டிக்குது!",
+          "visual": "a poor father holding a fighting rooster and his young son staring at a bag of white packets in their hut",
+          "characters": [
+            "Boy"
+          ]
+        },
+        {
+          "narration": "இதுக்கு நடுவுல, தாதா வீட்டுல அந்தப் பொண்ணுக்கும், ஒரு எடுபிடிப் பையனுக்கும் காதல்.",
+          "visual": "the young woman and a shy young servant exchanging a secret glance in a dim kitchen",
+          "characters": [
+            "Woman"
+          ]
+        },
+        {
+          "narration": "எல்லாரும் எல்லாரையும் ஏமாத்துற ஒரு ஆட்டம். கடைசியில ஜெயிக்கிறது யாரு? நீங்க நினைக்கவே மாட்டீங்க!",
+          "visual": "the young woman standing alone in the empty courtyard at dusk, a faint knowing smile",
+          "characters": [
+            "Woman"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! ஃபிலிம் ஸ்பீக்ஸ் சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "a bag of money lying on a dusty road at sunset, footprints leading away",
+          "characters": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "கதையை வச்சு படத்தைக் கண்டுபிடிங்க! #17",
+      "hook_text": "கதையைக் கேளுங்க!",
+      "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+      "description": "ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன?\n\nக்ளூ 1: போலீஸ் அதிகாரி பேரு ஜே.கே.\nக்ளூ 2: சேரன் நடிச்ச, மிஷ்கின் இயக்கின படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! FilmSpeaks சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "FilmSpeaks",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "சென்னையில, அட்டைப் பெட்டிகள்ல... வெட்டப்பட்ட மனுஷக் கைகள்!",
+          "visual": "a plain cardboard box left on a busy Chennai footpath at dawn, police tape around it, nothing graphic shown",
+          "characters": []
+        },
+        {
+          "narration": "இந்த வழக்கு, ஒரு சிபிசிஐடி அதிகாரிகிட்ட வருது. காணாமப் போன தன் தங்கையை நினைச்சு, தினமும் உடைஞ்சு போயிருக்கிறவர்.",
+          "visual": "the officer sitting alone in a dim room holding a framed photo of a young woman",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "அவருக்குத் துணையா, ஒரு பெண் சப்-இன்ஸ்பெக்டரும் ஒரு டாக்டரும்.",
+          "visual": "the officer with a young woman sub-inspector and an older doctor examining files in a cramped office",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "விசாரணை, காணாமப் போன இன்னொரு இளம் பொண்ணுகிட்ட போய் நிக்குது.",
+          "visual": "a missing-person poster of a young woman on a wet wall at night, the officer looking at it",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "ஒவ்வொரு தடயமும், பெரிய அதிகாரம் உள்ள மனுஷங்களை நோக்கிப் போகுது. மேல இருந்து அழுத்தம்.",
+          "visual": "powerful men in white shirts in a smoky room, a senior police officer warning the officer in a corridor",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "இந்தக் கைகளை வெட்டுறது யாரு? ஏன்? இது சாதாரண கொலை இல்ல... கணக்கு போட்ட பழிவாங்கல்!",
+          "visual": "a shadowy figure carefully sealing a cardboard box with tape in a dark room",
+          "characters": []
+        },
+        {
+          "narration": "நீதி கிடைக்காதவங்க, தங்களுக்கான நீதியைத் தாங்களே தேடினா என்ன ஆகும்?",
+          "visual": "an airplane taking off into a grey dawn sky",
+          "characters": []
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! ஃபிலிம் ஸ்பீக்ஸ் சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "the officer standing alone on a rooftop at night, looking over the city",
+          "characters": [
+            "Officer"
+          ]
+        }
+      ]
+    }
+  ]
+}
