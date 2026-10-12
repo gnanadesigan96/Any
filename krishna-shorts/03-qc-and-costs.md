@@ -31,6 +31,7 @@ Watch the export **on a phone, full-screen, at normal volume**, then once more m
 ### Audio
 - [ ] Dialogue is always clearly louder than the music
 - [ ] Music isn't continuous wall-to-wall; silence used at key moments (the kolusu beat, the reveal)
+- [ ] Every situation has its planned BGM cue and the mood matches ([BGM checklist](05-music-bgm-plan.md#7-bgm-checklist-add-to-qc))
 - [ ] SFX line up with on-screen action (pot crash, anklets)
 - [ ] Final loudness ≈ −14 LUFS, no clipping
 

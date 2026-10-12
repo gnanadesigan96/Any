@@ -15,6 +15,7 @@ A production kit for making cinematic 60-second Tamil Shorts/Reels about Lord Kr
 | [episodes/ep01-subtitles.srt](episodes/ep01-subtitles.srt) | Tamil subtitle file for Short #1, timed to the shot list |
 | [03-qc-and-costs.md](03-qc-and-costs.md) | Quality-control checklist, cost estimate, regeneration budget |
 | [04-voices-and-cinematic-flow.md](04-voices-and-cinematic-flow.md) | **Tamil voice casting** matched to every character's age and gender, plus the rules that make the episode flow like a movie (animatic, continuity, sound design) |
+| [05-music-bgm-plan.md](05-music-bgm-plan.md) | **BGM plan:** catchy series themes (title song, Kannan, Yashoda, gang, chase, divine, Kamsa, lullaby), a cue sheet for every situation in Episode 1, and prompts for action, romance, sad, festival and more |
 | [GEMINI-GUIDE.md](GEMINI-GUIDE.md) | **How to use all this in Gemini and Flow**, click by click |
 | [GEMINI-PROMPT-PACK.md](GEMINI-PROMPT-PACK.md) | Every image and video prompt, complete and ready to copy-paste |
 | [templates/episode-template.md](templates/episode-template.md) | Blank template for every future episode |

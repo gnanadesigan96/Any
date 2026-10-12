@@ -392,6 +392,8 @@ tiny stars and galaxies reflected in her pupils, mouth slightly open, jasmine in
 - Reject any result where teeth flicker or the jaw warps; regenerate with a cleaner, front-facing clip.
 
 ### E3. Music (Suno, instrumental)
+> The **full BGM plan** (series themes, a cue-by-cue sheet for this Short, and catchy prompts for every situation) is in [05-music-bgm-plan.md](../05-music-bgm-plan.md#4-short-1-வெண்ணெய்-திருடன்-60-s-cue-sheet). It replaces the quick list below.
+
 | Cue | Time | Suno prompt |
 |---|---|---|
 | Series motif (reuse every episode) | 0:03–0:05 & end card | `Solo bamboo flute (bansuri) four-note playful devotional motif, Indian classical, short sting, 4 seconds, instrumental` |

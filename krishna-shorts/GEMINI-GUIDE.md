@@ -55,7 +55,7 @@ Rules:
 - Tone: family-friendly, playful, devotional, never mocking, never gory.
 ```
 4. **Knowledge:** click **Add files** and upload:
-   `00-series-foundation.md`, `02-series-bible.md`, `02b-character-prompts-tamil.md`, `04-voices-and-cinematic-flow.md`, `episodes/ep01-screenplay.md`, `episodes/ep01-long-kokulathin-kutti-thirudan.md`
+   `00-series-foundation.md`, `02-series-bible.md`, `02b-character-prompts-tamil.md`, `04-voices-and-cinematic-flow.md`, `05-music-bgm-plan.md`, `episodes/ep01-screenplay.md`, `episodes/ep01-long-kokulathin-kutti-thirudan.md`
    *If it won't accept `.md` files, rename them to `.txt`, or open each one, copy the text into a Google Doc, and attach the Docs.*
 5. Click **Save**.
 
