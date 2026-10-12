@@ -259,6 +259,8 @@ def cmd_interactive(key, voices):
         if v.get("child"):
             print(f"\n{v['name']}: skipped (child voice; pick one from the Voice Library, see pipeline/README.md)")
             continue
+        if v.get("stage") in ("youth", "adult", "older"):
+            continue  # later life stages: create when their part begins (preview <name>)
         if v["name"] in existing:
             print(f"\n{v['name']} already exists in your ElevenLabs account; skipping.")
             continue
