@@ -125,12 +125,13 @@ For each character: description to use in **ElevenLabs → Voices → Voice Desi
 | **Settings** | Stability 55% · Style 30% · Speed 0.9 |
 | **Test line** | `டேய் கண்ணா, அம்மா சொல்றதைக் கேளு.` |
 
-### கதைசொல்லி (Narrator): strong young man, ~28
+### கதைசொல்லி (Narrator): young storyteller, male or female (~25–30)
 | | |
 |---|---|
 | **Sound** | Deep yet youthful, confident and charismatic, with controlled intensity that grips the audience. Crisp Tamil, dramatic pauses, and energy that rises at the big moments. **The series' signature voice** |
 | **Voice Design prompt** | `Strong, gripping voice of a confident young Tamil man in his late twenties, native Tamil speaker, deep yet youthful, powerful and charismatic, crisp clear Tamil diction, natural colloquial Tamil, controlled intensity that holds the listener's attention, dramatic pauses, energy rising at key moments, cinematic storyteller.` |
 | **Other styles to try** | `young_intense` (husky, suspenseful) · `young_warm` (friendly, talks straight to the viewer) · `young_heroic` (epic, devotional). Use `python3 ../tools/create_elevenlabs_voices.py preview KK_Narrator:all` |
+| **Female styles** | `female_sweet` (soft, melodious, smiling) · `female_bright` (cheerful, talks to the viewer) · `female_devotional` (serene, musical) · `female_cinematic` (velvety, emotional). Use `preview KK_Narrator:female` |
 | **Settings** | Stability 45% · Style 45% · Speed 1.0 |
 | **Test line** | `கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்!` |
 

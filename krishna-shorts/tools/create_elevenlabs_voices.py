@@ -12,6 +12,7 @@ Easiest (interactive, on your own computer):
 Two-step (no prompts; useful when someone else runs it for you):
     python create_elevenlabs_voices.py preview [KK_Kannan KK_Yashoda ...]
     python create_elevenlabs_voices.py preview KK_Narrator:all          # every narrator style
+    python create_elevenlabs_voices.py preview KK_Narrator:female       # only the female styles (or :male)
     python create_elevenlabs_voices.py preview KK_Narrator:cinematic+paati
         -> writes voice_previews/<name>_1.mp3 .. _3.mp3 and previews.json
     python create_elevenlabs_voices.py save KK_Kannan=2 KK_Yashoda=1 ...
@@ -197,7 +198,10 @@ def expand_variants(voices, args):
             out.append(v)
             continue
         variants = v.get("variants", {})
-        names = list(variants) if var == "all" else var.split("+")
+        groups = {"all": list(variants),
+                  "female": [k for k in variants if k.startswith("female_")],
+                  "male": [k for k in variants if not k.startswith("female_")]}
+        names = groups.get(var) or var.split("+")
         for vn in names:
             if vn not in variants:
                 sys.exit(f"{name} has no variant '{vn}'. Available: {', '.join(variants) or 'none'}")

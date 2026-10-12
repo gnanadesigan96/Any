@@ -15,7 +15,7 @@
   },
   {
     "name": "KK_Narrator",
-    "character": "கதைசொல்லி (Narrator), strong young man ~28",
+    "character": "கதைசொல்லி (Narrator), young storyteller",
     "description": "Strong, gripping voice of a confident young Tamil man in his late twenties, native Tamil speaker, deep yet youthful, powerful and charismatic, crisp clear Tamil diction, natural colloquial Tamil, controlled intensity that holds the listener's attention, dramatic pauses, energy rising at key moments, cinematic storyteller.",
     "text": "கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்! யசோதா அம்மா நினைச்சாங்க... பிரச்சனை முடிஞ்சதுன்னு. ஆனா கண்ணனுக்கு... இது ஆரம்பம் தான்!",
     "child": false,
@@ -23,7 +23,11 @@
       "young_strong": "Strong, gripping voice of a confident young Tamil man in his late twenties, native Tamil speaker, deep yet youthful, powerful and charismatic, crisp clear Tamil diction, natural colloquial Tamil, controlled intensity that holds the listener's attention, dramatic pauses, energy rising at key moments, cinematic storyteller.",
       "young_intense": "Intense, magnetic young Tamil male voice around thirty, native Tamil speaker, deep and slightly husky, cinematic trailer energy but natural, suspenseful and commanding, crisp Tamil diction, builds tension and then releases it.",
       "young_warm": "Warm but strong young Tamil man in his late twenties, native Tamil speaker, confident and friendly like a popular Tamil storyteller talking straight to the audience, energetic, expressive, a smile in the voice, clear colloquial Tamil that keeps viewers hooked.",
-      "young_heroic": "Bold, heroic young Tamil male voice in his early thirties, native Tamil speaker, rich and resonant, epic and devotional like the voice of a mythological hero, powerful projection, clear Tamil diction, inspiring and gripping."
+      "young_heroic": "Bold, heroic young Tamil male voice in his early thirties, native Tamil speaker, rich and resonant, epic and devotional like the voice of a mythological hero, powerful projection, clear Tamil diction, inspiring and gripping.",
+      "female_sweet": "Sweet, melodious voice of a young Tamil woman in her mid-twenties, native Tamil speaker, soft yet clear and expressive, a warm smile in the voice, natural colloquial Tamil, gentle storytelling with lovely pauses, enchanting and easy to listen to.",
+      "female_bright": "Bright, cheerful young Tamil woman in her mid-twenties, native Tamil speaker, sweet and lively, an expressive storyteller who talks straight to the audience, clear colloquial Tamil, playful and engaging.",
+      "female_devotional": "Sweet, serene young Tamil woman in her twenties with a musical, devotional quality, native Tamil speaker, soft and graceful like a bhajan singer speaking, clear Tamil diction, calm and moving.",
+      "female_cinematic": "Sweet but confident young Tamil woman in her late twenties, native Tamil speaker, cinematic narrator, velvety and emotional, holds attention with gentle intensity and dramatic pauses, crisp Tamil diction."
     }
   },
   {
