@@ -1,0 +1,39 @@
+{
+  "series_title": "கடைசிப் புகைப்படம்",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic horror film still, old Chennai apartment building at night, cold desaturated blue-green colour grade with sickly yellow tungsten practical lights, deep black shadows, rain and drifting mist, 35mm anamorphic lens, fine film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Arjun",
+      "look": "Tamil man aged 27, wheatish-brown skin, short dark black hair, light stubble beard, lean build, average height, plain black crew-neck t-shirt, dark blue-black jeans"
+    },
+    {
+      "name": "Meera",
+      "look": "ghost of a Tamil woman about 25, deathly pale grey skin, very long wet black hair, faded old white cotton nightgown, barefoot, hollow unblinking dark eyes"
+    },
+    {
+      "name": "Watchman",
+      "look": "Tamil night watchman aged 60, thin build, short grey hair, thick grey moustache, faded khaki uniform shirt, tired heavy-lidded eyes, deep wrinkles"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "பின்னால் நிற்பது யார்?",
+      "summary": "At 3 a.m. Arjun, new tenant of a cheap old building, gets a photo of himself asleep, taken inside his locked room. A second photo shows a long-haired woman behind his bed; she comes closer in each photo. The watchman calls: don't turn around, I can see you on camera.",
+      "cliffhanger": "The watchman screams that she is standing right behind him; Arjun slowly turns."
+    },
+    {
+      "part": 2,
+      "title": "இறந்த பெண்",
+      "summary": "Arjun runs to the watchman's room. The CCTV shows two Arjuns in his room, one standing still. The watchman shows a newspaper: Meera died in that room ten years ago, and everyone here gets her photo before they die. The paper is dated tomorrow, with Arjun's photo.",
+      "cliffhanger": "On the monitor Meera stands behind the watchman, finger on her lips: he must not learn the truth yet."
+    },
+    {
+      "part": 3,
+      "title": "உண்மையான பேய் யார்?",
+      "summary": "Meera sent the photos to warn Arjun. The watchman is a demon who takes the faces of the people he kills and wears them to fool the next one; it killed Meera ten years ago. His face cracks to reveal Arjun's face. Meera pulls Arjun out into the rain.",
+      "cliffhanger": "A last photo shows the watchman behind Arjun outside; across the road the demon smiles, wearing Arjun's face."
+    }
+  ]
+}

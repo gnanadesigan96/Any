@@ -130,8 +130,10 @@ def _final_mix(work_dir: Path, video: str, narration: str, ass: str, out: Path, 
     the subtitles filter never needs path escaping."""
     v = cfg["video"]
     args = ["-i", video, "-i", narration]
-    vf = f"[0:v]subtitles=filename={ass}:fontsdir={Path(find_font_file(v['caption_font'])).parent}[v]" \
-        if ass else "[0:v]null[v]"
+    # The ass filter with complex shaping: Tamil (and other Indic scripts) need their vowel signs reordered and
+    # joined; the plain subtitles filter draws them in typing order, e.g. பெண் as "பணெ".
+    vf = (f"[0:v]ass=filename={ass}:fontsdir={Path(find_font_file(v['caption_font'])).parent}:shaping=complex[v]"
+          if ass else "[0:v]null[v]")
     loud = f"loudnorm=I={v['loudness_lufs']}:TP=-1.5:LRA=11"
     if music and score:  # generated score is timed to this video: no looping, no fades
         args += ["-i", music]

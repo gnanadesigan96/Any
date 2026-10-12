@@ -91,6 +91,12 @@ class ElevenLabsVoice:
             self.v["voice_id"] = match[0]["voice_id"]
 
     def synthesize(self, text: str, prev_text: str, next_text: str, out_mp3: Path) -> list:
+        audio, alignment = self._request(text, prev_text, next_text)
+        out_mp3.write_bytes(audio)
+        words = alignment_to_words(alignment)
+        return words or _even_words(text, media_duration(out_mp3))
+
+    def _request(self, text: str, prev_text: str = "", next_text: str = "") -> tuple:
         v3 = self.v["model_id"].startswith("eleven_v3")
         stability = self.v["stability"]
         if v3:  # v3 only takes 0 (creative), 0.5 (natural) or 1 (robust)
@@ -104,21 +110,60 @@ class ElevenLabsVoice:
                 "style": self.v["style"],
             },
         }
+        if self.v.get("seed") is not None:  # the same seed keeps the voice the same from part to part
+            body["seed"] = int(self.v["seed"])
         if not v3:  # neighbouring text keeps intonation continuous across scenes (v3 doesn't support it)
             body.update(previous_text=prev_text or None, next_text=next_text or None)
         resp = requests.post(
             ELEVEN_URL.format(voice_id=self.v["voice_id"]),
             params={"output_format": "mp3_44100_128"},
             headers={"xi-api-key": self.key, "Content-Type": "application/json"},
-            json=body, timeout=180,
+            json=body, timeout=300,
         )
         if resp.status_code != 200:
             raise RuntimeError(f"ElevenLabs error {resp.status_code}: {resp.text[:300]}")
         data = resp.json()
-        out_mp3.write_bytes(base64.b64decode(data["audio_base64"]))
-        alignment = data.get("alignment") or data.get("normalized_alignment") or {}
-        words = alignment_to_words(alignment)
-        return words or _even_words(text, media_duration(out_mp3))
+        return base64.b64decode(data["audio_base64"]), data.get("alignment") or data.get("normalized_alignment") or {}
+
+    def synthesize_many(self, texts: list, out_mp3s: list) -> list:
+        """Voices all of a part's scenes in ONE request, so it is one continuous performance in one voice (separate
+        requests drift, especially on eleven_v3), then cuts it into scenes between their words, using ElevenLabs'
+        character timings."""
+        texts = [t.strip() for t in texts]
+        joined = "\n\n".join(texts)
+        audio, alignment = self._request(joined)
+        whole = out_mp3s[0].with_name(out_mp3s[0].stem + ".all.mp3")
+        whole.write_bytes(audio)
+        total = media_duration(whole)
+        chars = alignment.get("characters") or []
+        starts = alignment.get("character_start_times_seconds") or []
+        ends = alignment.get("character_end_times_seconds") or []
+        offsets, o = [], 0
+        for t in texts:
+            offsets.append(o)
+            o += len(t) + 2
+        aligned = "".join(chars) == joined and len(starts) == len(chars) == len(ends)
+        if aligned:
+            cuts = [0.0]
+            for i in range(1, len(texts)):
+                last = ends[offsets[i - 1] + len(texts[i - 1]) - 1]
+                cuts.append(round(max((last + starts[offsets[i]]) / 2, cuts[-1] + 0.05), 3))
+            cuts.append(round(total, 3))
+        else:  # timings that don't line up with the text: cut at the pauses instead
+            cuts = scene_cuts(texts, total, find_silences(whole, 0.2, -35))
+        out = []
+        for i, (mp3, a, b) in enumerate(zip(out_mp3s, cuts, cuts[1:])):
+            run_ffmpeg(["-i", whole, "-ss", f"{a:.3f}", "-to", f"{b:.3f}", "-c:a", "libmp3lame", "-q:a", "2", mp3])
+            if aligned:
+                sl = slice(offsets[i], offsets[i] + len(texts[i]))
+                words = [[w, round(x - a, 3), round(y - a, 3)] for w, x, y in alignment_to_words(
+                    {"characters": chars[sl], "character_start_times_seconds": starts[sl],
+                     "character_end_times_seconds": ends[sl]})]
+            else:
+                words = _spread_sentences(texts[i], b - a)
+            out.append(words)
+        whole.unlink()
+        return out
 
 
 KOKORO_RELEASE = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
@@ -536,6 +581,21 @@ def make_voice(cfg: dict, dry_run: bool):
     raise RuntimeError(f"Unknown voice.provider '{provider}'")
 
 
+CUE = re.compile(r"\[[^\]]*\]")  # eleven_v3 delivery cues such as [whispers]
+
+
+def _for_voice(text: str, cfg: dict, dry_run: bool) -> str:
+    """Delivery cues are performed by eleven_v3; every other voice would read them out, so they are removed."""
+    v = cfg["voice"]
+    if not dry_run and v["provider"] == "elevenlabs" and v.get("model_id", "").startswith("eleven_v3"):
+        return text
+    return re.sub(r"\s{2,}", " ", CUE.sub("", text)).strip()
+
+
+def _no_cues(words: list) -> list:
+    return [w for w in words if not CUE.fullmatch(w[0].strip())]
+
+
 def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> list:
     """Returns per-scene timing: [{audio, duration, words}] (word times relative to the scene)."""
     audio_dir = run_dir / "audio"
@@ -547,7 +607,7 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
     vc = cfg["voice"]
     sig = "dry" if dry_run else json.dumps(
         [vc["provider"], vc.get("voice_id"), vc.get(vc["provider"]) if vc["provider"] in ("kokoro", "edge", "gemini") else None]
-        + ([vc.get(k) for k in ("model_id", "stability", "similarity_boost", "style")]
+        + ([vc.get(k) for k in ("model_id", "stability", "similarity_boost", "style", "seed")]
            if vc["provider"] == "elevenlabs" else []),
         sort_keys=True)
 
@@ -565,7 +625,8 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
         prev_text = scenes[i - 1].narration if i > 0 else ""
         next_text = scenes[i + 1].narration if i + 1 < len(scenes) else ""
         mp3.with_suffix(".voice.mp3").unlink(missing_ok=True)  # the old line's untouched copy is stale now
-        words = voice.synthesize(scenes[i].narration, prev_text, next_text, mp3)
+        words = _no_cues(voice.synthesize(_for_voice(scenes[i].narration, cfg, dry_run), _for_voice(prev_text, cfg, dry_run),
+                                          _for_voice(next_text, cfg, dry_run), mp3))
         return i, {"text": scenes[i].narration, "audio": mp3.name, "sig": sig,
                    "duration": media_duration(mp3), "words": words}
 
@@ -578,9 +639,10 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
             mp3s = [audio_dir / f"scene_{i:03d}.mp3" for i in todo]
             for mp3 in mp3s:
                 mp3.with_suffix(".voice.mp3").unlink(missing_ok=True)
-            for i, mp3, words in zip(todo, mp3s, voice.synthesize_many([scenes[i].narration for i in todo], mp3s)):
+            texts = [_for_voice(scenes[i].narration, cfg, dry_run) for i in todo]
+            for i, mp3, words in zip(todo, mp3s, voice.synthesize_many(texts, mp3s)):
                 cached[str(i)] = {"text": scenes[i].narration, "audio": mp3.name, "sig": sig,
-                                  "duration": media_duration(mp3), "words": words}
+                                  "duration": media_duration(mp3), "words": _no_cues(words)}
             write_json(timing_path, cached)
     with ThreadPoolExecutor(max_workers=max(1, cfg["voice"]["workers"])) as pool:
         for i, info in pool.map(work, range(len(scenes))):

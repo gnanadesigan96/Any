@@ -29,6 +29,7 @@ DEFAULTS = {
         "provider": "elevenlabs",
         "voice_id": "",
         "model_id": "eleven_multilingual_v2",
+        "seed": 7,                # same seed = the same delivery of the voice in every part
         "stability": 0.45,
         "similarity_boost": 0.8,
         "style": 0.15,
@@ -91,6 +92,7 @@ DEFAULTS = {
         "motion": {"strength": 1.2, "handheld": 0.8, "depth_of_field": 0.8, "dust": True},
         "title_style": "tag",     # a small, neat "PART N" label at the top ("banner" = big yellow title)
         "voice_tempo": 1.1,       # narration a little quicker than the voice speaks (1.0 = as spoken)
+        "part_seconds": 0,        # e.g. 60: fit every part to exactly this length (pace 0.9x-1.3x + a quiet end)
         "voice_speed": 0.95,      # storytelling pace: a little slower and more dramatic than fact Shorts
         "sentence_pause": 0.2,
         # Narration language. English uses Kokoro; other languages use the free Edge voices unless

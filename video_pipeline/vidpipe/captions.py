@@ -55,7 +55,7 @@ def write_ass(phrases: list, path: Path, width: int, height: int, font: str, ver
         size, margin_v, align, outline = int(height * 0.062), int(height * 0.07), 2, 4
     if title_style == "tag":
         title_line = (f"Style: Title,{font},{int(size * 0.5)},&H00FFFFFF,&H00FFFFFF,&H5A000000,&H00000000,-1,0,0,0,"
-                      f"100,100,{max(1, size // 25)},0,3,{max(6, size // 5)},0,8,0,0,{int(height * 0.06)},1")
+                      f"100,100,0,0,3,{max(6, size // 5)},0,8,0,0,{int(height * 0.06)},1")  # no letter spacing: it splits Tamil letters
     else:
         title_line = (f"Style: Title,{font},{int(size * 1.15)},&H0000D7FF,&H0000D7FF,&H00000000,&H80000000,-1,0,0,0,"
                       f"100,100,0,0,1,{outline + 1},1,8,{int(width * 0.07)},{int(width * 0.07)},{int(height * 0.12)},1")

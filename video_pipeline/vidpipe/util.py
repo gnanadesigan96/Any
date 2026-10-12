@@ -25,7 +25,7 @@ def require_binary(name: str) -> None:
 def check_ffmpeg_features(need_captions: bool) -> None:
     """Fail early (before any paid work) if this ffmpeg build lacks what the renderer uses."""
     out = subprocess.run(["ffmpeg", "-hide_banner", "-filters"], capture_output=True, text=True).stdout
-    missing = [f for f in (["subtitles"] if need_captions else []) + ["zoompan", "loudnorm"]
+    missing = [f for f in (["ass"] if need_captions else []) + ["zoompan", "loudnorm"]
                if f" {f} " not in out]
     encoders = subprocess.run(["ffmpeg", "-hide_banner", "-encoders"], capture_output=True, text=True).stdout
     missing += [e for e in ("libx264", "libmp3lame") if e not in encoders]

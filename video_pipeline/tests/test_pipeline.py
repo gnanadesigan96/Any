@@ -1084,3 +1084,76 @@ def test_elevenlabs_voice_by_name_and_preview(cfg, tmp_path, monkeypatch, capsys
     paths = voice.preview_eleven_voices(cfg, "ஒன்று இரண்டு", tmp_path / "f", [], gender="female")
     assert [p.name for p in paths] == ["library_Priya_Tamil.mp3", "eleven_Kavitha_warm_eleven_multilingual_v2.mp3"]
     assert "Tamil Storyteller" not in capsys.readouterr().out
+
+
+def test_elevenlabs_voices_a_part_in_one_request_and_cuts_between_words(cfg, tmp_path, monkeypatch):
+    import base64
+    import types
+    from vidpipe import voice
+    texts = ["ஒன்று இரண்டு.", "[whispers] மூன்று நான்கு."]
+    joined = "\n\n".join(texts)
+    mp3 = tmp_path / "src.mp3"
+    voice.run_ffmpeg(["-f", "lavfi", "-i", "sine=f=220:d=6", "-c:a", "libmp3lame", mp3])
+    # Character timings: scene 1 spoken 0-2s, scene 2 from 3.5s to 6s.
+    starts, ends = [], []
+    for i, ch in enumerate(joined):
+        t = 2.0 * i / len(texts[0]) if i < len(texts[0]) + 2 else 3.5 + 2.5 * (i - len(texts[0]) - 2) / len(texts[1])
+        starts.append(round(min(t, 5.9), 3)), ends.append(round(min(t + 0.05, 6.0), 3))
+    sent = []
+
+    class R:
+        status_code, text = 200, ""
+
+        def json(self):
+            return {"audio_base64": base64.b64encode(mp3.read_bytes()).decode(),
+                    "alignment": {"characters": list(joined), "character_start_times_seconds": starts,
+                                  "character_end_times_seconds": ends}}
+
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "k")
+    monkeypatch.setattr(voice.requests, "post", lambda url, **kw: sent.append(kw["json"]) or R())
+    cfg["voice"].update(provider="elevenlabs", voice_id="G" * 20, model_id="eleven_v3", seed=7)
+    scenes = [types.SimpleNamespace(narration=t) for t in texts]
+    timing = voice.narrate_scenes(scenes, tmp_path, cfg, dry_run=False)
+    assert len(sent) == 1 and sent[0]["text"] == joined and sent[0]["seed"] == 7  # cue kept for v3
+    assert 2.4 < timing[0]["duration"] < 3.1 and 2.9 < timing[1]["duration"] < 3.6
+    assert [w[0] for w in timing[1]["words"]] == ["மூன்று", "நான்கு."]  # no [whispers] in the captions
+    assert 0 < timing[1]["words"][0][1] < 2.5  # times are relative to the scene's own start, not the part's
+
+
+def test_delivery_cues_are_removed_for_other_voices(cfg, tmp_path):
+    import types
+    from vidpipe.voice import narrate_scenes
+    timing = narrate_scenes([types.SimpleNamespace(narration="[whispers] ஒன்று இரண்டு")], tmp_path, cfg, dry_run=True)
+    assert [w[0] for w in timing[0]["words"]] == ["ஒன்று", "இரண்டு"]
+
+
+def test_parts_fit_an_exact_length(cfg, tmp_path):
+    import types
+    from vidpipe.pipeline import _fit_length, shorts_config
+    from vidpipe.voice import narrate_scenes
+    vcfg = shorts_config(cfg)
+    scenes = [types.SimpleNamespace(narration=" ".join(["சொல்"] * 26)) for _ in range(2)]
+    short = types.SimpleNamespace(scenes=scenes)
+    timing = narrate_scenes(scenes, tmp_path, vcfg, dry_run=True)  # ~20.5s at the dummy voice's pace
+    vcfg["shorts"]["part_seconds"] = 20
+    kcfg, fitted = _fit_length(short, tmp_path, vcfg, timing, True)
+    assert kcfg["voice"]["tempo"] > 1.0 and abs(sum(t["duration"] for t in fitted) - 20) < 0.01
+    vcfg["shorts"]["part_seconds"] = 30  # too short to stretch at 0.9x: the last scene holds instead
+    kcfg, fitted = _fit_length(short, tmp_path, vcfg, timing, True)
+    assert kcfg["voice"]["tempo"] == 0.9 and abs(sum(t["duration"] for t in fitted) - 30) < 0.01
+
+
+def test_tamil_story_is_tamil_on_screen(cfg):
+    from vidpipe import series
+    root = ROOT / "stories/kadaisi-pugaippadam"
+    bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
+    eps = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-03.json").read_text())).episodes
+    ui = series.ui_text(cfg, bible, eps)
+    pack = series.to_pack(bible, eps, ui)
+    assert [s.hook_text for s in pack.shorts] == ["பாகம் 1", "பாகம் 2", "பாகம் 3"]
+    assert pack.shorts[0].title == "பின்னால் நிற்பது யார்? | கடைசிப் புகைப்படம் பாகம் 1"
+    ov = series.overlays_for(bible, eps, cfg)
+    tamil = lambda t: all(not ("a" <= ch.lower() <= "z") for ch in t)  # noqa: E731
+    assert all(tamil(v) for o in ov for v in o.values()) and "subtitles" not in ov[0]
+    assert all(tamil(series.CUE.sub("", s.narration) if hasattr(series, "CUE") else s.narration.replace("[whispers]", ""))
+               for e in eps for s in e.scenes)

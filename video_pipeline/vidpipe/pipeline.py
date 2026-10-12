@@ -197,7 +197,7 @@ def shorts_config(cfg: dict) -> dict:
     return vcfg
 
 
-RENDER_VERSION = 2  # bump when the look/sound of renders changes, so existing videos are rebuilt
+RENDER_VERSION = 3  # bump when the look/sound of renders changes, so existing videos are rebuilt
 
 
 def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
@@ -210,6 +210,8 @@ def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
             cfg["voice"].get("kokoro"), cfg["voice"].get("provider")]
     if cfg["voice"].get("tempo", 1.0) != 1.0:
         data.append({"tempo": cfg["voice"]["tempo"]})
+    if cfg["shorts"].get("part_seconds"):
+        data.append({"part_seconds": cfg["shorts"]["part_seconds"]})
     if cfg["voice"].get("provider") in ("edge", "gemini"):
         data.append(cfg["voice"].get(cfg["voice"]["provider"]))
     elif cfg["voice"].get("provider") == "elevenlabs":
@@ -228,6 +230,32 @@ def _subtitle_timing(subtitles: list, timing: list) -> list:
     return out
 
 
+END_HOLD = 1.5  # seconds of quiet after the last line, under the end card
+
+
+def _fit_length(short, sub: Path, vcfg: dict, timing: list, dry_run: bool) -> tuple:
+    """With shorts.part_seconds set, make each Short exactly that long: the narration's pace is adjusted (within
+    0.9x-1.3x of the voice's own speed, re-using the recording) so it ends END_HOLD seconds early, and the last scene
+    holds for the rest. Returns the config and timing to render with."""
+    target = float(vcfg["shorts"].get("part_seconds") or 0)
+    if not target:
+        return vcfg, timing
+    tempo = float(vcfg["voice"].get("tempo", 1.0))
+    raw = sum(t["duration"] for t in timing) * tempo  # length at the voice's own speed
+    want = round(min(max(raw / max(target - END_HOLD, 1.0), 0.9), 1.3), 3)
+    kcfg = copy.deepcopy(vcfg)
+    kcfg["voice"]["tempo"] = want
+    if abs(want - tempo) > 1e-3:
+        timing = narrate_scenes(short.scenes, sub, kcfg, dry_run)
+    total = sum(t["duration"] for t in timing)
+    if total > target + 0.05:
+        log(f"  Warning: the narration needs {total:.1f}s even at {want}x; shorten the script to fit {target:.0f}s")
+    timing = [dict(t) for t in timing]
+    timing[-1]["duration"] += max(target - total, 0.0)
+    log(f"  pace {want}x to fit {target:.0f}s")
+    return kcfg, timing
+
+
 def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assume_yes: bool,
                  regenerated: bool, prefix: str = "short", limit: int = 0, overlays: list = None) -> Path:
     """Renders each item of pack.shorts as <prefix>_<k>.mp4. `limit` renders only the first N."""
@@ -243,13 +271,14 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
         sub.mkdir(exist_ok=True)
         log(f"{prefix.title()} {k}/{len(pack.shorts)}: {short.title}")
         timing = narrate_scenes(short.scenes, sub, vcfg, dry_run)
+        kcfg, timing = _fit_length(short, sub, vcfg, timing, dry_run)
         log(f"  narration: {sum(t['duration'] for t in timing):.1f}s")
         siblings = [run_dir / n / "images" for j, n in enumerate(names, start=1) if j != k]
-        paths = _visuals(short.scenes, timing, sub / "images", vcfg, dry_run, used_ids(siblings),
+        paths = _visuals(short.scenes, timing, sub / "images", kcfg, dry_run, used_ids(siblings),
                          library=run_dir / "library")
         out = run_dir / f"{names[k - 1]}.mp4"
         overlay = (overlays or [{}] * len(pack.shorts))[k - 1]
-        stamp, fp = sub / "fingerprint.txt", _fingerprint(short, overlay, paths, vcfg)
+        stamp, fp = sub / "fingerprint.txt", _fingerprint(short, overlay, paths, kcfg)
         # No stamp = rendered by an older version of the pipeline: rebuild it too, to be safe.
         if (stamp.exists() and stamp.read_text() != fp) or (not stamp.exists() and out.exists()):
             log("  script or settings changed since the last render; re-rendering this one")
@@ -259,7 +288,7 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
             video = sub / "video.mp4"
             if not video.exists():
                 subs = overlay.get("subtitles")
-                render_main(sub, paths, _subtitle_timing(subs, timing) if subs else timing, vcfg,
+                render_main(sub, paths, _subtitle_timing(subs, timing) if subs else timing, kcfg,
                             title=short.hook_text, scene_texts=[f"{sc.visual} {sc.narration}" for sc in short.scenes],
                             overlay={k: v for k, v in overlay.items() if k != "subtitles"})
             shutil.copyfile(video, out)

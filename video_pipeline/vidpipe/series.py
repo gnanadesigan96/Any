@@ -67,9 +67,10 @@ COMMON_RULES = """Rules for retelling:
 
 # On-screen words of the end cards, per narration language.
 UI_TEXT = {
-    "english": {"part": "Part {n} →", "next": "Next: {title}", "end": "The End", "follow": "Follow for the next story"},
+    "english": {"part": "Part {n} →", "next": "Next: {title}", "end": "The End", "follow": "Follow for the next story",
+                "tag": "PART {n}", "of": "Part {n} of {total}."},
     "tamil": {"part": "பாகம் {n} →", "next": "அடுத்து: {title}", "end": "முடிவு",
-              "follow": "அடுத்த கதைக்கு Follow பண்ணுங்க"},
+              "follow": "அடுத்த கதைக்குக் காத்திருங்கள்", "tag": "பாகம் {n}", "of": "பாகம் {n} / {total}."},
 }
 
 
@@ -271,16 +272,24 @@ def image_prompt(scene: StoryScene, bible: SeriesBible) -> str:
     return text
 
 
-def to_pack(bible: SeriesBible, episodes: list) -> ShortsPack:
+def ui_text(cfg: dict, bible: SeriesBible, episodes: list) -> dict:
+    """On-screen words: English when English subtitles are shown, otherwise the narration's language."""
+    if has_subtitles(episodes):
+        return UI_TEXT["english"]
+    return UI_TEXT.get(language_of(cfg, bible).lower(), UI_TEXT["english"])
+
+
+def to_pack(bible: SeriesBible, episodes: list, ui: dict = None) -> ShortsPack:
     """Express the series as a ShortsPack so the Shorts renderer, review and upload code apply."""
     total = len(episodes)
+    ui = ui or UI_TEXT["english"]
     shorts = []
     for e in episodes:
         hashtags = ["#" + h.strip().lstrip("#").replace(" ", "") for h in e.hashtags if h.strip("# ")][:5]
         shorts.append(ShortVideo(
-            title=f"{e.title} | {bible.series_title} Part {e.part}"[:100],
-            hook_text=f"PART {e.part}",  # a small tag; the movie's name is never shown on screen
-            description=f"{e.description.strip()}\n\nPart {e.part} of {total}.",
+            title=f"{e.title} | {bible.series_title} {ui['tag'].format(n=e.part).title()}"[:100],
+            hook_text=ui["tag"].format(n=e.part),  # a small tag; the story's name is never shown on screen
+            description=f"{e.description.strip()}\n\n{ui['of'].format(n=e.part, total=total)}",
             hashtags=hashtags,
             scenes=[Scene(narration=s.narration, visual=image_prompt(s, bible), search_query="") for s in e.scenes],
             fact_check=[FactClaim(claim="(story retelling - no factual claims)", source="n/a")],
@@ -292,7 +301,7 @@ def overlays_for(bible: SeriesBible, episodes: list, cfg: dict) -> list:
     if not cfg["series"].get("hook_card", True):
         return [{} for _ in episodes]
     subtitled = has_subtitles(episodes)  # on-screen text in English, whatever language is spoken
-    ui = UI_TEXT["english"] if subtitled else UI_TEXT.get(language_of(cfg, bible).lower(), UI_TEXT["english"])
+    ui = ui_text(cfg, bible, episodes)
     out = []
     for i, e in enumerate(episodes):
         if i + 1 < len(episodes):
@@ -317,6 +326,7 @@ def series_config(cfg: dict, bible: SeriesBible, episodes: list = ()) -> dict:
     scfg["video"]["animation"] = cfg["series"]["animation"]
     scfg["video"]["title_style"] = cfg["series"].get("title_style", "tag")
     scfg["voice"]["tempo"] = cfg["series"].get("voice_tempo", 1.0)
+    scfg["shorts"]["part_seconds"] = cfg["series"].get("part_seconds", 0)
     scfg["images"]["scenes_per_image"] = cfg["series"]["scenes_per_image"]
     scfg["video"]["score"] = cfg["series"].get("score", True)
     scfg["video"]["parallax"] = {**scfg["video"].get("parallax", {}), **cfg["series"].get("motion", {})}
@@ -385,7 +395,7 @@ def make_series(story: str, notes: str, cfg: dict, dry_run: bool = False, redo: 
 
     bible, episodes = write_series(run_dir, story, notes, cfg, dry_run)
     regenerated = not (run_dir / "metadata.json").exists()
-    result = _make_shorts(run_dir, bible.series_title, to_pack(bible, episodes), series_config(cfg, bible, episodes),
+    result = _make_shorts(run_dir, bible.series_title, to_pack(bible, episodes, ui_text(cfg, bible, episodes)), series_config(cfg, bible, episodes),
                           dry_run, assume_yes, regenerated, prefix="part", limit=first_n,
                           overlays=overlays_for(bible, episodes, cfg))
     write_shot_list(run_dir, bible, episodes, first_n or len(episodes))

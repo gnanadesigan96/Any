@@ -87,6 +87,7 @@ def main() -> int:
                                "elevenlabs: most expressive (paid, ELEVENLABS_API_KEY)")
     p_series.add_argument("--pace", type=float, default=0, help="narration speed, e.g. 1.1 (default) or 1.15; "
                                                                  "1.0 = as the voice speaks; no new voice credits")
+    p_series.add_argument("--seconds", type=float, default=0, help="make every part exactly this long, e.g. 60")
     p_series.add_argument("--voice-model", default="", help="ElevenLabs model, e.g. eleven_v3 (most expressive)")
     p_series.add_argument("--voice-style", default="",
                           help='how a Gemini voice should tell it, e.g. "Whisper it like a ghost story, slow and tense"')
@@ -146,6 +147,8 @@ def main() -> int:
                 cfg["series"][key] = args.voice
             if args.pace:
                 cfg["series"]["voice_tempo"] = args.pace
+            if args.seconds:
+                cfg["series"]["part_seconds"] = args.seconds
             if args.voice_model:
                 cfg["voice"]["model_id"] = args.voice_model
             if args.voice_style:
