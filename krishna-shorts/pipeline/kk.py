@@ -14,6 +14,7 @@
     python kk.py assemble                # final MP4 + SRT with ffmpeg (works at any stage: missing
                                          #   clips become still frames or placeholder cards = animatic)
     python kk.py choose frames S03 2     # promote take 2 of a refs/frames/clips item to the main one
+    python kk.py link KK_Kannan <id>     # use a Voice Library voice for a character
 
 Common options: --episode short01, --only S03,S08a (ids), --force (redo even if the file exists).
 Keys come from environment variables: ELEVENLABS_API_KEY, GEMINI_API_KEY.
@@ -154,26 +155,45 @@ def step_voices(ctx):
     sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
     import create_elevenlabs_voices as cv
     needed = sorted({ln["voice"] for s in ctx.m["shots"] for ln in s["lines"]})
-    existing = {v["name"] for v in ctx.el.get_json("/v1/voices").get("voices", [])}
+    existing = {v["name"] for v in ctx.el.get_json("/v1/voices").get("voices", [])} | set(ctx.el.linked())
     missing = [n for n in needed if n not in existing]
     if not missing:
         log("voices: all present:", ", ".join(needed))
         return
     specs = {v["name"]: v for v in cv.load_json(cv.VOICES_FILE, [])}
-    for name in missing:
+    kids = [n for n in missing if specs[n].get("child")]
+    for name in [n for n in missing if not specs[n].get("child")]:
         v = specs[name]
         log(f"voices: designing {name} ({v['character']})")
-        previews = cv.make_previews(ctx.el.key, v)
+        try:
+            previews = cv.make_previews(ctx.el.key, v)
+        except Exception as e:  # keep going with the other voices
+            log(f"   {name}: could not design ({e})")
+            continue
         paths = cv.write_previews(v, previews)
         if ctx.args.auto:
             vid = cv.save_voice(ctx.el.key, v, previews[0]["generated_voice_id"])
             cv.register(v, vid)
-            log(f"   saved preview 1 as {name} ({vid}); other previews: {', '.join(map(os.path.basename, paths[1:]))}")
+            log(f"   saved preview 1 as {name} ({vid})")
         else:
             log("   previews:", ", ".join(paths))
-    if not ctx.args.auto:
-        log("\nListen, then save your picks, e.g.:\n  python ../tools/create_elevenlabs_voices.py save KK_Kannan=2 ...\n"
+    if not ctx.args.auto and len(kids) < len(missing):
+        log("\nListen, then save your picks, e.g.:\n  python3 ../tools/create_elevenlabs_voices.py save KK_Yashoda=2 KK_Narrator=1\n"
             "or rerun with --auto to keep preview 1 of each.")
+    if kids:
+        log("\nChild voices can't be made with Voice Design (ElevenLabs blocks designing children's voices).\n"
+            "Pick them from the Voice Library instead (see pipeline/README.md, 'Child voices'), then link each one:")
+        for n in kids:
+            log(f"  python3 kk.py link {n} <voice_id>      # {specs[n]['character']}")
+
+
+def step_link(ctx):
+    name, vid = ctx.args.target
+    path = os.path.join(HERE, "voice_map.json")
+    data = json.load(open(path)) if os.path.exists(path) else {}
+    data[name] = vid
+    json.dump(data, open(path, "w"), indent=2)
+    log(f"linked {name} -> {vid}  (saved in voice_map.json)")
 
 
 def _gen_image(ctx, ident, path, prompt, refs, aspect):
@@ -592,14 +612,14 @@ def step_assemble(ctx):
 # ---------------------------------------------------------------- main
 STEPS = {"status": step_status, "voices": step_voices, "refs": step_refs, "frames": step_frames,
          "clips": step_clips, "lines": step_lines, "revoice": step_revoice, "sfx": step_sfx,
-         "music": step_music, "assemble": step_assemble, "choose": step_choose}
+         "music": step_music, "assemble": step_assemble, "choose": step_choose, "link": step_link}
 ALL = ["voices", "lines", "sfx", "music", "refs", "frames", "clips", "revoice", "assemble"]
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("step", choices=list(STEPS) + ["all"])
-    ap.add_argument("target", nargs="*", help="for 'choose': <refs|frames|clips|voice> <id> <take>")
+    ap.add_argument("target", nargs="*", help="choose: <refs|frames|clips|voice> <id> <take>; link: <KK_Name> <voice_id>")
     ap.add_argument("--episode", default="short01")
     ap.add_argument("--only", help="comma-separated ids (shot ids, line ids, ref names...)")
     ap.add_argument("--force", action="store_true")
@@ -611,6 +631,8 @@ def main(argv=None):
     ctx = Ctx(args)
     if args.step == "choose" and len(args.target) != 3:
         sys.exit("usage: kk.py choose <refs|frames|clips|voice> <id> <take>")
+    if args.step == "link" and len(args.target) != 2:
+        sys.exit("usage: kk.py link <KK_Name> <voice_id>")
     for step in (ALL if args.step == "all" else [args.step]):
         log(f"== {step} ==")
         STEPS[step](ctx)

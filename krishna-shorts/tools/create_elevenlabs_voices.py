@@ -178,6 +178,9 @@ def cmd_check(voices):
 
 def cmd_preview(key, voices):
     for v in voices:
+        if v.get("child"):
+            print(f"\n{v['name']}: skipped (child voice; pick one from the Voice Library and link it, see pipeline/README.md)")
+            continue
         print(f"\n{v['name']}  ({v['character']}): designing 3 previews...")
         try:
             paths = write_previews(v, make_previews(key, v))
@@ -214,6 +217,9 @@ def cmd_save(key, voices, picks):
 def cmd_interactive(key, voices):
     existing = {v.get("name") for v in call(key, "GET", "/v1/voices").get("voices", [])}
     for v in voices:
+        if v.get("child"):
+            print(f"\n{v['name']}: skipped (child voice; pick one from the Voice Library, see pipeline/README.md)")
+            continue
         if v["name"] in existing:
             print(f"\n{v['name']} already exists in your ElevenLabs account; skipping.")
             continue

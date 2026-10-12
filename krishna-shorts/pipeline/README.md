@@ -44,7 +44,8 @@ cd krishna-shorts/pipeline
 export ELEVENLABS_API_KEY=...   GEMINI_API_KEY=...      # Windows: set NAME=value
 
 python kk.py status                 # what's done / missing
-python kk.py voices                 # 3 previews per missing voice → pick with ../tools/create_elevenlabs_voices.py save ...
+python kk.py voices                 # adult voices: 3 previews each → pick with ../tools/create_elevenlabs_voices.py save ...
+                                    # child voices: pick from the Voice Library → python kk.py link KK_Kannan <voice_id> (see 'Child voices')
 python kk.py lines
 python kk.py sfx
 python kk.py music
@@ -64,6 +65,28 @@ Useful options:
 - `choose <refs|frames|clips|voice> <id> <take>` promotes an alternative to be the main file.
 
 **Hand-made pieces are fine.** If the API refuses something (Veo may block some shots with children, for example), make it in Flow or Gemini by hand and save it under the same name, e.g. `work/short01/clips/S08b.mp4`. Every step skips files that already exist, and `assemble` uses whatever is there.
+
+## Child voices (Kannan, Balarama, Shridama, Subala)
+ElevenLabs **does not allow designing children's voices** with Voice Design ("this prompt potentially doesn't follow our safety guidelines"). The script designs only the adult voices (Yashoda, Narrator) and asks you to pick the four boys' voices yourself. There are two approved ways:
+
+**A. Voice Library (fastest)**
+1. ElevenLabs → **Voices** → **Explore / Voice Library**.
+2. Search for **"cartoon"**, **"animated character"** or **"animation"**, and filter **Use case → Characters & Animation**. These are voices made for animated characters (performed by adult voice actors). Choose bright, youthful ones.
+3. For each boy, preview a few. Then click **Add to my voices**.
+4. Test it speaking Tamil: **Text to Speech** → the voice → model **Eleven v3** → paste his line from `../episodes/ep01-voice-lines-elevenlabs.md`.
+5. Copy the **voice ID** (My Voices → the voice → ⋯ → **Copy voice ID**) and link it:
+   ```
+   python3 kk.py link KK_Kannan <voice_id>
+   python3 kk.py link KK_Subala <voice_id>
+   python3 kk.py link KK_Shridama <voice_id>
+   python3 kk.py link KK_Balarama <voice_id>
+   ```
+6. Keep the four distinct: Kannan brightest and sweetest, Subala thinnest and most nervous, Shridama roundest and loudest, Balarama lowest and firmest.
+
+**B. A real performer (most natural)**
+An adult voice artist who does child voices (common in Tamil dubbing) records the lines, with written consent. Then either create an **Instant Voice Clone** of their "kid voice" (ElevenLabs → Voices → Clone) and link it as above, or convert each recording with **Voice Changer**.
+
+The links are saved in `voice_map.json` (local to your computer). All later steps (`lines`, `revoice`) use them automatically.
 
 ## Test without any keys
 ```

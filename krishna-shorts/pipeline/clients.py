@@ -71,11 +71,23 @@ class ElevenLabs:
         body, _ = _request("POST", self.BASE + path, self._h({"Content-Type": ctype}), data)
         return body
 
+    def linked(self):
+        """Voices linked by hand (e.g. from the Voice Library): pipeline/voice_map.json {"KK_Kannan": "<voice_id>"}."""
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "voice_map.json")
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                return json.load(f)
+        return {}
+
     def voice_id(self, name):
+        mapped = self.linked().get(name)
+        if mapped:
+            return mapped
         if self._voices is None:
             self._voices = {v["name"]: v["voice_id"] for v in self.get_json("/v1/voices").get("voices", [])}
         if name not in self._voices:
-            raise KeyError(f"Voice '{name}' not found in your ElevenLabs account. Run: python kk.py voices")
+            raise KeyError(f"Voice '{name}' not found. Design it (python kk.py voices) or link one: "
+                           f"python kk.py link {name} <voice_id>")
         return self._voices[name]
 
     def tts(self, voice_name, text, model="eleven_v3"):
