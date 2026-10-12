@@ -91,8 +91,8 @@ For **Kannan first**, then Yashoda, Shridama, Subala, Balarama, using [GEMINI-PR
 
 1. gemini.google.com → **New chat** → **Tools → Create images** (or start with "Generate an image:").
 2. Paste **Prompt 1 (full body)** → send.
-3. **Check Kannan's must-haves:** deep blue-black skin (not teal or purple) · kohl eyes · black dot on the **left** cheek · peacock feather in the topknot · yellow silk dhoti · flute at the waist · gold anklets.
-4. Fix by replying (e.g. *"Same image, but deeper blue-black skin and add the black dot on his left cheek"*) or click **Regenerate**.
+3. **Check Kannan's must-haves:** deep blue-black skin (not teal or purple) · kohl eyes · black dot on his **right** cheek · white-and-gold namam on the forehead · peacock feather in the topknot · yellow silk dhoti · flute at the waist · gold anklets.
+4. Fix by replying (e.g. *"Same image, but deeper blue-black skin and add the black dot on his right cheek"*) or click **Regenerate**.
 5. When it's right: open the image → **Download** → save as `refs/krishna_child_full.png`.
 6. In the **same chat**: paste **Prompt 2** → save `krishna_child_turnaround.png`; **Prompt 3** → `krishna_child_expressions.png`; **Prompt 4** → `krishna_child_front.png`.
 7. If the face changes in Prompts 2–4: new chat → **+ Upload** your `_full.png` → write *"Use this exact character"* → paste the prompt.

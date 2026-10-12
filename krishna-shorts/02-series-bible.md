@@ -46,11 +46,11 @@ blurry face, oversaturated neon colours, horror tone, sexualised depiction, west
 4. Save as `refs/krishna_child_front.png`, `refs/krishna_child_turnaround.png` and so on. **Upload the front portrait plus one full-body image as references for every shot that character appears in.**
 
 ### 2.1 Child Krishna (கண்ணன்), age ~5: Episodes 1–16
-**Identity anchors (must never change):** blue-black (neela megha) skin, large almond-shaped dark eyes with kohl, a black dhrishti dot on the left cheek, a peacock feather in the topknot, a yellow silk dhoti, and a mischievous half-smile.
+**Identity anchors (must never change):** blue-black (neela megha) skin, large almond-shaped dark eyes with kohl, a black dhrishti dot on the right cheek, a peacock feather in the topknot, a yellow silk dhoti, and a mischievous half-smile.
 
 ```
 CHARACTER: Child Krishna, 5-year-old Indian boy, deep blue-black skin with soft sheen (colour of a rain cloud),
-round cheeks, large almond-shaped dark brown eyes lined with black kohl, small black dhrishti dot on left cheek,
+round cheeks, large almond-shaped dark brown eyes lined with black kohl, small black dhrishti dot on his right cheek, a white-and-gold U-shaped namam (tilak) on the forehead,
 long eyelashes, small button nose, playful mischievous half-smile showing small teeth,
 black curly hair tied in a small topknot on top of the head with a single peacock feather tucked in,
 a few curls falling on the forehead, small gold crown-band (thin, simple) around the topknot,

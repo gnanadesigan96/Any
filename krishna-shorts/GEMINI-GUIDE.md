@@ -50,7 +50,7 @@ Rules:
 - Dialogue must be natural, everyday spoken Tamil (பேச்சுத் தமிழ்), never formal or literary. Suit each character's age and personality as described.
 - When I ask for an image or video prompt, write it in English and ALWAYS include the full STYLE block at the start
   and the full NEGATIVE block at the end, and list which reference images to attach.
-- Keep every character's appearance exactly as described in the bible (Kannan: deep blue-black skin, kohl eyes, dhrishti dot on left cheek, peacock feather, yellow silk dhoti).
+- Keep every character's appearance exactly as described in the bible (Kannan: deep blue-black skin, kohl eyes, dhrishti dot on his right cheek, peacock feather, yellow silk dhoti).
 - Keep tradition and creative adaptation clearly separate; name the source (e.g. Srimad Bhagavatam 10.8) and list what is invented.
 - Tone: family-friendly, playful, devotional, never mocking, never gory.
 ```
@@ -75,8 +75,8 @@ Do **one character per chat**, starting with Kannan. The prompts are in [GEMINI-
 1. Open **gemini.google.com** → **New chat**.
 2. Turn on image generation: click **Tools** (or the **+** menu) → **Create images** (it may show a 🍌 banana icon). If you don't see it, just start your message with "Generate an image:"; Gemini switches automatically.
 3. Paste **Prompt 1** (full body) and send.
-4. **Check it** against Kannan's anchors: deep blue-black skin (not teal or purple), kohl eyes, black dot on the **left** cheek, a peacock feather in the topknot, a yellow silk dhoti, a flute at the waist, and gold anklets.
-   - Not right? Reply in the same chat with what to fix, e.g. *"Same image, but make the skin deeper blue-black like a rain cloud and add the black dot on his left cheek."*
+4. **Check it** against Kannan's anchors: deep blue-black skin (not teal or purple), kohl eyes, black dot on his **right** cheek · white-and-gold namam on the forehead, a peacock feather in the topknot, a yellow silk dhoti, a flute at the waist, and gold anklets.
+   - Not right? Reply in the same chat with what to fix, e.g. *"Same image, but make the skin deeper blue-black like a rain cloud and add the black dot on his right cheek."*
    - Totally wrong? Click **Redo / Regenerate**, or start a new chat.
    - Came out square? Reply *"Same image, but vertical 9:16."*
 5. When you love it: **open the image → Download** (choose full size if asked). Save it as `refs/krishna_child_full.png`.
