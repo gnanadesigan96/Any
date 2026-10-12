@@ -5,9 +5,11 @@ A production kit for making cinematic 60-second Tamil Shorts/Reels about Lord Kr
 | File | What it is |
 |---|---|
 | [NEXT-STEPS.md](NEXT-STEPS.md) | **Start here:** day-by-day plan to get Short #1 published, then the long episode |
+| [00-series-foundation.md](00-series-foundation.md) | **The base description:** series idea, where the story is moving (5-part arc + running threads), detailed character profiles, world and background design with location prompts |
 | [01-tools-and-workflow.md](01-tools-and-workflow.md) | Which AI tools to use at each stage, how they compare, and the 12-step repeatable workflow |
 | [02-series-bible.md](02-series-bible.md) | Locked visual style, character sheets with reusable reference prompts, series identity, episode roadmap |
 | [02b-character-prompts-tamil.md](02b-character-prompts-tamil.md) | All character, style and negative prompts in Tamil, plus how to build reference sheets |
+| [episodes/ep01-screenplay.md](episodes/ep01-screenplay.md) | **Episode 1 screenplay:** the readable story version, scene by scene, with backgrounds, story beats and all Tamil dialogue |
 | [episodes/ep01-long-kokulathin-kutti-thirudan.md](episodes/ep01-long-kokulathin-kutti-thirudan.md) | **Episode 1, full 10–12 min YouTube episode (16:9)**: 10 scenes + cold open, 95 shots, complete Tamil dialogue, prompts, music, chapters, and the 4 Shorts to cut from it |
 | [episodes/ep01-vennai-thirudan.md](episodes/ep01-vennai-thirudan.md) | **Short #1 (60 s, 9:16), production-ready**: story, shot timeline, Tamil dialogue, detailed per-shot AI prompts, voice/music/SFX, editing |
 | [episodes/ep01-subtitles.srt](episodes/ep01-subtitles.srt) | Tamil subtitle file for Short #1, timed to the shot list |

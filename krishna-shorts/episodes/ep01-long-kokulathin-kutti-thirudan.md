@@ -139,11 +139,11 @@ Durations are targets; trim in the edit. Running time per scene is approximate.
 | 4.2 | 7 s | Yashoda looking down, puzzled; Kannan "asleep" in her lap | She asks; he answers with his eyes still shut | **யசோதை:** என்னடா, ஓடி வந்து தூங்குற? **கண்ணன்:** ஷ்ஷ்... நான் காலையிலிருந்து இங்கதான் தூங்கிட்டு இருக்கேன். | LS ×2 |
 | 4.3 | 6 s | Gate: four women marching in, led by Gomathi (butter on her saree) | Determined walk, low angle | **கோமதி:** யசோதா! உன் பையனைக் கொஞ்சம் பாரு! | LS |
 | 4.4 | 8 s | Paati (grandmother gopi) wagging a finger | Speaks in a shaky, scolding voice | **பாட்டி:** பால் கறக்குற நேரத்துக்கு முன்னாடியே கன்னுக்குட்டியை அவுத்து விட்டுடறான்! | LS |
-| 4.5 | 7 s | Gopi 3 with a pot on her hip, gesturing dramatically | Animated complaint | **கோபி:** வெண்ணெயை குரங்குக்குக் குடுக்கறான்! குரங்கு சாப்பிடலைன்னா பானையையே உடைச்சிடறான்! | LS |
+| 4.5 | 7 s | Kamala (Gopi 3) with a pot on her hip, gesturing dramatically | Animated complaint | **கமலா:** வெண்ணெயை குரங்குக்குக் குடுக்கறான்! குரங்கு சாப்பிடலைன்னா பானையையே உடைச்சிடறான்! | LS |
 | 4.6 | 6 s | Gomathi, hands on hips | Points at the lap | **கோமதி:** பிடிச்சா சிரிச்சுக்கிட்டே ஓடிடறான்! இன்னைக்கு கூட எங்க வீட்டுல... | LS |
 | 4.7 | 7 s | Yashoda, amused, gesturing at the "sleeping" child | Raises her eyebrows at the women | **யசோதை:** இவனா? இவன் சொல்றான், காலையிலிருந்து இங்கதான் தூங்குறானாம்! | LS |
 | 4.8 🌟 | 5 s | ECU: Kannan opens one eye, winks at the gopis; a dab of butter on his lip | Slow wink, tiny smirk | — | — |
-| 4.9 | 6 s | The gopis gasp, then burst out laughing | Gopi 3 points | **கோபி:** பாரு பாரு! உதட்டுல இன்னும் வெண்ணெய் இருக்கு! | LS |
+| 4.9 | 6 s | The gopis gasp, then burst out laughing | Kamala points | **கமலா:** பாரு பாரு! உதட்டுல இன்னும் வெண்ணெய் இருக்கு! | LS |
 | 4.10 | 8 s | Gomathi bending, pinching Kannan's cheek, laughing despite herself | She softens, everyone laughs | **கோமதி:** திருடனா இருந்தாலும்... இவ்வளவு அழகான திருடனை என்ன பண்றது? | LS |
 | 4.11 | 7 s | Wide: the gopis leaving through the gate, smiling and looking back at Kannan | Slow pull-back | **கதைசொல்லி:** கோகுலத்துப் பெண்கள் புகார் சொல்லத்தான் வந்தாங்க... ஆனா உண்மையில, கண்ணனைப் பார்க்கத்தான் வந்தாங்க. | — |
 
