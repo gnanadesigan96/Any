@@ -488,9 +488,9 @@ def draw_outro(fr, t):
     if p > 0:
         lay = Image.new("RGBA", (W, 260), (0, 0, 0, 0))
         d = ImageDraw.Draw(lay)
-        d.rounded_rectangle((200, 10, W - 200, 120), 55, fill=(214, 84, 104))
-        d.text((W / 2, 65), f"Follow {CHANNEL}", font=font("InterDisplay-Bold", 50), fill="white", anchor="mm")
-        d.text((W / 2, 170), "Save this for your next movie night", font=font("Inter-SemiBold", 36), fill=SOFT, anchor="ma")
+        d.rounded_rectangle((170, 10, W - 170, 120), 55, fill=(214, 84, 104))
+        d.text((W / 2, 65), f"Subscribe for Part {PART + 1}", font=font("InterDisplay-Bold", 50), fill="white", anchor="mm")
+        d.text((W / 2, 150), f"Tap ❤ if you found your next movie  ·  {CHANNEL}", font=font("Inter-SemiBold", 34), fill=SOFT, anchor="ma")
         fr.alpha_composite(fade(lay, p), (0, int(1440 + 30 * (1 - p))))
 
 
@@ -623,17 +623,37 @@ def render(t, fi=0):
     return np.clip(arr, 0, 255).astype(np.uint8)
 
 
+COVER_HOLD, COVER_FADE = 0.8, 0.35  # opening cover (= the part's thumbnail) so each Short's frame differs
+
+
+def load_cover():
+    p = os.path.join(WORK_DIR, f"thumbnail_feel_good_part{PART}_vertical.png")
+    if not os.path.exists(p):
+        return None
+    return np.asarray(Image.open(p).convert("RGB").resize((W, H), Image.LANCZOS), dtype=np.float32)
+
+
 def main():
+    cover = load_cover()
+    lead = COVER_HOLD if cover is not None else 0.0
     wav = os.path.join(WORK_DIR, "music.wav")
-    make_music(wav, R_DURATION)
+    make_music(wav, R_DURATION + lead)
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
            "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-i", wav,
            "-c:v", "libx264", "-preset", "slow", "-crf", "17", "-tune", "film", "-pix_fmt", "yuv420p",
            "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", OUT]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
-    total = int(R_DURATION * FPS)
+    total = int((R_DURATION + lead) * FPS)
     for fi in range(total):
-        proc.stdin.write(render(design_t(fi / FPS), fi).tobytes())
+        rt = fi / FPS
+        if cover is not None and rt < COVER_HOLD:
+            frame = cover.astype(np.uint8)
+        else:
+            frame = render(design_t(rt - lead), fi)
+            k = (rt - lead) / COVER_FADE
+            if cover is not None and k < 1:
+                frame = (cover * (1 - k) + frame.astype(np.float32) * k).astype(np.uint8)
+        proc.stdin.write(frame.tobytes())
         if fi % 200 == 0:
             print(f"frame {fi}/{total}", flush=True)
     proc.stdin.close()

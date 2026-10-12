@@ -18,6 +18,13 @@ EMOJI_FONT = "/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf"
 INK = (14, 16, 30)
 CREAM = (250, 242, 230)
 CORAL = (236, 78, 92)
+
+# one colour theme per part so every cover looks different (cycles after 8)
+THEMES = [(236, 78, 92), (20, 165, 160), (140, 90, 220), (245, 125, 40),
+          (60, 120, 235), (30, 170, 100), (220, 60, 150), (225, 175, 40)]
+ACCENT = THEMES[(PART - 1) % len(THEMES)]
+ACCENT_DARK = tuple(int(c * 0.6) for c in ACCENT)
+ACCENT_GLOW = tuple(int(c * 0.85) for c in ACCENT)
 SAFFRON = (255, 176, 64)
 GOLD = (232, 182, 92)
 
@@ -58,7 +65,7 @@ def card_back(label, w, h, hero=False):
     im = Image.new("RGBA", (W2, H2), (0, 0, 0, 0))
     y, x = np.mgrid[0:H2, 0:W2]
     t = ((x / W2 + y / H2) / 2)[..., None]
-    top, bot = (np.array((46, 40, 108)), np.array((22, 22, 54))) if not hero else (np.array((236, 78, 92)), np.array((150, 40, 70)))
+    top, bot = (np.array((46, 40, 108)), np.array((22, 22, 54))) if not hero else (np.array(ACCENT), np.array(ACCENT_DARK))
     body = Image.fromarray((top * (1 - t) + bot * t).astype(np.uint8)).convert("RGBA")
     m = Image.new("L", (W2, H2), 0)
     ImageDraw.Draw(m).rounded_rectangle((0, 0, W2 - 1, H2 - 1), r, fill=255)
@@ -100,7 +107,7 @@ def background(W, H, glow_xy, glow_r):
     gx, gy = glow_xy
     dist = np.sqrt(((x - gx) / glow_r[0]) ** 2 + ((y - gy) / glow_r[1]) ** 2)[..., None]
     g = np.clip(1 - dist, 0, 1) ** 2
-    base = base * (1 - g * 0.85) + np.array((200, 70, 90)) * g * 0.85
+    base = base * (1 - g * 0.85) + np.array(ACCENT_GLOW) * g * 0.85
     im = Image.fromarray(base.astype(np.uint8)).convert("RGBA")
     # faint rays
     ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -158,8 +165,8 @@ def vertical():
     d = ImageDraw.Draw(im)
     spaced(d, W / 2, 150, "FILMY PASSPORT", font("Inter-Bold", 36), GOLD, 10)
     text_shadow(im, (W / 2, 230), "FEEL-GOOD", font("InterDisplay-Black", 164), CREAM)
-    text_shadow(im, (W / 2, 405), "MOVIES", font("InterDisplay-Black", 222), CORAL)
-    pill(im, W / 2, 712, f"PART {PART}", font("InterDisplay-Black", 54), SAFFRON, INK, padx=50, h=92)
+    text_shadow(im, (W / 2, 405), "MOVIES", font("InterDisplay-Black", 222), ACCENT)
+    pill(im, W / 2, 735, f"PART {PART}", font("InterDisplay-Black", 82), SAFFRON, INK, padx=60, h=132)
     fan(im, (W / 2, 1190), 420, 622, 180, 9, 46)
     heart = emoji("💖", 96)
     im.alpha_composite(heart, (int(W / 2 + 250), 905))
@@ -178,7 +185,7 @@ def landscape():
     x0 = 70
     d.text((x0 + 4, 92), "FILMY PASSPORT", font=font("Inter-Bold", 26), fill=GOLD)
     text_shadow(im, (x0, 140), "FEEL-GOOD", font("InterDisplay-Black", 118), CREAM, anchor="la")
-    text_shadow(im, (x0, 262), "MOVIES", font("InterDisplay-Black", 150), CORAL, anchor="la")
+    text_shadow(im, (x0, 262), "MOVIES", font("InterDisplay-Black", 150), ACCENT, anchor="la")
     f = font("InterDisplay-Black", 40)
     w = d.textlength(f"PART {PART}", font=f) + 64
     d.rounded_rectangle((x0 + 4, 448, x0 + 4 + w, 512), 32, fill=SAFFRON)
