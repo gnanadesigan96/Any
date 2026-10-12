@@ -1184,7 +1184,9 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         assert short.hook_text == "" and ov["hook_sub"] and ov["end_text"] == "இந்தப் படம் எது?"
         ep = eps[0]
         last = ep.scenes[-1].narration
-        assert "க்ளூ" in last and "சப்ஸ்க்ரைப்" in last and "கமெண்ட்" in last
+        assert "சப்ஸ்க்ரைப்" in last and "கமெண்ட்" in last
+        assert not any("க்ளூ" in s.narration for s in ep.scenes)  # clues only in the description
+        assert all(f"க்ளூ {i}: {c}" in short.description for i, c in enumerate(m["clues"], start=1))
         shown = " ".join([short.title, ep.hook_text, ep.hook_sub, short.description, ep.end_text, ep.end_sub,
                           *ep.hashtags, *(s.narration for s in ep.scenes)])
         for word in [m["spoken"], *m.get("title_words", [])]:

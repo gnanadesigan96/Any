@@ -21,7 +21,7 @@ THRILLER = ("photorealistic cinematic crime thriller film still, Bengaluru at ni
             "grade, rain and wet neon reflections, deep shadows, 35mm anamorphic lens, film grain, high detail, natural "
             "skin texture, realistic expressions")
 
-# Keep them hard: no names until the last line, never a word from the title, the best clue in the description.
+# Keep them hard: no character names, never a word from the title. Clues go only in the description.
 # Each film: spoken = how the next video says the answer aloud; written = how its description writes it.
 MOVIES = [
  dict(n=1, answer="Imaikkaa Nodigal (இமைக்கா நொடிகள், 2018)", spoken="இமைக்கா நொடிகள்", written="இமைக்கா நொடிகள்",
@@ -46,7 +46,7 @@ MOVIES = [
     "the doctor running through a crowded night market in the rain clutching a heavy bag, police torches sweeping behind him", ["Doctor"]),
    ("அந்த டாக்டர் வேற யாரும் இல்ல... அந்த அதிகாரியோட சொந்தத் தம்பி! அப்போ இந்தக் கொலைகாரன் உண்மையில யாரு? திருப்பம் மேல திருப்பம்!",
     "the officer aiming her pistol across a dark parking garage at the hooded killer, her younger brother the doctor kneeling between them", ["Officer", "Killer"]),
-   ("க்ளூ: அந்த அதிகாரியோட பேரு அஞ்சலி. " + CTA,
+   ("கதை புரிஞ்சுதா? " + CTA,
     "the officer's face half lit by a red emergency light, rain on the window behind her", ["Officer"]),
   ]),
 ]
