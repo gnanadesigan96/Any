@@ -1,0 +1,739 @@
+{
+  "id": "short01",
+  "title": "கண்ணன் கதைகள் #01 | வெண்ணெய் திருடன்",
+  "aspect": "9:16",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "length": 65.0,
+  "refs": {
+    "krishna_child_full": {
+      "prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nCHARACTER: Child Krishna, 5-year-old Indian boy, deep blue-black skin with soft sheen (colour of a rain cloud), round cheeks, large almond-shaped dark brown eyes lined with black kohl, small black dhrishti dot on left cheek, long eyelashes, small button nose, playful mischievous half-smile showing small teeth, black curly hair tied in a small topknot on top of the head with a single peacock feather tucked in, a few curls falling on the forehead, small gold crown-band (thin, simple) around the topknot, bright turmeric-yellow silk dhoti (pitambaram) tied at the waist with a gold sash, thin gold waist-chain with tiny bells, gold armlets, small gold earrings, a necklace of tulsi beads and a short garland of small white jasmine and orange marigold, gold anklets with tiny bells, barefoot, a small bamboo flute tucked into the waist sash.\n\nFull-body front view, standing straight, plain light-grey background, even soft lighting, face clearly visible.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing."
+    },
+    "krishna_child_turnaround": {
+      "prompt": "Using the image you just made: same character, exactly the same face, skin colour, hairstyle, clothing and jewellery. Character turnaround sheet in one image: front view, three-quarter view, side profile and back view, full body, plain light-grey background, even lighting. No text or labels.",
+      "from": "krishna_child_full"
+    },
+    "krishna_child_expressions": {
+      "prompt": "Same character, exactly the same face and costume. Expression sheet in one image, six head-and-shoulders close-ups in a grid: laughing out loud, mischievous grin, innocent wide eyes, sad, surprised, mildly angry. Plain light-grey background. No text or labels.",
+      "from": "krishna_child_full"
+    },
+    "krishna_child_front": {
+      "prompt": "Same character, exactly the same face and costume. Front-facing head-and-shoulders portrait, looking straight at the camera with a gentle natural expression, plain light-grey background, even soft lighting, sharp detail on the face.",
+      "from": "krishna_child_full"
+    },
+    "yashoda_full": {
+      "prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nCHARACTER: Yashoda, 28-year-old Indian village mother, warm wheat-brown skin, kind oval face, large expressive eyes, red kumkum dot on forehead, long black hair in a thick braid decorated with jasmine flowers, cotton saree in deep red with a mustard-yellow border draped in a simple ancient style, short-sleeved blouse, glass and gold bangles on both wrists, simple gold necklace, small nose stud, silver anklets (kolusu), warm maternal expression that easily breaks into laughter.\n\nFull-body front view, standing straight, plain light-grey background, even soft lighting, face clearly visible.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing."
+    },
+    "yashoda_turnaround": {
+      "prompt": "Using the image you just made: same character, exactly the same face, skin colour, hairstyle, clothing and jewellery. Character turnaround sheet in one image: front view, three-quarter view, side profile and back view, full body, plain light-grey background, even lighting. No text or labels.",
+      "from": "yashoda_full"
+    },
+    "yashoda_expressions": {
+      "prompt": "Same character, exactly the same face and costume. Expression sheet in one image, six head-and-shoulders close-ups in a grid: laughing out loud, mischievous grin, innocent wide eyes, sad, surprised, mildly angry. Plain light-grey background. No text or labels.",
+      "from": "yashoda_full"
+    },
+    "yashoda_front": {
+      "prompt": "Same character, exactly the same face and costume. Front-facing head-and-shoulders portrait, looking straight at the camera with a gentle natural expression, plain light-grey background, even soft lighting, sharp detail on the face.",
+      "from": "yashoda_full"
+    },
+    "shridama_full": {
+      "prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nCHARACTER: Shridama, 6-year-old Indian cowherd boy, medium brown skin, chubby and sturdy, round face, big laugh, short messy hair with a cloth headband in green, short off-white cotton dhoti, a small wooden cowbell on a string around the neck.\n\nFull-body front view, standing straight, plain light-grey background, even soft lighting, face clearly visible.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing."
+    },
+    "shridama_turnaround": {
+      "prompt": "Using the image you just made: same character, exactly the same face, skin colour, hairstyle, clothing and jewellery. Character turnaround sheet in one image: front view, three-quarter view, side profile and back view, full body, plain light-grey background, even lighting. No text or labels.",
+      "from": "shridama_full"
+    },
+    "shridama_expressions": {
+      "prompt": "Same character, exactly the same face and costume. Expression sheet in one image, six head-and-shoulders close-ups in a grid: laughing out loud, mischievous grin, innocent wide eyes, sad, surprised, mildly angry. Plain light-grey background. No text or labels.",
+      "from": "shridama_full"
+    },
+    "shridama_front": {
+      "prompt": "Same character, exactly the same face and costume. Front-facing head-and-shoulders portrait, looking straight at the camera with a gentle natural expression, plain light-grey background, even soft lighting, sharp detail on the face.",
+      "from": "shridama_full"
+    },
+    "subala_full": {
+      "prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nCHARACTER: Subala, 5-year-old Indian cowherd boy, light brown skin, thin and small, big worried eyes, eyebrows often raised, hair tied in a tiny tuft, short saffron-orange cotton dhoti, a string of red beads on the wrist, carries a small shepherd's stick.\n\nFull-body front view, standing straight, plain light-grey background, even soft lighting, face clearly visible.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing."
+    },
+    "subala_turnaround": {
+      "prompt": "Using the image you just made: same character, exactly the same face, skin colour, hairstyle, clothing and jewellery. Character turnaround sheet in one image: front view, three-quarter view, side profile and back view, full body, plain light-grey background, even lighting. No text or labels.",
+      "from": "subala_full"
+    },
+    "subala_expressions": {
+      "prompt": "Same character, exactly the same face and costume. Expression sheet in one image, six head-and-shoulders close-ups in a grid: laughing out loud, mischievous grin, innocent wide eyes, sad, surprised, mildly angry. Plain light-grey background. No text or labels.",
+      "from": "subala_full"
+    },
+    "subala_front": {
+      "prompt": "Same character, exactly the same face and costume. Front-facing head-and-shoulders portrait, looking straight at the camera with a gentle natural expression, plain light-grey background, even soft lighting, sharp detail on the face.",
+      "from": "subala_full"
+    },
+    "balarama_full": {
+      "prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nCHARACTER: Balarama, 7-year-old Indian boy, fair light skin, sturdy build, confident face, short wavy black hair in a topknot, deep indigo-blue cotton dhoti, simple gold earrings and armlets, a small white conch-bead necklace.\n\nFull-body front view, standing straight, plain light-grey background, even soft lighting, face clearly visible.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing."
+    },
+    "balarama_turnaround": {
+      "prompt": "Using the image you just made: same character, exactly the same face, skin colour, hairstyle, clothing and jewellery. Character turnaround sheet in one image: front view, three-quarter view, side profile and back view, full body, plain light-grey background, even lighting. No text or labels.",
+      "from": "balarama_full"
+    },
+    "balarama_expressions": {
+      "prompt": "Same character, exactly the same face and costume. Expression sheet in one image, six head-and-shoulders close-ups in a grid: laughing out loud, mischievous grin, innocent wide eyes, sad, surprised, mildly angry. Plain light-grey background. No text or labels.",
+      "from": "balarama_full"
+    },
+    "balarama_front": {
+      "prompt": "Same character, exactly the same face and costume. Front-facing head-and-shoulders portrait, looking straight at the camera with a gentle natural expression, plain light-grey background, even soft lighting, sharp detail on the face.",
+      "from": "balarama_full"
+    },
+    "bg_mainroom": {
+      "prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nBackground only, no people: interior main room of an ancient Indian village house, mud walls lime-washed white with simple red-ochre border patterns, wooden pillars, a large terracotta pot hanging high from a wooden ceiling beam in a jute rope sling, shelves of shining brass vessels, a reed mat with a small wooden toy cow, a heavy stone grinding mortar in the corner, an open window with neem tree branches outside, warm sunbeams through the window, dust motes.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing."
+    }
+  },
+  "shots": [
+    {
+      "id": "S01",
+      "start": 0.0,
+      "dur": 3.0,
+      "veo_seconds": 4,
+      "method": "A",
+      "refs": [
+        "krishna_child_front",
+        "krishna_child_turnaround"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nExtreme close-up, vertical 9:16. Child Krishna (exactly as in reference images) peeking over the rim of a round terracotta pot filled with fresh white butter, only his eyes, eyebrows, peacock feather and top of his head visible above the rim, his small blue-black hand inside the butter, a butter-smeared fingertip. Mischievous sparkling eyes looking straight into camera. Dim earthen storeroom, single warm shaft of morning light from a small window, glowing dust particles, very shallow depth of field.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Slow tilt up and gentle push-in. The boy raises his head slightly above the pot rim, lifts one butter-covered finger to his lips in a \"shh\" gesture, whispers to camera, then giggles with his eyes squeezing shut. Dust motes drift in the light beam.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, conspiratorial whisper, giggle at the end; breaks the 4th wall) says in Tamil: \"ஷ்ஷ்... யார்கிட்டயும் சொல்லாதீங்க!\"\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 3 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S01_L1_kannan",
+          "voice": "KK_Kannan",
+          "speaker": "kannan",
+          "text": "[conspiratorial whisper] ஷ்ஷ்... யார்கிட்டயும் சொல்லாதீங்க!",
+          "subtitle": "ஷ்ஷ்... யார்கிட்டயும் சொல்லாதீங்க!",
+          "at": 0.3
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S02",
+      "start": 3.0,
+      "dur": 5.0,
+      "veo_seconds": 6,
+      "method": "C",
+      "refs": [],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nWide aerial view at sunrise of an ancient Indian cowherd village (Gokulam) on the bank of the Yamuna river, thatched-roof mud houses with white rice-flour kolam patterns at doorsteps, banyan and kadamba trees, herds of white and brown cows with painted horns, village women in colourful saris carrying brass pots, thin smoke rising from cooking fires, soft mist over the river, gold and pink sky, birds flying. Vertical 9:16, leading lines toward one larger house with a courtyard in the centre.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Smooth cinematic drone shot gliding forward and slowly descending over the village toward the central house with the courtyard. Birds cross the frame, smoke drifts, cows move slowly, mist moves on the river.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 5 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S02_L1_narrator",
+          "voice": "KK_Narrator",
+          "speaker": "narrator",
+          "text": "[warm grandfather storyteller] கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்!",
+          "subtitle": "கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்!",
+          "at": 3.6
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S03",
+      "start": 8.0,
+      "dur": 7.0,
+      "veo_seconds": 8,
+      "method": "A",
+      "refs": [
+        "krishna_child_front",
+        "shridama_front",
+        "subala_front",
+        "bg_mainroom"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nInterior of an ancient Indian village house, mud walls painted with simple white motifs, wooden pillars, shelves of shining brass vessels, a large round terracotta pot hanging high from a wooden ceiling beam in a jute rope sling, a stone grinding mortar on the floor, open window with neem leaves outside. Low camera angle from behind three small boys looking up at the hanging pot: Child Krishna in the centre (yellow dhoti, peacock feather), chubby Shridama on the left (green headband, off-white dhoti), small thin Subala on the right (saffron dhoti, small stick). Warm sunbeams through the window.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "The three boys stare up at the hanging pot, then the camera pushes in as Krishna turns toward camera-left to his friends with a big mischievous grin, speaks excitedly, taps his temple with one finger. Subala on the right shakes his head nervously. Krishna then points at the chubby boy and gestures \"bend down\". Ambient room tone, birds outside.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, excited whisper) says in Tamil: \"டேய், வெண்ணெய் அந்த உறியில தான் இருக்கு!\"\n- Subala (thin, nervous, whiny voice of a small 5-year-old Tamil boy, worried, whiny) says in Tamil: \"அவ்வளவு உயரமா? எப்படிடா எட்டும்?\"\n- Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, sly, then bossy-playful. **check ழ in வழி) says in Tamil: \"ஒரு வழி இருக்கு... (to Shridama) குனிடா!\"\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 7 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S03_L1_kannan",
+          "voice": "KK_Kannan",
+          "speaker": "kannan",
+          "text": "[excited whisper] டேய், வெண்ணெய் அந்த உறியில தான் இருக்கு!",
+          "subtitle": "டேய், வெண்ணெய் அந்த உறியில தான் இருக்கு!",
+          "at": 8.8
+        },
+        {
+          "id": "EP01S_S03_L2_subala",
+          "voice": "KK_Subala",
+          "speaker": "subala",
+          "text": "[worried, whiny] அவ்வளவு உயரமா? எப்படிடா எட்டும்?",
+          "subtitle": "அவ்வளவு உயரமா? எப்படிடா எட்டும்?",
+          "at": 11.0
+        },
+        {
+          "id": "EP01S_S03_L3_kannan",
+          "voice": "KK_Kannan",
+          "speaker": "kannan",
+          "text": "[sly, then bossy-playful] ஒரு வழி இருக்கு... குனிடா!",
+          "subtitle": "ஒரு வழி இருக்கு... குனிடா!",
+          "at": 13.0
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S04",
+      "start": 15.0,
+      "dur": 6.0,
+      "veo_seconds": 6,
+      "method": "B",
+      "refs": [
+        "krishna_child_full",
+        "shridama_full",
+        "subala_full",
+        "bg_mainroom"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nSame village house interior. A comic human tower of children: small Subala (saffron dhoti) crouching and holding a stone mortar steady with both hands, chubby Shridama (green headband) standing wobbly on top of the mortar, Child Krishna (yellow dhoti, peacock feather, gold anklets) standing on Shridama's shoulders, stretching one arm up toward a hanging terracotta butter pot in a rope sling near the ceiling. Full vertical composition from floor to ceiling, low angle. Warm sunbeams, dust in the air. All hands and feet anatomically correct.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Camera tilts upward from the boys' feet to the hanging pot, following Krishna as he climbs onto the chubby boy's shoulders. The middle boy's legs tremble, he grimaces with effort; the boy at the bottom grips the mortar and looks up in fear. Krishna stretches on his tiptoes, fingertips just touching the pot. Playful, slightly wobbly physical comedy.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Shridama (loud, round, slightly husky voice of a chubby 6-year-old Tamil boy, straining, comic. **check ள in தோள்) says in Tamil: \"சீக்கிரம் கண்ணா... தோள் வலிக்குது!\"\n- Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, stretching effort, then triumph) says in Tamil: \"அசையாதடா... இதோ... கிடைச்சுடுச்சு!\"\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 6 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S04_L1_shridama",
+          "voice": "KK_Shridama",
+          "speaker": "shridama",
+          "text": "[straining, comic] சீக்கிரம் கண்ணா... தோள் வலிக்குது!",
+          "subtitle": "சீக்கிரம் கண்ணா... தோள் வலிக்குது!",
+          "at": 15.6
+        },
+        {
+          "id": "EP01S_S04_L2_kannan",
+          "voice": "KK_Kannan",
+          "speaker": "kannan",
+          "text": "[stretching effort] அசையாதடா... இதோ... கிடைச்சுடுச்சு!",
+          "subtitle": "அசையாதடா... இதோ... கிடைச்சுடுச்சு!",
+          "at": 18.2
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S05",
+      "start": 21.0,
+      "dur": 5.0,
+      "veo_seconds": 6,
+      "method": "B",
+      "refs": [
+        "krishna_child_full",
+        "shridama_full",
+        "subala_full",
+        "bg_mainroom"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nSame interior, medium-wide low angle. Child Krishna balanced on top of the boy tower, one hand deep in the hanging butter pot, the other hand throwing a lump of white butter downward, laughing joyfully, butter on his cheeks. Below, Shridama and Subala with mouths open catching butter, laughing. At the open window a grey langur monkey reaching out to catch butter. Warm sunlight, flying droplets of butter frozen in light.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Krishna laughs and tosses lumps of butter down; the two boys catch them and laugh with butter on their faces; the monkey at the window snatches a lump and munches happily. Joyful chaotic energy, slight camera shake.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, generous, laughing) says in Tamil: \"எல்லாருக்கும் உண்டு! குரங்கு மாமா, உனக்கும் தான்!\"\nAudio includes: children's joyful laughter, a monkey chattering.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 5 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S05_L1_kannan",
+          "voice": "KK_Kannan",
+          "speaker": "kannan",
+          "text": "[generous, laughing] எல்லாருக்கும் உண்டு! குரங்கு மாமா, உனக்கும் தான்!",
+          "subtitle": "எல்லாருக்கும் உண்டு! குரங்கு மாமா, உனக்கும் தான்!",
+          "at": 21.3
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S06a",
+      "start": 26.0,
+      "dur": 2.0,
+      "veo_seconds": 4,
+      "method": "none",
+      "refs": [
+        "yashoda_full"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nExtreme low close-up at floor level of a woman's bare feet with silver anklets (kolusu) and a red saree hem with mustard border stepping onto a wooden doorway threshold decorated with turmeric and kolam. Bright daylight behind her, silhouette effect.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "One slow deliberate step onto the threshold, anklets swinging.\nAudio includes: silver anklets jingling with each step.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 2 seconds.",
+      "lines": [],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S06b",
+      "start": 28.0,
+      "dur": 2.0,
+      "veo_seconds": 4,
+      "method": "B",
+      "refs": [
+        "krishna_child_full",
+        "shridama_full",
+        "subala_full"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nThe three boys in their human tower frozen mid-action, eyes wide with shock, butter dripping from Krishna's hand, all looking toward camera-right (the door). Comic freeze.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Boys freeze, only their eyes slowly turn toward the door; the tower starts to wobble.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Subala (thin, nervous, whiny voice of a small 5-year-old Tamil boy, terrified whisper) says in Tamil: \"டேய்... கொலுசு சத்தம்... அம்மா!\"\n- Yashoda (warm, soft, medium-low voice of a young Tamil mother in her late twenties, off-screen (not visible), voice heard from outside the frame, long, sing-song warning, half-angry half-amused) says in Tamil: \"கண்ணா...!\"\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 4 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S06_L1_subala",
+          "voice": "KK_Subala",
+          "speaker": "subala",
+          "text": "[terrified whisper] டேய்... கொலுசு சத்தம்... அம்மா!",
+          "subtitle": "டேய்... கொலுசு சத்தம்... அம்மா!",
+          "at": 26.6
+        },
+        {
+          "id": "EP01S_S06_L2_yashoda",
+          "voice": "KK_Yashoda",
+          "speaker": "yashoda",
+          "text": "[long, sing-song warning] கண்ணா...!",
+          "subtitle": "கண்ணா...!",
+          "at": 28.5
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S07",
+      "start": 30.0,
+      "dur": 4.0,
+      "veo_seconds": 4,
+      "method": "none",
+      "refs": [
+        "krishna_child_full",
+        "shridama_full",
+        "subala_full",
+        "bg_mainroom"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nSame interior, wide shot. Comic chaos: the boy tower collapsing in mid-air, the terracotta butter pot falling from its rope sling, Shridama and Subala diving toward the open window, Child Krishna falling onto his bottom. Motion blur on limbs, butter splashing.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "The tower collapses comically; the pot falls and shatters on the floor with butter splashing; two boys scramble out through the window and disappear; Krishna lands sitting on the floor amid broken pot pieces, butter on his face, then quickly hides both hands behind his back. Slapstick, family-friendly.\nAudio includes: a clay pot crashing and shattering, whooshes, children scrambling.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 4 seconds.",
+      "lines": [],
+      "keep_clip_audio_db": -8
+    },
+    {
+      "id": "S08a",
+      "start": 34.0,
+      "dur": 3.0,
+      "veo_seconds": 4,
+      "method": "A",
+      "refs": [
+        "yashoda_front",
+        "yashoda_full"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nMedium low-angle shot of Yashoda (exactly as reference: red saree with mustard border, jasmine in braid, kumkum, bangles) standing in a doorway, hands on her hips, one eyebrow raised, lips pressed trying to look angry but eyes betraying amusement. Bright daylight behind her creating a warm rim light. Broken clay pot pieces and butter on the floor in the foreground.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "She taps her foot once and speaks a scolding question with natural mouth movement; one eyebrow rises.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Yashoda (warm, soft, medium-low voice of a young Tamil mother in her late twenties, stern but with an amused crack in her voice) says in Tamil: \"கண்ணா, திரும்பவும் வெண்ணெய் திருடித் தின்னியா?\"\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 3 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S08_L1_yashoda",
+          "voice": "KK_Yashoda",
+          "speaker": "yashoda",
+          "text": "[stern but with an amused crack in her voice] கண்ணா, திரும்பவும் வெண்ணெய் திருடித் தின்னியா?",
+          "subtitle": "கண்ணா, திரும்பவும் வெண்ணெய் திருடித் தின்னியா?",
+          "at": 34.3
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S08b",
+      "start": 37.0,
+      "dur": 4.0,
+      "veo_seconds": 4,
+      "method": "A",
+      "refs": [
+        "krishna_child_front",
+        "krishna_child_expressions"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nHigh-angle close-up from an adult's point of view looking down at Child Krishna sitting on the floor, face, cheeks, nose and hair smeared with white butter, peacock feather crooked, both hands hidden behind his back, looking up with enormous innocent glistening eyes and a tiny pout. Soft warm light on his face, broken pot pieces around him. Adorable, expressive.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "He blinks slowly with big innocent eyes, shakes his head side to side and speaks with natural mouth movement and a little pout.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, exaggerated innocence, sing-song, eyelashes fluttering) says in Tamil: \"அம்மா, நான் ஒண்ணுமே பண்ணலையே!\"\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 4 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S08_L2_kannan",
+          "voice": "KK_Kannan",
+          "speaker": "kannan",
+          "text": "[exaggerated innocence] அம்மா, நான் ஒண்ணுமே பண்ணலையே!",
+          "subtitle": "அம்மா, நான் ஒண்ணுமே பண்ணலையே!",
+          "at": 37.6
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S09",
+      "start": 41.0,
+      "dur": 6.0,
+      "veo_seconds": 6,
+      "method": "A",
+      "refs": [
+        "yashoda_front",
+        "krishna_child_front",
+        "bg_mainroom"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nEye-level two-shot in profile: Yashoda kneeling on the floor facing Child Krishna, holding up her index finger with a dab of white butter on it, teasing smile; Krishna, butter-smeared face, looking at her finger cross-eyed, about to make an excuse. Window with neem tree behind them, soft warm light, both faces clearly visible.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Slow push-in. Yashoda speaks a teasing question with natural mouth movement while showing the butter on her finger. Krishna looks at the finger, thinks for a beat, then brightens and points confidently toward the window while answering with natural mouth movement.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Yashoda (warm, soft, medium-low voice of a young Tamil mother in her late twenties, teasing, raised eyebrow) says in Tamil: \"அப்போ உன் மூக்குல இருக்கிறது என்ன?\"\n- Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, quick thinking, confident lie, points at window) says in Tamil: \"அதுவா... குரங்கு மாமா பூசிட்டுப் போயிட்டாரும்மா!\"\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 6 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S09_L1_yashoda",
+          "voice": "KK_Yashoda",
+          "speaker": "yashoda",
+          "text": "[teasing, raised eyebrow] அப்போ உன் மூக்குல இருக்கிறது என்ன?",
+          "subtitle": "அப்போ உன் மூக்குல இருக்கிறது என்ன?",
+          "at": 41.3
+        },
+        {
+          "id": "EP01S_S09_L2_kannan",
+          "voice": "KK_Kannan",
+          "speaker": "kannan",
+          "text": "[quick thinking] அதுவா... குரங்கு மாமா பூசிட்டுப் போயிட்டாரும்மா!",
+          "subtitle": "அதுவா... குரங்கு மாமா பூசிட்டுப் போயிட்டாரும்மா!",
+          "at": 43.8
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S10",
+      "start": 47.0,
+      "dur": 4.0,
+      "veo_seconds": 4,
+      "method": "B",
+      "refs": [
+        "yashoda_front",
+        "krishna_child_front"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nMedium close-up: Yashoda laughing with eyes closed, hugging Child Krishna tightly to her chest, wiping his buttery cheek with the end of her red saree; Krishna giggling with eyes squeezed shut, cheek pressed against her shoulder. Warm golden backlight, tender, loving.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Slow orbit around mother and child as she laughs, hugs him and rocks him gently, wiping his face with her saree.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Yashoda (warm, soft, medium-low voice of a young Tamil mother in her late twenties, soft, adoring, whispered into his hair) says in Tamil: \"(laughs) என் செல்லத் திருடா...\"\nAudio includes: a mother's warm laughter, bangles clinking.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 4 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S10_L1_yashoda",
+          "voice": "KK_Yashoda",
+          "speaker": "yashoda",
+          "text": "[soft, adoring] [laughs] என் செல்லத் திருடா...",
+          "subtitle": "என் செல்லத் திருடா...",
+          "at": 48.3
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S11a",
+      "start": 51.0,
+      "dur": 2.0,
+      "veo_seconds": 4,
+      "method": "C",
+      "refs": [
+        "balarama_full"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nBalarama (7-year-old, fair skin, indigo dhoti, topknot) bursting through the bright doorway, out of breath, pointing accusingly toward camera with one arm outstretched, mouth open shouting. Dust swirling in the sunbeam.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "He runs in, skids to a stop and points accusingly.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Balarama (firm, proud voice of a 7-year-old Tamil boy, a little lower than Kannan's, breathless, tattling big brother) says in Tamil: \"அம்மா! கண்ணன் மண்ணு தின்னான்! நானே பார்த்தேன்!\"\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 2 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S11_L1_balarama",
+          "voice": "KK_Balarama",
+          "speaker": "balarama",
+          "text": "[breathless, tattling big brother] அம்மா! கண்ணன் மண்ணு தின்னான்! நானே பார்த்தேன்!",
+          "subtitle": "அம்மா! கண்ணன் மண்ணு தின்னான்! நானே பார்த்தேன்!",
+          "at": 51.2
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S11b",
+      "start": 53.0,
+      "dur": 4.0,
+      "veo_seconds": 4,
+      "method": "A",
+      "refs": [
+        "yashoda_front",
+        "krishna_child_front"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nClose-up of Yashoda, her laughter fading into a worried frown, holding Child Krishna by both shoulders in the foreground (back of his head and peacock feather visible, out of focus). The light starts to cool slightly.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Her smile drops into concern, she speaks a sharp short question, then a slow firm command with natural mouth movement.\nDialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:\n- Yashoda (warm, soft, medium-low voice of a young Tamil mother in her late twenties, shock → firm, slow command. **check ற in திற) says in Tamil: \"என்னது?! கண்ணா... வாயைத் திற!\"\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 4 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S11_L2_yashoda",
+          "voice": "KK_Yashoda",
+          "speaker": "yashoda",
+          "text": "[shock → firm] என்னது?! கண்ணா... வாயைத் திற!",
+          "subtitle": "என்னது?! கண்ணா... வாயைத் திற!",
+          "at": 54.2
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S12a",
+      "start": 57.0,
+      "dur": 3.0,
+      "veo_seconds": 4,
+      "method": "C",
+      "refs": [
+        "krishna_child_front"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nClose-up of Child Krishna's face, a little butter still on one cheek, calm knowing gentle smile, eyes glowing faintly, lips just beginning to part, a soft golden-white light starting to glow from inside his mouth onto his chin. Room behind him darkened, deep indigo shadows, tiny floating golden particles. Divine, awe-inspiring, reverent.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Very slow push-in. His smile becomes serene, he slowly opens his mouth and an intense golden-white divine light with swirling stars and tiny galaxies spills out, lighting the particles in the air. Reverent, not scary.\nAudio includes: a deep humming 'om' and shimmering bells, no music.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 3 seconds.",
+      "lines": [
+        {
+          "id": "EP01S_S12_L1_narrator",
+          "voice": "KK_Narrator",
+          "speaker": "narrator",
+          "text": "[hushed, full of wonder] அந்தச் சின்ன வாய்க்குள்ள... யசோதா என்ன பார்த்தாங்க?",
+          "subtitle": "அந்தச் சின்ன வாய்க்குள்ள... யசோதா என்ன பார்த்தாங்க?",
+          "at": 57.8
+        }
+      ],
+      "keep_clip_audio_db": null
+    },
+    {
+      "id": "S12b",
+      "start": 60.0,
+      "dur": 2.0,
+      "veo_seconds": 4,
+      "method": "none",
+      "refs": [
+        "yashoda_front"
+      ],
+      "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nExtreme close-up of Yashoda's face lit only by golden-white light from below-front, eyes wide with awe and shock, tiny stars and galaxies reflected in her pupils, mouth slightly open, jasmine in her hair glowing. Dark indigo background.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
+      "video_prompt": "Light flickers across her face, a tear forms, her lips part in wonder. Then light flares to white.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 2 seconds.",
+      "lines": [],
+      "keep_clip_audio_db": null
+    }
+  ],
+  "sfx_library": {
+    "amb_room": {
+      "prompt": "Inside an ancient Indian village house, quiet morning room tone, birds outside the window, distant cow bells",
+      "seconds": 22
+    },
+    "amb_village": {
+      "prompt": "Indian village at sunrise, birds chirping, cow bells, distant river, peaceful",
+      "seconds": 22
+    },
+    "anklets_gold": {
+      "prompt": "Small gold anklet bells jingling as a child climbs",
+      "seconds": 2
+    },
+    "anklets_silver": {
+      "prompt": "Silver anklets jingling, three slow footsteps on a wooden threshold",
+      "seconds": 2.5
+    },
+    "drum_hit": {
+      "prompt": "Single deep dramatic drum hit",
+      "seconds": 1.5
+    },
+    "pot_crash": {
+      "prompt": "Clay pot falling and shattering on a mud floor",
+      "seconds": 2
+    },
+    "butter_splat": {
+      "prompt": "Soft splat of butter",
+      "seconds": 0.8
+    },
+    "monkey": {
+      "prompt": "Langur monkey chattering",
+      "seconds": 2
+    },
+    "kids_laugh": {
+      "prompt": "Group of small children laughing",
+      "seconds": 3
+    },
+    "bangles": {
+      "prompt": "Glass bangles clinking",
+      "seconds": 1.5
+    },
+    "running": {
+      "prompt": "Child running footsteps on a mud floor",
+      "seconds": 2
+    },
+    "divine_om": {
+      "prompt": "Low humming om with shimmering temple bells, divine",
+      "seconds": 5
+    },
+    "magic_ding": {
+      "prompt": "Quick magical ding",
+      "seconds": 0.8
+    },
+    "wood_creak": {
+      "prompt": "Wooden creak and children grunting with effort",
+      "seconds": 2
+    }
+  },
+  "sfx": [
+    {
+      "sfx": "magic_ding",
+      "at": 12.6,
+      "db": -14
+    },
+    {
+      "sfx": "anklets_gold",
+      "at": 15.4,
+      "db": -14
+    },
+    {
+      "sfx": "wood_creak",
+      "at": 17.0,
+      "db": -16
+    },
+    {
+      "sfx": "kids_laugh",
+      "at": 21.6,
+      "db": -16
+    },
+    {
+      "sfx": "butter_splat",
+      "at": 22.4,
+      "db": -12
+    },
+    {
+      "sfx": "monkey",
+      "at": 23.6,
+      "db": -16
+    },
+    {
+      "sfx": "butter_splat",
+      "at": 24.2,
+      "db": -12
+    },
+    {
+      "sfx": "anklets_silver",
+      "at": 26.0,
+      "db": -8
+    },
+    {
+      "sfx": "drum_hit",
+      "at": 28.0,
+      "db": -8
+    },
+    {
+      "sfx": "pot_crash",
+      "at": 30.8,
+      "db": -8
+    },
+    {
+      "sfx": "monkey",
+      "at": 44.6,
+      "db": -14
+    },
+    {
+      "sfx": "bangles",
+      "at": 47.6,
+      "db": -16
+    },
+    {
+      "sfx": "running",
+      "at": 51.0,
+      "db": -14
+    },
+    {
+      "sfx": "divine_om",
+      "at": 57.0,
+      "db": -12
+    }
+  ],
+  "ambience": [
+    {
+      "sfx": "amb_room",
+      "start": 0.0,
+      "end": 3.0,
+      "db": -24
+    },
+    {
+      "sfx": "amb_village",
+      "start": 3.0,
+      "end": 8.0,
+      "db": -22
+    },
+    {
+      "sfx": "amb_room",
+      "start": 8.0,
+      "end": 57.0,
+      "db": -26
+    }
+  ],
+  "music_library": {
+    "T1_title": {
+      "prompt": "Catchy Tamil devotional title theme, instrumental, joyful bansuri flute hook of four notes, mridangam and tabla groove, veena, strings, festive and uplifting, 100 bpm",
+      "seconds": 15
+    },
+    "T2_kannan": {
+      "prompt": "Playful mischievous Indian instrumental, cheeky bansuri flute melody with a catchy bouncy hook, pizzicato strings, kanjira and light mridangam, tiptoeing comedic rhythm, 96 bpm, animated family film score",
+      "seconds": 30
+    },
+    "T3_yashoda": {
+      "prompt": "Tender warm Indian instrumental, veena melody with soft strings and gentle flute, mother's love, lullaby-like, 68 bpm, emotional cinematic, simple memorable melody",
+      "seconds": 15
+    },
+    "T8_divine": {
+      "prompt": "Divine awe-inspiring cinematic instrumental, low choir humming om, temple bells and shimmering chimes, slowly rising strings building to a powerful swell, Indian devotional epic, 60 bpm",
+      "seconds": 15
+    },
+    "T9_mystery": {
+      "prompt": "Mysterious ethereal Indian ambient, single temple bell, soft tanpura drone, distant flute note, slow, magical and curious, minimal",
+      "seconds": 15
+    }
+  },
+  "music": [
+    {
+      "track": "T1_title",
+      "start": 3.0,
+      "end": 5.8,
+      "db": -12,
+      "fade_in": 0.1,
+      "fade_out": 0.6
+    },
+    {
+      "track": "T2_kannan",
+      "start": 5.2,
+      "end": 26.0,
+      "db": -15,
+      "fade_in": 0.8,
+      "fade_out": 0.05
+    },
+    {
+      "track": "T2_kannan",
+      "start": 34.0,
+      "end": 47.0,
+      "db": -24,
+      "fade_in": 0.5,
+      "fade_out": 0.8,
+      "offset": 10.0
+    },
+    {
+      "track": "T3_yashoda",
+      "start": 46.6,
+      "end": 51.4,
+      "db": -15,
+      "fade_in": 0.6,
+      "fade_out": 0.6
+    },
+    {
+      "track": "T9_mystery",
+      "start": 51.0,
+      "end": 57.2,
+      "db": -18,
+      "fade_in": 0.4,
+      "fade_out": 0.4
+    },
+    {
+      "track": "T8_divine",
+      "start": 56.8,
+      "end": 62.0,
+      "db": -12,
+      "fade_in": 0.3,
+      "fade_out": 0.05
+    },
+    {
+      "track": "T1_title",
+      "start": 62.2,
+      "end": 65.0,
+      "db": -12,
+      "fade_in": 0.1,
+      "fade_out": 0.8
+    }
+  ],
+  "titles": [
+    {
+      "text": "கண்ணன் கதைகள் #01",
+      "sub": "வெண்ணெய் திருடன்",
+      "start": 3.5,
+      "end": 5.5
+    }
+  ],
+  "end_card": {
+    "start": 62.0,
+    "end": 65.0,
+    "lines": [
+      "அடுத்த எபிசோட்:",
+      "வாய்க்குள் ஒரு பிரபஞ்சம்",
+      "Follow பண்ணுங்க"
+    ]
+  }
+}

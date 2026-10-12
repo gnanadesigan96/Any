@@ -1,5 +1,7 @@
 # கண்ணன் கதைகள் (Kannan Kathaigal): AI Tamil Mythological Shorts
 
+> 🤖 **Want it all done by script?** [pipeline/](pipeline/README.md): one command makes the voices, pictures, Veo clips, sound, music and the finished Short with subtitles.
+>
 > 🎬 **Making Episode 1? Follow [MAKE-EPISODE-1.md](MAKE-EPISODE-1.md)**: one complete step-by-step guide, from setup to publishing, with a card for every shot.
 >
 > **Using Gemini + ElevenLabs (recommended)?** Start with **[ELEVENLABS-GEMINI-WORKFLOW.md](ELEVENLABS-GEMINI-WORKFLOW.md)**: Gemini/Veo for pictures, video and music, ElevenLabs for every voice, with all Episode 1 lines ready in [episodes/ep01-voice-lines-elevenlabs.md](episodes/ep01-voice-lines-elevenlabs.md).
@@ -28,6 +30,7 @@ A production kit for making cinematic 60-second Tamil Shorts/Reels about Lord Kr
 | [GEMINI-ONLY-PROMPT-PACK.md](GEMINI-ONLY-PROMPT-PACK.md) | Prompts for the Google-only plan: first frame + talking-video prompt (Tamil dialogue built in) for every shot of the Short and the full episode, plus the narrator script |
 | [GEMINI-GUIDE.md](GEMINI-GUIDE.md) | **How to use all this in Gemini and Flow**, click by click |
 | [GEMINI-PROMPT-PACK.md](GEMINI-PROMPT-PACK.md) | Every image and video prompt, complete and ready to copy-paste |
+| [pipeline/](pipeline/README.md) | **Automated production:** scripts that generate and assemble Short #1 end to end (ElevenLabs + Gemini API + ffmpeg) |
 | [tools/](tools/README.md) | Script that creates all the character voices in ElevenLabs automatically |
 | [templates/episode-template.md](templates/episode-template.md) | Blank template for every future episode |
 

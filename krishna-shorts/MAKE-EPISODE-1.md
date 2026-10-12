@@ -2,6 +2,8 @@
 
 **Tools:** Gemini app (pictures, music) · Google Flow (video) · ElevenLabs (voices, sound effects) · **DaVinci Resolve** (free; final edit). CapCut is blocked in India.
 
+> 🤖 **Prefer automation?** [pipeline/README.md](pipeline/README.md) does Phases 1–7 by script. This guide is the manual route, and also explains what the script does.
+
 **What you'll make first:** **Short #1: வெண்ணெய் திருடன்** (60 s, vertical). It's Episode 1's first release, and it teaches you the whole process with little risk. The full 11-minute Episode 1 then uses exactly the same steps, scene by scene (Phase 8).
 
 **Time:** about 8–10 sessions of 1–2 hours. **Tick each box as you go.**
