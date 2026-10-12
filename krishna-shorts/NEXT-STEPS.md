@@ -25,7 +25,7 @@ For each one ([prompts: English](02-series-bible.md#2-characters) · [Tamil](02b
 Make **Short Shot 8** (Yashoda catches Kannan) completely, before anything else:
 1. **Frames:** generate the 8a and 8b first frames in Nano Banana with the refs attached (prompts: "SHOT 8" in [the Short script](episodes/ep01-vennai-thirudan.md)).
 2. **Video:** in Flow → *Frames to Video* → 9:16 → paste the motion prompt → generate in **Fast**.
-3. **Voice:** in ElevenLabs, use *Voice Design* to create **Yashoda** and **Kannan** voices ([voice briefs](02-series-bible.md#3-voice-casting-elevenlabs-save-each-as-a-named-voice-and-always-reuse-the-same-voice-id)). Generate the two lines, 3 takes each.
+3. **Voice:** in ElevenLabs, use *Voice Design* to create **Yashoda** and **Kannan** voices ([voice casting](04-voices-and-cinematic-flow.md#a3-character-voice-sheets-part-1-cast)). Generate the two lines, 3 takes each. For Kannan, also try a real child reading the line + *Voice Changer* and compare.
 4. **Lip-sync:** use the free trial credits on **sync.so** or **Kling** to sync the lines onto the clips.
 5. Watch the result on your phone and **ask a Tamil-speaking family member** whether the voices sound natural.
 

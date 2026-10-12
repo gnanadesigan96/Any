@@ -108,6 +108,9 @@ hair tied in a tiny tuft, short saffron-orange cotton dhoti, a string of red bea
 | Kaliya | five-hooded giant black serpent with gem-crowns |
 
 ## 3. Voice casting (ElevenLabs; save each as a named voice and always reuse the same voice ID)
+
+> **Full, detailed voice casting** (age- and gender-matched voices for every character, ElevenLabs Voice Design prompts, child/elderly voice strategy, voice register) is in [04-voices-and-cinematic-flow.md](04-voices-and-cinematic-flow.md). The table below is the short version.
+
 | Character | Voice brief | Settings guide |
 |---|---|---|
 | Child Krishna | Young, high-pitched, playful, cheeky, giggly; Chennai/neutral Tamil accent | Stability low-mid (~35%) for expressiveness; Style high. If Voice Design won't produce a child voice, use a light, youthful female voice with Tamil accent, or a parent-consented recording of a real child converted with Speech-to-Speech. |

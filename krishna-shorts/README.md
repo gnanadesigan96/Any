@@ -14,6 +14,9 @@ A production kit for making cinematic 60-second Tamil Shorts/Reels about Lord Kr
 | [episodes/ep01-vennai-thirudan.md](episodes/ep01-vennai-thirudan.md) | **Short #1 (60 s, 9:16), production-ready**: story, shot timeline, Tamil dialogue, detailed per-shot AI prompts, voice/music/SFX, editing |
 | [episodes/ep01-subtitles.srt](episodes/ep01-subtitles.srt) | Tamil subtitle file for Short #1, timed to the shot list |
 | [03-qc-and-costs.md](03-qc-and-costs.md) | Quality-control checklist, cost estimate, regeneration budget |
+| [04-voices-and-cinematic-flow.md](04-voices-and-cinematic-flow.md) | **Tamil voice casting** matched to every character's age and gender, plus the rules that make the episode flow like a movie (animatic, continuity, sound design) |
+| [GEMINI-GUIDE.md](GEMINI-GUIDE.md) | **How to use all this in Gemini and Flow**, click by click |
+| [GEMINI-PROMPT-PACK.md](GEMINI-PROMPT-PACK.md) | Every image and video prompt, complete and ready to copy-paste |
 | [templates/episode-template.md](templates/episode-template.md) | Blank template for every future episode |
 
 ---
