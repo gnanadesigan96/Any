@@ -28,6 +28,7 @@ A production kit for making cinematic 60-second Tamil Shorts/Reels about Lord Kr
 | [GEMINI-ONLY-PROMPT-PACK.md](GEMINI-ONLY-PROMPT-PACK.md) | Prompts for the Google-only plan: first frame + talking-video prompt (Tamil dialogue built in) for every shot of the Short and the full episode, plus the narrator script |
 | [GEMINI-GUIDE.md](GEMINI-GUIDE.md) | **How to use all this in Gemini and Flow**, click by click |
 | [GEMINI-PROMPT-PACK.md](GEMINI-PROMPT-PACK.md) | Every image and video prompt, complete and ready to copy-paste |
+| [tools/](tools/README.md) | Script that creates all the character voices in ElevenLabs automatically |
 | [templates/episode-template.md](templates/episode-template.md) | Blank template for every future episode |
 
 ---

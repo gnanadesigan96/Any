@@ -51,6 +51,8 @@ Go to **https://github.com/gnanadesigan96/Any/tree/claude/modest-turing-kfxpi6/k
 You need these voices for the Short: **Kannan, Yashoda, Subala, Shridama, Balarama, Narrator.**
 
 ### 1.1 Design each voice
+> **Shortcut:** [tools/create_elevenlabs_voices.py](tools/README.md) creates all 11 voices automatically. You just listen to 3 previews per character and pick one. If you use it, skip to 1.2.
+
 For each character, in this order: Yashoda → Narrator → Kannan → Subala → Shridama → Balarama.
 
 1. ElevenLabs → **Voices** → **+ Create a voice / Add voice** → **Voice Design**.
