@@ -4,6 +4,7 @@
     python3 boys.py auto            # search the Voice Library, pick 4 different voices, add them to your
                                     # account, make Tamil test lines (normal + pitched up), link them
     python3 boys.py search          # only list + download previews of the best candidates (adds nothing)
+    python3 boys.py use KK_Subala <library voice_id>   # swap one boy for a voice from the list
 
 ElevenLabs can't design children's voices, so this uses published Voice Library voices (adult performers)
 and, where a voice doesn't already sound like a child, raises its pitch a little (a standard animation
@@ -121,6 +122,8 @@ def cmd_search(el):
               f"{'Tamil' if is_tamil(v) else 'not Tamil-verified'}, score {base_score(v)}")
     with open(os.path.join(OUT, "candidates.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
+    with open(os.path.join(OUT, "candidates.json"), "w", encoding="utf-8") as f:
+        json.dump(ranked[:60], f, ensure_ascii=False)
     print(f"\nPreviews and list: {OUT}")
     return ranked
 
@@ -139,43 +142,67 @@ def cmd_auto(el):
               "| Character | Voice (Voice Library) | Why | Linked as | Change with |", "|---|---|---|---|---|"]
     print("\n=== Picks ===")
     for role in ORDER:
-        v = chosen[role]
-        new_name = f"{role} ({v['name'][:40]})"
-        for old_name, old_id in list(mine.items()):
-            if old_name.startswith(f"{role} (") and old_name != new_name:
-                try:
-                    el.delete_voice(old_id)  # an earlier pick this script added; free the slot
-                    print(f"   removed earlier pick '{old_name}' from your voices")
-                except ApiError as e:
-                    print(f"   could not remove '{old_name}': {e}")
-        vid = mine.get(new_name)
-        if not vid:
-            try:
-                vid = el.add_shared(v["public_owner_id"], v["voice_id"], new_name)
-            except ApiError as e:
-                print(f"{role}: could not add '{v['name']}' to your voices ({e})")
-                continue
-        el._voices = None
-        pitch = 0 if is_kid(v) else 3
-        vmap[role] = {"id": vid, "pitch": pitch} if pitch else vid
-        line = ROLES[role][1]
-        for p in (0, 3):
-            out = os.path.join(OUT, "tests", f"{role}_p{p}.mp3")
-            try:
-                with open(out, "wb") as f:
-                    f.write(_tts_by_id(el, vid, line))
-                kk.pitch_shift(out, p)
-            except ApiError as e:
-                print(f"   test line failed for {role}: {e}")
-        why = "child-like description" if is_kid(v) else "playful young voice, pitched up 3 semitones"
-        print(f"{role:<12} → {v['name']}  [{why}]")
-        report.append(f"| {role} | **{v['name']}**: {(v.get('description') or '')[:80]} | {why} | `{vid}`"
-                      f"{' +' + str(pitch) + ' st' if pitch else ''} | `python3 kk.py link {role} <voice_id> --pitch N` |")
+        row = install(el, role, chosen[role], mine, vmap)
+        if row:
+            report.append(row)
     json.dump(vmap, open(path, "w"), indent=2)
     with open(os.path.join(OUT, "report.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(report) + "\n")
     print(f"\nLinked in voice_map.json. Test lines: {os.path.join(OUT, 'tests')}  Report: {os.path.join(OUT, 'report.md')}")
     print("Next: python3 kk.py lines")
+
+
+def install(el, role, v, mine, vmap):
+    """Add library voice v to the account as <role> (removing this role's earlier pick), link it, make test lines."""
+    new_name = f"{role} ({v['name'][:40]})"
+    for old_name, old_id in list(mine.items()):
+        if old_name.startswith(f"{role} (") and old_name != new_name:
+            try:
+                el.delete_voice(old_id)
+                print(f"   removed earlier pick '{old_name}' from your voices")
+            except ApiError as e:
+                print(f"   could not remove '{old_name}': {e}")
+    vid = mine.get(new_name)
+    if not vid:
+        try:
+            vid = el.add_shared(v["public_owner_id"], v["voice_id"], new_name)
+        except ApiError as e:
+            print(f"{role}: could not add '{v['name']}' to your voices ({e})")
+            return None
+    pitch = 0 if is_kid(v) else 3
+    vmap[role] = {"id": vid, "pitch": pitch} if pitch else vid
+    os.makedirs(os.path.join(OUT, "tests"), exist_ok=True)
+    for p in (0, 3):
+        out = os.path.join(OUT, "tests", f"{role}_p{p}.mp3")
+        try:
+            with open(out, "wb") as f:
+                f.write(_tts_by_id(el, vid, ROLES[role][1]))
+            kk.pitch_shift(out, p)
+        except ApiError as e:
+            print(f"   test line failed for {role}: {e}")
+    why = "child-like description" if is_kid(v) else "playful young voice, pitched up 3 semitones"
+    print(f"{role:<12} → {v['name']}  [{why}{', Tamil-verified' if is_tamil(v) else ''}]")
+    return (f"| {role} | **{v['name']}**: {(v.get('description') or '')[:80]} | {why} | `{vid}`"
+            f"{' +' + str(pitch) + ' st' if pitch else ''} | `python3 boys.py use {role} <library voice_id>` |")
+
+
+def cmd_use(el):
+    """python3 boys.py use KK_Subala <library voice_id>: swap one boy's voice."""
+    if len(sys.argv) != 4 or sys.argv[2] not in ROLES:
+        sys.exit("usage: python3 boys.py use <KK_Kannan|KK_Subala|KK_Shridama|KK_Balarama> <library voice_id>")
+    role, lib_id = sys.argv[2], sys.argv[3]
+    hits = [v for v in el.shared_voices(page_size=100, search=lib_id) if v["voice_id"] == lib_id]
+    if not hits:
+        cand = os.path.join(OUT, "candidates.json")
+        hits = [v for v in (json.load(open(cand)) if os.path.exists(cand) else []) if v["voice_id"] == lib_id]
+    if not hits:
+        sys.exit(f"Voice {lib_id} not found in the Voice Library (use an id from work/boys/candidates.md).")
+    mine = {v["name"]: v["voice_id"] for v in el.get_json("/v1/voices").get("voices", [])}
+    path = os.path.join(HERE, "voice_map.json")
+    vmap = json.load(open(path)) if os.path.exists(path) else {}
+    if install(el, role, hits[0], mine, vmap):
+        json.dump(vmap, open(path, "w"), indent=2)
+        print(f"Linked. Listen: {os.path.join(OUT, 'tests', role + '_p0.mp3')}")
 
 
 def _tts_by_id(el, vid, text):
@@ -194,7 +221,7 @@ def main():
         sys.exit("ELEVENLABS_API_KEY is not set.")
     el = ElevenLabs(key)
     cmd = sys.argv[1] if len(sys.argv) > 1 else "auto"
-    {"auto": cmd_auto, "search": cmd_search}.get(cmd, lambda _: sys.exit(__doc__))(el)
+    {"auto": cmd_auto, "search": cmd_search, "use": cmd_use}.get(cmd, lambda _: sys.exit(__doc__))(el)
 
 
 if __name__ == "__main__":
