@@ -7,6 +7,8 @@
     python kk.py refs   [--takes 2]      # character + background reference pictures (Gemini API)
     python kk.py frames [--takes 2]      # first frame of every shot (Gemini API, uses refs)
     python kk.py clips  --yes            # video clips (Veo via Gemini API, costs money; asks for --yes)
+    python kk.py clips  --hero --yes     # low-cost mode: video only for the key moments; other shots get
+                                         #   a cinematic camera move on the still frame in 'assemble'
     python kk.py lines                   # all voice lines (ElevenLabs TTS)
     python kk.py revoice                 # lip-sync method A: Veo speech -> isolate -> character voice
     python kk.py sfx                     # sound effects + ambience (ElevenLabs)
@@ -224,8 +226,10 @@ def step_todo(ctx):
     if clips:
         w(f"## 3. Video clips (Flow → Frames to Video, 9:16, Veo Fast) → save into `{os.path.join(ctx.work, 'clips')}`\n")
         w("Upload the shot's frame from `frames/` as the start frame, paste the prompt, download the clip.\n")
+        w("Shots marked ⭐ are the key moments; the others can stay as still frames with a camera move (free).\n")
         for s in clips:
-            w(f"### `{s['id']}.mp4` · start frame: `frames/{s['id']}.png` · {s['veo_seconds']} s\n```\n{s['video_prompt']}\n```\n")
+            star = "⭐ " if s.get("hero") else ""
+            w(f"### {star}`{s['id']}.mp4` · start frame: `frames/{s['id']}.png` · {s['veo_seconds']} s\n```\n{s['video_prompt']}\n```\n")
     if not (refs or frames or clips):
         w("Nothing left: all pictures and clips exist. Run `python3 kk.py revoice` then `python3 kk.py assemble`.")
     path = os.path.join(ctx.work, "TODO-by-hand.md")
@@ -305,13 +309,14 @@ def step_frames(ctx):
 
 
 def step_clips(ctx):
-    todo = [s for s in ctx.m["shots"] if ctx.want(s["id"], ctx.p("clips", s["id"], "mp4"))]
+    todo = [s for s in ctx.m["shots"] if ctx.want(s["id"], ctx.p("clips", s["id"], "mp4"))
+            and (not ctx.args.hero or s.get("hero"))]
     secs = sum(s["veo_seconds"] for s in todo) * ctx.args.takes
     if not todo:
         log("clips: nothing to do")
         return
     log(f"clips: {len(todo)} clip(s), {secs} s of video with model {ctx.gm.video_model}. "
-        "This is billed on your Gemini API account (roughly $0.15-0.40 per second; check Google's pricing page).")
+        "This is billed on your Gemini API account (Veo 3.1 Fast is about $0.10 per second at 720p; check Google's pricing page).")
     if not ctx.args.yes:
         log("Re-run with --yes to generate.")
         return
@@ -578,6 +583,26 @@ def retime(ctx, revoice, gap=0.15, tail=0.35):
     return timing, placed, warp, warp(m["length"])
 
 
+def camera_move(move, W, H, fps, dur):
+    """Cinematic camera move on a still frame (zoompan on a 2x upscale so the motion is smooth)."""
+    n = max(1, int(round(dur * fps)))
+    cx, cy = "iw/2-(iw/zoom/2)", "ih/2-(ih/zoom/2)"
+    t = f"(on/{n})"
+    moves = {
+        "push_in": (f"1+0.12*{t}", cx, cy),
+        "push_in_slow": (f"1+0.06*{t}", cx, cy),
+        "pull_back": (f"1.12-0.12*{t}", cx, cy),
+        "tilt_up": ("1.15", cx, f"(ih-ih/zoom)*(1-{t})"),
+        "tilt_down": ("1.15", cx, f"(ih-ih/zoom)*{t}"),
+        "pan_right": ("1.15", f"(iw-iw/zoom)*{t}", cy),
+        "pan_left": ("1.15", f"(iw-iw/zoom)*(1-{t})", cy),
+        "shake": ("1.08", f"{cx}+10*sin(on*1.7)*(1-{t})", f"{cy}+10*cos(on*2.3)*(1-{t})"),
+    }
+    z, x, y = moves.get(move, moves["push_in_slow"])
+    return (f"scale={2 * W}:{2 * H}:force_original_aspect_ratio=increase,crop={2 * W}:{2 * H},"
+            f"zoompan=z='{z}':x='{x}':y='{y}':d=1:s={W}x{H}:fps={fps}")
+
+
 def step_assemble(ctx):
     m = ctx.m
     W, H, fps = m["width"], m["height"], m["fps"]
@@ -608,7 +633,8 @@ def step_assemble(ctx):
         elif os.path.exists(frame):
             k = add_input(["-loop", "1", "-framerate", str(fps), "-t", f"{nd:.3f}", "-i", frame])
             stage["frame"] += 1
-            src = f"[{k}:v]"
+            vf.append(f"[{k}:v]{camera_move(s.get('move', 'push_in_slow'), W, H, fps, nd)}[still{i}]")
+            src = f"[still{i}]"
         else:
             k = add_input(["-f", "lavfi", "-t", f"{nd:.3f}", "-i", f"color=c=0x1d1a24:s={W}x{H}:r={fps}"])
             stage["card"] += 1
@@ -732,6 +758,7 @@ def main(argv=None):
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--takes", type=int, default=1)
     ap.add_argument("--yes", action="store_true", help="allow paid video generation")
+    ap.add_argument("--hero", action="store_true", help="clips: only the key moments (speaking close-ups, the reveal)")
     ap.add_argument("--auto", action="store_true", help="voices: keep preview 1 without asking")
     ap.add_argument("--no-grade", action="store_true")
     ap.add_argument("--pitch", type=float, default=0, help="link: raise this voice by N semitones (e.g. 3 for a boy)")

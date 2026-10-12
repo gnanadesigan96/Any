@@ -109,7 +109,9 @@
           "at": 0.3
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": true,
+      "move": "tilt_up"
     },
     {
       "id": "S02",
@@ -130,7 +132,9 @@
           "at": 3.6
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": false,
+      "move": "push_in_slow"
     },
     {
       "id": "S03",
@@ -172,7 +176,9 @@
           "at": 13.0
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": false,
+      "move": "push_in"
     },
     {
       "id": "S04",
@@ -206,7 +212,9 @@
           "at": 18.2
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": false,
+      "move": "tilt_up"
     },
     {
       "id": "S05",
@@ -232,7 +240,9 @@
           "at": 21.3
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": false,
+      "move": "push_in_slow"
     },
     {
       "id": "S06a",
@@ -246,7 +256,9 @@
       "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nExtreme low close-up at floor level of a woman's bare feet with silver anklets (kolusu) and a red saree hem with mustard border stepping onto a wooden doorway threshold decorated with turmeric and kolam. Bright daylight behind her, silhouette effect.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
       "video_prompt": "One slow deliberate step onto the threshold, anklets swinging.\nAudio includes: silver anklets jingling with each step.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 2 seconds.",
       "lines": [],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": false,
+      "move": "push_in"
     },
     {
       "id": "S06b",
@@ -279,7 +291,9 @@
           "at": 28.5
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": false,
+      "move": "push_in"
     },
     {
       "id": "S07",
@@ -296,7 +310,9 @@
       "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nSame interior, wide shot. Comic chaos: the boy tower collapsing in mid-air, the terracotta butter pot falling from its rope sling, Shridama and Subala diving toward the open window, Child Krishna falling onto his bottom. Motion blur on limbs, butter splashing.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
       "video_prompt": "The tower collapses comically; the pot falls and shatters on the floor with butter splashing; two boys scramble out through the window and disappear; Krishna lands sitting on the floor amid broken pot pieces, butter on his face, then quickly hides both hands behind his back. Slapstick, family-friendly.\nAudio includes: a clay pot crashing and shattering, whooshes, children scrambling.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 4 seconds.",
       "lines": [],
-      "keep_clip_audio_db": -8
+      "keep_clip_audio_db": -8,
+      "hero": false,
+      "move": "shake"
     },
     {
       "id": "S08a",
@@ -320,7 +336,9 @@
           "at": 34.3
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": true,
+      "move": "push_in"
     },
     {
       "id": "S08b",
@@ -344,7 +362,9 @@
           "at": 37.6
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": true,
+      "move": "push_in"
     },
     {
       "id": "S09",
@@ -377,7 +397,9 @@
           "at": 43.8
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": true,
+      "move": "push_in_slow"
     },
     {
       "id": "S10",
@@ -401,7 +423,9 @@
           "at": 48.3
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": false,
+      "move": "pan_left"
     },
     {
       "id": "S11a",
@@ -424,7 +448,9 @@
           "at": 51.2
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": false,
+      "move": "pan_right"
     },
     {
       "id": "S11b",
@@ -448,7 +474,9 @@
           "at": 54.2
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": true,
+      "move": "push_in"
     },
     {
       "id": "S12a",
@@ -471,7 +499,9 @@
           "at": 57.8
         }
       ],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": true,
+      "move": "push_in_slow"
     },
     {
       "id": "S12b",
@@ -485,7 +515,9 @@
       "frame_prompt": "Cinematic stylized 3D animation, premium Indian mythological animated feature film quality, semi-realistic proportions, expressive large eyes, soft subsurface skin shading, highly detailed traditional textiles and gold jewellery, painterly warm golden-hour lighting, volumetric light rays, soft atmospheric haze, shallow depth of field, rich saturated but natural colours (saffron, peacock blue, turmeric yellow, leaf green, terracotta), ancient Indian village setting (Gokulam, Dwapara Yuga), vertical 9:16 composition, subject framed for mobile viewing, film grain subtle.\n\nExtreme close-up of Yashoda's face lit only by golden-white light from below-front, eyes wide with awe and shock, tiny stars and galaxies reflected in her pupils, mouth slightly open, jasmine in her hair glowing. Dark indigo background.\n\nAvoid: photorealistic live-action look, anime style, cartoonish flat 2D, distorted or melted faces, extra or missing fingers, extra limbs, crossed eyes, asymmetric eyes, changing costume or jewellery, changing skin colour, modern objects, plastic, text, letters, watermark, logo, subtitles in image, blurry face, oversaturated neon colours, horror tone, sexualised depiction, western medieval clothing.",
       "video_prompt": "Light flickers across her face, a tear forms, her lips part in wonder. Then light flares to white.\nAudio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.\nDuration: 2 seconds.",
       "lines": [],
-      "keep_clip_audio_db": null
+      "keep_clip_audio_db": null,
+      "hero": false,
+      "move": "push_in"
     }
   ],
   "sfx_library": {

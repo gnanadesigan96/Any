@@ -59,6 +59,16 @@ for m in re.finditer(r"\*\*(Shot (\d+)|(\d+[ab])): ① First frame\*\* · Refs: 
     shots.append({"id": sid, "start": start, "dur": dur, "veo_seconds": veo, "method": method,
                   "refs": ref_names, "frame_prompt": m.group(5).strip(), "video_prompt": m.group(6).strip(),
                   "lines": [], "keep_clip_audio_db": None})
+# Key moments that get real AI video (Veo) in the low-cost mode; all other shots use a cinematic camera move
+# on the still frame. Speaking close-ups (lip-sync) and the reveal.
+HERO = {"S01", "S08a", "S08b", "S09", "S11b", "S12a"}
+MOVE = {"S01": "tilt_up", "S02": "push_in_slow", "S03": "push_in", "S04": "tilt_up", "S05": "push_in_slow",
+        "S06a": "push_in", "S06b": "push_in", "S07": "shake", "S08a": "push_in", "S08b": "push_in",
+        "S09": "push_in_slow", "S10": "pan_left", "S11a": "pan_right", "S11b": "push_in", "S12a": "push_in_slow",
+        "S12b": "push_in"}
+for sh in shots:
+    sh["hero"] = sh["id"] in HERO
+    sh["move"] = MOVE.get(sh["id"], "push_in_slow")
 by = {s["id"]: s for s in shots}
 assert len(shots) == 16, [s["id"] for s in shots]
 by["S07"]["keep_clip_audio_db"] = -8  # Veo's own crash sound, under the SFX
