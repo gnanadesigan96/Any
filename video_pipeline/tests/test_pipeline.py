@@ -1182,7 +1182,7 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         short = series.to_pack(bible, eps, series.ui_text(cfg, bible, eps)).shorts[0]
         ov = series.overlays_for(bible, eps, cfg)[0]
         assert short.hook_text == "" and ov["hook"] == "கதையைக் கேளுங்க!" and ov["hook_sub"]
-        assert ov["end_text"] == "FilmSpeaks" and ov["end_sub"]  # channel end card
+        assert ov["end_text"] == "Guessinema" and ov["end_sub"]  # channel end card
         ep = eps[0]
         spoken = " ".join(s.narration for s in ep.scenes)
         last = ep.scenes[-1].narration

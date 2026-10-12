@@ -9,8 +9,8 @@ next video. The description has two clues: the main character's name and one eas
 import json, sys
 from pathlib import Path
 out = Path(sys.argv[1])
-CHANNEL = "FilmSpeaks"            # shown on the end card and in descriptions
-CHANNEL_SPOKEN = "ஃபிலிம் ஸ்பீக்ஸ்"  # how the narrator says it
+CHANNEL = "Guessinema"            # shown on the end card and in descriptions
+CHANNEL_SPOKEN = "கெஸ்ஸினிமா"      # how the narrator says it
 CTA = (f"இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! "
        f"{CHANNEL_SPOKEN} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!")
 VILLAGE = ("photorealistic cinematic film still, rural Tamil Nadu, warm golden colour grade with dusty earth tones, natural "
