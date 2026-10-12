@@ -1,12 +1,12 @@
 # How to Make Episode 1: the complete step-by-step guide
 
-**Tools:** Gemini app (pictures, music) · Google Flow (video) · ElevenLabs (voices, sound effects) · CapCut desktop or YouTube Create (final edit).
+**Tools:** Gemini app (pictures, music) · Google Flow (video) · ElevenLabs (voices, sound effects) · **DaVinci Resolve** (free; final edit). CapCut is blocked in India.
 
 **What you'll make first:** **Short #1: வெண்ணெய் திருடன்** (60 s, vertical). It's Episode 1's first release, and it teaches you the whole process with little risk. The full 11-minute Episode 1 then uses exactly the same steps, scene by scene (Phase 8).
 
 **Time:** about 8–10 sessions of 1–2 hours. **Tick each box as you go.**
 
-> Menus in Gemini, Flow, ElevenLabs and CapCut change often. If a button name is different on your screen, pick the closest one.
+> Menus in Gemini, Flow, ElevenLabs and DaVinci Resolve change often. If a button name is different on your screen, pick the closest one.
 
 ---
 
@@ -42,7 +42,8 @@ Go to **https://github.com/gnanadesigan96/Any/tree/claude/modest-turing-kfxpi6/k
 - [ ] **Gemini:** signed in with your Gemini Pro account at gemini.google.com
 - [ ] **Flow:** open **labs.google/flow** with the same account; note your **credits** (top-right or profile menu). The Short needs about 30–40 Fast generations.
 - [ ] **ElevenLabs:** a **paid plan** (Starter or above) for commercial use; note your credits
-- [ ] **Editor:** install **CapCut desktop** (free), or **YouTube Create** on Android
+- [ ] **Flow credits:** at **flow.google.com**, click your **profile picture (top-right)**; it shows e.g. *"1,050 Google Flow credits"*. Write the number down.
+- [ ] **Editor:** install **DaVinci Resolve** (free): **blackmagicdesign.com/products/davinciresolve** → **Free Download** (choose the free version, not Studio) → Mac or Windows. *(CapCut is blocked in India. An easier but simpler alternative is **Clipchamp** in Chrome at app.clipchamp.com.)*
 
 ---
 
@@ -124,11 +125,11 @@ Play lines 3–5, then 9–10, 11–15 and 16–17 back to back. Each reply shou
 
 ---
 
-## PHASE 4: Quick animatic (CapCut, 30 min, the step that makes it feel like a film)
+## PHASE 4: Quick animatic (DaVinci Resolve, 30 min, the step that makes it feel like a film)
 
 Before spending video credits, check the timing.
 
-1. CapCut → **New project** → set the ratio to **9:16**.
+1. Resolve → **New Project** → **File → Project Settings**: timeline resolution **1080 × 1920** (vertical), frame rate **30**.
 2. You don't have the shot frames yet, so drop in simple placeholders: your reference pictures, or text cards reading "Shot 1", "Shot 2"...
 3. Place the voice lines on the audio track at the times in the **Shot cards** below.
 4. Play it. Does each line have room to breathe? Is anything rushed? Note any shot that needs to be longer.
@@ -152,7 +153,7 @@ Before spending video credits, check the timing.
 
 ### 5.3 The three voice methods
 - **A: Veo acts, ElevenLabs re-voices** (exact lip-sync):
-  1. In CapCut, put the clip on the timeline → right-click → **Extract audio** → export that audio.
+  1. Get the clip's audio: in Resolve, put the clip alone on a timeline → **Deliver** page → **Audio Only** → Export (WAV). (ElevenLabs may also accept the MP4 directly.)
   2. ElevenLabs → **Voice Isolator** → upload the audio → download the clean speech.
   3. ElevenLabs → **Voice Changer** → choose the character's voice → upload the clean speech → Generate → download as `voice/EP01S_S08_L1_yashoda_VC.wav`.
   4. Use this file instead of the Phase 3 file. Mute the clip and place it at the clip's start. It's already in sync.
@@ -307,7 +308,16 @@ Generate each 3–4 times, keep the catchiest, and save to `music/`.
 
 ---
 
-## PHASE 7: Edit the Short (CapCut desktop, 2–3 hours)
+## PHASE 7: Edit the Short (DaVinci Resolve, 2–3 hours)
+
+> **DaVinci Resolve equivalents for the steps below:**
+> - **New project:** Project Settings → 1080×1920, 30 fps.
+> - **Mute a clip:** select it, then open the Inspector → Audio → Volume to −∞ (or right-click → disable the audio clip).
+> - **Import subtitles:** File → Import → Subtitle → `ep01-subtitles.srt`, then drag it onto the timeline.
+> - **Lower music under speech (ducking):** Fairlight page → volume keyframes on the music track.
+> - **Colour:** Color page → one node with warm grading; copy it to all clips.
+> - **Export:** Deliver page → H.264, 1080×1920.
+
 
 ### 7.1 Project
 **New project** → ratio **9:16** → resolution **1080×1920**, **30 fps**.
@@ -335,11 +345,11 @@ Follow the [Short cue sheet](05-music-bgm-plan.md#4-short-1-வெண்ணெ�
 7. 0:57 divine swell.
 8. Silence at the black frame, then the motif under the end card.
 
-Lower the music to about **−24 dB whenever someone speaks**. Use keyframes, or CapCut's **auto-ducking** if available.
+Lower the music to about **−24 dB whenever someone speaks**, using volume keyframes on the music track (Fairlight page).
 
 ### 7.6 Titles, subtitles, end card
 1. **Title (0:03.5–0:05.5):** text `கண்ணன் கதைகள் #01` / `வெண்ணெய் திருடன்` in a gold Tamil font (e.g. Mukta Malar ExtraBold), with a quick fade.
-2. **Subtitles:** **Text → Import captions / Local captions** → choose `ep01-subtitles.srt`.
+2. **Subtitles:** **File → Import → Subtitle** → choose `ep01-subtitles.srt` → drag it onto the timeline.
    - Style: white, bold, black outline, about 62–68% down the screen.
    - Colour Kannan's lines **gold (#FFD966)** and put the narrator in *italic*.
    - Adjust each cue to match the actual voice timing.
