@@ -437,7 +437,7 @@ def _srt_time(t):
     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
 
-def build_subs(ctx, cues):
+def build_subs(ctx, cues, warp=lambda t: t):
     m, W, H = ctx.m, ctx.m["width"], ctx.m["height"]
     font = os.environ.get("KK_FONT", "Noto Sans Tamil")
     title_font = os.environ.get("KK_TITLE_FONT", "Mukta Malar ExtraBold")
@@ -465,11 +465,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         ev.append(f"Dialogue: 0,{_ass_time(t0)},{_ass_time(t1)},{style},,0,0,0,,{text}")
         srt.append(f"{i}\n{_srt_time(t0)} --> {_srt_time(t1)}\n{text}\n")
     for t in m.get("titles", []):
-        ev.append(f"Dialogue: 1,{_ass_time(t['start'])},{_ass_time(t['end'])},Title,,0,0,0,,"
+        ev.append(f"Dialogue: 1,{_ass_time(warp(t['start']))},{_ass_time(warp(t['end']))},Title,,0,0,0,,"
                   f"{{\\fad(250,300)}}{t['text']}\\N{{\\fs{int(H * 0.04)}}}{t['sub']}")
     ec = m.get("end_card")
     if ec:
-        ev.append(f"Dialogue: 1,{_ass_time(ec['start'])},{_ass_time(ec['end'])},End,,0,0,0,,"
+        ev.append(f"Dialogue: 1,{_ass_time(warp(ec['start']))},{_ass_time(warp(ec['end']))},End,,0,0,0,,"
                   "{\\fad(300,300)}" + "\\N\\N".join(ec["lines"]))
     ass = os.path.join(ctx.work, "out", f"{m['id']}.ass")
     with open(ass, "w", encoding="utf-8") as f:
@@ -497,11 +497,50 @@ def split_long(cues, limit=46):
     return out
 
 
+def retime(ctx, revoice, gap=0.15, tail=0.35):
+    """Place every line so none overlap, and stretch shots that need more time for their dialogue.
+    Returns (shot timing {id: (new_start, new_dur)}, placed lines, warp(t) for other cue times, new total)."""
+    m = ctx.m
+    timing, placed, prev_end, cursor = {}, [], -1.0, 0.0
+    for s in m["shots"]:
+        rv = revoice.get(s["id"], {})
+        onsets = rv.get("onsets", [])
+        new_start, need_end = cursor, cursor + s["dur"]
+        for j, ln in enumerate(s["lines"]):
+            path, off = ctx.p("voice", ln["id"], "mp3"), ln["at"] - s["start"]
+            done = rv.get("lines", {}).get(ln["id"])
+            if s["method"] == "A" and done:
+                path, off = os.path.join(ctx.work, "revoice", done["file"]), done["offset"]
+            elif s["method"] in ("A", "B") and len(onsets) == len(s["lines"]) and abs(onsets[j] - off) < 1.5:
+                off = onsets[j]
+            d = duration(path) if os.path.exists(path) else max(1.2, len(ln["subtitle"]) / 11)
+            at = max(new_start + off, prev_end + gap if prev_end > 0 else 0.0)
+            prev_end = at + d
+            need_end = max(need_end, prev_end + tail)
+            placed.append({"line": ln, "path": path, "at": at, "dur": d})
+        timing[s["id"]] = (new_start, need_end - new_start)
+        cursor = need_end
+    olds = [(s["start"], s["start"] + s["dur"], timing[s["id"]]) for s in m["shots"]]
+
+    def warp(t):
+        for o0, o1, (n0, nd) in olds:
+            if o0 <= t < o1:
+                return n0 + min(t - o0, nd)
+        o0, o1, (n0, nd) = olds[-1]
+        return n0 + nd + (t - o1) if t >= o1 else t
+    return timing, placed, warp, warp(m["length"])
+
+
 def step_assemble(ctx):
     m = ctx.m
-    W, H, fps, total = m["width"], m["height"], m["fps"], m["length"]
+    W, H, fps = m["width"], m["height"], m["fps"]
     info_path = os.path.join(ctx.work, "revoice", "revoice.json")
     revoice = json.load(open(info_path)) if os.path.exists(info_path) else {}
+    timing, placed, warp, total = retime(ctx, revoice)
+    stretched = [f"{sid} +{nd - s['dur']:.1f}s" for s in m["shots"] for sid, (n0, nd) in [(s["id"], timing[s["id"]])]
+                 if nd - s["dur"] > 0.05]
+    if stretched:
+        log("assemble: shots lengthened to fit their dialogue: " + ", ".join(stretched))
     inputs, vf, a_dial, a_mus, a_fx = [], [], [], [], []
     stage = {"clip": 0, "frame": 0, "card": 0}
 
@@ -512,18 +551,19 @@ def step_assemble(ctx):
     # ---- video
     for i, s in enumerate(m["shots"]):
         clip, frame = ctx.p("clips", s["id"], "mp4"), ctx.p("frames", s["id"], "png")
+        n0, nd = timing[s["id"]]
         if os.path.exists(clip):
             k = add_input(["-i", clip])
             stage["clip"] += 1
             src = f"[{k}:v]"
             if s.get("keep_clip_audio_db") is not None and has_audio(clip):
-                a_fx.append((f"[{k}:a]", 0, s["dur"], s["start"], s["keep_clip_audio_db"], 0, 0))
+                a_fx.append((f"[{k}:a]", 0, nd, n0, s["keep_clip_audio_db"], 0, 0))
         elif os.path.exists(frame):
-            k = add_input(["-loop", "1", "-framerate", str(fps), "-t", str(s["dur"]), "-i", frame])
+            k = add_input(["-loop", "1", "-framerate", str(fps), "-t", f"{nd:.3f}", "-i", frame])
             stage["frame"] += 1
             src = f"[{k}:v]"
         else:
-            k = add_input(["-f", "lavfi", "-t", str(s["dur"]), "-i", f"color=c=0x1d1a24:s={W}x{H}:r={fps}"])
+            k = add_input(["-f", "lavfi", "-t", f"{nd:.3f}", "-i", f"color=c=0x1d1a24:s={W}x{H}:r={fps}"])
             stage["card"] += 1
             src = f"[{k}:v]"
             label = s["id"].replace(":", "")
@@ -531,8 +571,8 @@ def step_assemble(ctx):
                       f"x=(w-tw)/2:y=(h-th)/2[card{i}]")
             src = f"[card{i}]"
         vf.append(f"{src}scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={fps},"
-                  f"setsar=1,trim=0:{s['dur']},setpts=PTS-STARTPTS[v{i}]")
-    last_end = max(s["start"] + s["dur"] for s in m["shots"])
+                  f"setsar=1,tpad=stop_mode=clone:stop_duration={nd:.3f},trim=0:{nd:.3f},setpts=PTS-STARTPTS[v{i}]")
+    last_end = max(n0 + nd for n0, nd in timing.values())
     tail = max(0.1, total - last_end)
     k = add_input(["-f", "lavfi", "-t", f"{tail:.3f}", "-i", f"color=c=black:s={W}x{H}:r={fps}"])
     vf.append(f"[{k}:v]setsar=1,fps={fps}[vend]")
@@ -541,22 +581,11 @@ def step_assemble(ctx):
 
     # ---- dialogue placement + subtitle cues
     cues = []
-    for s in m["shots"]:
-        rv = revoice.get(s["id"], {})
-        onsets = rv.get("onsets", [])
-        for j, ln in enumerate(s["lines"]):
-            at, path = ln["at"], ctx.p("voice", ln["id"], "mp3")
-            done = rv.get("lines", {}).get(ln["id"])
-            if s["method"] == "A" and done:
-                path = os.path.join(ctx.work, "revoice", done["file"])
-                at = s["start"] + done["offset"]
-            elif s["method"] in ("A", "B") and len(onsets) == len(s["lines"]) and abs(s["start"] + onsets[j] - at) < 1.5:
-                at = s["start"] + onsets[j]
-            d = duration(path) if os.path.exists(path) else max(1.2, len(ln["subtitle"]) / 11)
-            if os.path.exists(path):
-                k = add_input(["-i", path])
-                a_dial.append((f"[{k}:a]", 0, d, at, -1.0, 0, 0))
-            cues.append([at, at + d + 0.15, ln["speaker"], ln["subtitle"]])
+    for p in placed:
+        if os.path.exists(p["path"]):
+            k = add_input(["-i", p["path"]])
+            a_dial.append((f"[{k}:a]", 0, p["dur"], p["at"], -1.0, 0, 0))
+        cues.append([p["at"], p["at"] + p["dur"] + 0.15, p["line"]["speaker"], p["line"]["subtitle"]])
     cues = split_long(cues)
     cues.sort()
     for a, b in zip(cues, cues[1:]):
@@ -567,17 +596,17 @@ def step_assemble(ctx):
         path = ctx.p("sfx", amb["sfx"], "mp3")
         if os.path.exists(path):
             k = add_input(["-stream_loop", "-1", "-i", path])
-            a_fx.append((f"[{k}:a]", 0, amb["end"] - amb["start"], amb["start"], amb["db"], 0.4, 0.4))
+            a_fx.append((f"[{k}:a]", 0, warp(amb["end"]) - warp(amb["start"]), warp(amb["start"]), amb["db"], 0.4, 0.4))
     for fx in m["sfx"]:
         path = ctx.p("sfx", fx["sfx"], "mp3")
         if os.path.exists(path):
             k = add_input(["-i", path])
-            a_fx.append((f"[{k}:a]", 0, duration(path), fx["at"], fx["db"], 0, 0.05))
+            a_fx.append((f"[{k}:a]", 0, duration(path), warp(fx["at"]), fx["db"], 0, 0.05))
     for cue in m["music"]:
         path = ctx.p("music", cue["track"], "mp3")
         if os.path.exists(path):
             k = add_input(["-stream_loop", "-1", "-i", path])
-            a_mus.append((f"[{k}:a]", cue.get("offset", 0), cue["end"] - cue["start"], cue["start"], cue["db"],
+            a_mus.append((f"[{k}:a]", cue.get("offset", 0), warp(cue["end"]) - warp(cue["start"]), warp(cue["start"]), cue["db"],
                           cue.get("fade_in", 0), cue.get("fade_out", 0)))
 
     af, idx = [], [0]
@@ -614,12 +643,14 @@ def step_assemble(ctx):
     af.append(f"[dmix][musd][fx]amix=inputs=3:normalize=0:duration=longest,apad=whole_dur={total},"
               f"atrim=0:{total},loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[aout]")
 
-    ass = build_subs(ctx, cues)
+    ass = build_subs(ctx, cues, warp)
     fontsdir = os.path.join(HERE, "fonts")
     sub = f"ass='{ass}':shaping=complex" + (f":fontsdir='{fontsdir}'" if os.path.isdir(fontsdir) else "")
     grade = "eq=saturation=1.06:contrast=1.03,noise=alls=3:allf=t+u," if not ctx.args.no_grade else ""
     vf.append(f"[vcat]{grade}{sub},format=yuv420p[vout]")
 
+    with open(os.path.join(ctx.work, "out", "timing.json"), "w") as f:
+        json.dump({sid: {"start": round(a, 3), "dur": round(b, 3)} for sid, (a, b) in timing.items()}, f, indent=2)
     graph = os.path.join(ctx.work, "out", "graph.txt")
     with open(graph, "w", encoding="utf-8") as f:
         f.write(";\n".join(vf + af))

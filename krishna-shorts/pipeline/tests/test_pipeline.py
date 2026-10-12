@@ -57,7 +57,13 @@ outs = sorted(f for f in os.listdir(os.path.join(work, "out")) if f.endswith(".m
 dur = kk.duration(os.path.join(work, "out", outs[-1]))
 print("\nrevoiced shots:", {k: len(v["lines"]) for k, v in info.items()}, "voice changes:", calls["vc"])
 print("output:", outs[-1], f"{dur:.1f}s")
-assert abs(dur - 65.0) < 0.3, dur
+timing = json.load(open(os.path.join(work, "out", "timing.json")))
+expected = max(t["start"] + t["dur"] for t in timing.values()) + 3.0  # + end card
+assert abs(dur - expected) < 0.3, (dur, expected)
+ctx = kk.Ctx(kk.argparse.Namespace(episode="short01", only=None, force=False))
+_, placed, _, _ = kk.retime(ctx, info)
+for a, b in zip(placed, placed[1:]):
+    assert b["at"] >= a["at"] + a["dur"], ("overlapping lines", a["line"]["id"], b["line"]["id"])
 assert info["S03"]["lines"] and len(info["S03"]["lines"]) == 3, info["S03"]
 assert info["S09"]["lines"] and len(info["S09"]["lines"]) == 2
 srt = open(os.path.join(work, "out", "short01.srt"), encoding="utf-8").read()

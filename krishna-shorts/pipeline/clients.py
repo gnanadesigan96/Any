@@ -20,13 +20,21 @@ class ApiError(Exception):
         self.body = body
 
 
-def _request(method, url, headers, data=None, timeout=300):
-    req = urllib.request.Request(url, data=data, method=method, headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            return r.read(), r.headers.get("Content-Type", "")
-    except urllib.error.HTTPError as e:
-        raise ApiError(e.code, e.read().decode("utf-8", "replace"), url.split("?")[0])
+def _request(method, url, headers, data=None, timeout=300, retries=4):
+    """HTTP request; retries busy/temporary errors (429, 500, 502, 503, 504) with growing waits."""
+    for attempt in range(retries + 1):
+        req = urllib.request.Request(url, data=data, method=method, headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read(), r.headers.get("Content-Type", "")
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "replace")
+            if e.code in (429, 500, 502, 503, 504) and attempt < retries:
+                wait = 5 * 2 ** attempt
+                print(f"      (service busy, HTTP {e.code}; retrying in {wait} s)", flush=True)
+                time.sleep(wait)
+                continue
+            raise ApiError(e.code, body, url.split("?")[0])
 
 
 def multipart(fields, files):
