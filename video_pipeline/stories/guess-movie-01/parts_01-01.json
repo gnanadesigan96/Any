@@ -5,7 +5,7 @@
       "title": "இந்தப் படம் எது? #01 கண்டுபிடிங்க!",
       "hook_text": "இந்தப் படம் எது?",
       "hook_sub": "60 விநாடியில் முழுக் கதை",
-      "description": "60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: க்ரைம் த்ரில்லர், பெங்களூருல நடக்குற கதை\nக்ளூ 2: கதாநாயகி பேரு அஞ்சலி\nக்ளூ 3: ஒரு பிரபல ஹிந்திப் பட இயக்குநர், வில்லனா நடிச்ச தமிழ் படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "description": "60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: தமிழ் படம், கதாநாயகியை மையமா வச்ச கதை\nக்ளூ 2: கதாநாயகி பேரு கீதா ராணி\nக்ளூ 3: 2019-ல வெளியான படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
       "hashtags": [
         "#GuessTheMovie",
         "#படம்எது",
@@ -17,58 +17,57 @@
       "end_sub": "கமெண்ட் • லைக் • சப்ஸ்க்ரைப்",
       "scenes": [
         {
-          "narration": "அஞ்சு வருஷம் முன்னாடி செத்துட்டான்னு சொன்ன ஒரு தொடர் கொலைகாரன்... மறுபடியும் வந்துட்டான்!",
-          "visual": "a dark rain-soaked city street at night, the killer standing motionless under a flickering streetlight",
-          "characters": [
-            "Killer"
-          ]
-        },
-        {
-          "narration": "பெங்களூருல, பணக்கார வீட்டுப் பிள்ளைகளைக் கடத்துறான். பணம் கேக்குறான். பணம் கொடுத்தாலும்... அவங்க உயிரோட திரும்ப வர்றதில்ல.",
-          "visual": "a missing-person poster of a young man on a wet wall at night, police tape and flashing police lights behind it",
+          "narration": "ஒரு கிராமத்து அரசுப் பள்ளி. பசங்க சுவரேறி ஓடுறாங்க. வாத்தியார்கள் தூங்குறாங்க. யாருக்கும் கவலையே இல்ல.",
+          "visual": "a crumbling village government school with cracked walls and faded paint, schoolchildren in uniforms climbing over the compound wall to run away, a teacher dozing in a chair inside a classroom",
           "characters": []
         },
         {
-          "narration": "அவனைப் பிடிக்க வர்றாங்க, ஒரு துணிச்சலான சிபிஐ அதிகாரி.",
-          "visual": "the officer stepping out of a car into the rain at a night crime scene, officers making way for her",
+          "narration": "ஒரு நாள், கீதா ராணின்னு ஒரு புது தலைமை ஆசிரியை வர்றாங்க. முதல் நாளே எல்லாரும் நடுங்கிட்டாங்க.",
+          "visual": "the headmistress walking through the rusty iron gate of the village school in the morning light, children and teachers stopping to stare at her",
           "characters": [
-            "Officer"
+            "Headmistress"
           ]
         },
         {
-          "narration": "அஞ்சு வருஷம் முன்னாடி அதே வழக்கை விசாரிச்சவங்க இவங்கதான். இந்த முறை, அவன் அவங்களுக்கே நேரடியா சவால் விடுறான்.",
-          "visual": "the officer alone in a dark office at night, studying a wall of photographs and red string, a phone glowing on the desk",
+          "narration": "நேரத்துக்கு வரணும். ஒழுங்கா பாடம் எடுக்கணும். பள்ளி முழுக்க சுத்தமா இருக்கணும். சோம்பேறி வாத்தியார்கள் அவங்களுக்கு ஒரு பட்டப்பேர் வச்சாங்க.",
+          "visual": "the headmistress in a shabby staff room pointing firmly at the wall clock while embarrassed teachers stand up from their chairs, two of them whispering behind her back",
           "characters": [
-            "Officer"
+            "Headmistress"
           ]
         },
         {
-          "narration": "அப்போ, ஒரு இளம் டாக்டரோட காதலியைக் கடத்துறான். அவளைத் தண்ணியில மூழ்கடிப்பேன்னு நேரலையில மிரட்டுறான்.",
-          "visual": "a laptop screen in a dark room showing a live video of a frightened young woman tied to a chair as water rises around her",
+          "narration": "படிப்பை நிறுத்தின பிள்ளைகளை, வீடு வீடா போய் மறுபடியும் பள்ளிக்குக் கூட்டிட்டு வர்றாங்க.",
+          "visual": "the headmistress kneeling outside a small village hut, gently holding the hand of a barefoot girl while the girl's worried mother listens",
           "characters": [
-            "Doctor"
+            "Headmistress"
           ]
         },
         {
-          "narration": "அவளைக் காப்பாத்த, அந்த டாக்டர் கொலைகாரன் சொல்றதையெல்லாம் செய்யுறான். கடைசியில, கொலைகாரனே அவன்தான்னு போலீஸ் நம்புற மாதிரி மாட்டி விடப்படுறான்!",
-          "visual": "the doctor running through a crowded night market in the rain clutching a heavy bag, police torches sweeping behind him",
+          "narration": "ஊர்ல ஒரு தனியார் பள்ளி முதலாளி. அரசுப் பள்ளி உயர்ந்தா, அவன் வியாபாரம் படுத்துடும். அரசியல்வாதிங்க, அதிகாரிங்க, அடியாட்கள்... எல்லாரும் அவங்களுக்கு எதிரா.",
+          "visual": "the private school owner standing with arms crossed in front of a shiny new private school building, a few rough men and a politician in white beside him, smirking",
           "characters": [
-            "Doctor"
+            "SchoolOwner"
           ]
         },
         {
-          "narration": "அந்த டாக்டர் வேற யாரும் இல்ல... அந்த அதிகாரியோட சொந்தத் தம்பி! அப்போ இந்தக் கொலைகாரன் உண்மையில யாரு? திருப்பம் மேல திருப்பம்!",
-          "visual": "the officer aiming her pistol across a dark parking garage at the hooded killer, her younger brother the doctor kneeling between them",
+          "narration": "ஆனா அவங்க பயப்படல. அடிக்க வந்தவங்களையே அடிச்சு விரட்டுறாங்க!",
+          "visual": "dynamic action shot in a dusty school courtyard: the headmistress in her saree blocking a thug's punch and pushing him back, dust flying, children watching from a doorway",
           "characters": [
-            "Officer",
-            "Killer"
+            "Headmistress"
           ]
         },
         {
-          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? பதிலை கமெண்ட்ல சொல்லுங்க. பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
-          "visual": "the officer's face half lit by a red emergency light, rain on the window behind her",
+          "narration": "கடைசியில அந்தப் பள்ளியே மாறிடுது. பசங்க சிரிச்சுட்டே படிக்கிறாங்க. ஊரே அவங்களைக் கொண்டாடுது.",
+          "visual": "the same village school now freshly painted and clean, happy children in neat uniforms cheering around the smiling headmistress in the courtyard, villagers clapping",
           "characters": [
-            "Officer"
+            "Headmistress"
+          ]
+        },
+        {
+          "narration": "சோம்பேறிகள் அவங்களுக்கு வச்ச அந்தப் பட்டப்பேர்தான்... இந்தப் படத்தோட பேரு! இந்தப் படம் எது? பதிலை கமெண்ட்ல சொல்லுங்க. பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "silhouette of the headmistress standing tall at the school gate against a blazing orange sunset, children's silhouettes behind her",
+          "characters": [
+            "Headmistress"
           ]
         }
       ]

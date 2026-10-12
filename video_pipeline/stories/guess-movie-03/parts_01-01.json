@@ -5,7 +5,7 @@
       "title": "இந்தப் படம் எது? #03 கண்டுபிடிங்க!",
       "hook_text": "இந்தப் படம் எது?",
       "hook_sub": "60 விநாடியில் முழுக் கதை",
-      "description": "போன வீடியோ #02 பதில்: மாநகரம்\n\n60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: நியோ-நாய்ர் துப்பறியும் த்ரில்லர்\nக்ளூ 2: ஹீரோ பேரு வெற்றி\nக்ளூ 3: ஹீரோயின் பேரு மது\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "description": "போன வீடியோ #02 பதில்: இமைக்கா நொடிகள்\n\n60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: ஹைப்பர்லிங்க் க்ரைம் த்ரில்லர், சென்னையில நடக்குற கதை\nக்ளூ 2: முக்கிய கதாபாத்திரம் பேரு பரணி\nக்ளூ 3: இன்னைக்கு பெரிய ஹிட் படங்கள் கொடுக்கிற ஒரு இயக்குநரோட முதல் படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
       "hashtags": [
         "#GuessTheMovie",
         "#படம்எது",
@@ -17,59 +17,51 @@
       "end_sub": "கமெண்ட் • லைக் • சப்ஸ்க்ரைப்",
       "scenes": [
         {
-          "narration": "போன வீடியோவோட பதில்... மாநகரம்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள். இப்போ அடுத்த படம்! குற்றவியல் படிச்சு முடிச்ச ஒரு இளைஞன். ஒரு தனியார் துப்பறியும் நிறுவனத்துல வேலைக்குச் சேர்றான்.",
-          "visual": "the detective walking into a small dim private detective office with frosted glass and filing cabinets",
-          "characters": [
-            "Detective"
-          ]
-        },
-        {
-          "narration": "அவனோட வேலை, சாதாரண மனுஷங்களை ரகசியமா பின்தொடர்ந்து, அவங்களைப் பத்தி எல்லா தகவலையும் சேகரிக்கிறது.",
-          "visual": "the detective photographing a stranger from across a busy street with a long-lens camera, hidden behind a tea stall",
-          "characters": [
-            "Detective"
-          ]
-        },
-        {
-          "narration": "அவனோட அஞ்சாவது ஆளு, ஒரு அழகான பொண்ணு. அவளைப் பின்தொடர்ந்து... அவளையே காதலிக்க ஆரம்பிக்கிறான்.",
-          "visual": "the woman laughing at a bus stop in soft evening light, the detective watching her from a distance, smiling despite himself",
-          "characters": [
-            "Woman",
-            "Detective"
-          ]
-        },
-        {
-          "narration": "அப்போதான் ஒரு அதிர்ச்சி. அவன் முன்னாடி கண்காணிச்ச ஒவ்வொருத்தரும், ஒருத்தர் பின்னால ஒருத்தரா மர்மமா சாகுறாங்க!",
-          "visual": "a desk covered in surveillance photos of four strangers, each one crossed out with a red marker, a desk lamp glowing",
+          "narration": "போன வீடியோவோட பதில்... இமைக்கா நொடிகள்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள். இப்போ அடுத்த படம்! சென்னைக்கு வந்த சில பேரு. ஒருத்தரை ஒருத்தர் தெரியாது. ஒரு சின்ன தவறால, எல்லாரோட வாழ்க்கையும் சிக்குது.",
+          "visual": "a crowded Chennai junction at night seen from above, buses, autos and people crossing in every direction, rain on the road",
           "characters": []
         },
         {
-          "narration": "அடுத்தது... அவன் காதலிக்கிற அந்தப் பொண்ணா?",
-          "visual": "the woman walking alone down a dark lane at night, unaware of a shadow following her",
+          "narration": "சின்ன ஊர்ல இருந்து வேலைக்கு வந்த ஒரு பையன். இந்த ஊரே பிடிக்கல. வேலையை விட்டுட்டு ஊருக்குப் போகணும்னு நினைக்கிறான்.",
+          "visual": "the newcomer standing alone on a crowded suburban train platform with a bag, looking lost and homesick",
           "characters": [
-            "Woman"
+            "Newcomer"
           ]
         },
         {
-          "narration": "அவன் சேகரிச்ச தகவல்களை வச்சுதான் இந்தக் கொலைகள் நடக்குதா? அவனுக்கே தெரியாம, அவனையே யாரோ பயன்படுத்துறாங்களா?",
-          "visual": "the detective in the dark office staring at his own files, venetian-blind shadows across his face, realisation dawning",
+          "narration": "ஒரு பார்ல நடந்த சண்டையால, ஒரு ரவுடிக் கும்பல் அவனை வேற ஒருத்தன்னு நினைச்சு, அடிச்சுப் போட்டுடுது.",
+          "visual": "a dark back alley at night, shadows of a gang standing over a man on the ground, a dropped office ID tag in a puddle, nothing graphic",
+          "characters": []
+        },
+        {
+          "narration": "இன்னொருத்தர், மகனோட சிகிச்சைக்காக சென்னைக்கு வந்த ஒரு ஏழை டாக்சி டிரைவர். அவர் ஓட்டுற டாக்சி, ஒரு பெரிய தாதாவோடது.",
+          "visual": "the driver behind the wheel of an old yellow-top taxi at night, a worn photo of a small boy tucked on the dashboard",
           "characters": [
-            "Detective"
+            "Driver"
           ]
         },
         {
-          "narration": "உண்மையைத் தேடிப் போனா, பின்னாடி ஒரு பெரிய மோசடி... யாருமே எதிர்பார்க்காத ஒரு முகம்!",
-          "visual": "the detective running up a dark stairwell at night with a torch, a silhouette waiting at the top",
+          "narration": "இன்னொரு பக்கம், ஒரு கும்பல் பணத்துக்காக ஒரு ஸ்கூல் பையனைக் கடத்தப் பார்க்குது. ஆனா அதே பேர்ல, அஞ்சு பசங்க!",
+          "visual": "five schoolboys in identical uniforms standing in a row outside a school gate, a nervous stranger in front of them",
+          "characters": []
+        },
+        {
+          "narration": "தப்பான பையனைத் தூக்கிட்டு வந்துடுறாங்க. அந்தப் பையன்... அதே தாதாவோட மகன்!",
+          "visual": "a small boy in a school uniform sitting calmly in the back of a van, three bumbling kidnappers staring at each other in panic",
+          "characters": []
+        },
+        {
+          "narration": "ஒரு பை, ஒரு டாக்சி, ஒரு கடத்தல்... எல்லாமே ஒரே இடத்துல வந்து மோதுது!",
+          "visual": "a lone black bag on the back seat of the taxi under flashing police lights, the driver looking at it in shock",
           "characters": [
-            "Detective"
+            "Driver"
           ]
         },
         {
           "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? பதிலை கமெண்ட்ல சொல்லுங்க. பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
-          "visual": "the detective and the woman standing apart on a rainy road at night, looking at each other",
+          "visual": "the newcomer standing on an empty Chennai street at dawn, looking back at the city",
           "characters": [
-            "Detective",
-            "Woman"
+            "Newcomer"
           ]
         }
       ]

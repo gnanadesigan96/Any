@@ -1,0 +1,23 @@
+{
+  "series_title": "60 விநாடியில் ஒரு படம்",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic neo-noir mystery film still, Chennai, dark moody colour grade with deep greens and golden practical lights, venetian-blind shadows, 35mm film grain, high detail, realistic expressions",
+  "characters": [
+    {
+      "name": "Detective",
+      "look": "Tamil man in his mid-twenties, short neat black hair, light stubble, sharp curious eyes, dark jacket over a plain t-shirt, a small notebook in hand"
+    },
+    {
+      "name": "Woman",
+      "look": "Tamil woman in her mid-twenties, long straight black hair, warm gentle smile, pastel cotton kurti, a tote bag"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #04",
+      "summary": "A guess-the-movie Short retelling Thegidi (தெகிடி, 2014) in 60 seconds without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

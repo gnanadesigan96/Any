@@ -1,26 +1,22 @@
 {
   "series_title": "60 விநாடியில் ஒரு படம்",
   "language": "Tamil",
-  "art_style": "photorealistic cinematic crime thriller film still, Bengaluru at night, cold steel-blue and amber colour grade, rain and wet neon reflections, deep shadows, 35mm anamorphic lens, film grain, high detail, natural skin texture, realistic expressions",
+  "art_style": "photorealistic cinematic film still, rural Tamil Nadu, warm golden colour grade with dusty earth tones, natural light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
   "characters": [
     {
-      "name": "Officer",
-      "look": "Tamil woman in her mid-thirties, sharp intense eyes, black hair tied in a tight low ponytail, dark formal trouser suit, ID card on a lanyard, holstered pistol, composed fearless expression"
+      "name": "Headmistress",
+      "look": "Tamil woman in her late thirties, wheatish skin, determined eyes, black hair in a neat low bun, small red bindi, crisp plain maroon cotton saree, simple wristwatch, upright confident posture"
     },
     {
-      "name": "Doctor",
-      "look": "Tamil man in his late twenties, short wavy black hair, light stubble, white doctor's coat over a grey t-shirt, stethoscope around his neck"
-    },
-    {
-      "name": "Killer",
-      "look": "tall man in a long black hooded raincoat and a plain black face mask, only cold staring eyes visible"
+      "name": "SchoolOwner",
+      "look": "Tamil man in his fifties, heavy build, thick black moustache, oiled swept-back hair, white shirt and white veshti, thick gold chain and gold rings, smug expression"
     }
   ],
   "episodes": [
     {
       "part": 1,
       "title": "இந்தப் படம் எது? #01",
-      "summary": "A guess-the-movie Short retelling Imaikkaa Nodigal (இமைக்கா நொடிகள், 2018) in 60 seconds without naming it.",
+      "summary": "A guess-the-movie Short retelling Raatchasi (ராட்சசி, 2019) in 60 seconds without naming it.",
       "cliffhanger": "Viewers guess the film in the comments."
     }
   ]

@@ -5,7 +5,7 @@
       "title": "இந்தப் படம் எது? #02 கண்டுபிடிங்க!",
       "hook_text": "இந்தப் படம் எது?",
       "hook_sub": "60 விநாடியில் முழுக் கதை",
-      "description": "போன வீடியோ #01 பதில்: இமைக்கா நொடிகள்\n\n60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: ஹைப்பர்லிங்க் க்ரைம் த்ரில்லர், சென்னையில நடக்குற கதை\nக்ளூ 2: முக்கிய கதாபாத்திரம் பேரு பரணி\nக்ளூ 3: இன்னைக்கு பெரிய ஹிட் படங்கள் கொடுக்கிற ஒரு இயக்குநரோட முதல் படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "description": "போன வீடியோ #01 பதில்: ராட்சசி\n\n60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: க்ரைம் த்ரில்லர், பெங்களூருல நடக்குற கதை\nக்ளூ 2: கதாநாயகி பேரு அஞ்சலி\nக்ளூ 3: ஒரு பிரபல ஹிந்திப் பட இயக்குநர், வில்லனா நடிச்ச தமிழ் படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
       "hashtags": [
         "#GuessTheMovie",
         "#படம்எது",
@@ -17,51 +17,58 @@
       "end_sub": "கமெண்ட் • லைக் • சப்ஸ்க்ரைப்",
       "scenes": [
         {
-          "narration": "போன வீடியோவோட பதில்... இமைக்கா நொடிகள்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள். இப்போ அடுத்த படம்! சென்னைக்கு வந்த சில பேரு. ஒருத்தரை ஒருத்தர் தெரியாது. ஒரு சின்ன தவறால, எல்லாரோட வாழ்க்கையும் சிக்குது.",
-          "visual": "a crowded Chennai junction at night seen from above, buses, autos and people crossing in every direction, rain on the road",
-          "characters": []
-        },
-        {
-          "narration": "சின்ன ஊர்ல இருந்து வேலைக்கு வந்த ஒரு பையன். இந்த ஊரே பிடிக்கல. வேலையை விட்டுட்டு ஊருக்குப் போகணும்னு நினைக்கிறான்.",
-          "visual": "the newcomer standing alone on a crowded suburban train platform with a bag, looking lost and homesick",
+          "narration": "போன வீடியோவோட பதில்... ராட்சசி! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள். இப்போ அடுத்த படம்! அஞ்சு வருஷம் முன்னாடி செத்துட்டான்னு சொன்ன ஒரு தொடர் கொலைகாரன்... மறுபடியும் வந்துட்டான்!",
+          "visual": "a dark rain-soaked city street at night, the killer standing motionless under a flickering streetlight",
           "characters": [
-            "Newcomer"
+            "Killer"
           ]
         },
         {
-          "narration": "ஒரு பார்ல நடந்த சண்டையால, ஒரு ரவுடிக் கும்பல் அவனை வேற ஒருத்தன்னு நினைச்சு, அடிச்சுப் போட்டுடுது.",
-          "visual": "a dark back alley at night, shadows of a gang standing over a man on the ground, a dropped office ID tag in a puddle, nothing graphic",
+          "narration": "பெங்களூருல, பணக்கார வீட்டுப் பிள்ளைகளைக் கடத்துறான். பணம் கேக்குறான். பணம் கொடுத்தாலும்... அவங்க உயிரோட திரும்ப வர்றதில்ல.",
+          "visual": "a missing-person poster of a young man on a wet wall at night, police tape and flashing police lights behind it",
           "characters": []
         },
         {
-          "narration": "இன்னொருத்தர், மகனோட சிகிச்சைக்காக சென்னைக்கு வந்த ஒரு ஏழை டாக்சி டிரைவர். அவர் ஓட்டுற டாக்சி, ஒரு பெரிய தாதாவோடது.",
-          "visual": "the driver behind the wheel of an old yellow-top taxi at night, a worn photo of a small boy tucked on the dashboard",
+          "narration": "அவனைப் பிடிக்க வர்றாங்க, ஒரு துணிச்சலான சிபிஐ அதிகாரி.",
+          "visual": "the officer stepping out of a car into the rain at a night crime scene, officers making way for her",
           "characters": [
-            "Driver"
+            "Officer"
           ]
         },
         {
-          "narration": "இன்னொரு பக்கம், ஒரு கும்பல் பணத்துக்காக ஒரு ஸ்கூல் பையனைக் கடத்தப் பார்க்குது. ஆனா அதே பேர்ல, அஞ்சு பசங்க!",
-          "visual": "five schoolboys in identical uniforms standing in a row outside a school gate, a nervous stranger in front of them",
-          "characters": []
-        },
-        {
-          "narration": "தப்பான பையனைத் தூக்கிட்டு வந்துடுறாங்க. அந்தப் பையன்... அதே தாதாவோட மகன்!",
-          "visual": "a small boy in a school uniform sitting calmly in the back of a van, three bumbling kidnappers staring at each other in panic",
-          "characters": []
-        },
-        {
-          "narration": "ஒரு பை, ஒரு டாக்சி, ஒரு கடத்தல்... எல்லாமே ஒரே இடத்துல வந்து மோதுது!",
-          "visual": "a lone black bag on the back seat of the taxi under flashing police lights, the driver looking at it in shock",
+          "narration": "அஞ்சு வருஷம் முன்னாடி அதே வழக்கை விசாரிச்சவங்க இவங்கதான். இந்த முறை, அவன் அவங்களுக்கே நேரடியா சவால் விடுறான்.",
+          "visual": "the officer alone in a dark office at night, studying a wall of photographs and red string, a phone glowing on the desk",
           "characters": [
-            "Driver"
+            "Officer"
+          ]
+        },
+        {
+          "narration": "அப்போ, ஒரு இளம் டாக்டரோட காதலியைக் கடத்துறான். அவளைத் தண்ணியில மூழ்கடிப்பேன்னு நேரலையில மிரட்டுறான்.",
+          "visual": "a laptop screen in a dark room showing a live video of a frightened young woman tied to a chair as water rises around her",
+          "characters": [
+            "Doctor"
+          ]
+        },
+        {
+          "narration": "அவளைக் காப்பாத்த, அந்த டாக்டர் கொலைகாரன் சொல்றதையெல்லாம் செய்யுறான். கடைசியில, கொலைகாரனே அவன்தான்னு போலீஸ் நம்புற மாதிரி மாட்டி விடப்படுறான்!",
+          "visual": "the doctor running through a crowded night market in the rain clutching a heavy bag, police torches sweeping behind him",
+          "characters": [
+            "Doctor"
+          ]
+        },
+        {
+          "narration": "அந்த டாக்டர் வேற யாரும் இல்ல... அந்த அதிகாரியோட சொந்தத் தம்பி! அப்போ இந்தக் கொலைகாரன் உண்மையில யாரு? திருப்பம் மேல திருப்பம்!",
+          "visual": "the officer aiming her pistol across a dark parking garage at the hooded killer, her younger brother the doctor kneeling between them",
+          "characters": [
+            "Officer",
+            "Killer"
           ]
         },
         {
           "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? பதிலை கமெண்ட்ல சொல்லுங்க. பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
-          "visual": "the newcomer standing on an empty Chennai street at dawn, looking back at the city",
+          "visual": "the officer's face half lit by a red emergency light, rain on the window behind her",
           "characters": [
-            "Newcomer"
+            "Officer"
           ]
         }
       ]

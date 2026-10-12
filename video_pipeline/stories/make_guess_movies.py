@@ -24,7 +24,9 @@ THRILLER = ("photorealistic cinematic crime thriller film still, Bengaluru at ni
 # Keep them hard: no character names, never a word from the title. Clues go only in the description.
 # Each film: spoken = how the next video says the answer aloud; written = how its description writes it.
 MOVIES = [
- dict(n=1, answer="Imaikkaa Nodigal (இமைக்கா நொடிகள், 2018)", spoken="இமைக்கா நொடிகள்", written="இமைக்கா நொடிகள்",
+ # Already made and posted from its own files (stories/guess-movie-01); kept here so #02 can open with its answer.
+ dict(n=1, answer="Raatchasi (ராட்சசி, 2019)", spoken="ராட்சசி", written="ராட்சசி", published=True),
+ dict(n=2, answer="Imaikkaa Nodigal (இமைக்கா நொடிகள், 2018)", spoken="இமைக்கா நொடிகள்", written="இமைக்கா நொடிகள்",
   title_words=["இமைக்க", "நொடிகள்"], style=THRILLER,
   clues=["க்ரைம் த்ரில்லர், பெங்களூருல நடக்குற கதை", "கதாநாயகி பேரு அஞ்சலி",
          "ஒரு பிரபல ஹிந்திப் பட இயக்குநர், வில்லனா நடிச்ச தமிழ் படம்"],
@@ -49,7 +51,7 @@ MOVIES = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the officer's face half lit by a red emergency light, rain on the window behind her", ["Officer"]),
   ]),
- dict(n=2, answer="Maanagaram (மாநகரம், 2017)", spoken="மாநகரம்", written="மாநகரம்", title_words=["மாநகர"],
+ dict(n=3, answer="Maanagaram (மாநகரம், 2017)", spoken="மாநகரம்", written="மாநகரம்", title_words=["மாநகர"],
   style=("photorealistic cinematic crime thriller film still, Chennai at night, gritty teal and sodium-orange colour grade, "
          "busy wet streets, headlights and neon, handheld 35mm look, film grain, high detail, realistic expressions"),
   clues=["ஹைப்பர்லிங்க் க்ரைம் த்ரில்லர், சென்னையில நடக்குற கதை", "முக்கிய கதாபாத்திரம் பேரு பரணி",
@@ -74,7 +76,7 @@ MOVIES = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the newcomer standing on an empty Chennai street at dawn, looking back at the city", ["Newcomer"]),
   ]),
- dict(n=3, answer="Thegidi (தெகிடி, 2014)", spoken="தெகிடி", written="தெகிடி", title_words=["தெகிடி"],
+ dict(n=4, answer="Thegidi (தெகிடி, 2014)", spoken="தெகிடி", written="தெகிடி", title_words=["தெகிடி"],
   style=("photorealistic cinematic neo-noir mystery film still, Chennai, dark moody colour grade with deep greens and "
          "golden practical lights, venetian-blind shadows, 35mm film grain, high detail, realistic expressions"),
   clues=["நியோ-நாய்ர் துப்பறியும் த்ரில்லர்", "ஹீரோ பேரு வெற்றி", "ஹீரோயின் பேரு மது"],
@@ -104,6 +106,9 @@ SPOKEN = {m["n"]: m["spoken"] for m in MOVIES}
 WRITTEN = {m["n"]: m["written"] for m in MOVIES}
 answers = ["# Guess the movie: answers (never upload this file)", ""]
 for m in MOVIES:
+    if m.get("published"):  # leave a posted video's files exactly as they were
+        answers += [f"- **#{m['n']:02d}:** {m['answer']}"]
+        continue
     if m["n"] > 1:  # open with the previous video's answer, over this film's first picture
         prev = m["n"] - 1
         first = m["scenes"][0]

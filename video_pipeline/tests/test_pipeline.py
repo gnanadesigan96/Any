@@ -1175,7 +1175,7 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
     from vidpipe import series
     movies = _guess_movies()
     assert movies
-    for m in movies:
+    for m in (m for m in movies if not m.get("published")):
         root = ROOT / f"stories/guess-movie-{m['n']:02d}"
         bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
         eps = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes
