@@ -95,7 +95,7 @@ The three boys stare up at the hanging pot, then the camera pushes in as Krishna
 Dialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:
 - Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, excited whisper) says in Tamil: "டேய், வெண்ணெய் அந்த உறியில தான் இருக்கு!"
 - Subala (thin, nervous, whiny voice of a small 5-year-old Tamil boy, worried, whiny) says in Tamil: "அவ்வளவு உயரமா? எப்படிடா எட்டும்?"
-- Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, sly, then bossy-playful. **check ழ in வழி) says in Tamil: "ஒரு வழி இருக்கு... (to Shridama) குனிடா!"
+- Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, sly, then bossy-playful) says in Tamil: "ஒரு வழி இருக்கு... (to Shridama) குனிடா!"
 Audio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.
 Duration: 7 seconds.
 ```
@@ -116,7 +116,7 @@ Avoid: photorealistic live-action look, anime style, cartoonish flat 2D, distort
 ```
 Camera tilts upward from the boys' feet to the hanging pot, following Krishna as he climbs onto the chubby boy's shoulders. The middle boy's legs tremble, he grimaces with effort; the boy at the bottom grips the mortar and looks up in fear. Krishna stretches on his tiptoes, fingertips just touching the pot. Playful, slightly wobbly physical comedy.
 Dialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:
-- Shridama (loud, round, slightly husky voice of a chubby 6-year-old Tamil boy, straining, comic. **check ள in தோள்) says in Tamil: "சீக்கிரம் கண்ணா... தோள் வலிக்குது!"
+- Shridama (loud, round, slightly husky voice of a chubby 6-year-old Tamil boy, straining, comic) says in Tamil: "சீக்கிரம் கண்ணா... தோள் வலிக்குது!"
 - Kannan (high, bright, playful, giggly voice of a 5-year-old Tamil boy, stretching effort, then triumph) says in Tamil: "அசையாதடா... இதோ... கிடைச்சுடுச்சு!"
 Audio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.
 Duration: 6 seconds.
@@ -320,7 +320,7 @@ Avoid: photorealistic live-action look, anime style, cartoonish flat 2D, distort
 ```
 Her smile drops into concern, she speaks a sharp short question, then a slow firm command with natural mouth movement.
 Dialogue, spoken in natural colloquial Tamil with clear Tamil pronunciation and accurate lip-sync, in this order:
-- Yashoda (warm, soft, medium-low voice of a young Tamil mother in her late twenties, shock → firm, slow command. **check ற in திற) says in Tamil: "என்னது?! கண்ணா... வாயைத் திற!"
+- Yashoda (warm, soft, medium-low voice of a young Tamil mother in her late twenties, shock → firm, slow command) says in Tamil: "என்னது?! கண்ணா... வாயைத் திற!"
 Audio: natural ambient sound and sound effects of the scene only. No background music. No subtitles, captions or on-screen text.
 Duration: 4 seconds.
 ```

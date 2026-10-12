@@ -56,8 +56,9 @@ for m in re.finditer(r"\*\*(Shot (\d+)|(\d+[ab])): ① First frame\*\* · Refs: 
     if sid in ("S03", "S04", "S05", "S07", "S09"):
         ref_names.append("bg_mainroom")
     start, dur, veo, method = TIMING[sid]
+    m_video = re.sub(r"\.?\s*\*\*[Cc]heck [^)\n]*", "", m.group(6).strip())
     shots.append({"id": sid, "start": start, "dur": dur, "veo_seconds": veo, "method": method,
-                  "refs": ref_names, "frame_prompt": m.group(5).strip(), "video_prompt": m.group(6).strip(),
+                  "refs": ref_names, "frame_prompt": m.group(5).strip(), "video_prompt": m_video,
                   "lines": [], "keep_clip_audio_db": None})
 # Key moments that get real AI video (Veo) in the low-cost mode; all other shots use a cinematic camera move
 # on the still frame. Speaking close-ups (lip-sync) and the reveal.
