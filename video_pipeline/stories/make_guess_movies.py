@@ -1,11 +1,18 @@
 """Writes stories/guess-movie-NN/ (bible.json + parts_01-01.json) and stories/GUESS_MOVIE_ANSWERS.md.
 
 Add a movie to MOVIES and run:  python stories/make_guess_movies.py stories
-Each video from #02 on opens with the previous answer (SPOKEN) and lists it in its description."""
+
+Format: a title card ("கதையைக் கேளுங்க! / படத்தைக் கண்டுபிடிங்க") over the first picture, the story with no
+character names and no word from the title, then one spoken call to action (comment the answer, the clue is in
+the description, subscribe to the channel) and a channel end card. Answers are posted in the comments, not in the
+next video. The description has two clues: the main character's name and one easy clue."""
 import json, sys
 from pathlib import Path
 out = Path(sys.argv[1])
-CTA = "இந்தப் படம் எது? பதிலை கமெண்ட்ல சொல்லுங்க. பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!"
+CHANNEL = "FilmSpeaks"            # shown on the end card and in descriptions
+CHANNEL_SPOKEN = "ஃபிலிம் ஸ்பீக்ஸ்"  # how the narrator says it
+CTA = (f"இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! "
+       f"{CHANNEL_SPOKEN} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!")
 VILLAGE = ("photorealistic cinematic film still, rural Tamil Nadu, warm golden colour grade with dusty earth tones, natural "
            "light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions")
 NIGHT = ("photorealistic cinematic action film still, Tamil Nadu at night, high-contrast teal and orange colour grade, "
@@ -22,14 +29,13 @@ THRILLER = ("photorealistic cinematic crime thriller film still, Bengaluru at ni
             "skin texture, realistic expressions")
 
 # Keep them hard: no character names, never a word from the title. Clues go only in the description.
-# Each film: spoken = how the next video says the answer aloud; written = how its description writes it.
+# Each film: spoken/written = the answer (kept out of the video by a test); clues = [main character's name, easy clue].
 MOVIES = [
  # Already made and posted from its own files (stories/guess-movie-01); kept here so #02 can open with its answer.
  dict(n=1, answer="Raatchasi (ராட்சசி, 2019)", spoken="ராட்சசி", written="ராட்சசி", published=True),
  dict(n=2, answer="Imaikkaa Nodigal (இமைக்கா நொடிகள், 2018)", spoken="இமைக்கா நொடிகள்", written="இமைக்கா நொடிகள்",
   title_words=["இமைக்க", "நொடிகள்"], style=THRILLER,
-  clues=["க்ரைம் த்ரில்லர், பெங்களூருல நடக்குற கதை", "கதாநாயகி பேரு அஞ்சலி",
-         "ஒரு பிரபல ஹிந்திப் பட இயக்குநர், வில்லனா நடிச்ச தமிழ் படம்"],
+  clues=["கதாநாயகி பேரு அஞ்சலி", "நயன்தாரா சிபிஐ அதிகாரியா நடிச்ச படம்"],
   chars={"Officer": "Tamil woman in her mid-thirties, sharp intense eyes, black hair tied in a tight low ponytail, dark formal trouser suit, ID card on a lanyard, holstered pistol, composed fearless expression",
          "Doctor": "Tamil man in his late twenties, short wavy black hair, light stubble, white doctor's coat over a grey t-shirt, stethoscope around his neck",
          "Killer": "tall man in a long black hooded raincoat and a plain black face mask, only cold staring eyes visible"},
@@ -54,8 +60,7 @@ MOVIES = [
  dict(n=3, answer="Maanagaram (மாநகரம், 2017)", spoken="மாநகரம்", written="மாநகரம்", title_words=["மாநகர"],
   style=("photorealistic cinematic crime thriller film still, Chennai at night, gritty teal and sodium-orange colour grade, "
          "busy wet streets, headlights and neon, handheld 35mm look, film grain, high detail, realistic expressions"),
-  clues=["ஹைப்பர்லிங்க் க்ரைம் த்ரில்லர், சென்னையில நடக்குற கதை", "முக்கிய கதாபாத்திரம் பேரு பரணி",
-         "இன்னைக்கு பெரிய ஹிட் படங்கள் கொடுக்கிற ஒரு இயக்குநரோட முதல் படம்"],
+  clues=["முக்கிய கதாபாத்திரம் பேரு பரணி", "லோகேஷ் கனகராஜ் இயக்கின முதல் படம்"],
   chars={"Newcomer": "Tamil man in his late twenties from a small town, neat short black hair, clean-shaven, shy worried eyes, simple checked shirt tucked into trousers, office ID tag",
          "Driver": "Tamil man in his fifties, thin build, grey stubble, kind tired eyes, faded blue shirt, a towel on his shoulder"},
   scenes=[
@@ -79,7 +84,7 @@ MOVIES = [
  dict(n=4, answer="Thegidi (தெகிடி, 2014)", spoken="தெகிடி", written="தெகிடி", title_words=["தெகிடி"],
   style=("photorealistic cinematic neo-noir mystery film still, Chennai, dark moody colour grade with deep greens and "
          "golden practical lights, venetian-blind shadows, 35mm film grain, high detail, realistic expressions"),
-  clues=["நியோ-நாய்ர் துப்பறியும் த்ரில்லர்", "ஹீரோ பேரு வெற்றி", "ஹீரோயின் பேரு மது"],
+  clues=["ஹீரோ பேரு வெற்றி", "அசோக் செல்வன் துப்பறிவாளரா நடிச்ச படம்"],
   chars={"Detective": "Tamil man in his mid-twenties, short neat black hair, light stubble, sharp curious eyes, dark jacket over a plain t-shirt, a small notebook in hand",
          "Woman": "Tamil woman in her mid-twenties, long straight black hair, warm gentle smile, pastel cotton kurti, a tote bag"},
   scenes=[
@@ -102,40 +107,31 @@ MOVIES = [
   ]),
 ]
 
-SPOKEN = {m["n"]: m["spoken"] for m in MOVIES}
-WRITTEN = {m["n"]: m["written"] for m in MOVIES}
 answers = ["# Guess the movie: answers (never upload this file)", ""]
 for m in MOVIES:
     if m.get("published"):  # leave a posted video's files exactly as they were
         answers += [f"- **#{m['n']:02d}:** {m['answer']}"]
         continue
-    if m["n"] > 1:  # open with the previous video's answer, over this film's first picture
-        prev = m["n"] - 1
-        first = m["scenes"][0]
-        m["scenes"][0] = (f"போன வீடியோவோட பதில்... {SPOKEN[prev]}! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள். இப்போ அடுத்த படம்! "
-                          + first[0], first[1], first[2])
-        m["prev_line"] = f"போன வீடியோ #{prev:02d} பதில்: {WRITTEN[prev]}\n\n"
-
     d = out / f"guess-movie-{m['n']:02d}"
     d.mkdir(parents=True, exist_ok=True)
     bible = {"series_title": "60 விநாடியில் ஒரு படம்", "language": "Tamil", "art_style": m["style"],
              "characters": [{"name": k, "look": v} for k, v in m["chars"].items()],
              "episodes": [{"part": 1, "title": f"இந்தப் படம் எது? #{m['n']:02d}",
-                           "summary": f"A guess-the-movie Short retelling {m['answer']} in 60 seconds without naming it.",
+                           "summary": f"A guess-the-movie Short retelling {m['answer']} in about a minute without naming it.",
                            "cliffhanger": "Viewers guess the film in the comments."}]}
-    c1, c2, c3 = m["clues"]
-    ep = {"part": 1, "title": f"இந்தப் படம் எது? #{m['n']:02d} கண்டுபிடிங்க!",
-          "hook_text": "இந்தப் படம் எது?", "hook_sub": "60 விநாடியில் முழுக் கதை",
-          "description": (m.get("prev_line", "") + f"60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: {c1}\nக்ளூ 2: {c2}\n"
-                          f"க்ளூ 3: {c3}\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!"),
+    c1, c2 = m["clues"]
+    ep = {"part": 1, "title": f"கதையை வச்சு படத்தைக் கண்டுபிடிங்க! #{m['n']:02d}",
+          "hook_text": "கதையைக் கேளுங்க!", "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+          "description": (f"ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன?\n\nக்ளூ 1: {c1}\nக்ளூ 2: {c2}\n\n"
+                          f"பதிலை கமெண்ட்ல சொல்லுங்க! {CHANNEL} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க."),
           "hashtags": ["#GuessTheMovie", "#படம்எது", "#TamilMovie", "#TamilShorts", "#Shorts"],
-          "end_text": "இந்தப் படம் எது?", "end_sub": "கமெண்ட் • லைக் • சப்ஸ்க்ரைப்",
+          "end_text": CHANNEL, "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
           "scenes": [{"narration": n, "visual": v, "characters": c} for n, v, c in m["scenes"]]}
     (d / "bible.json").write_text(json.dumps(bible, ensure_ascii=False, indent=2) + "\n")
     (d / "parts_01-01.json").write_text(json.dumps({"episodes": [ep]}, ensure_ascii=False, indent=2) + "\n")
     stale = d / "parts_01.json"
     stale.unlink(missing_ok=True)
     words = sum(len(s[0].split()) for s in m["scenes"])
-    answers += [f"- **#{m['n']:02d}:** {m['answer']}  (clues: {c1}; {c2}; {c3})"]
+    answers += [f"- **#{m['n']:02d}:** {m['answer']}  (clues: {c1}; {c2})"]
     print(f"#{m['n']:02d} {m['answer']}: {len(m['scenes'])} scenes, {words} words")
 (out / "GUESS_MOVIE_ANSWERS.md").write_text("\n".join(answers) + "\n")

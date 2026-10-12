@@ -1181,17 +1181,18 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         eps = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes
         short = series.to_pack(bible, eps, series.ui_text(cfg, bible, eps)).shorts[0]
         ov = series.overlays_for(bible, eps, cfg)[0]
-        assert short.hook_text == "" and ov["hook_sub"] and ov["end_text"] == "இந்தப் படம் எது?"
+        assert short.hook_text == "" and ov["hook"] == "கதையைக் கேளுங்க!" and ov["hook_sub"]
+        assert ov["end_text"] == "FilmSpeaks" and ov["end_sub"]  # channel end card
         ep = eps[0]
+        spoken = " ".join(s.narration for s in ep.scenes)
         last = ep.scenes[-1].narration
-        assert "சப்ஸ்க்ரைப்" in last and "கமெண்ட்" in last
-        assert not any("க்ளூ" in s.narration for s in ep.scenes)  # clues only in the description
-        assert all(f"க்ளூ {i}: {c}" in short.description for i, c in enumerate(m["clues"], start=1))
+        assert "கமெண்ட்" in last and "டிஸ்கிரிப்ஷன்" in last and "சப்ஸ்க்ரைப்" in last
+        assert spoken.count("சப்ஸ்க்ரைப்") == 1 and "லைக் பண்ண" not in spoken  # one call to action, said once
+        assert len(m["clues"]) == 2
+        for i, c in enumerate(m["clues"], start=1):
+            assert f"க்ளூ {i}: {c}" in short.description and c not in spoken  # clues only in the description
         shown = " ".join([short.title, ep.hook_text, ep.hook_sub, short.description, ep.end_text, ep.end_sub,
-                          *ep.hashtags, *(s.narration for s in ep.scenes)])
+                          *ep.hashtags, spoken])
         for word in [m["spoken"], *m.get("title_words", [])]:
             assert word not in shown, (m["n"], word)
-        if m["n"] > 1:  # opens with the previous video's answer
-            prev = next(p for p in movies if p["n"] == m["n"] - 1)
-            assert ep.scenes[0].narration.startswith(f"போன வீடியோவோட பதில்... {prev['spoken']}!")
-            assert short.description.startswith(f"போன வீடியோ #{prev['n']:02d} பதில்: {prev['written']}")
+        assert "போன வீடியோ" not in spoken  # answers go in the comments, not the next video
