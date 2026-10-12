@@ -2373,11 +2373,11 @@ End card: make it in the editor (black background, peacock feather, gold title t
 
 ## Part C: Narrator script for Google AI Studio (all lines, in order)
 
-AI Studio → **Generate speech** → **single speaker**. Choose one voice and never change it. Audition a few warm, mature male voices, for example **Charon**, **Algenib**, **Iapetus** and **Orus**; voice names can change, so pick from what's listed. Paste the style line, then one narration line at a time, and download each as `NARR_<shot>.wav`.
+AI Studio → **Generate speech** → **single speaker**. Choose one voice and never change it. Audition a few strong young male voices, for example **Fenrir**, **Orus**, **Charon** and **Puck**; voice names can change, so pick from what's listed. Paste the style line, then one narration line at a time, and download each as `NARR_<shot>.wav`.
 
 **Style line (paste before each narration line):**
 ```
-Read this in Tamil like a warm, smiling grandfather telling a bedtime story to his grandchildren: slow, gentle, with dramatic pauses at the dots.
+Read this in Tamil like a strong, confident young storyteller who grips the audience: deep, charismatic, controlled intensity, with dramatic pauses at the dots.
 ```
 
 | Shot | Narration |

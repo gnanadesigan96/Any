@@ -20,7 +20,7 @@ The whole universe is inside this boy, yet he wants nothing more than butter, hi
 
 **Tone:** a family film you can watch with your grandmother and your 6-year-old. Playful, never silly; devotional, never preachy; dramatic, never gory.
 
-**The narrator:** a warm grandfather voice (தாத்தா கதை சொல்ற மாதிரி) who tells the story as if to grandchildren at bedtime. He speaks only when he adds something: opening a scene, revealing meaning, or setting up the hook. He never explains a joke.
+**The narrator:** a strong, gripping young man's voice that pulls the audience in and won't let go. He tells the story as if to a friend leaning in to hear what happens next. He speaks only when he adds something: opening a scene, revealing meaning, or setting up the hook. He never explains a joke.
 
 ---
 
@@ -195,7 +195,7 @@ Appears mostly in the background in Episode 1 (leaving with the herdsmen at dawn
 - A grey langur with a black face and a long tail; cheeky; always at the window when there's butter. Kannan calls him "குரங்கு மாமா". He gets blamed for everything. Reuse him across Part 1 episodes as a running joke.
 
 ### 3.10 கதைசொல்லி (the Narrator)
-- Never seen. A warm grandfather's voice, slow and smiling, with dramatic pauses before the last word ("...வெண்ணெய்!"). He speaks to the audience as "நீங்க" and sometimes asks the hook question at the end ("யசோதா என்ன பார்த்தாங்க?").
+- Never seen. A strong young man's voice (late twenties): deep, confident and gripping, with controlled intensity and dramatic pauses before the last word ("...வெண்ணெய்!"). He speaks to the audience as "நீங்க" and sometimes asks the hook question at the end ("யசோதா என்ன பார்த்தாங்க?").
 
 ### 3.11 The shadows of Mathura (Episode 1 glimpses only, full designs in Ep 2)
 - **கம்சன் (Kamsa):** king of Mathura, Devaki's brother. Huge and broad-shouldered; a heavy jagged gold crown; a dark red cloak over black armour; cruel, sleepless, glinting eyes. In Episode 1 we see **only his eyes in lightning** and hear one line. He is driven by fear, not strength, so play it that way. Never cartoonish.

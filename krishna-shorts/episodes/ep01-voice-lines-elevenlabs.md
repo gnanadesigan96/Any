@@ -13,7 +13,7 @@ Every spoken line of Episode 1, in order, with the voice to use, a suggested **E
 | # | Shot | Character | Voice | Text to paste | File |
 |---|---|---|---|---|---|
 | 1 | 1 | கண்ணன் | `KK_Kannan` | [conspiratorial whisper] ஷ்ஷ்... யார்கிட்டயும் சொல்லாதீங்க! | `EP01S_S01_L1_kannan.wav` |
-| 2 | 2 | கதைசொல்லி | `KK_Narrator` | [warm grandfather storyteller] கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்! | `EP01S_S02_L1_narrator.wav` |
+| 2 | 2 | கதைசொல்லி | `KK_Narrator` | [strong, gripping young storyteller] கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்! | `EP01S_S02_L1_narrator.wav` |
 | 3 | 3 | கண்ணன் | `KK_Kannan` | [excited whisper] டேய், வெண்ணெய் அந்த உறியில தான் இருக்கு! | `EP01S_S03_L1_kannan.wav` |
 | 4 | 3 | சுபலன் | `KK_Subala` | [worried, whiny] அவ்வளவு உயரமா? எப்படிடா எட்டும்? | `EP01S_S03_L2_subala.wav` |
 | 5 | 3 | கண்ணன் | `KK_Kannan` | [sly, then bossy-playful] ஒரு வழி இருக்கு... குனிடா! | `EP01S_S03_L3_kannan.wav` |
@@ -37,7 +37,7 @@ Every spoken line of Episode 1, in order, with the voice to use, a suggested **E
 |---|---|---|---|---|---|
 | 1 | C1 | கண்ணன் | `KK_Kannan` | [whispering, cheeky] ஷ்ஷ்... யார்கிட்டயும் சொல்லாதீங்க! | `EP01L_SC1_L1_kannan.wav` |
 | 2 | C2 | கோமதி | `KK_Gomathi` | [off-screen, suspicious] யாரது? யாரு உள்ள? | `EP01L_SC2_L1_gomathi.wav` |
-| 3 | C4 | கதைசொல்லி | `KK_Narrator` | [warm grandfather voice] இவன் தான் கண்ணன். கோகுலத்துல எல்லாரும் இவனை உயிரா நேசிக்கிறாங்க... | `EP01L_SC4_L1_narrator.wav` |
+| 3 | C4 | கதைசொல்லி | `KK_Narrator` | [strong, gripping young voice] இவன் தான் கண்ணன். கோகுலத்துல எல்லாரும் இவனை உயிரா நேசிக்கிறாங்க... | `EP01L_SC4_L1_narrator.wav` |
 | 4 | C5 | கதைசொல்லி | `KK_Narrator` | [pause, then amused] ...ஆனா எல்லார் வீட்டு வெண்ணெயும் இவனைக் கண்டாலே பயப்படுது! | `EP01L_SC5_L1_narrator.wav` |
 | 5 | 1.1 | கதைசொல்லி | `KK_Narrator` | கோகுலத்துல காலை விடியறதே... தயிர் கடையற சத்தத்துல தான். | `EP01L_S1-1_L1_narrator.wav` |
 | 6 | 1.4 | கண்ணன் | `KK_Kannan` | [sleepy murmur] ம்ம்ம்... வெண்ணெய் வாசனை... | `EP01L_S1-4_L1_kannan.wav` |

@@ -55,7 +55,7 @@ Kannan grins, winks at us, and is gone. The pot is left swinging on its rope.
 ### EXT. கோகுலம் (GOKULAM VILLAGE) – DAWN
 **Background:** an aerial view of the cowherd village on the Yamuna at sunrise: thatched mud houses, kolams at the doorsteps, cows with painted horns, cooking smoke, mist on the river, a pink-gold sky.
 
-**கதைசொல்லி** *(warm grandfather voice, smiling)*
+**கதைசொல்லி** *(strong, gripping young voice, a hint of a smile)*
 இவன் தான் கண்ணன். கோகுலத்துல எல்லாரும் இவனை உயிரா நேசிக்கிறாங்க...
 
 A village lane: Kannan runs laughing with a lump of butter in his hand. Three gopis chase him, waving ladles. Cows scatter.

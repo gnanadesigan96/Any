@@ -81,7 +81,7 @@ Dust motes drift in the light beam. No other characters. Ambient sound only: qui
 
 | Speaker | Tamil | Pronunciation | Tone |
 |---|---|---|---|
-| Narrator | கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்! | *Gokulath-thula oru kutti-th thirudan irukkaan… avan thirudradhu thangam illa… veNNey!* | Warm grandfather storyteller, amused, pause before "வெண்ணெய்!" |
+| Narrator | கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்! | *Gokulath-thula oru kutti-th thirudan irukkaan… avan thirudradhu thangam illa… veNNey!* | Strong, gripping young storyteller, amused, pause before "வெண்ணெய்!" |
 
 **First-frame prompt · Refs: none**
 ```
