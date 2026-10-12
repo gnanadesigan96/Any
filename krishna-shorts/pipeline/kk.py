@@ -581,7 +581,7 @@ def step_assemble(ctx):
     log(f"assemble: {stage['clip']} clips, {stage['frame']} still frames, {stage['card']} placeholder cards; "
         f"{len(a_dial)} voice files, {len(a_fx)} sfx/ambience, {len(a_mus)} music cues")
     cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error"] + inputs + [
-        "-filter_complex_script", graph, "-map", "[vout]", "-map", "[aout]",
+        "-filter_complex", open(graph, encoding="utf-8").read(), "-map", "[vout]", "-map", "[aout]",
         "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-r", str(fps),
         "-c:a", "aac", "-b:a", "192k", "-t", str(total), "-movflags", "+faststart", out]
     run(cmd)
