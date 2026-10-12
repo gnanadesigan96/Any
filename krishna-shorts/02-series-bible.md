@@ -40,7 +40,7 @@ blurry face, oversaturated neon colours, horror tone, sexualised depiction, west
 ## 2. Characters
 
 **How to build reference sheets (do this once):**
-1. Paste MASTER STYLE + the character prompt into Nano Banana. Generate until one image is right.
+1. Paste MASTER STYLE + the character prompt + `Full-body front view, standing straight, plain light-grey background, even soft lighting, face clearly visible.` + MASTER NEGATIVE into Nano Banana. Generate until one image is right. (Tamil versions of all these prompts: [02b-character-prompts-tamil.md](02b-character-prompts-tamil.md).)
 2. Then ask, using that image as the reference: *"Same character, character turnaround sheet: front view, three-quarter view, side profile, full body, on a plain light background."*
 3. Then: *"Same character, expression sheet: happy laughing, mischievous grin, innocent wide eyes, sad, surprised."*
 4. Save as `refs/krishna_child_front.png`, `refs/krishna_child_turnaround.png` and so on. **Upload the front portrait plus one full-body image as references for every shot that character appears in.**
