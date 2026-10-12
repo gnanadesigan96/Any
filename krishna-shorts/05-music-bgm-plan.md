@@ -2,7 +2,7 @@
 
 Background music decides whether the audience *feels* a scene. This plan makes sure **every situation has the right BGM**, that the main themes are **catchy and memorable** (people should hum them after watching), and that the music stays consistent across the whole series.
 
-Tool: **Suno Pro** (needed for commercial use). Prompts below go in Suno's **Style** box; turn **Instrumental ON** unless lyrics are given. Don't use real composer or film names in prompts; Suno blocks them, and your channel should have its own sound anyway.
+Tool: **Suno Pro** (needed for commercial use), **or Gemini's own music tool (Lyria) in the Gemini app** if you're following the [Gemini-only workflow](GEMINI-ONLY-WORKFLOW.md). The same prompts work in both. Prompts below go in Suno's **Style** box; turn **Instrumental ON** unless lyrics are given. Don't use real composer or film names in prompts; Suno blocks them, and your channel should have its own sound anyway.
 
 ---
 

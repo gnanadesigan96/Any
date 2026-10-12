@@ -1,5 +1,7 @@
 # What to do now: a step-by-step plan
 
+> **Gemini-only?** Follow the 2-week plan in [GEMINI-ONLY-WORKFLOW.md §6](GEMINI-ONLY-WORKFLOW.md#6-your-plan-for-the-next-two-weeks-gemini-only) instead. This page is for the mixed-tools plan.
+
 Goal for the next 7–10 days: **publish Short #1 (வெண்ணெய் திருடன்)**. It's the cheapest way to learn the whole pipeline before spending on the 10–12 minute episode. Don't buy anything except where a step says so.
 
 ## Day 1: Set up (1 hour)

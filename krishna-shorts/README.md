@@ -1,5 +1,7 @@
 # கண்ணன் கதைகள் (Kannan Kathaigal): AI Tamil Mythological Shorts
 
+> **Using only Gemini / Google tools?** Start with **[GEMINI-ONLY-WORKFLOW.md](GEMINI-ONLY-WORKFLOW.md)** and **[GEMINI-ONLY-PROMPT-PACK.md](GEMINI-ONLY-PROMPT-PACK.md)**. Veo speaks the Tamil dialogue with automatic lip-sync, AI Studio voices the narrator, and Gemini's music tool makes the BGM.
+
 A production kit for making cinematic 60-second Tamil Shorts/Reels about Lord Krishna, built so the same system can later be reused for Ganesha, Murugan and others.
 
 | File | What it is |
@@ -16,6 +18,8 @@ A production kit for making cinematic 60-second Tamil Shorts/Reels about Lord Kr
 | [03-qc-and-costs.md](03-qc-and-costs.md) | Quality-control checklist, cost estimate, regeneration budget |
 | [04-voices-and-cinematic-flow.md](04-voices-and-cinematic-flow.md) | **Tamil voice casting** matched to every character's age and gender, plus the rules that make the episode flow like a movie (animatic, continuity, sound design) |
 | [05-music-bgm-plan.md](05-music-bgm-plan.md) | **BGM plan:** catchy series themes (title song, Kannan, Yashoda, gang, chase, divine, Kamsa, lullaby), a cue sheet for every situation in Episode 1, and prompts for action, romance, sad, festival and more |
+| [GEMINI-ONLY-WORKFLOW.md](GEMINI-ONLY-WORKFLOW.md) | **Google-only plan:** every step with Gemini, Flow, AI Studio and YouTube Create, honest limits, and what fits in your credits |
+| [GEMINI-ONLY-PROMPT-PACK.md](GEMINI-ONLY-PROMPT-PACK.md) | Prompts for the Google-only plan: first frame + talking-video prompt (Tamil dialogue built in) for every shot of the Short and the full episode, plus the narrator script |
 | [GEMINI-GUIDE.md](GEMINI-GUIDE.md) | **How to use all this in Gemini and Flow**, click by click |
 | [GEMINI-PROMPT-PACK.md](GEMINI-PROMPT-PACK.md) | Every image and video prompt, complete and ready to copy-paste |
 | [templates/episode-template.md](templates/episode-template.md) | Blank template for every future episode |
