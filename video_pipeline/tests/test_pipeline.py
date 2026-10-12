@@ -1196,3 +1196,4 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         for word in [m["spoken"], *m.get("title_words", [])]:
             assert word not in shown, (m["n"], word)
         assert "போன வீடியோ" not in spoken  # answers go in the comments, not the next video
+        assert short.title.startswith(m["tease"]) and short.title.endswith("| Guessinema") and len(short.title) <= 100
