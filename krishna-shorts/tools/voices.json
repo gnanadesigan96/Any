@@ -4,7 +4,8 @@
     "character": "கண்ணன் (Kannan), boy ~5",
     "description": "A young, high-pitched, playful and mischievous voice of a small boy, native Tamil speaker from Tamil Nadu, speaking natural colloquial Tamil, bright and sweet tone, giggles easily, fast and bouncy rhythm, warm and innocent.",
     "text": "டேய், என்னைப் பிடிக்க முடியுமா? பிடிச்சுப் பாரு! அம்மா, நான் ஒண்ணுமே பண்ணலையே! அதுவா... குரங்கு மாமா பூசிட்டுப் போயிட்டாரும்மா! ஹிஹி!",
-    "child": true
+    "child": true,
+    "stage": "child (Parts 1–2)"
   },
   {
     "name": "KK_Yashoda",
@@ -35,21 +36,24 @@
     "character": "பலராமன் (Balarama), boy ~7",
     "description": "Voice of a confident 7-year-old boy, native Tamil speaker, natural colloquial Tamil, slightly lower and stronger than a small child, firm and proud big-brother tone, clear and loud.",
     "text": "என்ன திட்டம்? திருட்டுத் திட்டமா? நான் வரல. அம்மா கிட்ட சொல்லிடுவேன் பாரு! அம்மா! கண்ணன் மண்ணு தின்னான்! நானே பார்த்தேன்!",
-    "child": true
+    "child": true,
+    "stage": "child (Parts 1–2)"
   },
   {
     "name": "KK_Shridama",
     "character": "ஸ்ரீதாமா (Shridama), boy ~6",
     "description": "Voice of a chubby, cheerful 6-year-old boy, native Tamil speaker, colloquial Tamil, slightly husky and round tone, loud, laughs a lot, friendly and simple.",
     "text": "வந்துட்டான்டா நம்ம தலைவன்! கண்ணா... நீ குட்டியா இருந்தாலும் கனமா இருக்கடா! சீக்கிரம் கண்ணா... தோள் வலிக்குது! ஹாஹாஹா!",
-    "child": true
+    "child": true,
+    "stage": "child (Parts 1–2)"
   },
   {
     "name": "KK_Subala",
     "character": "சுபலன் (Subala), boy ~5",
     "description": "Voice of a small, thin, nervous 5-year-old boy, native Tamil speaker, colloquial Tamil, thin and slightly whiny tone, worried, often whispering, voice rising when scared.",
     "text": "ஐயோ! போன வாரம் மாட்டினப்போ அவங்க தொரத்துனது மறந்துட்டியா? டேய்... ஒண்ணுமே தெரியலடா... டேய்... கொலுசு சத்தம்... அம்மா!",
-    "child": true
+    "child": true,
+    "stage": "child (Parts 1–2)"
   },
   {
     "name": "KK_Gomathi",
@@ -85,5 +89,61 @@
     "description": "Very deep, cold and menacing voice of a powerful 40-year-old king, native Tamil speaker, formal but natural Tamil, slow controlled delivery, dark and heavy, with hidden fear and paranoia, cinematic villain.",
     "text": "என்னைக் கொல்லப் போறவன்... எங்கேயோ பிறந்துட்டானா?! காவலர்களே! மதுராவின் ஒவ்வொரு வீட்டையும் தேடுங்க! அவன் உயிரோட இருக்கக் கூடாது!",
     "child": false
+  },
+  {
+    "name": "KK_Kannan_Youth",
+    "character": "கண்ணன் (Kannan), youth (Parts 3–4: flute, Radha, Mathura)",
+    "stage": "youth",
+    "child": false,
+    "description": "Youthful, charming voice of a young Tamil man around twenty, native Tamil speaker, playful and confident with a warm smile in the voice, light and melodious, gently mischievous, natural colloquial Tamil, the same cheeky spark as a boy but now mature.",
+    "text": "ராதா... என் புல்லாங்குழல் சத்தம் கேட்டு நீ ஓடி வந்தியா? ஹாஹா... பயப்படாதே. யமுனைக் கரையில நான் எப்பவுமே உனக்காகக் காத்துக்கிட்டு இருப்பேன்."
+  },
+  {
+    "name": "KK_Kannan_Adult",
+    "character": "கண்ணன் (Krishna), adult (Part 5: Dwaraka, Kurukshetra, the Gita)",
+    "stage": "adult",
+    "child": false,
+    "description": "Calm, deep, compassionate and authoritative voice of a Tamil man in his thirties, native Tamil speaker, wise and serene with a faint warm smile, measured pace, clear Tamil diction, divine but gentle, profoundly reassuring.",
+    "text": "அர்ஜுனா... கலங்காதே. உன் கடமையைச் செய். பலனைப் பற்றி யோசிக்காதே. நான் எப்போதும் உன்னுடனே இருக்கிறேன்."
+  },
+  {
+    "name": "KK_Balarama_Youth",
+    "character": "பலராமன் (Balarama), youth (Parts 3–4)",
+    "stage": "youth",
+    "child": false,
+    "description": "Strong, bold voice of a young Tamil man in his early twenties, native Tamil speaker, deeper and firmer than his brother, protective, proud and brave, natural colloquial Tamil, a big-brother warmth underneath.",
+    "text": "கண்ணா, நீ முன்னாடி போ. இந்த மல்யுத்த வீரர்களை நான் பார்த்துக்கறேன்! யாரும் உன்னைத் தொட முடியாது, நான் இருக்கும் வரைக்கும்."
+  },
+  {
+    "name": "KK_Balarama_Adult",
+    "character": "பலராமன் (Balarama), adult (Part 5)",
+    "stage": "adult",
+    "child": false,
+    "description": "Powerful, deep and commanding voice of a Tamil warrior king in his late thirties, native Tamil speaker, booming yet fair, proud and righteous, clear Tamil diction.",
+    "text": "தர்மம் எங்கே இருக்கோ, அங்கேதான் வெற்றி இருக்கும். ஆனா இந்தப் போர்... என் மனசுக்குப் பிடிக்கல. நான் தீர்த்த யாத்திரைக்குப் போறேன்."
+  },
+  {
+    "name": "KK_Shridama_Youth",
+    "character": "ஸ்ரீதாமா (Shridama), youth (Part 3)",
+    "stage": "youth",
+    "child": false,
+    "description": "Hearty, cheerful voice of a stocky young Tamil village man around twenty, native Tamil speaker, loud and warm, laughs easily, simple and loyal, natural colloquial Tamil, slightly husky.",
+    "text": "கண்ணா! நீ மதுராவுக்குப் போயிட்டா எங்க வெண்ணெயை யாரு திருடுவா? ஹாஹா... ஆனா உண்மையா சொல்றேன்டா, நீ இல்லாம இந்த ஊரே காலியா இருக்கும்."
+  },
+  {
+    "name": "KK_Subala_Youth",
+    "character": "சுபலன் (Subala), youth (Part 3)",
+    "stage": "youth",
+    "child": false,
+    "description": "Soft, gentle, slightly anxious voice of a slim young Tamil man around twenty, native Tamil speaker, sensitive and caring, a little nervous, natural colloquial Tamil, light tone.",
+    "text": "கண்ணா... நீ நிஜமாவே போகப் போறியா? அக்ரூரர் ரதம் வந்துடுச்சுன்னு எல்லாரும் சொல்றாங்க. எனக்கு பயமா இருக்குடா... திரும்பி வருவியா?"
+  },
+  {
+    "name": "KK_Yashoda_Older",
+    "character": "யசோதை (Yashoda), ~40 (Part 3 farewell)",
+    "stage": "older",
+    "child": false,
+    "description": "Warm, loving voice of a Tamil village mother around forty, native Tamil speaker, the same tender affection as before but deeper and a little weary, emotional, natural colloquial Tamil.",
+    "text": "கண்ணா... நீ சின்ன வயசுல வெண்ணெய் திருடின அந்த நாளெல்லாம் இன்னும் கண்ணுல நிக்குது. எங்க போனாலும்... இந்த அம்மாவை மறந்துடாதே, சரியா?"
   }
 ]

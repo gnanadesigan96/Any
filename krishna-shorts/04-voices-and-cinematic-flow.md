@@ -159,12 +159,24 @@ For each character: description to use in **ElevenLabs → Voices → Voice Desi
 | **சாந்தீபனி முனிவர்** (Sandipani) | Elderly man, ~70 | Deep, slow, wise sage; distinct from the narrator (lower, more formal) |
 | **சுதாமா** (Sudama) | Boy ~12 → poor man ~35 | Humble, gentle, slightly nervous |
 
-## A5. When characters grow up
-Keep the **personality and rhythm** the same and change only the age:
-- Kannan 5 → **teen Kannan, 16:** same playful rhythm and smile in the voice, but a young man's voice. Design prompt: `Voice of a charming 16-year-old Tamil boy, native Tamil speaker, playful and confident, warm smile in the voice, gentle, slightly deeper than a child but youthful.`
-- Kannan → **adult Krishna (Gita, Part 5):** calm, deep, compassionate and authoritative, with the faint smile still there.
-- Balarama grows in parallel: always **a little lower and firmer** than Kannan at every age.
-- Introduce the new voice with a narrator bridge ("வருடங்கள் ஓடின...") so the change feels natural.
+## A5. When characters grow up: voice stages
+The characters age through the series, so their voices must age too. Each character gets **one voice per life stage**. It keeps the same personality, rhythm and warmth; only the age changes. Each voice is used only from the part where that stage begins.
+
+| Character | Child (Parts 1–2, ages ~5–10) | Youth (Parts 3–4, ~16–20) | Adult (Part 5) |
+|---|---|---|---|
+| **Kannan / Krishna** | `KK_Kannan`: sweet, high, cheeky kid (Voice Library character voice) | `KK_Kannan_Youth`: charming, playful, melodious young man; the same cheeky spark | `KK_Kannan_Adult`: calm, deep, compassionate, authoritative (the Gita) |
+| **Balarama** | `KK_Balarama`: firmer, slightly older kid | `KK_Balarama_Youth`: strong, bold, protective | `KK_Balarama_Adult`: powerful warrior king |
+| **Shridama** | `KK_Shridama`: round, loud kid | `KK_Shridama_Youth`: hearty, stocky village youth | — |
+| **Subala** | `KK_Subala`: thin, nervous kid | `KK_Subala_Youth`: soft, gentle, a bit anxious | — |
+| **Yashoda** | `KK_Yashoda`: young mother (~28) | `KK_Yashoda_Older`: the same tenderness, deeper and a little weary (~40) | — |
+| **Narrator** | `KK_Narrator` (female_cinematic): **never changes** | same | same |
+
+**Rules that make the change feel natural:**
+1. **Keep the character's signature.** Kannan's giggle and teasing rhythm stay in the youth voice; Balarama is always a little lower and firmer than Kannan at every age.
+2. **Change at a story turning point, never mid-episode.** Kannan's voice changes at the start of Part 3 (after Govardhan), as the narrator bridges the years: "வருடங்கள் ஓடின... கோகுலத்துக் குட்டிக் கண்ணன் இப்போ..."
+3. **Show the change on screen:** the first youth shot echoes a childhood moment (the flute, the butter pot) so the audience connects the two voices.
+4. **The narrator never changes.** She is the thread that holds the whole life together.
+5. **Who can be designed:** the youth and adult voices are adult voices, so `python3 ../tools/create_elevenlabs_voices.py preview KK_Kannan_Youth` creates them (they are already defined in `tools/voices.json`). Create them only when their part begins, to save voice slots. Child voices always come from the Voice Library (`pipeline/boys.py`), because ElevenLabs doesn't design children's voices.
 
 ## A6. Voice register: fill this in and never lose it
 | Character | ElevenLabs voice name | Voice ID | Model | Stability | Similarity | Style | Speed | Source (Design / Real person + Changer) | Consent on file |
