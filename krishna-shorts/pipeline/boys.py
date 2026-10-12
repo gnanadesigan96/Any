@@ -48,6 +48,11 @@ def is_kid(v):
     return any(w in text_of(v) for w in ("kid", "child", "boy", "cartoon", "childlike", "child-like", "baby"))
 
 
+def is_tamil(v):
+    langs = json.dumps(v.get("verified_languages") or []).lower() + " " + str(v.get("language") or "").lower()
+    return "ta" in re.findall(r"[a-z]+", langs) or "tamil" in langs
+
+
 def base_score(v):
     t = text_of(v)
     s = 3 * sum(w in t for w in KID) - 4 * sum(w in t for w in AVOID)
@@ -55,9 +60,12 @@ def base_score(v):
         s += 4
     if v.get("age") == "young":
         s += 2
-    langs = json.dumps(v.get("verified_languages") or []).lower() + str(v.get("language") or "").lower()
-    if "ta" in re.findall(r"[a-z]+", langs) or "tamil" in langs:
-        s += 3
+    if is_tamil(v):
+        s += 10
+    gender = str(v.get("gender") or "").lower()
+    name_desc = text_of(v)
+    if gender == "female" or any(w in name_desc for w in (" girl", "female", "woman", "lady", "princess")):
+        s -= 40  # the four characters are boys
     if v.get("rate") not in (None, 0, 0.0, 1, 1.0):
         s -= 6  # custom-priced voice: avoid surprise costs
     return s
@@ -83,7 +91,7 @@ def pick(ranked):
     chosen, used = {}, set()
     for role in ORDER:
         words = ROLES[role][0]
-        best = max((v for v in ranked[:60] if v["voice_id"] not in used),
+        best = max((v for v in ranked[:60] if v["voice_id"] not in used and base_score(v) > 0),
                    key=lambda v: base_score(v) + 3 * sum(w in text_of(v) for w in words), default=None)
         if best:
             chosen[role] = best
@@ -109,7 +117,8 @@ def cmd_search(el):
         ok = v.get("preview_url") and download(v["preview_url"], prev)
         desc = (v.get("description") or "").replace("|", "/").replace("\n", " ")[:90]
         lines.append(f"| {i} | {v['name']} | {desc} | `{v['voice_id']}` | {os.path.basename(prev) if ok else '-'} |")
-        print(f"{i:>2}. {v['name']}  ({v['voice_id']})  score {base_score(v)}")
+        print(f"{i:>2}. {v['name']}  ({v['voice_id']})  {v.get('gender') or '?'}, "
+              f"{'Tamil' if is_tamil(v) else 'not Tamil-verified'}, score {base_score(v)}")
     with open(os.path.join(OUT, "candidates.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
     print(f"\nPreviews and list: {OUT}")
@@ -132,6 +141,13 @@ def cmd_auto(el):
     for role in ORDER:
         v = chosen[role]
         new_name = f"{role} ({v['name'][:40]})"
+        for old_name, old_id in list(mine.items()):
+            if old_name.startswith(f"{role} (") and old_name != new_name:
+                try:
+                    el.delete_voice(old_id)  # an earlier pick this script added; free the slot
+                    print(f"   removed earlier pick '{old_name}' from your voices")
+                except ApiError as e:
+                    print(f"   could not remove '{old_name}': {e}")
         vid = mine.get(new_name)
         if not vid:
             try:

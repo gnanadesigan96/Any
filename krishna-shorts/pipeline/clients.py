@@ -10,6 +10,9 @@ import urllib.request
 import uuid
 
 
+FMT = os.environ.get("KK_EL_FORMAT", "mp3_44100_128")  # 192 kbps needs the Creator plan
+
+
 class ApiError(Exception):
     def __init__(self, status, body, url=""):
         super().__init__(f"HTTP {status} from {url}: {body[:500]}")
@@ -99,7 +102,7 @@ class ElevenLabs:
 
     def tts(self, voice_name, text, model="eleven_v3"):
         vid = self.voice_id(voice_name)
-        q = "?output_format=mp3_44100_192"
+        q = "?output_format=" + FMT
         try:
             return self.post_json(f"/v1/text-to-speech/{vid}{q}",
                                   {"text": text, "model_id": model, "voice_settings": {"stability": 0.5, "similarity_boost": 0.75}},
@@ -119,16 +122,19 @@ class ElevenLabs:
         q = urllib.parse.urlencode({k: v for k, v in params.items() if v not in (None, "")})
         return self.get_json(f"/v1/shared-voices?{q}").get("voices", [])
 
+    def delete_voice(self, voice_id):
+        _request("DELETE", f"{self.BASE}/v1/voices/{voice_id}", self._h())
+
     def add_shared(self, public_owner_id, voice_id, new_name):
         return self.post_json(f"/v1/voices/add/{public_owner_id}/{voice_id}", {"new_name": new_name})["voice_id"]
 
     def sound_effect(self, prompt, seconds):
-        return self.post_json("/v1/sound-generation?output_format=mp3_44100_192",
+        return self.post_json("/v1/sound-generation?output_format=" + FMT,
                               {"text": prompt, "duration_seconds": max(0.5, min(22, seconds)), "prompt_influence": 0.5},
                               want="bytes")
 
     def music(self, prompt, seconds):
-        return self.post_json("/v1/music?output_format=mp3_44100_192",
+        return self.post_json("/v1/music?output_format=" + FMT,
                               {"prompt": prompt + ". Instrumental only, no vocals.",
                                "music_length_ms": int(max(10, seconds) * 1000), "model_id": "music_v1"},
                               want="bytes")
@@ -138,7 +144,7 @@ class ElevenLabs:
 
     def voice_change(self, voice_name, audio_path):
         vid = self.voice_id(voice_name)
-        return self.post_files(f"/v1/speech-to-speech/{vid}?output_format=mp3_44100_192",
+        return self.post_files(f"/v1/speech-to-speech/{vid}?output_format=" + FMT,
                                {"model_id": "eleven_multilingual_sts_v2", "remove_background_noise": "true"},
                                {"audio": audio_path})
 
