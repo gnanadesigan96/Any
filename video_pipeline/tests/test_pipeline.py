@@ -1159,30 +1159,37 @@ def test_tamil_story_is_tamil_on_screen(cfg):
                for e in eps for s in e.scenes)
 
 
-def test_guess_the_movie_short_has_no_part_tag_and_asks_at_the_end(cfg):
+def _guess_movies():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("make_guess_movies", ROOT / "stories/make_guess_movies.py")
+    mod = importlib.util.module_from_spec(spec)
+    old, sys.argv = sys.argv, ["make_guess_movies.py", str(ROOT / "stories")]  # it rewrites the same files
+    try:
+        spec.loader.exec_module(mod)
+    finally:
+        sys.argv = old
+    return mod.MOVIES
+
+
+def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_away(cfg):
     from vidpipe import series
-    root = ROOT / "stories/guess-movie-01"
-    bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
-    eps = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes
-    short = series.to_pack(bible, eps, series.ui_text(cfg, bible, eps)).shorts[0]
-    assert short.hook_text == "" and short.title == "இந்தப் படம் எது? #01 கண்டுபிடிங்க! | 60 விநாடியில் ஒரு படம்"
-    ov = series.overlays_for(bible, eps, cfg)[0]
-    assert ov["end_text"] == "இந்தப் படம் எது?" and ov["hook_sub"] == "60 விநாடியில் முழுக் கதை"
-    assert "கீதா ராணி" in short.description and "சப்ஸ்க்ரைப்" in eps[0].scenes[-1].narration
-
-
-@pytest.mark.parametrize("n, answer", [(1, "ராட்சசி"), (2, "கைதி"), (3, "எந்திரன்"), (4, "96"), (5, "அசுரன்"),
-                                       (6, "பாபநாசம்"), (7, "கில்லி"), (8, "சூரரைப்"), (9, "ஜெய் பீம்"), (10, "அந்நியன்")])
-def test_guess_the_movie_never_gives_the_answer_away(n, answer):
-    root = ROOT / f"stories/guess-movie-{n:02d}"
-    ep = json.loads((root / "parts_01-01.json").read_text())["episodes"][0]
-    shown = " ".join([ep["title"], ep["hook_text"], ep["hook_sub"], ep["description"], ep["end_text"], ep["end_sub"],
-                      *ep["hashtags"], *(s["narration"] for s in ep["scenes"])])
-    assert answer not in shown
-
-
-@pytest.mark.parametrize("n, previous", [(2, "ராட்சசி"), (3, "கைதி"), (5, "தொண்ணூத்தி ஆறு"), (10, "ஜெய் பீம்")])
-def test_each_guess_the_movie_opens_with_the_previous_answer(n, previous):
-    ep = json.loads((ROOT / f"stories/guess-movie-{n:02d}/parts_01-01.json").read_text())["episodes"][0]
-    assert ep["scenes"][0]["narration"].startswith(f"போன வீடியோவோட பதில்... {previous}!")
-    assert ep["description"].startswith(f"போன வீடியோ #{n - 1:02d} பதில்:")
+    movies = _guess_movies()
+    assert movies
+    for m in movies:
+        root = ROOT / f"stories/guess-movie-{m['n']:02d}"
+        bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
+        eps = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes
+        short = series.to_pack(bible, eps, series.ui_text(cfg, bible, eps)).shorts[0]
+        ov = series.overlays_for(bible, eps, cfg)[0]
+        assert short.hook_text == "" and ov["hook_sub"] and ov["end_text"] == "இந்தப் படம் எது?"
+        ep = eps[0]
+        last = ep.scenes[-1].narration
+        assert "க்ளூ" in last and "சப்ஸ்க்ரைப்" in last and "கமெண்ட்" in last
+        shown = " ".join([short.title, ep.hook_text, ep.hook_sub, short.description, ep.end_text, ep.end_sub,
+                          *ep.hashtags, *(s.narration for s in ep.scenes)])
+        for word in [m["spoken"], *m.get("title_words", [])]:
+            assert word not in shown, (m["n"], word)
+        if m["n"] > 1:  # opens with the previous video's answer
+            prev = next(p for p in movies if p["n"] == m["n"] - 1)
+            assert ep.scenes[0].narration.startswith(f"போன வீடியோவோட பதில்... {prev['spoken']}!")
+            assert short.description.startswith(f"போன வீடியோ #{prev['n']:02d} பதில்: {prev['written']}")
