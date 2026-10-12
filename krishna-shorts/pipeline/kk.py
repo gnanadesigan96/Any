@@ -16,6 +16,7 @@
     python kk.py choose frames S03 2     # promote take 2 of a refs/frames/clips item to the main one
     python kk.py link KK_Kannan <id> [--pitch 3]   # use a Voice Library voice (optionally pitched up)
     python kk.py pitch KK_Kannan 3       # change only the pitch of a linked voice
+    python kk.py todo                    # list pictures/clips still to make by hand (Gemini app / Flow)
 
 Common options: --episode short01, --only S03,S08a (ids), --force (redo even if the file exists).
 Keys come from environment variables: ELEVENLABS_API_KEY, GEMINI_API_KEY.
@@ -197,6 +198,40 @@ def step_voices(ctx):
             "Pick them from the Voice Library instead (see pipeline/README.md, 'Child voices'), then link each one:")
         for n in kids:
             log(f"  python3 kk.py link {n} <voice_id>      # {specs[n]['character']}")
+
+
+def step_todo(ctx):
+    """Write work/<ep>/TODO-by-hand.md: every missing picture/clip with its prompt, refs and exact file name,
+    for making them with the Gemini app / Flow (Pro subscription) instead of the paid API."""
+    m, out = ctx.m, []
+    w = out.append
+    w(f"# Make by hand with your Gemini Pro plan ({m['id']})\n")
+    w("Save each result with the exact file name shown. Re-run `python3 kk.py todo` any time to see what's left.\n")
+    refs = [(n, sp) for n, sp in m["refs"].items() if not os.path.exists(ctx.p("refs", n, "png"))]
+    if refs:
+        w(f"## 1. Reference pictures (Gemini app → Tools → Create images) → save into `{os.path.join(ctx.work, 'refs')}`\n")
+        w("Do the `_full` picture of a character first; for the other three, attach that `_full.png` in the same chat.\n")
+        for n, sp in refs:
+            att = f" · **attach:** `{sp['from']}.png`" if sp.get("from") else ""
+            w(f"### `{n}.png`{att}\n```\n{sp['prompt']}\n```\n")
+    frames = [s for s in m["shots"] if not os.path.exists(ctx.p("frames", s["id"], "png"))]
+    if frames:
+        w(f"## 2. Shot first frames (Gemini app, vertical 9:16) → save into `{os.path.join(ctx.work, 'frames')}`\n")
+        for s in frames:
+            att = ", ".join(f"`{r}.png`" for r in s["refs"]) or "none"
+            w(f"### `{s['id']}.png` · **attach:** {att}\n```\n{(REF_HINT if s['refs'] else '') + s['frame_prompt']}\n```\n")
+    clips = [s for s in m["shots"] if not os.path.exists(ctx.p("clips", s["id"], "mp4"))]
+    if clips:
+        w(f"## 3. Video clips (Flow → Frames to Video, 9:16, Veo Fast) → save into `{os.path.join(ctx.work, 'clips')}`\n")
+        w("Upload the shot's frame from `frames/` as the start frame, paste the prompt, download the clip.\n")
+        for s in clips:
+            w(f"### `{s['id']}.mp4` · start frame: `frames/{s['id']}.png` · {s['veo_seconds']} s\n```\n{s['video_prompt']}\n```\n")
+    if not (refs or frames or clips):
+        w("Nothing left: all pictures and clips exist. Run `python3 kk.py revoice` then `python3 kk.py assemble`.")
+    path = os.path.join(ctx.work, "TODO-by-hand.md")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("\n".join(out) + "\n")
+    log(f"todo: {len(refs)} reference pictures, {len(frames)} frames, {len(clips)} clips to make. List: {path}")
 
 
 def step_pitch(ctx):
@@ -684,7 +719,7 @@ def step_assemble(ctx):
 # ---------------------------------------------------------------- main
 STEPS = {"status": step_status, "voices": step_voices, "refs": step_refs, "frames": step_frames,
          "clips": step_clips, "lines": step_lines, "revoice": step_revoice, "sfx": step_sfx,
-         "music": step_music, "assemble": step_assemble, "choose": step_choose, "link": step_link, "pitch": step_pitch}
+         "music": step_music, "assemble": step_assemble, "choose": step_choose, "link": step_link, "pitch": step_pitch, "todo": step_todo}
 ALL = ["voices", "lines", "sfx", "music", "refs", "frames", "clips", "revoice", "assemble"]
 
 
