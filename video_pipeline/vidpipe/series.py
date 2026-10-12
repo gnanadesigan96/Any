@@ -53,6 +53,8 @@ class Episode(BaseModel):
     description: str
     hashtags: list[str]
     scenes: list[StoryScene]
+    end_text: str = ""  # optional end card instead of "Part N+1 →" / "The End", e.g. a quiz question
+    end_sub: str = ""
 
 
 class EpisodeBatch(BaseModel):
@@ -287,9 +289,11 @@ def to_pack(bible: SeriesBible, episodes: list, ui: dict = None) -> ShortsPack:
     for e in episodes:
         hashtags = ["#" + h.strip().lstrip("#").replace(" ", "") for h in e.hashtags if h.strip("# ")][:5]
         shorts.append(ShortVideo(
-            title=f"{e.title} | {bible.series_title} {ui['tag'].format(n=e.part).title()}"[:100],
-            hook_text=ui["tag"].format(n=e.part),  # a small tag; the story's name is never shown on screen
-            description=f"{e.description.strip()}\n\n{ui['of'].format(n=e.part, total=total)}",
+            title=(f"{e.title} | {bible.series_title} {ui['tag'].format(n=e.part).title()}" if total > 1
+                   else f"{e.title} | {bible.series_title}")[:100],
+            # A small part tag (none for a one-part story); the story's name is never shown on screen.
+            hook_text=ui["tag"].format(n=e.part) if total > 1 else "",
+            description=e.description.strip() + (f"\n\n{ui['of'].format(n=e.part, total=total)}" if total > 1 else ""),
             hashtags=hashtags,
             scenes=[Scene(narration=s.narration, visual=image_prompt(s, bible), search_query="") for s in e.scenes],
             fact_check=[FactClaim(claim="(story retelling - no factual claims)", source="n/a")],
@@ -309,6 +313,8 @@ def overlays_for(bible: SeriesBible, episodes: list, cfg: dict) -> list:
             end = {"end_text": ui["part"].format(n=nxt.part), "end_sub": ui["next"].format(title=nxt.title)}
         else:
             end = {"end_text": ui["end"], "end_sub": ui["follow"]}
+        if e.end_text:
+            end = {"end_text": e.end_text, "end_sub": e.end_sub}
         out.append({"hook": e.hook_text, **end})
         if subtitled:
             out[-1]["subtitles"] = [sc.subtitle for sc in e.scenes]

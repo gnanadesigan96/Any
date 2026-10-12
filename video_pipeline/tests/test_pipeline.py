@@ -1157,3 +1157,15 @@ def test_tamil_story_is_tamil_on_screen(cfg):
     assert all(tamil(v) for o in ov for v in o.values()) and "subtitles" not in ov[0]
     assert all(tamil(series.CUE.sub("", s.narration) if hasattr(series, "CUE") else s.narration.replace("[whispers]", ""))
                for e in eps for s in e.scenes)
+
+
+def test_guess_the_movie_short_has_no_part_tag_and_asks_at_the_end(cfg):
+    from vidpipe import series
+    root = ROOT / "stories/guess-movie-01"
+    bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
+    eps = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes
+    short = series.to_pack(bible, eps, series.ui_text(cfg, bible, eps)).shorts[0]
+    assert short.hook_text == "" and short.title == "இந்தப் படம் எது? கண்டுபிடிங்க! | 60 விநாடியில் ஒரு படம்"
+    assert series.overlays_for(bible, eps, cfg)[0]["end_text"] == "இந்தப் படம் எது?"
+    text = " ".join(s.narration for s in eps[0].scenes) + short.title + short.description
+    assert "ராட்சசி" not in text and "Raatchasi" not in text  # the answer is never given away

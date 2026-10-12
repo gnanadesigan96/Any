@@ -1,0 +1,23 @@
+{
+  "series_title": "60 விநாடியில் ஒரு படம்",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic film still, sunlit rural Tamil Nadu village, warm golden colour grade with dusty earth tones, natural light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Headmistress",
+      "look": "Tamil woman in her late thirties, wheatish skin, determined eyes, black hair in a neat low bun, small red bindi, crisp plain maroon cotton saree, simple wristwatch, upright confident posture"
+    },
+    {
+      "name": "SchoolOwner",
+      "look": "Tamil man in his fifties, heavy build, thick black moustache, oiled swept-back hair, white shirt and white veshti, thick gold chain and gold rings, smug expression"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது?",
+      "summary": "A strict new headmistress transforms a neglected village government school against lazy teachers, a private school owner and politicians; the nickname the slackers give her is the film's title.",
+      "cliffhanger": "Viewers must guess the film from the nickname clue."
+    }
+  ]
+}
