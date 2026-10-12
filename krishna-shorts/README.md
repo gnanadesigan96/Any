@@ -1,5 +1,7 @@
 # கண்ணன் கதைகள் (Kannan Kathaigal): AI Tamil Mythological Shorts
 
+> 🎬 **Making Episode 1? Follow [MAKE-EPISODE-1.md](MAKE-EPISODE-1.md)**: one complete step-by-step guide, from setup to publishing, with a card for every shot.
+>
 > **Using Gemini + ElevenLabs (recommended)?** Start with **[ELEVENLABS-GEMINI-WORKFLOW.md](ELEVENLABS-GEMINI-WORKFLOW.md)**: Gemini/Veo for pictures, video and music, ElevenLabs for every voice, with all Episode 1 lines ready in [episodes/ep01-voice-lines-elevenlabs.md](episodes/ep01-voice-lines-elevenlabs.md).
 >
 > **Using only Gemini / Google?** See [GEMINI-ONLY-WORKFLOW.md](GEMINI-ONLY-WORKFLOW.md) and [GEMINI-ONLY-PROMPT-PACK.md](GEMINI-ONLY-PROMPT-PACK.md).
