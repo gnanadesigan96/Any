@@ -15,6 +15,7 @@
                                          #   clips become still frames or placeholder cards = animatic)
     python kk.py choose frames S03 2     # promote take 2 of a refs/frames/clips item to the main one
     python kk.py link KK_Kannan <id> [--pitch 3]   # use a Voice Library voice (optionally pitched up)
+    python kk.py pitch KK_Kannan 3       # change only the pitch of a linked voice
 
 Common options: --episode short01, --only S03,S08a (ids), --force (redo even if the file exists).
 Keys come from environment variables: ELEVENLABS_API_KEY, GEMINI_API_KEY.
@@ -196,6 +197,20 @@ def step_voices(ctx):
             "Pick them from the Voice Library instead (see pipeline/README.md, 'Child voices'), then link each one:")
         for n in kids:
             log(f"  python3 kk.py link {n} <voice_id>      # {specs[n]['character']}")
+
+
+def step_pitch(ctx):
+    name, semis = ctx.args.target[0], float(ctx.args.target[1])
+    path = os.path.join(HERE, "voice_map.json")
+    data = json.load(open(path)) if os.path.exists(path) else {}
+    cur = data.get(name)
+    if not cur:
+        sys.exit(f"{name} isn't linked yet (run boys.py auto / use, or kk.py link).")
+    vid = cur["id"] if isinstance(cur, dict) else cur
+    data[name] = {"id": vid, "pitch": semis} if semis else vid
+    json.dump(data, open(path, "w"), indent=2)
+    log(f"{name}: pitch set to {semis:+g} semitones. Regenerate its lines: python3 kk.py lines --only <line ids> --force "
+        "(or delete work/short01/voice/ and run lines again)")
 
 
 def step_link(ctx):
@@ -626,7 +641,7 @@ def step_assemble(ctx):
 # ---------------------------------------------------------------- main
 STEPS = {"status": step_status, "voices": step_voices, "refs": step_refs, "frames": step_frames,
          "clips": step_clips, "lines": step_lines, "revoice": step_revoice, "sfx": step_sfx,
-         "music": step_music, "assemble": step_assemble, "choose": step_choose, "link": step_link}
+         "music": step_music, "assemble": step_assemble, "choose": step_choose, "link": step_link, "pitch": step_pitch}
 ALL = ["voices", "lines", "sfx", "music", "refs", "frames", "clips", "revoice", "assemble"]
 
 
@@ -646,6 +661,8 @@ def main(argv=None):
     ctx = Ctx(args)
     if args.step == "choose" and len(args.target) != 3:
         sys.exit("usage: kk.py choose <refs|frames|clips|voice> <id> <take>")
+    if args.step == "pitch" and len(args.target) != 2:
+        sys.exit("usage: kk.py pitch <KK_Name> <semitones>")
     if args.step == "link" and len(args.target) != 2:
         sys.exit("usage: kk.py link <KK_Name> <voice_id>")
     for step in (ALL if args.step == "all" else [args.step]):
