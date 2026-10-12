@@ -118,7 +118,7 @@ hair tied in a tiny tuft, short saffron-orange cotton dhoti, a string of red bea
 | Balarama | Slightly older boy, bossy and proud big brother | Stability ~45% |
 | Shridama | Chubby kid voice, loud, laughs a lot | Stability ~35% |
 | Subala | Small, nervous, whiny kid | Stability ~40% |
-| Narrator (கதைசொல்லி) | Strong, gripping young male voice (late 20s): deep, confident, charismatic, with controlled intensity and dramatic pauses | Stability ~60%; keep the same narrator for the whole series, since it is the show's signature |
+| Narrator (கதைசொல்லி) | Sweet but confident young woman (late 20s): velvety, emotional, gripping, with dramatic pauses (ElevenLabs style `female_cinematic`) | Stability ~60%; keep the same narrator for the whole series, since it is the show's signature |
 
 **Tamil pronunciation rules for every TTS take:** check ழ / ள / ல, ற / ர, ண / ந / ன by ear. If the TTS mispronounces a word, respell it phonetically in Tamil script (for example, write it the way it's spoken) or split it with a hyphen. Never publish a line you haven't listened to in full.
 

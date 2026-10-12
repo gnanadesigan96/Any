@@ -15,8 +15,8 @@
   },
   {
     "name": "KK_Narrator",
-    "character": "கதைசொல்லி (Narrator), young storyteller",
-    "description": "Strong, gripping voice of a confident young Tamil man in his late twenties, native Tamil speaker, deep yet youthful, powerful and charismatic, crisp clear Tamil diction, natural colloquial Tamil, controlled intensity that holds the listener's attention, dramatic pauses, energy rising at key moments, cinematic storyteller.",
+    "character": "கதைசொல்லி (Narrator), young woman ~28 (female_cinematic)",
+    "description": "Sweet but confident young Tamil woman in her late twenties, native Tamil speaker, cinematic narrator, velvety and emotional, holds attention with gentle intensity and dramatic pauses, crisp Tamil diction.",
     "text": "கோகுலத்துல ஒரு குட்டித் திருடன் இருக்கான்... அவன் திருடுறது தங்கம் இல்ல... வெண்ணெய்! யசோதா அம்மா நினைச்சாங்க... பிரச்சனை முடிஞ்சதுன்னு. ஆனா கண்ணனுக்கு... இது ஆரம்பம் தான்!",
     "child": false,
     "variants": {

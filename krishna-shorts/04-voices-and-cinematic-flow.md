@@ -125,7 +125,7 @@ For each character: description to use in **ElevenLabs → Voices → Voice Desi
 | **Settings** | Stability 55% · Style 30% · Speed 0.9 |
 | **Test line** | `டேய் கண்ணா, அம்மா சொல்றதைக் கேளு.` |
 
-### கதைசொல்லி (Narrator): young storyteller, male or female (~25–30)
+### கதைசொல்லி (Narrator): young woman, ~28. **Chosen: `female_cinematic`**
 | | |
 |---|---|
 | **Sound** | Deep yet youthful, confident and charismatic, with controlled intensity that grips the audience. Crisp Tamil, dramatic pauses, and energy that rises at the big moments. **The series' signature voice** |
