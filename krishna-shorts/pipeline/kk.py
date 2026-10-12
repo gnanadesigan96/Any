@@ -229,7 +229,14 @@ def _gen_image(ctx, ident, path, prompt, refs, aspect):
         try:
             write(out, ctx.gm.image(prompt, refs, aspect))
             log(f"   {ident}: {os.path.relpath(out, ctx.work)}")
-        except (ApiError, RuntimeError) as e:
+        except ApiError as e:
+            if e.status == 429 and ("limit: 0" in e.body or "free_tier" in e.body):
+                sys.exit("\nGemini API: your key is on the FREE tier, which allows no image/video generation.\n"
+                         "Turn on billing for the key's project (aistudio.google.com/apikey → Set up billing), "
+                         "or make these pictures by hand in the Gemini app and save them into "
+                         f"{os.path.dirname(path)}/ with the same names (see pipeline/README.md).")
+            log(f"   {ident}: FAILED take {n}: {e}")
+        except RuntimeError as e:
             log(f"   {ident}: FAILED take {n}: {e}")
 
 
@@ -284,7 +291,12 @@ def step_clips(ctx):
             try:
                 write(out, ctx.gm.video(s["video_prompt"], frame, ctx.m["aspect"], s["veo_seconds"], NEG_SHORT, log=log))
                 log(f"   {s['id']}: {os.path.relpath(out, ctx.work)}")
-            except (ApiError, RuntimeError, TimeoutError) as e:
+            except ApiError as e:
+                if e.status == 429 and ("limit: 0" in e.body or "free_tier" in e.body):
+                    sys.exit("\nGemini API: video generation isn't available on the free tier. Turn on billing, "
+                             "or make the clips in Flow and save them as work/short01/clips/<shot id>.mp4.")
+                log(f"   {s['id']}: FAILED: {e}\n      Tip: make this shot by hand in Flow and save it as clips/{s['id']}.mp4")
+            except (RuntimeError, TimeoutError) as e:
                 log(f"   {s['id']}: FAILED: {e}\n      Tip: make this shot by hand in Flow and save it as clips/{s['id']}.mp4")
 
 

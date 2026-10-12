@@ -29,7 +29,8 @@ def _request(method, url, headers, data=None, timeout=300, retries=4):
                 return r.read(), r.headers.get("Content-Type", "")
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", "replace")
-            if e.code in (429, 500, 502, 503, 504) and attempt < retries:
+            hard_quota = e.code == 429 and ("limit: 0" in body or "free_tier" in body)
+            if e.code in (429, 500, 502, 503, 504) and attempt < retries and not hard_quota:
                 wait = 5 * 2 ** attempt
                 print(f"      (service busy, HTTP {e.code}; retrying in {wait} s)", flush=True)
                 time.sleep(wait)
