@@ -1,0 +1,23 @@
+{
+  "series_title": "60 விநாடியில் ஒரு படம்",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic action film still, Tamil Nadu at night, high-contrast teal and orange colour grade, headlights and sodium street lamps, haze, 35mm anamorphic lens, film grain, high detail, realistic expressions",
+  "characters": [
+    {
+      "name": "Hero",
+      "look": "rugged Tamil man in his late thirties, long untidy black hair, thick black beard, tired intense eyes, faded checked shirt and grey veshti folded at the knee, strong build"
+    },
+    {
+      "name": "Officer",
+      "look": "Tamil police inspector in his forties, short hair, trimmed moustache, khaki uniform torn and dusty, bandaged arm"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #02",
+      "summary": "A guess-the-movie Short retelling Kaithi (கைதி, 2019) in 60 seconds without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

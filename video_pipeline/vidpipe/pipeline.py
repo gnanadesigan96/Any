@@ -19,7 +19,7 @@ from .script import (MANUAL_REPLY, dummy_script, dummy_shorts, generate_script, 
                      parse_manual_reply, write_manual_prompt)
 from .stock import credit_lines, fetch_thumbnail_photo, fetch_visuals, used_ids
 from .thumbnail import make_thumbnails
-from .util import check_ffmpeg_features, log, read_json, require_binary, slugify, write_json
+from .util import check_ffmpeg_features, log, read_json, require_binary, run_ffmpeg, slugify, write_json
 from .voice import distribute_words, narrate_scenes
 
 # Downstream outputs to delete when a stage is redone.
@@ -205,7 +205,7 @@ def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
     v = cfg["video"]
     data = [RENDER_VERSION, [s.narration for s in short.scenes], short.hook_text, overlay,
             [f"{p.name}:{p.stat().st_mtime_ns}" for p in paths],
-            {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "score_whoosh", "width",
+            {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "score_whoosh", "score_riser", "width",
                                     "height", "fps", "captions", "caption_max_words", "title_style")},
             cfg["voice"].get("kokoro"), cfg["voice"].get("provider")]
     if cfg["voice"].get("tempo", 1.0) != 1.0:
@@ -235,14 +235,15 @@ END_HOLD = 1.5  # seconds of quiet after the last line, under the end card
 
 def _fit_length(short, sub: Path, vcfg: dict, timing: list, dry_run: bool) -> tuple:
     """With shorts.part_seconds set, make each Short exactly that long: the narration's pace is adjusted (within
-    0.9x-1.3x of the voice's own speed, re-using the recording) so it ends END_HOLD seconds early, and the last scene
-    holds for the rest. Returns the config and timing to render with."""
+    the chosen pace-1.3x, re-using the recording) so it ends END_HOLD seconds early, and the last scene holds for the
+    rest. Returns the config and timing to render with."""
     target = float(vcfg["shorts"].get("part_seconds") or 0)
     if not target:
         return vcfg, timing
     tempo = float(vcfg["voice"].get("tempo", 1.0))
     raw = sum(t["duration"] for t in timing) * tempo  # length at the voice's own speed
-    want = round(min(max(raw / max(target - END_HOLD, 1.0), 0.9), 1.3), 3)
+    # Never slower than the chosen pace (a slowed voice drags); a short script gets a longer quiet end instead.
+    want = round(min(max(raw / max(target - END_HOLD, 1.0), tempo, 0.9), 1.3), 3)
     kcfg = copy.deepcopy(vcfg)
     kcfg["voice"]["tempo"] = want
     if abs(want - tempo) > 1e-3:
@@ -293,6 +294,9 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
                             overlay={k: v for k, v in overlay.items() if k != "subtitles"})
             shutil.copyfile(video, out)
         stamp.write_text(fp)
+        thumb = out.with_name(out.stem + "_thumbnail.jpg")
+        if not thumb.exists() or thumb.stat().st_mtime < out.stat().st_mtime:  # the title card in the first frame
+            run_ffmpeg(["-ss", "0.15", "-i", out, "-frames:v", "1", "-q:v", "2", thumb])
         duration = check_output(out, check_silence=not dry_run)
         if duration > 180:
             log(f"  Warning: {out.name} is {duration:.0f}s; YouTube Shorts must be 3 minutes or less")

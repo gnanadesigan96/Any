@@ -53,6 +53,7 @@ class Episode(BaseModel):
     description: str
     hashtags: list[str]
     scenes: list[StoryScene]
+    hook_sub: str = ""  # optional second line under the opening title card, e.g. "60 விநாடியில் முழுக் கதை"
     end_text: str = ""  # optional end card instead of "Part N+1 →" / "The End", e.g. a quiz question
     end_sub: str = ""
 
@@ -315,7 +316,7 @@ def overlays_for(bible: SeriesBible, episodes: list, cfg: dict) -> list:
             end = {"end_text": ui["end"], "end_sub": ui["follow"]}
         if e.end_text:
             end = {"end_text": e.end_text, "end_sub": e.end_sub}
-        out.append({"hook": e.hook_text, **end})
+        out.append({"hook": e.hook_text, **({"hook_sub": e.hook_sub} if e.hook_sub else {}), **end})
         if subtitled:
             out[-1]["subtitles"] = [sc.subtitle for sc in e.scenes]
     return out

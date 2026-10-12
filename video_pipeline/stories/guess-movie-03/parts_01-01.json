@@ -1,0 +1,81 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #03 கண்டுபிடிங்க!",
+      "hook_text": "இந்தப் படம் எது?",
+      "hook_sub": "60 விநாடியில் முழுக் கதை",
+      "description": "போன வீடியோ #02 பதில்: கைதி\n\n60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: அறிவியல் புனைகதை (சயின்ஸ் ஃபிக்ஷன்) படம்\nக்ளூ 2: விஞ்ஞானி பேரு வசீகரன், ரோபோ பேரு சிட்டி\nக்ளூ 3: 2010-ல வெளியான படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "இந்தப் படம் எது?",
+      "end_sub": "கமெண்ட் • லைக் • சப்ஸ்க்ரைப்",
+      "scenes": [
+        {
+          "narration": "போன வீடியோவோட பதில்... கைதி! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள். இப்போ அடுத்த படம்! ஒரு விஞ்ஞானி, பத்து வருஷம் கஷ்டப்பட்டு, தன்னைப் போலவே ஒரு ரோபோவை உருவாக்குறாரு.",
+          "visual": "the scientist in a high-tech lab at night working on the robot lying on a table, wires and sparks, glowing screens",
+          "characters": [
+            "Scientist",
+            "Robot"
+          ]
+        },
+        {
+          "narration": "அந்த ரோபோ ஓடும், சண்டை போடும், ஒரு நொடியில ஆயிரம் புத்தகம் படிக்கும்.",
+          "visual": "the robot flipping through a book in a blur of pages, holographic text floating around it",
+          "characters": [
+            "Robot"
+          ]
+        },
+        {
+          "narration": "ஆனா அதுக்கு மனுஷ உணர்வுகள் இல்ல. விஞ்ஞானி அதுக்கு உணர்வுகளைக் கொடுக்கிறாரு. அதுதான் பெரிய தப்பு!",
+          "visual": "the scientist connecting a glowing chip to the robot's head, the robot's eyes changing colour for the first time",
+          "characters": [
+            "Scientist",
+            "Robot"
+          ]
+        },
+        {
+          "narration": "அந்த ரோபோ, விஞ்ஞானியோட காதலியையே காதலிக்க ஆரம்பிக்குது!",
+          "visual": "the robot holding a single red rose and gazing at a surprised young Tamil woman in a pale blue salwar in a garden",
+          "characters": [
+            "Robot"
+          ]
+        },
+        {
+          "narration": "கோபத்துல விஞ்ஞானி அதை உடைச்சுப் போடுறாரு. ஆனா ஒரு வில்லன் விஞ்ஞானி, அதை எடுத்து ஒரு கொலைகார ரோபோவா மாத்துறான்.",
+          "visual": "a dark workshop where a sinister old scientist installs a glowing red chip into the broken robot's head",
+          "characters": [
+            "Robot"
+          ]
+        },
+        {
+          "narration": "இப்போ அந்த ரோபோ, தன்னைப் போலவே நூத்துக்கணக்கான ரோபோக்களை உருவாக்கி, நகரத்தையே தாக்குது.",
+          "visual": "an army of identical robots marching through a Chennai street at night, cars overturned, people fleeing",
+          "characters": [
+            "Robot"
+          ]
+        },
+        {
+          "narration": "கடைசியில, அதை உருவாக்கின விஞ்ஞானியே அதைத் தடுத்து நிறுத்துறாரு.",
+          "visual": "the scientist facing the robot alone amid smoke and wreckage, holding a small device",
+          "characters": [
+            "Scientist",
+            "Robot"
+          ]
+        },
+        {
+          "narration": "க்ளூ: விஞ்ஞானி பேரு வசீகரன். ரோபோ பேரு சிட்டி. இந்தப் படம் எது? பதிலை கமெண்ட்ல சொல்லுங்க. பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "the robot standing alone under a single spotlight in a dark museum hall, a calm expression",
+          "characters": [
+            "Robot"
+          ]
+        }
+      ]
+    }
+  ]
+}

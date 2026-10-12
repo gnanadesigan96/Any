@@ -1091,13 +1091,13 @@ def test_elevenlabs_voices_a_part_in_one_request_and_cuts_between_words(cfg, tmp
     import types
     from vidpipe import voice
     texts = ["ஒன்று இரண்டு.", "[whispers] மூன்று நான்கு."]
-    joined = "\n\n".join(texts)
+    joined = " ".join(texts)
     mp3 = tmp_path / "src.mp3"
     voice.run_ffmpeg(["-f", "lavfi", "-i", "sine=f=220:d=6", "-c:a", "libmp3lame", mp3])
     # Character timings: scene 1 spoken 0-2s, scene 2 from 3.5s to 6s.
     starts, ends = [], []
     for i, ch in enumerate(joined):
-        t = 2.0 * i / len(texts[0]) if i < len(texts[0]) + 2 else 3.5 + 2.5 * (i - len(texts[0]) - 2) / len(texts[1])
+        t = 2.0 * i / len(texts[0]) if i < len(texts[0]) + 1 else 3.5 + 2.5 * (i - len(texts[0]) - 1) / len(texts[1])
         starts.append(round(min(t, 5.9), 3)), ends.append(round(min(t + 0.05, 6.0), 3))
     sent = []
 
@@ -1138,9 +1138,9 @@ def test_parts_fit_an_exact_length(cfg, tmp_path):
     vcfg["shorts"]["part_seconds"] = 20
     kcfg, fitted = _fit_length(short, tmp_path, vcfg, timing, True)
     assert kcfg["voice"]["tempo"] > 1.0 and abs(sum(t["duration"] for t in fitted) - 20) < 0.01
-    vcfg["shorts"]["part_seconds"] = 30  # too short to stretch at 0.9x: the last scene holds instead
+    vcfg["shorts"]["part_seconds"] = 30  # never slowed below the chosen pace: the last scene holds instead
     kcfg, fitted = _fit_length(short, tmp_path, vcfg, timing, True)
-    assert kcfg["voice"]["tempo"] == 0.9 and abs(sum(t["duration"] for t in fitted) - 30) < 0.01
+    assert kcfg["voice"]["tempo"] == 1.0 and abs(sum(t["duration"] for t in fitted) - 30) < 0.01
 
 
 def test_tamil_story_is_tamil_on_screen(cfg):
@@ -1165,7 +1165,24 @@ def test_guess_the_movie_short_has_no_part_tag_and_asks_at_the_end(cfg):
     bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
     eps = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes
     short = series.to_pack(bible, eps, series.ui_text(cfg, bible, eps)).shorts[0]
-    assert short.hook_text == "" and short.title == "இந்தப் படம் எது? கண்டுபிடிங்க! | 60 விநாடியில் ஒரு படம்"
-    assert series.overlays_for(bible, eps, cfg)[0]["end_text"] == "இந்தப் படம் எது?"
-    text = " ".join(s.narration for s in eps[0].scenes) + short.title + short.description
-    assert "ராட்சசி" not in text and "Raatchasi" not in text  # the answer is never given away
+    assert short.hook_text == "" and short.title == "இந்தப் படம் எது? #01 கண்டுபிடிங்க! | 60 விநாடியில் ஒரு படம்"
+    ov = series.overlays_for(bible, eps, cfg)[0]
+    assert ov["end_text"] == "இந்தப் படம் எது?" and ov["hook_sub"] == "60 விநாடியில் முழுக் கதை"
+    assert "கீதா ராணி" in short.description and "சப்ஸ்க்ரைப்" in eps[0].scenes[-1].narration
+
+
+@pytest.mark.parametrize("n, answer", [(1, "ராட்சசி"), (2, "கைதி"), (3, "எந்திரன்"), (4, "96"), (5, "அசுரன்"),
+                                       (6, "பாபநாசம்"), (7, "கில்லி"), (8, "சூரரைப்"), (9, "ஜெய் பீம்"), (10, "அந்நியன்")])
+def test_guess_the_movie_never_gives_the_answer_away(n, answer):
+    root = ROOT / f"stories/guess-movie-{n:02d}"
+    ep = json.loads((root / "parts_01-01.json").read_text())["episodes"][0]
+    shown = " ".join([ep["title"], ep["hook_text"], ep["hook_sub"], ep["description"], ep["end_text"], ep["end_sub"],
+                      *ep["hashtags"], *(s["narration"] for s in ep["scenes"])])
+    assert answer not in shown
+
+
+@pytest.mark.parametrize("n, previous", [(2, "ராட்சசி"), (3, "கைதி"), (5, "தொண்ணூத்தி ஆறு"), (10, "ஜெய் பீம்")])
+def test_each_guess_the_movie_opens_with_the_previous_answer(n, previous):
+    ep = json.loads((ROOT / f"stories/guess-movie-{n:02d}/parts_01-01.json").read_text())["episodes"][0]
+    assert ep["scenes"][0]["narration"].startswith(f"போன வீடியோவோட பதில்... {previous}!")
+    assert ep["description"].startswith(f"போன வீடியோ #{n - 1:02d} பதில்:")

@@ -1,0 +1,77 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #09 கண்டுபிடிங்க!",
+      "hook_text": "இந்தப் படம் எது?",
+      "hook_sub": "60 விநாடியில் முழுக் கதை",
+      "description": "போன வீடியோ #08 பதில்: சூரரைப் போற்று\n\n60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: ஒரு உண்மைச் சம்பவத்தை அடிப்படையா வச்ச நீதிமன்றப் படம்\nக்ளூ 2: வக்கீல் பேரு சந்துரு, அந்தப் பொண்ணு பேரு செங்கேணி\nக்ளூ 3: 2021-ல வெளியான படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "இந்தப் படம் எது?",
+      "end_sub": "கமெண்ட் • லைக் • சப்ஸ்க்ரைப்",
+      "scenes": [
+        {
+          "narration": "போன வீடியோவோட பதில்... சூரரைப் போற்று! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள். இப்போ அடுத்த படம்! ஒரு பழங்குடி கிராமம். செங்கேணியும் அவ கணவனும், கூலி வேலை பார்க்கிற ஏழைகள்.",
+          "visual": "a small tribal hamlet of mud huts at the edge of rice fields, the wife and her husband laughing together outside their hut",
+          "characters": [
+            "Wife"
+          ]
+        },
+        {
+          "narration": "ஊர்ல ஒரு வீட்டுல நகை திருட்டு. எந்தச் சாட்சியும் இல்லாம, போலீஸ் அவ கணவனைப் பிடிச்சுட்டுப் போகுது.",
+          "visual": "policemen dragging a thin tribal man away from his hut while his wife screams and villagers watch helplessly",
+          "characters": [
+            "Wife"
+          ]
+        },
+        {
+          "narration": "லாக்கப்ல, அவனை கொடூரமா அடிச்சு சித்ரவதை பண்றாங்க.",
+          "visual": "a dim police lockup with iron bars, a shadow of a raised baton on the wall, nothing graphic",
+          "characters": []
+        },
+        {
+          "narration": "அடுத்த நாள், அவன் தப்பிச்சு ஓடிட்டான்னு போலீஸ் சொல்லுது. ஆனா அவன் எங்க போனான்னு யாருக்குமே தெரியல.",
+          "visual": "the wife standing alone in front of a police station, holding a small photo of her husband, officers turning away",
+          "characters": [
+            "Wife"
+          ]
+        },
+        {
+          "narration": "நியாயம் கேட்டு, செங்கேணி ஒரு வக்கீலைத் தேடிப் போறா. ஏழைகளுக்காக காசே வாங்காம வாதாடுற வக்கீல்.",
+          "visual": "the wife sitting across a desk from the lawyer in a cluttered office full of case files, the lawyer listening intently",
+          "characters": [
+            "Wife",
+            "Lawyer"
+          ]
+        },
+        {
+          "narration": "அவர் நீதிமன்றத்துல ஒவ்வொரு பொய்யையும் உடைக்கிறாரு. உண்மை வெளிய வருது. போலீஸ் லாக்கப்லேயே அவன் இறந்துட்டான்!",
+          "visual": "the lawyer arguing passionately in a packed courtroom, pointing at a police officer in the witness box",
+          "characters": [
+            "Lawyer"
+          ]
+        },
+        {
+          "narration": "ஒரு ஏழைப் பொண்ணோட போராட்டம், மொத்த அமைப்பையே ஆட வச்சுது.",
+          "visual": "the wife walking out of the court building into bright sunlight, villagers waiting for her with folded hands",
+          "characters": [
+            "Wife"
+          ]
+        },
+        {
+          "narration": "க்ளூ: வக்கீல் பேரு சந்துரு, அந்தப் பொண்ணு பேரு செங்கேணி. இந்தப் படம் எது? பதிலை கமெண்ட்ல சொல்லுங்க. பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "the lawyer standing on the court steps, looking up, a determined expression",
+          "characters": [
+            "Lawyer"
+          ]
+        }
+      ]
+    }
+  ]
+}

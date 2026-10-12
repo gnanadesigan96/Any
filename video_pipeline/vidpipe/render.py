@@ -201,14 +201,15 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
                   v["width"], v["height"], v["caption_font"], vertical=v["height"] > v["width"],
                   title=title, duration=duration, hook=overlay.get("hook", ""),
                   end_text=overlay.get("end_text", ""), end_sub=overlay.get("end_sub", ""),
-                  title_style=v.get("title_style", "banner"))
+                  title_style=v.get("title_style", "banner"), hook_sub=overlay.get("hook_sub", ""))
         ass = "captions.ass"
     music, score = _pick_music(cfg, run_dir.name), False
     if v.get("score"):
         from .sound import build_score
         cuts = [t["start"] for t in timeline[1:]]
         music = build_score(work / "score.wav", duration, cuts, timeline[-1]["start"],
-                            seed=sum(map(ord, run_dir.name)), whoosh=v.get("score_whoosh", False)).name
+                            seed=sum(map(ord, run_dir.name)), whoosh=v.get("score_whoosh", False),
+                            riser=v.get("score_riser", False)).name
         score = True
     log("Mixing final video...")
     _final_mix(work, "video_noaudio.mp4", "narration.wav", ass, final.resolve(), cfg, music, duration, score)

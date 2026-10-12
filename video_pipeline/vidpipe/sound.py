@@ -46,7 +46,7 @@ def _riser(seconds: float, rng) -> np.ndarray:
 
 
 def build_score(path: Path, duration: float, cut_times: list, climax_time: float, seed: int = 0,
-                whoosh: bool = False) -> Path:
+                whoosh: bool = False, riser: bool = False) -> Path:
     """Writes a mono 44.1 kHz WAV `duration` seconds long."""
     rng = np.random.default_rng(seed)
     n = int(duration * SR)
@@ -71,8 +71,8 @@ def build_score(path: Path, duration: float, cut_times: list, climax_time: float
         if 0.5 < cut < duration - 0.3:
             place(_whoosh(rng), max(cut - 0.35, 0), 0.5)
     if climax_time > 3.5:
-        riser = _riser(3.0, rng)
-        place(riser, climax_time - 3.0, 0.9)
+        if riser:  # a rising whoosh into the last scene (off by default: it sounds like a whoosh at the end)
+            place(_riser(3.0, rng), climax_time - 3.0, 0.9)
         place(_boom(rng), climax_time, 1.0)
     fade = int(min(0.4, duration / 4) * SR)
     score[-fade:] *= np.linspace(1, 0, fade)

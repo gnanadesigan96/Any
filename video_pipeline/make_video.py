@@ -44,6 +44,54 @@ def _join_signed_values(argv: list) -> list:
     return out
 
 
+def add_series_flags(p) -> None:
+    p.add_argument("--parts", type=int, help="number of parts (default from config: 3)")
+    p.add_argument("--style", default="", help='visual style hint, e.g. "anime", "watercolour storybook"')
+    p.add_argument("--notes", default="", help="anything Claude should know (focus, tone, ending)")
+    p.add_argument("--first", type=int, default=0, help="only render the first N parts this run")
+    p.add_argument("--language", default="", help='narration language, e.g. "Tamil" (default: English)')
+    p.add_argument("--voice", default="",
+                   help="Edge voice for non-English narration, e.g. ta-IN-PallaviNeural (with "
+                        "--voice-provider gemini: a Gemini voice such as Charon; elevenlabs: a voice name or ID)")
+    p.add_argument("--voice-rate", default="", help='speak faster/slower (non-English voices), e.g. +20%% or -5%%')
+    p.add_argument("--voice-pitch", default="", help='deeper/higher (non-English voices), e.g. -6Hz or +2Hz')
+    p.add_argument("--voice-provider", choices=["auto", "edge", "gemini", "elevenlabs"], default="",
+                   help="gemini: expressive storyteller voice, free tier (GEMINI_API_KEY); "
+                        "elevenlabs: most expressive (paid, ELEVENLABS_API_KEY)")
+    p.add_argument("--pace", type=float, default=0, help="narration speed, e.g. 1.1 (default) or 1.15; "
+                                                          "1.0 = as the voice speaks; no new voice credits")
+    p.add_argument("--seconds", type=float, default=0, help="make every part exactly this long, e.g. 60")
+    p.add_argument("--voice-model", default="", help="ElevenLabs model, e.g. eleven_v3 (most expressive)")
+    p.add_argument("--voice-style", default="",
+                   help='how a Gemini voice should tell it, e.g. "Whisper it like a ghost story, slow and tense"')
+    p.add_argument("--scenes-per-image", type=int, default=0,
+                   help="reuse each picture for N scenes (2 halves image-generation time)")
+    p.add_argument("--fast", action="store_true",
+                   help="smaller local pictures (576x1024, about 40%% quicker), upscaled to 1080x1920")
+    p.add_argument("--images", choices=["local", "openai"], default="",
+                   help="openai: paid pictures, made several at a time in under a minute each (OPENAI_API_KEY)")
+
+
+def run_batch(args, cfg) -> int:
+    """Each folder becomes its own run (named after the folder); one failure doesn't stop the others, and the local
+    picture model loads only once."""
+    done, failed = [], []
+    for n, folder in enumerate(args.script_dirs, start=1):
+        name = Path(folder).name
+        print(f"\n===== {n}/{len(args.script_dirs)}: {name} =====")
+        try:
+            done.append(make_series(name, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first, folder))
+        except Exception as e:  # keep going: the next story doesn't depend on this one
+            failed.append((name, str(e).splitlines()[0] if str(e) else type(e).__name__))
+            print(f"Failed: {name}: {failed[-1][1]}")
+    print(f"\nFinished {len(done)} of {len(args.script_dirs)}.")
+    for path in done:
+        print(f"  {path}")
+    for name, why in failed:
+        print(f"  FAILED {name}: {why}")
+    return 1 if failed else 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--config", help="path to config.yaml (default: ./config.yaml)")
@@ -72,29 +120,14 @@ def main() -> int:
 
     p_series = sub.add_parser("series", help="retell one story as a numbered series of Shorts")
     p_series.add_argument("story", help='e.g. "Dracula by Bram Stoker" or a movie title')
-    p_series.add_argument("--parts", type=int, help="number of parts (default from config: 3)")
-    p_series.add_argument("--style", default="", help='visual style hint, e.g. "anime", "watercolour storybook"')
-    p_series.add_argument("--notes", default="", help="anything Claude should know (focus, tone, ending)")
-    p_series.add_argument("--first", type=int, default=0, help="only render the first N parts this run")
-    p_series.add_argument("--language", default="", help='narration language, e.g. "Tamil" (default: English)')
-    p_series.add_argument("--voice", default="",
-                          help="Edge voice for non-English narration, e.g. ta-IN-PallaviNeural (with "
-                               "--voice-provider gemini: a Gemini voice such as Charon; elevenlabs: a voice ID)")
-    p_series.add_argument("--voice-rate", default="", help='speak faster/slower (non-English voices), e.g. +20%% or -5%%')
-    p_series.add_argument("--voice-pitch", default="", help='deeper/higher (non-English voices), e.g. -6Hz or +2Hz')
-    p_series.add_argument("--voice-provider", choices=["auto", "edge", "gemini", "elevenlabs"], default="",
-                          help="gemini: expressive storyteller voice, free tier (GEMINI_API_KEY); "
-                               "elevenlabs: most expressive (paid, ELEVENLABS_API_KEY)")
-    p_series.add_argument("--pace", type=float, default=0, help="narration speed, e.g. 1.1 (default) or 1.15; "
-                                                                 "1.0 = as the voice speaks; no new voice credits")
-    p_series.add_argument("--seconds", type=float, default=0, help="make every part exactly this long, e.g. 60")
-    p_series.add_argument("--voice-model", default="", help="ElevenLabs model, e.g. eleven_v3 (most expressive)")
-    p_series.add_argument("--voice-style", default="",
-                          help='how a Gemini voice should tell it, e.g. "Whisper it like a ghost story, slow and tense"')
     p_series.add_argument("--script-dir", default="", help="use a ready-made script, e.g. stories/dracula")
-    p_series.add_argument("--scenes-per-image", type=int, default=0,
-                          help="reuse each picture for N scenes (2 halves image-generation time)")
+    add_series_flags(p_series)
     add_make_flags(p_series)
+
+    p_batch = sub.add_parser("batch", help="make several ready-made stories in one run, e.g. stories/guess-movie-*")
+    p_batch.add_argument("script_dirs", nargs="+", help="story folders, each with bible.json and parts_*.json")
+    add_series_flags(p_batch)
+    add_make_flags(p_batch)
 
     p_voices = sub.add_parser("voices", help="preview the free Kokoro voices (writes one mp3 per voice)")
     p_voices.add_argument("--say", default="In 1940, a brand new bridge began to twist in the wind. "
@@ -132,7 +165,7 @@ def main() -> int:
                 row = random.choice(rows) if args.random else rows[0]
                 print(f"Topic: {row['title']}\nAngle: {row['angle']}")
             make_video(row["title"], row["angle"], cfg, args.dry_run, args.redo or "", args.yes)
-        elif args.command == "series":
+        elif args.command in ("series", "batch"):
             if args.parts:
                 cfg["series"]["parts"] = args.parts
             if args.style:
@@ -159,8 +192,15 @@ def main() -> int:
                 cfg["series"]["voice_pitch"] = args.voice_pitch if args.voice_pitch[0] in "+-" else "+" + args.voice_pitch
             if args.scenes_per_image:
                 cfg["series"]["scenes_per_image"] = args.scenes_per_image
-            make_series(args.story, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first,
-                        args.script_dir)
+            if args.fast:
+                cfg["images"]["local"].update(width=576, height=1024)
+            if args.images:
+                cfg["series"]["images_provider"] = args.images
+            if args.command == "series":
+                make_series(args.story, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first,
+                            args.script_dir)
+            else:
+                return run_batch(args, cfg)
         elif args.command == "topics":
             if not args.niche:
                 print("Niches:\n  " + "\n  ".join(bank.niches(cfg)))

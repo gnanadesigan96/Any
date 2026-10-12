@@ -130,7 +130,7 @@ class ElevenLabsVoice:
         requests drift, especially on eleven_v3), then cuts it into scenes between their words, using ElevenLabs'
         character timings."""
         texts = [t.strip() for t in texts]
-        joined = "\n\n".join(texts)
+        joined = " ".join(texts)  # one flowing read: a paragraph break makes the voice pause between scenes
         audio, alignment = self._request(joined)
         whole = out_mp3s[0].with_name(out_mp3s[0].stem + ".all.mp3")
         whole.write_bytes(audio)
@@ -141,7 +141,7 @@ class ElevenLabsVoice:
         offsets, o = [], 0
         for t in texts:
             offsets.append(o)
-            o += len(t) + 2
+            o += len(t) + 1
         aligned = "".join(chars) == joined and len(starts) == len(chars) == len(ends)
         if aligned:
             cuts = [0.0]

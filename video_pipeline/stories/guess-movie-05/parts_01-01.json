@@ -1,0 +1,76 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #05 கண்டுபிடிங்க!",
+      "hook_text": "இந்தப் படம் எது?",
+      "hook_sub": "60 விநாடியில் முழுக் கதை",
+      "description": "போன வீடியோ #04 பதில்: 96\n\n60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: ஆக்ஷன் டிராமா\nக்ளூ 2: ஹீரோ பேரு சிவசாமி\nக்ளூ 3: எழுத்தாளர் பூமணியோட 'வெக்கை' நாவலை அடிப்படையா வச்ச படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "இந்தப் படம் எது?",
+      "end_sub": "கமெண்ட் • லைக் • சப்ஸ்க்ரைப்",
+      "scenes": [
+        {
+          "narration": "போன வீடியோவோட பதில்... தொண்ணூத்தி ஆறு! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள். இப்போ அடுத்த படம்! ஒரு அமைதியான கிராமத்து விவசாயி, சிவசாமி. எதுக்கும் சண்டைக்குப் போகாதவர்.",
+          "visual": "the father working calmly in a dry field at sunrise, a bullock behind him",
+          "characters": [
+            "Father"
+          ]
+        },
+        {
+          "narration": "ஊர்ல ஒரு பணக்கார நிலச்சுவான்தார், அவரோட நிலத்தைப் பறிக்கப் பார்க்கிறான். அந்தச் சண்டையில, சிவசாமியோட மூத்த பையன் கொல்லப்படுறான்.",
+          "visual": "a wealthy landlord in white with gold rings standing on a field boundary with his men, a grieving family in the distance",
+          "characters": []
+        },
+        {
+          "narration": "பழிவாங்க, இளைய பையன் அந்தப் பணக்காரனைக் கொன்னுடுறான். இப்போ அவனைக் கொல்ல ஒரு பெரிய கும்பல் தேடுது.",
+          "visual": "the son running in panic through a village lane at night, holding a sickle, men with torches behind him",
+          "characters": [
+            "Son"
+          ]
+        },
+        {
+          "narration": "மகனைக் காப்பாத்த, அப்பாவும் பையனும் காட்டுக்குள்ள ஓடுறாங்க.",
+          "visual": "the father pulling his son by the hand through a dense dry forest at dawn",
+          "characters": [
+            "Father",
+            "Son"
+          ]
+        },
+        {
+          "narration": "அப்போதான் பையனுக்கு அப்பாவோட பழைய கதை தெரியுது. இளமையில, அவர் ஒரு பயங்கரமான வீரன்! தன்னோட மக்களுக்காக அவர் நிறைய ரத்தம் சிந்தியிருக்காரு.",
+          "visual": "a fierce young version of the father with thick black hair, shirtless, holding a machete, standing defiant in a burning village at night",
+          "characters": []
+        },
+        {
+          "narration": "கடைசியில, மகனைக் காப்பாத்த, அந்த அமைதியான அப்பா மறுபடியும் ஆயுதம் எடுக்கிறாரு.",
+          "visual": "the father standing alone in a field facing a mob of armed men, gripping a machete, dust rising",
+          "characters": [
+            "Father"
+          ]
+        },
+        {
+          "narration": "ஆனா அவர் மகனுக்குச் சொல்ற கடைசி பாடம்... ஆயுதம் இல்ல, படிப்புதான் நம்மளைக் காப்பாத்தும்.",
+          "visual": "the father with a hand on his son's shoulder at a village bus stop, the son holding school books",
+          "characters": [
+            "Father",
+            "Son"
+          ]
+        },
+        {
+          "narration": "க்ளூ: ஹீரோ பேரு சிவசாமி. இந்தப் படம் எது? பதிலை கமெண்ட்ல சொல்லுங்க. பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "silhouette of the father walking along a red-earth path at sunset",
+          "characters": [
+            "Father"
+          ]
+        }
+      ]
+    }
+  ]
+}

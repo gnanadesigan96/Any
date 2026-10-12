@@ -73,6 +73,14 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
 - **Neat and readable:** each part shows only a small "PART N" tag at the top (the story's name is never on
   screen), pictures are prompted to keep every head and face in frame, and the narration plays at 1.1x speed
   (`--pace 1.15` for quicker, `--pace 1.0` for the voice's own pace; changing it re-uses the recorded voice).
+- **Guess the movie (Shorts quiz):** `stories/guess-movie-01` … `-10` tell a whole Tamil film in under a minute
+  without naming it, end with a clue, "comment your answer" and like/subscribe, and open with the previous
+  video's answer. Answers are in `stories/GUESS_MOVIE_ANSWERS.md` (don't upload it). Add films in
+  `stories/make_guess_movies.py`. Make them all in one run (the picture model loads once):
+  `python make_video.py batch stories/guess-movie-* --pace 1.15 --voice-provider elevenlabs --voice George
+  --voice-model eleven_v3 --fast --yes`. The first frame is a title card, saved as `part_01_thumbnail.jpg`.
+- **Quicker pictures:** `--fast` makes local pictures at 576x1024 (about 40% quicker, a little softer);
+  `--images openai` uses paid pictures made several at a time (OPENAI_API_KEY), by far the fastest.
 - **Try it small first:** `--first 1` renders only part 1 so you can check the style before committing hours.
   Run again without `--first` to render the rest.
 - **Tamil (or other languages):** `--language Tamil` writes the narration in natural spoken Tamil and voices it with

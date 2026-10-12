@@ -45,7 +45,7 @@ def _ass_escape(text: str) -> str:
 def write_ass(phrases: list, path: Path, width: int, height: int, font: str, vertical: bool,
               title: str = "", duration: float = 0.0, hook: str = "", end_text: str = "",
               end_sub: str = "", hook_seconds: float = 2.2, end_seconds: float = 2.6,
-              title_style: str = "banner") -> None:
+              title_style: str = "banner", hook_sub: str = "") -> None:
     """Captions, plus optional overlays: `title` at the top for the whole video ("banner": big yellow text;
     "tag": a small, neat label on a soft dark box), `hook` as a big punch-in card for the first seconds,
     and an end card (`end_text` / `end_sub`) at the end."""
@@ -80,15 +80,17 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     if title and duration > 0:
         lines.append(f"Dialogue: 1,{_ass_time(0)},{_ass_time(duration)},Title,,0,0,0,,{_ass_escape(title)}")
     if hook and duration > 0:
-        # Punch-in: starts oversized and snaps to size, then fades out.
+        # Crisp from the very first frame (so that frame works as the thumbnail), then fades out.
+        sub = f"\\N{{\\fs{int(size * 0.8)}\\c&H00FFFFFF&}}{_ass_escape(hook_sub)}" if hook_sub else ""
         lines.append(f"Dialogue: 2,{_ass_time(0)},{_ass_time(min(hook_seconds, duration))},Hook,,0,0,0,,"
-                     "{\\fscx135\\fscy135\\t(0,220,\\fscx100\\fscy100)\\fad(0,250)}"
-                     + _ass_escape(hook.upper()))
+                     "{\\fad(0,250)}" + _ass_escape(hook.upper()) + sub)
     if end_text and duration > end_seconds + 1:
         sub = (f"\\N{{\\fs{int(size * 0.85)}\\c&H0000D7FF&}}{_ass_escape(end_sub.upper())}" if end_sub else "")
         lines.append(f"Dialogue: 2,{_ass_time(duration - end_seconds)},{_ass_time(duration)},End,,0,0,0,,"
                      "{\\fad(200,0)\\fscx120\\fscy120\\t(0,200,\\fscx100\\fscy100)}"
                      + _ass_escape(end_text.upper()) + sub)
+    if hook:  # keep the first half second clean: that frame is the thumbnail
+        phrases = [(text, max(s, 0.5), e) for text, s, e in phrases]
     lines += [
         f"Dialogue: 0,{_ass_time(s)},{_ass_time(e)},Cap,,0,0,0,,{_ass_escape(text)}"
         for text, s, e in phrases if e > s

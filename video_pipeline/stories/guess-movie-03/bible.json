@@ -1,0 +1,23 @@
+{
+  "series_title": "60 விநாடியில் ஒரு படம்",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic science-fiction film still, Chennai, cool blue and chrome colour grade with warm highlights, glowing lab lights, 35mm anamorphic lens, film grain, high detail, realistic expressions",
+  "characters": [
+    {
+      "name": "Scientist",
+      "look": "Tamil man in his fifties, neat side-parted black hair, clean-shaven, kind sharp eyes, white lab coat over a blue shirt"
+    },
+    {
+      "name": "Robot",
+      "look": "humanoid robot that looks exactly like a Tamil man in his fifties with neat side-parted black hair, glowing eyes, metallic silver panels showing on its neck and hands, black suit"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #03",
+      "summary": "A guess-the-movie Short retelling Enthiran (எந்திரன், 2010) in 60 seconds without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}
