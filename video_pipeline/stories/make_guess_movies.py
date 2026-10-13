@@ -2,10 +2,11 @@
 
 Add a movie to MOVIES and run:  python stories/make_guess_movies.py stories
 
-Format: a title card ("கதையைக் கேளுங்க! / படத்தைக் கண்டுபிடிங்க") over the first picture, the story with no
+Format: an opening card ("GUESS THE MOVIE / FROM THE STORY" + a Tamil line) over the first picture, the story with no
 character names and no word from the title, "the clue is in the description, answer in 5 seconds, comment now", a
-5-second countdown over the blurred poster, then the reveal: the poster, "பதில்: <film>", and subscribe (said once),
-with the channel end card under the poster. Save each film's poster as stories/guess-movie-NN/poster.jpg.
+5-second countdown over the blurred poster, then the reveal: the poster, "பதில்: <film>" (the
+answer is said only after the countdown), and an end screen: did you guess it, comment, SUBSCRIBE @Guessinema, thanks
+for watching (subscribe said once). Save each film's poster as stories/guess-movie-NN/poster.jpg.
 The description has two clues: the main character's name and one easy clue."""
 import json, sys
 from pathlib import Path
@@ -17,8 +18,18 @@ CTA = "இந்தப் படம் எது? க்ளூ டிஸ்க�
 COUNTDOWN_SECONDS = 5
 
 
+REVEAL_SECONDS = 3.0  # the answer stays on screen at least this long
+OUTRO_SECONDS = 4.5   # the end screen
+# Opening card over the first picture: the title in English, a line in Tamil under it.
+INTRO = {"hook_text": "Guess the movie", "hook_sub": "from the story", "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!"}
+# Closing screen after the reveal (said once by the narrator: comment, subscribe, thanks).
+OUTRO = {"title": "Did you guess it right?", "sub": "கமெண்ட்ல சொல்லுங்க!", "button": "SUBSCRIBE",
+         "handle": f"@{CHANNEL}", "thanks": "Thanks for watching!", "thanks_sub": "பார்த்ததுக்கு நன்றி!"}
+OUTRO_LINE = f"சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. {CHANNEL_SPOKEN} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!"
+
+
 def reveal_line(spoken: str) -> str:
-    return f"பதில்... {spoken}! சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. {CHANNEL_SPOKEN} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!"
+    return f"பதில்... {spoken}!"
 VILLAGE = ("photorealistic cinematic film still, rural Tamil Nadu, warm golden colour grade with dusty earth tones, natural "
            "light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions")
 NIGHT = ("photorealistic cinematic action film still, Tamil Nadu at night, high-contrast teal and orange colour grade, "
@@ -460,18 +471,21 @@ for m in MOVIES:
     # YouTube title: the story hook first (what makes people tap), then the quiz and number; the channel name is
     # added after it ("... | Guessinema").
     ep = {"part": 1, "title": f"{m['tease']} 🤔 இந்தப் படம் எது? #{m['n']:02d}",
-          "hook_text": "கதையைக் கேளுங்க!", "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+          **INTRO,
           "description": (f"{m['tease']}\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n"
                           f"🔍 க்ளூ 1: {c1}\n🔍 க்ளூ 2: {c2}\n\n"
                           f"👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n"
                           f"🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு {CHANNEL} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க."),
           "hashtags": ["#GuessTheMovie", "#படம்எது", "#Guessinema", "#TamilMovie", "#TamilShorts", "#Shorts"],
           "end_text": CHANNEL, "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
-          "reveal_text": f"பதில்: {m['written']}",
+          "reveal_text": f"பதில்: {m['written']}", "outro": OUTRO,
           "scenes": [{"narration": n, "visual": v, "characters": c} for n, v, c in m["scenes"]]
                     + [{"narration": "", "visual": "poster", "characters": [], "kind": "countdown",
                         "seconds": COUNTDOWN_SECONDS},
-                       {"narration": reveal_line(m["spoken"]), "visual": "poster", "characters": [], "kind": "reveal"}]}
+                       {"narration": reveal_line(m["spoken"]), "visual": "poster", "characters": [], "kind": "reveal",
+                        "seconds": REVEAL_SECONDS},
+                       {"narration": OUTRO_LINE, "visual": "poster", "characters": [], "kind": "outro",
+                        "seconds": OUTRO_SECONDS}]}
     (d / "bible.json").write_text(json.dumps(bible, ensure_ascii=False, indent=2) + "\n")
     (d / "parts_01-01.json").write_text(json.dumps({"episodes": [ep]}, ensure_ascii=False, indent=2) + "\n")
     stale = d / "parts_01.json"

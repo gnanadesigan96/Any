@@ -1181,22 +1181,27 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         eps = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes
         short = series.to_pack(bible, eps, series.ui_text(cfg, bible, eps)).shorts[0]
         ov = series.overlays_for(bible, eps, cfg)[0]
-        assert short.hook_text == "" and ov["hook"] == "கதையைக் கேளுங்க!" and ov["hook_sub"]
-        assert ov["end_text"] == "Guessinema" and ov["end_sub"]  # channel end card
+        assert short.hook_text == "" and ov["hook"] == "Guess the movie" and ov["hook_sub"] == "from the story"
+        assert ov["hook_note"]  # the opening card: English title, a Tamil line under it
+        assert ov["outro"]["button"] == "SUBSCRIBE" and ov["outro"]["handle"] == "@Guessinema"
+        assert ov["outro"]["thanks"] == "Thanks for watching!"
         ep = eps[0]
-        *story, countdown, reveal = ep.scenes
+        *story, countdown, reveal, outro = ep.scenes
         assert (countdown.kind, countdown.seconds, countdown.narration) == ("countdown", 5, "")
-        assert reveal.kind == "reveal" and reveal.narration.startswith(f"பதில்... {m['spoken']}!")
-        assert ep.reveal_text == f"பதில்: {m['written']}" and ov["kinds"][-2:] == ["countdown", "reveal"]
+        # The answer is its own line, said only after the countdown; comment/subscribe/thanks follow on the end screen.
+        assert reveal.kind == "reveal" and reveal.narration == f"பதில்... {m['spoken']}!" and reveal.seconds >= 2.5
+        assert outro.kind == "outro" and "நன்றி" in outro.narration and outro.seconds >= 4
+        assert ep.reveal_text == f"பதில்: {m['written']}" and ov["kinds"][-3:] == ["countdown", "reveal", "outro"]
         spoken = " ".join(s.narration for s in story)  # everything before the reveal
         last = story[-1].narration
         assert "கமெண்ட்" in last and "டிஸ்கிரிப்ஷன்" in last and "அஞ்சு விநாடில பதில்" in last
-        everything = spoken + " " + reveal.narration
-        assert everything.count("சப்ஸ்க்ரைப்") == 1 and "லைக் பண்ண" not in everything  # said once, at the reveal
+        everything = spoken + " " + reveal.narration + " " + outro.narration
+        assert everything.count("சப்ஸ்க்ரைப்") == 1 and "லைக் பண்ண" not in everything  # said once, at the end
         assert len(m["clues"]) == 2
         for i, c in enumerate(m["clues"], start=1):
             assert f"க்ளூ {i}: {c}" in short.description and c not in spoken  # clues only in the description
-        shown = " ".join([short.title, ep.hook_text, ep.hook_sub, short.description, ep.end_text, ep.end_sub,
+        shown = " ".join([short.title, ep.hook_text, ep.hook_sub, ep.hook_note, *ep.outro.values(), outro.narration,
+                          short.description, ep.end_text, ep.end_sub,
                           *ep.hashtags, spoken])
         for word in [m["spoken"], *m.get("title_words", [])]:
             assert word not in shown, (m["n"], word)
@@ -1245,6 +1250,46 @@ def test_countdown_and_poster_reveal(cfg, tmp_path):
     assert counts == ["5", "4", "3", "2", "1"]
     assert "Reveal,,0,0,0,," in ass and "பதில்: படம்" in ass and "Guessinema" in ass
     assert "ஒன்று" in ass and "பதில்...}" not in ass and ",Cap,,0,0,0,,பதில்..." not in ass
+    # With an end screen: the answer comes off when it starts; the screen has the SUBSCRIBE button and thanks.
+    write_ass(phrases, tmp_path / "d.ass", 1080, 1920, "Arial", True, duration=16.0, end_text="Guessinema",
+              countdown=(4.0, 5.0), reveal=(9.0, "பதில்: படம்"), hook="Guess the movie", hook_sub="from the story",
+              hook_note="கதையைக் கேட்டு", outro=(12.0, {"title": "Did you guess it right?", "button": "SUBSCRIBE",
+                                                       "handle": "@Guessinema", "thanks": "Thanks for watching!"}))
+    ass = (tmp_path / "d.ass").read_text()
+    reveal_line = next(l for l in ass.splitlines() if ",Reveal,," in l)
+    assert reveal_line.split(",")[2] == "0:00:12.00"
+    assert "GUESS THE MOVIE" in ass and "FROM THE STORY" in ass and "கதையைக் கேட்டு" in ass
+    assert "SUBSCRIBE" in ass and "@Guessinema" in ass and "Thanks for watching!" in ass
+    assert ",End,," not in ass  # the end screen replaces the small end card
+    # The answer and the end screen are recorded on their own, never cut out of the story's one take.
+    from vidpipe import voice as voice_mod
+    calls = []
+
+    class Fake:
+        def synthesize_many(self, texts, mp3s):
+            calls.append(("many", list(texts)))
+            for p in mp3s:
+                p.write_bytes(b"")
+            return [[] for _ in texts]
+
+        def synthesize(self, text, prev, nxt, mp3):
+            calls.append(("one", text))
+            return []
+
+    scenes = [types.SimpleNamespace(narration="ஒன்று", kind=""), types.SimpleNamespace(narration="இரண்டு", kind=""),
+              types.SimpleNamespace(narration="", kind="countdown", seconds=5),
+              types.SimpleNamespace(narration="பதில்... படம்!", kind="reveal"),
+              types.SimpleNamespace(narration="நன்றி!", kind="outro")]
+    old = voice_mod.make_voice, voice_mod.media_duration
+    voice_mod.make_voice, voice_mod.media_duration = (lambda c, d: Fake()), (lambda p: 1.0)
+    try:
+        cfg["voice"]["tempo"] = 1.0
+        (tmp_path / "v").mkdir()
+        narrate_scenes(scenes, tmp_path / "v", cfg, dry_run=False)
+    finally:
+        voice_mod.make_voice, voice_mod.media_duration = old
+    assert calls[0] == ("many", ["ஒன்று", "இரண்டு"])
+    assert sorted(c for c in calls[1:]) == [("one", "நன்றி!"), ("one", "பதில்... படம்!")]
 
 
 def test_posters_find_their_films_from_messy_file_names(tmp_path):

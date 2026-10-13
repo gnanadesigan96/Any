@@ -51,8 +51,9 @@ def _riser(seconds: float, rng) -> np.ndarray:
 
 
 def build_score(path: Path, duration: float, cut_times: list, climax_time: float, seed: int = 0,
-                whoosh: bool = False, riser: bool = False, ticks: list = ()) -> Path:
-    """Writes a mono 44.1 kHz WAV `duration` seconds long."""
+                whoosh: bool = False, riser: bool = False, ticks: list = (), bed: bool = True) -> Path:
+    """Writes a mono 44.1 kHz WAV `duration` seconds long. bed=False leaves out the drone under the voice (quiz
+    videos: just the ticks and the hits, so nothing hisses or hums behind the narration)."""
     rng = np.random.default_rng(seed)
     n = int(duration * SR)
     t = np.arange(n) / SR
@@ -60,8 +61,8 @@ def build_score(path: Path, duration: float, cut_times: list, climax_time: float
              + 0.09 * np.sin(2 * np.pi * 82.41 * t + 0.6 * np.sin(2 * np.pi * 0.07 * t))
              + 0.05 * np.sin(2 * np.pi * 110.2 * t))
     drone *= 0.65 + 0.35 * np.sin(2 * np.pi * 0.11 * t + 1.3)
-    rumble = _smooth(rng.standard_normal(n), 400) * 3.0
-    score = drone + rumble * 0.25
+    # No noise layer: filtered noise under the voice is heard as static once the mix is loudness-normalised.
+    score = drone if bed else np.zeros(n)
     score *= np.clip(t / 0.6, 0, 1)  # quick swell in, under the opening boom
 
     def place(sound: np.ndarray, at: float, gain: float) -> None:
@@ -84,6 +85,8 @@ def build_score(path: Path, duration: float, cut_times: list, climax_time: float
     fade = int(min(0.4, duration / 4) * SR)
     score[-fade:] *= np.linspace(1, 0, fade)
     score /= max(np.abs(score).max(), 1e-6) / 0.9
+    if not bed:  # no drone to fill the silences: keep the hits clean, below the voice
+        score *= 0.7
     with wave.open(str(path), "wb") as w:
         w.setnchannels(1)
         w.setsampwidth(2)

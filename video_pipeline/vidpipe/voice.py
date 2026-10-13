@@ -650,7 +650,11 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
         voice = make_voice(cfg, dry_run)
         chars = sum(len(scenes[i].narration) for i in todo)
         log(f"Generating narration for {len(todo)} scenes ({chars} characters)...")
-        if hasattr(voice, "synthesize_many") and len(todo) > 1:  # one request for all of them
+        # The story is one request, read as one performance. The answer and the end screen are recorded on their
+        # own: cut out of that one take at a guessed boundary, the answer could end up spoken before the countdown.
+        batch = [i for i in todo if getattr(scenes[i], "kind", "") not in ("reveal", "outro")]
+        if hasattr(voice, "synthesize_many") and len(batch) > 1:  # one request for all of them
+            todo = batch
             mp3s = [audio_dir / f"scene_{i:03d}.mp3" for i in todo]
             for mp3 in mp3s:
                 mp3.with_suffix(".voice.mp3").unlink(missing_ok=True)

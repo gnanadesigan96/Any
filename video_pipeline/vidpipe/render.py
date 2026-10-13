@@ -163,17 +163,26 @@ def _absolute_words(timing: list, timeline: list, scene_ids, offset: float, fps:
     return words
 
 
-def _render_poster_clip(image: Path, frames: int, out: Path, cfg: dict, blur: bool) -> None:
-    """The film's poster, whole, over a blurred and darkened copy of itself, with a slow push-in. blur=True hides it
-    (for the countdown) so it can't be read until the reveal."""
+def _render_poster_clip(image: Path, frames: int, out: Path, cfg: dict, mode: str = "reveal") -> None:
+    """The film's poster, whole, over a blurred and darkened copy of itself, with a slow push-in.
+    mode "countdown": blurred beyond recognition (shrunk to a few dozen pixels, then smoothed), so neither the title
+    nor the faces can be made out until the reveal; "outro": softly blurred and dark, under the end card."""
     v = cfg["video"]
     w, h, fps = v["width"], v["height"], v["fps"]
-    fg_w = int(w * 0.86) // 2 * 2
-    fg_blur = ",boxblur=luma_radius=28:luma_power=3" if blur else ""
-    vf = (f"[0:v]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},boxblur=luma_radius=40:luma_power=2,"
-          f"eq=brightness=-0.18[bg];"
-          f"[0:v]scale={fg_w}:{int(h * 0.8)}:force_original_aspect_ratio=decrease,"
-          f"scale=trunc(iw/2)*2:trunc(ih/2)*2{fg_blur}[fg];"
+    with Image.open(image) as im:
+        scale = min(w * 0.86 / im.width, h * 0.8 / im.height)
+        fw, fh = int(im.width * scale) // 2 * 2, int(im.height * scale) // 2 * 2
+    fg = f"[0:v]scale={fw}:{fh},setsar=1"
+    if mode == "countdown":
+        fg += (f",scale={max(fw // 40, 8)}:{max(fh // 40, 8)}:flags=area,gblur=sigma=1.5,"
+               f"scale={fw}:{fh}:flags=bicubic,gblur=sigma=14,eq=brightness=-0.06:saturation=0.8")
+    elif mode == "outro":
+        fg += ",gblur=sigma=9,eq=brightness=-0.32:saturation=0.85"
+    bg_dim = -0.35 if mode == "outro" else -0.18
+    bg_blur = (f"scale={w // 40}:{h // 40}:flags=area,scale={w}:{h}:flags=bicubic,gblur=sigma=20" if mode == "countdown"
+               else "boxblur=luma_radius=40:luma_power=2")
+    vf = (f"[0:v]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},{bg_blur},"
+          f"eq=brightness={bg_dim}[bg];{fg}[fg];"
           f"[bg][fg]overlay=(W-w)/2:(H-h)/2,scale={2 * w}:{2 * h},"
           f"zoompan=z='min(1+0.0009*on,1.06)':d={frames}:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s={w}x{h}:fps={fps},"
           f"format=yuv420p[v]")
@@ -201,8 +210,8 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
     def work_scene(i):
         if not clips[i].exists():
             text = scene_texts[i] if scene_texts else timing[i].get("text", "")
-            if kinds[i] in ("countdown", "reveal"):
-                _render_poster_clip(image_paths[i], timeline[i]["frames"], clips[i], cfg, blur=kinds[i] == "countdown")
+            if kinds[i] in ("countdown", "reveal", "outro"):
+                _render_poster_clip(image_paths[i], timeline[i]["frames"], clips[i], cfg, mode=kinds[i])
             else:
                 render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)], clips[i], cfg,
                                   index=i, text=text)
@@ -222,13 +231,16 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
         words = _absolute_words(timing, timeline, range(len(timing)), 0.0, fps)
         countdown = [(timeline[i]["start"], timeline[i]["frames"] / fps) for i, k in enumerate(kinds) if k == "countdown"]
         reveal = [timeline[i]["start"] for i, k in enumerate(kinds) if k == "reveal"]
+        outro = [timeline[i]["start"] for i, k in enumerate(kinds) if k == "outro"]
         write_ass(group_words(words, v["caption_max_words"]), work / "captions.ass",
                   v["width"], v["height"], v["caption_font"], vertical=v["height"] > v["width"],
                   title=title, duration=duration, hook=overlay.get("hook", ""),
                   end_text=overlay.get("end_text", ""), end_sub=overlay.get("end_sub", ""),
                   title_style=v.get("title_style", "banner"), hook_sub=overlay.get("hook_sub", ""),
                   countdown=countdown[0] if countdown else None,
-                  reveal=(reveal[0], overlay.get("reveal_text", "")) if reveal else None)
+                  reveal=(reveal[0], overlay.get("reveal_text", "")) if reveal else None,
+                  hook_note=overlay.get("hook_note", ""),
+                  outro=(outro[0], overlay.get("outro") or {}) if outro else None)
         ass = "captions.ass"
     music, score = _pick_music(cfg, run_dir.name), False
     if v.get("score"):
@@ -236,9 +248,12 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
         cuts = [t["start"] for t in timeline[1:]]
         ticks = [timeline[i]["start"] + s for i, k in enumerate(kinds) if k == "countdown"
                  for s in range(int(round(timeline[i]["frames"] / fps)))]
-        music = build_score(work / "score.wav", duration, cuts, timeline[-1]["start"],
+        # The closing hit lands on the reveal when there is one, else on the last scene.
+        climax = next((timeline[i]["start"] for i, k in enumerate(kinds) if k == "reveal"), timeline[-1]["start"])
+        music = build_score(work / "score.wav", duration, cuts, climax,
                             seed=sum(map(ord, run_dir.name)), whoosh=v.get("score_whoosh", False),
-                            riser=v.get("score_riser", False), ticks=ticks).name
+                            riser=v.get("score_riser", False), ticks=ticks,
+                            bed=v.get("score_bed", True) and "countdown" not in kinds).name
         score = True
     log("Mixing final video...")
     _final_mix(work, "video_noaudio.mp4", "narration.wav", ass, final.resolve(), cfg, music, duration, score)

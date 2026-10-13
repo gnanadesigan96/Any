@@ -44,8 +44,8 @@ class StoryScene(BaseModel):
     visual: str
     characters: list[str]
     subtitle: str = ""  # on-screen caption in another language than the narration (e.g. English under Tamil)
-    kind: str = ""      # "countdown" (silent, over the blurred poster) or "reveal" (the poster); last scenes only
-    seconds: float = 0.0
+    kind: str = ""      # "countdown" (silent, blurred poster), "reveal" (the poster), "outro" (end screen); last only
+    seconds: float = 0.0  # countdown length; for reveal / outro, the least time the scene is held on screen
 
 
 class Episode(BaseModel):
@@ -59,6 +59,8 @@ class Episode(BaseModel):
     reveal_text: str = ""  # shown over the poster in the reveal scene, e.g. "பதில்: <film>"
     end_text: str = ""  # optional end card instead of "Part N+1 →" / "The End", e.g. a quiz question
     end_sub: str = ""
+    hook_note: str = ""  # a third line on the opening card; makes it a panel card with the title in English
+    outro: dict = {}  # the closing screen of an "outro" scene: title, sub, button, handle, thanks, thanks_sub
 
 
 class EpisodeBatch(BaseModel):
@@ -320,7 +322,8 @@ def overlays_for(bible: SeriesBible, episodes: list, cfg: dict) -> list:
             end = {"end_text": ui["end"], "end_sub": ui["follow"]}
         if e.end_text:
             end = {"end_text": e.end_text, "end_sub": e.end_sub}
-        out.append({"hook": e.hook_text, **({"hook_sub": e.hook_sub} if e.hook_sub else {}), **end})
+        out.append({"hook": e.hook_text, **({"hook_sub": e.hook_sub} if e.hook_sub else {}),
+                    **({"hook_note": e.hook_note} if e.hook_note else {}), **({"outro": e.outro} if e.outro else {}), **end})
         if any(sc.kind for sc in e.scenes):  # countdown / poster reveal at the end
             out[-1].update(kinds=[sc.kind for sc in e.scenes], reveal_text=e.reveal_text)
         if subtitled:

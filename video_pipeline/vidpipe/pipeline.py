@@ -208,13 +208,13 @@ def shorts_config(cfg: dict) -> dict:
     return vcfg
 
 
-RENDER_VERSION = 4  # bump when the look/sound of renders changes, so existing videos are rebuilt
+RENDER_VERSION = 5  # bump when the look/sound of renders changes, so existing videos are rebuilt
 
 
 def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
     """Changes whenever anything that affects the rendered Short changes."""
     v = cfg["video"]
-    data = [RENDER_VERSION, [s.narration for s in short.scenes], short.hook_text, overlay,
+    data = [RENDER_VERSION, [[s.narration, s.seconds] for s in short.scenes], short.hook_text, overlay,
             [f"{p.name}:{p.stat().st_mtime_ns}" for p in paths],
             {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "score_whoosh", "score_riser", "width",
                                     "height", "fps", "captions", "caption_max_words", "title_style")},
@@ -268,6 +268,16 @@ def _fit_length(short, sub: Path, vcfg: dict, timing: list, dry_run: bool) -> tu
     return kcfg, timing
 
 
+def _hold_special(scenes: list, timing: list) -> list:
+    """A reveal or end screen with `seconds` set stays up at least that long (the voice ends, the card holds)."""
+    out = []
+    for sc, t in zip(scenes, timing):
+        if sc.kind in ("reveal", "outro") and sc.seconds and t["duration"] < sc.seconds:
+            t = {**t, "duration": sc.seconds}
+        out.append(t)
+    return out
+
+
 def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assume_yes: bool,
                  regenerated: bool, prefix: str = "short", limit: int = 0, overlays: list = None) -> Path:
     """Renders each item of pack.shorts as <prefix>_<k>.mp4. `limit` renders only the first N."""
@@ -284,6 +294,7 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
         log(f"{prefix.title()} {k}/{len(pack.shorts)}: {short.title}")
         timing = narrate_scenes(short.scenes, sub, vcfg, dry_run)
         kcfg, timing = _fit_length(short, sub, vcfg, timing, dry_run)
+        timing = _hold_special(short.scenes, timing)
         log(f"  narration: {sum(t['duration'] for t in timing):.1f}s")
         siblings = [run_dir / n / "images" for j, n in enumerate(names, start=1) if j != k]
         # Countdown / reveal scenes (always last) show the film's poster instead of a generated picture.
