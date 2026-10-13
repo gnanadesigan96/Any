@@ -22,10 +22,12 @@
         "title": "Did you guess it right?",
         "sub": "கமெண்ட்ல சொல்லுங்க!",
         "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
         "handle": "@Guessinema",
         "thanks": "Thanks for watching!",
         "thanks_sub": "பார்த்ததுக்கு நன்றி!"
       },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
           "narration": "சென்னையில, ஒரு பெரிய கம்பெனியில வேலை பார்க்கிற ஒரு ஆங்கிலோ இந்தியப் பொண்ணு. தனியா ஒரு மகனை வளர்க்கிறா.",
@@ -91,7 +93,7 @@
           "seconds": 5
         },
         {
-          "narration": "பதில்... தரமணி!",
+          "narration": "தரமணி!",
           "visual": "poster",
           "characters": [],
           "kind": "reveal",

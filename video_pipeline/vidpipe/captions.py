@@ -81,31 +81,31 @@ def intro_card(start: float, end: float, width: int, height: int, size: int, tit
 
 
 def outro_card(start: float, end: float, width: int, height: int, size: int, card: dict) -> list:
-    """The closing screen: "did you guess it?", comment, a red SUBSCRIBE button with the channel's handle, and
-    thanks for watching. Kept in the middle of the frame, clear of the YouTube buttons at the bottom."""
-    cx = width // 2
-    y = lambda f: int(height * f)
-    fade = lambda k: f"\\fad({200 if k == 0 else 250},0)" if k == 0 else f"\\alpha&HFF&\\t({k * 250},{k * 250 + 250},\\alpha&H00&)"
-    lines = [_box(start, end, cx, y(0.44), int(width * 0.88), y(0.46), "&H00000000&", "&H60&", fade(0))]
-    k = 0
-    if card.get("title"):
-        lines.append(_text(start, end, cx, y(0.255), int(size * 1.15), YELLOW, card["title"], fade(k)))
-    if card.get("sub"):
-        k += 1
-        lines.append(_text(start, end, cx, y(0.315), int(size * 0.78), WHITE, card["sub"], fade(k)))
-    k += 1
-    bw, bh = int(width * 0.64), y(0.078)
-    pulse = "".join(f"\\t({t},{t + 200},\\fscx106\\fscy106)\\t({t + 200},{t + 400},\\fscx100\\fscy100)"
-                    for t in (900, 1900, 2900))
-    lines.append(_box(start, end, cx, y(0.415), bw, bh, RED, "&H00&", fade(k) + pulse))
-    lines.append(_text(start, end, cx, y(0.415), int(size * 0.95), WHITE, card.get("button", "SUBSCRIBE"), fade(k) + pulse))
+    """The words of the animated end screen (finale.render_outro draws the card, badge and button under them):
+    the channel's handle under its badge, "did you guess it?", comment, the button's SUBSCRIBE -> SUBSCRIBED, and
+    thanks for watching. All in the middle of the frame, clear of the YouTube buttons at the bottom."""
+    from .finale import BUTTON_IN, LAYOUT as L, TAP, THANKS_IN
+    cx, y = width // 2, (lambda f: int(height * f))
+    appear = lambda at: f"\\alpha&HFF&\\t({int(at * 1000)},{int(at * 1000) + 250},\\alpha&H00&)"
+    lines = []
     if card.get("handle"):
-        lines.append(_text(start, end, cx, y(0.49), int(size * 0.72), WHITE, card["handle"], fade(k)))
+        lines.append(_text(start, end, cx, y(L["name_y"]), int(size * 0.8), WHITE, card["handle"], appear(0.3)))
+    if card.get("title"):
+        lines.append(_text(start, end, cx, y(L["title_y"]), int(size * 1.0), YELLOW, card["title"], appear(0.45)))
+    if card.get("sub"):
+        lines.append(_text(start, end, cx, y(L["sub_y"]), int(size * 0.7), WHITE, card["sub"], appear(0.6)))
+    tap = start + TAP + 0.05
+    if end > start + BUTTON_IN:
+        lines.append(_text(start + BUTTON_IN + 0.2, min(tap, end), cx, y(L["button_y"]), int(size * 0.88), WHITE,
+                           card.get("button", "SUBSCRIBE"), "\\fad(120,0)"))
+    if end > tap:
+        lines.append(_text(tap, end, cx + int(width * 0.05), y(L["button_y"]), int(size * 0.8), WHITE,
+                           card.get("done", "SUBSCRIBED"), ""))
     if card.get("thanks"):
-        k += 1
-        lines.append(_text(start, end, cx, y(0.565), int(size * 0.9), YELLOW, card["thanks"], fade(k)))
+        lines.append(_text(start, end, cx, y(L["thanks_y"]), int(size * 0.92), YELLOW, card["thanks"], appear(THANKS_IN)))
     if card.get("thanks_sub"):
-        lines.append(_text(start, end, cx, y(0.62), int(size * 0.62), WHITE, card["thanks_sub"], fade(k)))
+        lines.append(_text(start, end, cx, y(L["thanks_sub_y"]), int(size * 0.62), WHITE, card["thanks_sub"],
+                           appear(THANKS_IN + 0.15)))
     return lines
 
 
@@ -113,7 +113,7 @@ def write_ass(phrases: list, path: Path, width: int, height: int, font: str, ver
               title: str = "", duration: float = 0.0, hook: str = "", end_text: str = "",
               end_sub: str = "", hook_seconds: float = 2.2, end_seconds: float = 2.6,
               title_style: str = "banner", hook_sub: str = "", countdown: tuple = None,
-              reveal: tuple = None, hook_note: str = "", outro: tuple = None) -> None:
+              reveal: tuple = None, hook_note: str = "", outro: tuple = None, count_label: str = "") -> None:
     """Captions, plus optional overlays: `title` at the top for the whole video ("banner": big yellow text;
     "tag": a small, neat label on a soft dark box), `hook` as a big punch-in card for the first seconds,
     and an end card (`end_text` / `end_sub`) at the end. With `hook_note` the opening is a panel card (intro_card);
@@ -143,7 +143,7 @@ Style: Cap,{font},{size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,10
 {title_line}
 Style: Hook,{font},{int(size * 1.7)},&H0000D7FF,&H0000D7FF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,5,{int(width * 0.06)},{int(width * 0.06)},0,1
 Style: End,{font},{int(size * 1.6)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,{end_align},{int(width * 0.06)},{int(width * 0.06)},{end_margin},1
-Style: Count,{font},{int(size * 5)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 6},3,5,0,0,0,1
+Style: Count,{font},{int(size * 3.3)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline},4,5,0,0,0,1
 Style: Box,{font},{size},&H00000000,&H00000000,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1
 Style: Card,{font},{size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{max(2, outline - 3)},1,5,0,0,0,1
 Style: Reveal,{font},{int(size * 1.3)},&H0000D7FF,&H0000D7FF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,8,{int(width * 0.06)},{int(width * 0.06)},{int(height * 0.04)},1
@@ -168,15 +168,23 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         lines.append(f"Dialogue: 2,{_ass_time(duration - end_seconds)},{_ass_time(duration)},End,,0,0,0,,"
                      "{\\fad(200,0)\\fscx120\\fscy120\\t(0,200,\\fscx100\\fscy100)}"
                      + _ass_escape(end_text if reveal else end_text.upper()) + sub)  # a channel name keeps its case
-    if countdown:  # a big 5, 4, 3, 2, 1 over the blurred poster, one per second
+    if countdown:  # a big 5, 4, 3, 2, 1 inside the countdown ring (finale.render_countdown), one per second
+        from .finale import LAYOUT as L
         start, seconds = countdown
         n = int(round(seconds))
+        cy = int(height * L["ring_y"])
         for k in range(n):
-            lines.append(f"Dialogue: 3,{_ass_time(start + k)},{_ass_time(start + k + 0.95)},Count,,0,0,0,,"
-                         "{\\fscx160\\fscy160\\t(0,180,\\fscx100\\fscy100)\\fad(0,150)}" + str(n - k))
+            lines.append(f"Dialogue: 3,{_ass_time(start + k)},{_ass_time(start + k + 0.97)},Count,,0,0,0,,"
+                         f"{{\\an5\\pos({width // 2},{cy})\\fscx135\\fscy135\\t(0,220,\\fscx100\\fscy100)\\fad(60,120)}}" + str(n - k))
+        if count_label:
+            lines.append(_text(start, start + seconds, width // 2, int(height * L["count_label_y"]), int(size * 0.8),
+                               WHITE, count_label, "\\fad(200,0)"))
     if reveal and reveal[1] and duration > reveal[0]:
-        lines.append(f"Dialogue: 3,{_ass_time(reveal[0])},{_ass_time(outro[0] if outro else duration)},Reveal,,0,0,0,,"
-                     "{\\fad(150,0)\\fscx120\\fscy120\\t(0,220,\\fscx100\\fscy100)}" + _ass_escape(reveal[1]))
+        from .finale import BANNER_IN, LAYOUT as L
+        at = reveal[0] + BANNER_IN + 0.3  # once the gold banner has slid in
+        lines.append(_text(at, outro[0] if outro else duration, width // 2, int(height * L["banner_y"]),
+                           int(size * 0.95), "&H00180E08&", reveal[1],
+                           "\\bord0\\shad0\\fscx115\\fscy115\\t(0,200,\\fscx100\\fscy100)\\fad(100,0)"))
     if reveal:  # no captions over the poster: its title is usually at the bottom, and the answer is on screen
         phrases = [(text, s, min(e, reveal[0])) for text, s, e in phrases if s < reveal[0] - 0.05]
     if hook:  # keep the first half second clean: that frame is the thumbnail

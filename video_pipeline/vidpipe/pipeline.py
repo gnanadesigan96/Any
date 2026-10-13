@@ -208,7 +208,7 @@ def shorts_config(cfg: dict) -> dict:
     return vcfg
 
 
-RENDER_VERSION = 5  # bump when the look/sound of renders changes, so existing videos are rebuilt
+RENDER_VERSION = 6  # bump when the look/sound of renders changes, so existing videos are rebuilt
 
 
 def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:

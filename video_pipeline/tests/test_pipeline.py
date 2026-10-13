@@ -1191,7 +1191,7 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         # The opening card sits on the first story picture: the poster is never shown before the countdown.
         assert all(not sc.kind and sc.visual != "poster" for sc in story)
         # The answer is its own line, said only after the countdown; comment/subscribe/thanks follow on the end screen.
-        assert reveal.kind == "reveal" and reveal.narration == f"பதில்... {m['spoken']}!" and reveal.seconds >= 2.5
+        assert reveal.kind == "reveal" and reveal.narration == f"{m['spoken']}!" and reveal.seconds >= 2.5
         assert outro.kind == "outro" and "நன்றி" in outro.narration and outro.seconds >= 4
         assert ep.reveal_text == f"பதில்: {m['written']}" and ov["kinds"][-3:] == ["countdown", "reveal", "outro"]
         spoken = " ".join(s.narration for s in story)  # everything before the reveal
@@ -1250,7 +1250,7 @@ def test_countdown_and_poster_reveal(cfg, tmp_path):
     ass = (tmp_path / "c.ass").read_text()
     counts = [l.rsplit("}", 1)[1] for l in ass.splitlines() if ",Count," in l and l.startswith("Dialogue")]
     assert counts == ["5", "4", "3", "2", "1"]
-    assert "Reveal,,0,0,0,," in ass and "பதில்: படம்" in ass and "Guessinema" in ass
+    assert "பதில்: படம்" in ass and "Guessinema" in ass
     assert "ஒன்று" in ass and "பதில்...}" not in ass and ",Cap,,0,0,0,,பதில்..." not in ass
     # With an end screen: the answer comes off when it starts; the screen has the SUBSCRIBE button and thanks.
     write_ass(phrases, tmp_path / "d.ass", 1080, 1920, "Arial", True, duration=16.0, end_text="Guessinema",
@@ -1258,10 +1258,11 @@ def test_countdown_and_poster_reveal(cfg, tmp_path):
               hook_note="கதையைக் கேட்டு", outro=(12.0, {"title": "Did you guess it right?", "button": "SUBSCRIBE",
                                                        "handle": "@Guessinema", "thanks": "Thanks for watching!"}))
     ass = (tmp_path / "d.ass").read_text()
-    reveal_line = next(l for l in ass.splitlines() if ",Reveal,," in l)
-    assert reveal_line.split(",")[2] == "0:00:12.00"
+    reveal_line = next(l for l in ass.splitlines() if l.endswith("பதில்: படம்"))
+    assert reveal_line.split(",")[2] == "0:00:12.00"  # off when the end screen starts
+    assert float(reveal_line.split(",")[1].split(":")[2]) > 9.0  # in once the banner has slid down
     assert "GUESS THE MOVIE" in ass and "FROM THE STORY" in ass and "கதையைக் கேட்டு" in ass
-    assert "SUBSCRIBE" in ass and "@Guessinema" in ass and "Thanks for watching!" in ass
+    assert "SUBSCRIBE" in ass and "SUBSCRIBED" in ass and "@Guessinema" in ass and "Thanks for watching!" in ass
     assert ",End,," not in ass  # the end screen replaces the small end card
     # The answer and the end screen are recorded on their own, never cut out of the story's one take.
     from vidpipe import voice as voice_mod

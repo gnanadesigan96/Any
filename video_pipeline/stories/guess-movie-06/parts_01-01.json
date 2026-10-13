@@ -22,10 +22,12 @@
         "title": "Did you guess it right?",
         "sub": "கமெண்ட்ல சொல்லுங்க!",
         "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
         "handle": "@Guessinema",
         "thanks": "Thanks for watching!",
         "thanks_sub": "பார்த்ததுக்கு நன்றி!"
       },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
           "narration": "ஒரு திருடனைத் துரத்திட்டுப் போற ஒரு போலீஸ் இன்ஸ்பெக்டர். அங்க ஒருத்தன், தன் மனைவியையே கொலை பண்றதைப் பார்க்கிறான்.",
@@ -90,7 +92,7 @@
           "seconds": 5
         },
         {
-          "narration": "பதில்... மாயவன்!",
+          "narration": "மாயவன்!",
           "visual": "poster",
           "characters": [],
           "kind": "reveal",

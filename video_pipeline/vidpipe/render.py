@@ -163,31 +163,24 @@ def _absolute_words(timing: list, timeline: list, scene_ids, offset: float, fps:
     return words
 
 
-def _render_poster_clip(image: Path, frames: int, out: Path, cfg: dict, mode: str = "reveal") -> None:
-    """The film's poster, whole, over a blurred and darkened copy of itself, with a slow push-in.
-    mode "countdown": blurred beyond recognition (shrunk to a few dozen pixels, then smoothed), so neither the title
-    nor the faces can be made out until the reveal; "outro": softly blurred and dark, under the end card."""
-    v = cfg["video"]
-    w, h, fps = v["width"], v["height"], v["fps"]
-    with Image.open(image) as im:
-        scale = min(w * 0.86 / im.width, h * 0.8 / im.height)
-        fw, fh = int(im.width * scale) // 2 * 2, int(im.height * scale) // 2 * 2
-    fg = f"[0:v]scale={fw}:{fh},setsar=1"
-    if mode == "countdown":
-        fg += (f",scale={max(fw // 40, 8)}:{max(fh // 40, 8)}:flags=area,gblur=sigma=1.5,"
-               f"scale={fw}:{fh}:flags=bicubic,gblur=sigma=14,eq=brightness=-0.06:saturation=0.8")
-    elif mode == "outro":
-        fg += ",gblur=sigma=9,eq=brightness=-0.32:saturation=0.85"
-    bg_dim = -0.35 if mode == "outro" else -0.18
-    bg_blur = (f"scale={w // 40}:{h // 40}:flags=area,scale={w}:{h}:flags=bicubic,gblur=sigma=20" if mode == "countdown"
-               else "boxblur=luma_radius=40:luma_power=2")
-    vf = (f"[0:v]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},{bg_blur},"
-          f"eq=brightness={bg_dim}[bg];{fg}[fg];"
-          f"[bg][fg]overlay=(W-w)/2:(H-h)/2,scale={2 * w}:{2 * h},"
-          f"zoompan=z='min(1+0.0009*on,1.06)':d={frames}:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s={w}x{h}:fps={fps},"
-          f"format=yuv420p[v]")
-    run_ffmpeg(["-loop", "1", "-i", image, "-filter_complex", vf, "-map", "[v]", "-c:v", "libx264",
-                "-preset", v["preset"], "-crf", v["crf"], "-pix_fmt", "yuv420p", "-frames:v", frames, "-an", out])
+def _check_narration(path: Path, timeline: list, kinds: list, fps: int, duration: float) -> None:
+    """Guards the quiz: the narration must be exactly as long as the picture, and silent during the countdown, so
+    the answer can never be heard before it's shown. Stops the render instead of making a video that gives it away."""
+    import wave
+    import numpy as np
+    with wave.open(str(path)) as w:
+        sr, n = w.getframerate(), w.getnframes()
+        audio = np.frombuffer(w.readframes(n), np.int16).astype(np.float32) / 32768
+    if abs(n / sr - duration) > 0.1:
+        raise RuntimeError(f"The narration is {n / sr:.2f}s but the picture is {duration:.2f}s; delete the run's work "
+                           "folder and render again")
+    for i, k in enumerate(kinds):
+        if k == "countdown":
+            a, b = int(timeline[i]["start"] * sr), int((timeline[i]["start"] + timeline[i]["frames"] / fps) * sr)
+            seg = audio[a + int(0.05 * sr):b - int(0.05 * sr)]
+            if len(seg) and np.sqrt((seg ** 2).mean()) > 0.003:
+                raise RuntimeError("There is voice in the countdown, so the answer would be heard early. Delete the "
+                                   f"audio and work folders in {path.parent.parent} and render again")
 
 
 def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title: str = "",
@@ -211,11 +204,17 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
         if not clips[i].exists():
             text = scene_texts[i] if scene_texts else timing[i].get("text", "")
             if kinds[i] in ("countdown", "reveal", "outro"):
-                _render_poster_clip(image_paths[i], timeline[i]["frames"], clips[i], cfg, mode=kinds[i])
+                from .finale import render_finale_clip
+                render_finale_clip(kinds[i], image_paths[i], timeline[i]["frames"], clips[i], cfg)
             else:
                 render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)], clips[i], cfg,
                                   index=i, text=text)
-        if not wavs[i].exists():
+        # Always rebuilt (it's cheap): a scene's old audio must never be reused against a new timeline. The countdown
+        # is written as pure silence, whatever its audio file holds.
+        if kinds[i] == "countdown":
+            run_ffmpeg(["-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", f"{timeline[i]['frames'] / fps:.6f}",
+                        "-ar", 44100, "-ac", 1, wavs[i]])
+        else:
             _scene_wav(run_dir / "audio" / timing[i]["audio"], timeline[i]["frames"], fps, wavs[i])
 
     log(f"Rendering {len(timing)} scene clips...")
@@ -225,6 +224,7 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
     _concat(clips, work / "clips.txt", work / "video_noaudio.mp4")
     _concat(wavs, work / "wavs.txt", work / "narration.wav", copy=False)
     duration = sum(t["frames"] for t in timeline) / fps
+    _check_narration(work / "narration.wav", timeline, kinds, fps, duration)
 
     ass = ""
     if v["captions"]:
@@ -240,7 +240,8 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
                   countdown=countdown[0] if countdown else None,
                   reveal=(reveal[0], overlay.get("reveal_text", "")) if reveal else None,
                   hook_note=overlay.get("hook_note", ""),
-                  outro=(outro[0], overlay.get("outro") or {}) if outro else None)
+                  outro=(outro[0], overlay.get("outro") or {}) if outro else None,
+                  count_label=overlay.get("count_label", ""))
         ass = "captions.ass"
     music, score = _pick_music(cfg, run_dir.name), False
     if v.get("score"):
@@ -250,10 +251,11 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
                  for s in range(int(round(timeline[i]["frames"] / fps)))]
         # The closing hit lands on the reveal when there is one, else on the last scene.
         climax = next((timeline[i]["start"] for i, k in enumerate(kinds) if k == "reveal"), timeline[-1]["start"])
+        events = [(k, timeline[i]["start"]) for i, k in enumerate(kinds) if k in ("reveal", "outro")]
         music = build_score(work / "score.wav", duration, cuts, climax,
                             seed=sum(map(ord, run_dir.name)), whoosh=v.get("score_whoosh", False),
                             riser=v.get("score_riser", False), ticks=ticks,
-                            bed=v.get("score_bed", True) and "countdown" not in kinds).name
+                            bed=v.get("score_bed", True) and "countdown" not in kinds, events=events).name
         score = True
     log("Mixing final video...")
     _final_mix(work, "video_noaudio.mp4", "narration.wav", ass, final.resolve(), cfg, music, duration, score)

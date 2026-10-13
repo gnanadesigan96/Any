@@ -35,9 +35,40 @@ def _whoosh(rng) -> np.ndarray:
     return airy * env * 0.6
 
 
-def _tick() -> np.ndarray:
-    t = np.arange(int(0.09 * SR)) / SR
-    return (np.sin(2 * np.pi * 1800 * t) * 0.6 + np.sin(2 * np.pi * 3600 * t) * 0.25) * np.exp(-t * 70)
+def _tick(rng, last: bool = False) -> np.ndarray:
+    """A wooden clock tick: a short knock (two damped body modes) with a click of noise on top."""
+    t = np.arange(int(0.12 * SR)) / SR
+    f = 1250 if last else 950
+    knock = (np.sin(2 * np.pi * f * t) * 0.7 + np.sin(2 * np.pi * f * 2.7 * t) * 0.25) * np.exp(-t * 55)
+    click = rng.standard_normal(len(t)) * np.exp(-t * 400) * 0.5
+    return knock + click - _smooth(click, 8)
+
+
+def _chime(rng) -> np.ndarray:
+    """A bright sparkle for the reveal: a few high bell partials, slightly detuned, ringing out."""
+    t = np.arange(int(1.6 * SR)) / SR
+    out = np.zeros_like(t)
+    for k, f in enumerate((1568, 2093, 2637, 3136, 4186)):
+        start = int(k * 0.045 * SR)
+        tt = t[: len(t) - start]
+        out[start:] += np.sin(2 * np.pi * f * (1 + rng.uniform(-0.002, 0.002)) * tt) * np.exp(-tt * (3 + k)) * 0.25
+    return out
+
+
+def _pop() -> np.ndarray:  # the button popping in
+    t = np.arange(int(0.12 * SR)) / SR
+    return np.sin(2 * np.pi * (300 + 900 * t / 0.12) * t) * np.exp(-t * 35) * 0.8
+
+
+def _click(rng) -> np.ndarray:  # the tap
+    t = np.arange(int(0.05 * SR)) / SR
+    n = rng.standard_normal(len(t))
+    return (n - _smooth(n, 4)) * np.exp(-t * 180) * 0.9
+
+
+def _ding() -> np.ndarray:  # subscribed
+    t = np.arange(int(0.9 * SR)) / SR
+    return (np.sin(2 * np.pi * 1760 * t) + 0.5 * np.sin(2 * np.pi * 2640 * t)) * np.exp(-t * 6) * 0.45
 
 
 def _riser(seconds: float, rng) -> np.ndarray:
@@ -51,7 +82,8 @@ def _riser(seconds: float, rng) -> np.ndarray:
 
 
 def build_score(path: Path, duration: float, cut_times: list, climax_time: float, seed: int = 0,
-                whoosh: bool = False, riser: bool = False, ticks: list = (), bed: bool = True) -> Path:
+                whoosh: bool = False, riser: bool = False, ticks: list = (), bed: bool = True,
+                events: list = ()) -> Path:
     """Writes a mono 44.1 kHz WAV `duration` seconds long. bed=False leaves out the drone under the voice (quiz
     videos: just the ticks and the hits, so nothing hisses or hums behind the narration)."""
     rng = np.random.default_rng(seed)
@@ -76,8 +108,17 @@ def build_score(path: Path, duration: float, cut_times: list, climax_time: float
     for cut in (cut_times if whoosh else []):
         if 0.5 < cut < duration - 0.3:
             place(_whoosh(rng), max(cut - 0.35, 0), 0.5)
-    for at in ticks:  # a clock tick each second of a countdown
-        place(_tick(), at, 0.8)
+    for k, at in enumerate(ticks):  # a clock tick each second of a countdown, the last one higher
+        place(_tick(rng, last=k == len(ticks) - 1), at, 0.75)
+    for kind, at in events:  # the quiz ending: (kind, start time)
+        if kind == "reveal":
+            place(_whoosh(rng), max(at - 0.38, 0), 0.9)
+            place(_chime(rng), at + 0.02, 0.8)
+        elif kind == "outro":
+            from .finale import BUTTON_IN, TAP
+            place(_pop(), at + BUTTON_IN, 0.6)
+            place(_click(rng), at + TAP, 0.8)
+            place(_ding(), at + TAP + 0.06, 0.6)
     if climax_time > 3.5:
         if riser:  # a rising whoosh into the last scene (off by default: it sounds like a whoosh at the end)
             place(_riser(3.0, rng), climax_time - 3.0, 0.9)

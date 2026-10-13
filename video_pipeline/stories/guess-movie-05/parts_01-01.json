@@ -22,10 +22,12 @@
         "title": "Did you guess it right?",
         "sub": "கமெண்ட்ல சொல்லுங்க!",
         "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
         "handle": "@Guessinema",
         "thanks": "Thanks for watching!",
         "thanks_sub": "பார்த்ததுக்கு நன்றி!"
       },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
           "narration": "ராத்திரி நேரம். ரோட்டோரத்துல, குண்டடிபட்ட ஒருத்தன் ரத்த வெள்ளத்துல கிடக்குறான். யாருமே கண்டுக்கல.",
@@ -93,7 +95,7 @@
           "seconds": 5
         },
         {
-          "narration": "பதில்... ஓநாயும் ஆட்டுக்குட்டியும்!",
+          "narration": "ஓநாயும் ஆட்டுக்குட்டியும்!",
           "visual": "poster",
           "characters": [],
           "kind": "reveal",

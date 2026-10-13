@@ -22,10 +22,12 @@
         "title": "Did you guess it right?",
         "sub": "கமெண்ட்ல சொல்லுங்க!",
         "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
         "handle": "@Guessinema",
         "thanks": "Thanks for watching!",
         "thanks_sub": "பார்த்ததுக்கு நன்றி!"
       },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
           "narration": "ஒரு சின்ன கடத்தல்காரன். அவனுக்குன்னு சில விதிகள் இருக்கு. அடிக்க மாட்டான். பெரிய ஆளுங்களைத் தொட மாட்டான்.",
@@ -92,7 +94,7 @@
           "seconds": 5
         },
         {
-          "narration": "பதில்... சூது கவ்வும்!",
+          "narration": "சூது கவ்வும்!",
           "visual": "poster",
           "characters": [],
           "kind": "reveal",

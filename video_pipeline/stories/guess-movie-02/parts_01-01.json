@@ -22,10 +22,12 @@
         "title": "Did you guess it right?",
         "sub": "கமெண்ட்ல சொல்லுங்க!",
         "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
         "handle": "@Guessinema",
         "thanks": "Thanks for watching!",
         "thanks_sub": "பார்த்ததுக்கு நன்றி!"
       },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
           "narration": "அஞ்சு வருஷம் முன்னாடி செத்துட்டான்னு சொன்ன ஒரு தொடர் கொலைகாரன்... மறுபடியும் வந்துட்டான்!",
@@ -90,7 +92,7 @@
           "seconds": 5
         },
         {
-          "narration": "பதில்... இமைக்கா நொடிகள்!",
+          "narration": "இமைக்கா நொடிகள்!",
           "visual": "poster",
           "characters": [],
           "kind": "reveal",

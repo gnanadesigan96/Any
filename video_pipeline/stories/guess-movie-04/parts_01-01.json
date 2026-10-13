@@ -22,10 +22,12 @@
         "title": "Did you guess it right?",
         "sub": "கமெண்ட்ல சொல்லுங்க!",
         "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
         "handle": "@Guessinema",
         "thanks": "Thanks for watching!",
         "thanks_sub": "பார்த்ததுக்கு நன்றி!"
       },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
           "narration": "குற்றவியல் படிச்சு முடிச்ச ஒரு இளைஞன். ஒரு தனியார் துப்பறியும் நிறுவனத்துல வேலைக்குச் சேர்றான்.",
@@ -91,7 +93,7 @@
           "seconds": 5
         },
         {
-          "narration": "பதில்... தெகிடி!",
+          "narration": "தெகிடி!",
           "visual": "poster",
           "characters": [],
           "kind": "reveal",

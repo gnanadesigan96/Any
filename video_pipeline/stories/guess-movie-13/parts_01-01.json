@@ -22,10 +22,12 @@
         "title": "Did you guess it right?",
         "sub": "கமெண்ட்ல சொல்லுங்க!",
         "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
         "handle": "@Guessinema",
         "thanks": "Thanks for watching!",
         "thanks_sub": "பார்த்ததுக்கு நன்றி!"
       },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
           "narration": "மழை பெய்யுற ஒரு ராத்திரி. நாலு நண்பர்கள் நல்லா குடிச்சுட்டு, ஒருத்தருக்கொருத்தர் சவால் விடுறாங்க.",
@@ -81,7 +83,7 @@
           "seconds": 5
         },
         {
-          "narration": "பதில்... டிமான்ட்டி காலனி!",
+          "narration": "டிமான்ட்டி காலனி!",
           "visual": "poster",
           "characters": [],
           "kind": "reveal",

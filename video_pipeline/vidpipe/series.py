@@ -60,6 +60,7 @@ class Episode(BaseModel):
     end_text: str = ""  # optional end card instead of "Part N+1 →" / "The End", e.g. a quiz question
     end_sub: str = ""
     hook_note: str = ""  # a third line on the opening card; makes it a panel card with the title in English
+    count_label: str = ""  # a line above the countdown ring, e.g. "comment your answer"
     outro: dict = {}  # the closing screen of an "outro" scene: title, sub, button, handle, thanks, thanks_sub
 
 
@@ -323,7 +324,8 @@ def overlays_for(bible: SeriesBible, episodes: list, cfg: dict) -> list:
         if e.end_text:
             end = {"end_text": e.end_text, "end_sub": e.end_sub}
         out.append({"hook": e.hook_text, **({"hook_sub": e.hook_sub} if e.hook_sub else {}),
-                    **({"hook_note": e.hook_note} if e.hook_note else {}), **({"outro": e.outro} if e.outro else {}), **end})
+                    **({"hook_note": e.hook_note} if e.hook_note else {}), **({"outro": e.outro} if e.outro else {}),
+                    **({"count_label": e.count_label} if e.count_label else {}), **end})
         if any(sc.kind for sc in e.scenes):  # countdown / poster reveal at the end
             out[-1].update(kinds=[sc.kind for sc in e.scenes], reveal_text=e.reveal_text)
         if subtitled:

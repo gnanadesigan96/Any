@@ -23,13 +23,14 @@ OUTRO_SECONDS = 4.5   # the end screen
 # Opening card over the first picture: the title in English, a line in Tamil under it.
 INTRO = {"hook_text": "Guess the movie", "hook_sub": "from the story", "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!"}
 # Closing screen after the reveal (said once by the narrator: comment, subscribe, thanks).
-OUTRO = {"title": "Did you guess it right?", "sub": "கமெண்ட்ல சொல்லுங்க!", "button": "SUBSCRIBE",
+COUNT_LABEL = "உங்க பதிலை கமெண்ட் பண்ணுங்க!"
+OUTRO = {"title": "Did you guess it right?", "sub": "கமெண்ட்ல சொல்லுங்க!", "button": "SUBSCRIBE", "done": "SUBSCRIBED",
          "handle": f"@{CHANNEL}", "thanks": "Thanks for watching!", "thanks_sub": "பார்த்ததுக்கு நன்றி!"}
 OUTRO_LINE = f"சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. {CHANNEL_SPOKEN} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!"
 
 
-def reveal_line(spoken: str) -> str:
-    return f"பதில்... {spoken}!"
+def reveal_line(spoken: str) -> str:  # just the name, the moment the poster appears (no pause before it)
+    return f"{spoken}!"
 VILLAGE = ("photorealistic cinematic film still, rural Tamil Nadu, warm golden colour grade with dusty earth tones, natural "
            "light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions")
 NIGHT = ("photorealistic cinematic action film still, Tamil Nadu at night, high-contrast teal and orange colour grade, "
@@ -561,7 +562,7 @@ for m in MOVIES:
                           f"🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு {CHANNEL} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க."),
           "hashtags": ["#GuessTheMovie", "#படம்எது", "#Guessinema", "#TamilMovie", "#TamilShorts", "#Shorts"],
           "end_text": CHANNEL, "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
-          "reveal_text": f"பதில்: {m['written']}", "outro": OUTRO,
+          "reveal_text": f"பதில்: {m['written']}", "outro": OUTRO, "count_label": COUNT_LABEL,
           "scenes": [{"narration": n, "visual": v, "characters": c} for n, v, c in m["scenes"]]
                     + [{"narration": "", "visual": "poster", "characters": [], "kind": "countdown",
                         "seconds": COUNTDOWN_SECONDS},

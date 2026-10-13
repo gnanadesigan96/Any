@@ -22,10 +22,12 @@
         "title": "Did you guess it right?",
         "sub": "கமெண்ட்ல சொல்லுங்க!",
         "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
         "handle": "@Guessinema",
         "thanks": "Thanks for watching!",
         "thanks_sub": "பார்த்ததுக்கு நன்றி!"
       },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
           "narration": "கல்யாணத்துக்கு இன்னும் ரெண்டே நாள். மாப்பிள்ளை, நண்பர்களோட கிரிக்கெட் விளையாடப் போறான்.",
@@ -96,7 +98,7 @@
           "seconds": 5
         },
         {
-          "narration": "பதில்... நடுவுல கொஞ்சம் பக்கத்தக் காணோம்!",
+          "narration": "நடுவுல கொஞ்சம் பக்கத்தக் காணோம்!",
           "visual": "poster",
           "characters": [],
           "kind": "reveal",

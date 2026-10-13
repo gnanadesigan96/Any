@@ -22,10 +22,12 @@
         "title": "Did you guess it right?",
         "sub": "கமெண்ட்ல சொல்லுங்க!",
         "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
         "handle": "@Guessinema",
         "thanks": "Thanks for watching!",
         "thanks_sub": "பார்த்ததுக்கு நன்றி!"
       },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
           "narration": "ஒரு வயசான தாதா. அவனோட வீட்டுல, ஒரு இளம் பொண்ணு அடிமை மாதிரி சிக்கியிருக்கா.",
@@ -88,7 +90,7 @@
           "seconds": 5
         },
         {
-          "narration": "பதில்... ஆரண்ய காண்டம்!",
+          "narration": "ஆரண்ய காண்டம்!",
           "visual": "poster",
           "characters": [],
           "kind": "reveal",
