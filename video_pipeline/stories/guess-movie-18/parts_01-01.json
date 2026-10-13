@@ -69,7 +69,7 @@
         },
         {
           "narration": "சொந்தக்காரங்க முன்னாடி, அவன் வாயைத் திறக்கும்போதெல்லாம் நண்பர்களுக்கு நெஞ்சு படபடக்குது!",
-          "visual": "a busy decorated wedding hall, the groom in a white shirt and veshti surrounded by chatting relatives, his friends beside him forcing nervous smiles",
+          "visual": "a busy decorated wedding hall, the groom (a man) in a white shirt and white veshti, surrounded by chatting relatives, his three friends beside him forcing nervous smiles",
           "characters": [
             "Groom",
             "Friends"
@@ -77,9 +77,10 @@
         },
         {
           "narration": "தாலி கட்டுற நேரம் வருது. தன் கூட உக்காந்திருக்கிற மணப்பொண்ணு யாருன்னே அவனுக்குத் தெரியல!",
-          "visual": "the groom on the flower-decorated wedding stage glancing in confusion at the smiling bride in a silk saree beside him, a friend whispering in his ear from behind",
+          "visual": "a flower-decorated wedding stage: the groom, a man in a white shirt and white veshti with a garland, glancing in confusion at the bride sitting beside him, a friend whispering in his ear from behind",
           "characters": [
             "Groom",
+            "Bride",
             "Friends"
           ]
         },

@@ -30,47 +30,49 @@
       "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
-          "narration": "சென்னையில, அட்டைப் பெட்டிகள்ல... வெட்டப்பட்ட மனுஷக் கைகள்!",
+          "narration": "சென்னையில, அட்டைப் பெட்டிகள்ல... வெட்டப்பட்ட மனுஷக் கைகள் கிடைக்குது!",
           "visual": "a plain cardboard box left on a busy Chennai footpath at dawn, police tape around it, nothing graphic shown",
           "characters": []
         },
         {
-          "narration": "இந்த வழக்கு, ஒரு சிபிசிஐடி அதிகாரிகிட்ட வருது. காணாமப் போன தன் தங்கையை நினைச்சு, தினமும் உடைஞ்சு போயிருக்கிறவர்.",
-          "visual": "the officer sitting alone in a dim room holding a framed photo of a young woman",
+          "narration": "இந்த வழக்கு, ஒரு சிபிசிஐடி அதிகாரிகிட்ட வருது. அவரோட சொந்தத் தங்கச்சி காணாமப் போய், மாசக்கணக்கா ஆச்சு. அந்த வலியோடவே வேலை பார்க்கிறார்.",
+          "visual": "the officer sitting alone in a dim room at night holding a framed family photo, a case file open on the table",
           "characters": [
             "Officer"
           ]
         },
         {
-          "narration": "அவருக்குத் துணையா, ஒரு பெண் சப்-இன்ஸ்பெக்டரும் ஒரு டாக்டரும்.",
-          "visual": "the officer with a young woman sub-inspector and an older doctor examining files in a cramped office",
+          "narration": "அந்தக் கைகள் யாருடையது? ஒவ்வொரு தடயமும், பணமும் செல்வாக்கும் உள்ள பெரிய மனுஷங்ககிட்ட போய் நிக்குது.",
+          "visual": "the officer pinning photos of rich, powerful men on a crime board in a cramped police office, red string between them",
           "characters": [
             "Officer"
           ]
         },
         {
-          "narration": "விசாரணை, காணாமப் போன இன்னொரு இளம் பொண்ணுகிட்ட போய் நிக்குது.",
-          "visual": "a missing-person poster of a young woman on a wet wall at night, the officer looking at it",
+          "narration": "மேல இருந்து அழுத்தம். வழக்கை மூடச் சொல்றாங்க. ஆனா அவர் விடல.",
+          "visual": "a senior police officer in uniform pointing a finger at the officer in a dark corridor, the officer standing firm",
           "characters": [
             "Officer"
           ]
         },
         {
-          "narration": "ஒவ்வொரு தடயமும், பெரிய அதிகாரம் உள்ள மனுஷங்களை நோக்கிப் போகுது. மேல இருந்து அழுத்தம்.",
-          "visual": "powerful men in white shirts in a smoky room, a senior police officer warning the officer in a corridor",
+          "narration": "தோண்டத் தோண்ட, இதுக்குப் பின்னாடி ஒரு இளம் பொண்ணுக்கு நடந்த கொடுமை தெரியுது. அதுக்கு நீதி கிடைக்கவே இல்ல.",
+          "visual": "an old faded school photo pinned to a wall, the officer looking at it under a single bulb, his face in shadow",
           "characters": [
             "Officer"
           ]
         },
         {
-          "narration": "இந்தக் கைகளை வெட்டுறது யாரு? ஏன்? இது சாதாரண கொலை இல்ல... கணக்கு போட்ட பழிவாங்கல்!",
-          "visual": "a shadowy figure carefully sealing a cardboard box with tape in a dark room",
+          "narration": "இது சாதாரண கொலை இல்ல... கணக்கு போட்டு, ஒவ்வொருத்தரா நடக்கிற பழிவாங்கல்!",
+          "visual": "a shadowy figure carefully sealing a cardboard box with tape in a dark room, face hidden",
           "characters": []
         },
         {
-          "narration": "நீதி கிடைக்காதவங்க, தங்களுக்கான நீதியைத் தாங்களே தேடினா என்ன ஆகும்?",
-          "visual": "an airplane taking off into a grey dawn sky",
-          "characters": []
+          "narration": "சட்டம் கைவிட்டவங்க, தங்களுக்கான நீதியைத் தாங்களே எடுத்துக்கிட்டா... அந்த அதிகாரி என்ன பண்ணுவார்?",
+          "visual": "the officer standing in the rain under a streetlight at night, staring at a cardboard box in his hands",
+          "characters": [
+            "Officer"
+          ]
         },
         {
           "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
