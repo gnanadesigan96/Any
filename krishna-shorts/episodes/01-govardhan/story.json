@@ -1,0 +1,60 @@
+{
+  "title": "Krishna Lifts Govardhan Hill",
+  "on_screen_title": "The Boy Who Lifted a Mountain",
+  "outro_text": "Jai Shri Krishna",
+  "voice_settings": {"speed": 1.0},
+  "style": "Soft 3D animated film look, warm golden light, rich saturated colours, cinematic depth of field, vertical 9:16 composition, no text",
+  "character": "Krishna: 7-year-old boy, deep blue skin, big kind eyes, gentle smile, black curly hair, gold crown with one peacock feather, yellow silk dhoti, gold armlets, bamboo flute tucked in waist sash",
+  "scenes": [
+    {
+      "narration": "What happens when a seven-year-old boy challenges the king of the gods?",
+      "image_prompt": "Krishna standing on a green hilltop at sunrise, looking up confidently at a vast stormy sky where a giant shadowy figure on a white elephant looms in the clouds",
+      "motion": "zoom_in"
+    },
+    {
+      "narration": "Every year, the people of Vrindavan offered a grand feast to Indra, the lord of rain.",
+      "image_prompt": "Village of Vrindavan, villagers in colourful clothes carrying baskets of sweets, fruits and pots of milk toward a decorated altar, cows and marigold garlands everywhere",
+      "motion": "pan_right"
+    },
+    {
+      "narration": "But little Krishna said, 'Govardhan Hill feeds our cows and shelters our forests. Let us honour the hill instead.'",
+      "image_prompt": "Krishna smiling and pointing toward a lush green mountain, talking to his father Nanda and the village elders who listen with surprise",
+      "motion": "zoom_in"
+    },
+    {
+      "narration": "Indra watched from the heavens, and his pride burned like lightning.",
+      "image_prompt": "Indra, king of gods, golden armour and crown, sitting on the white elephant Airavata above dark clouds, face angry, lightning crackling in his hand",
+      "motion": "zoom_out"
+    },
+    {
+      "narration": "He sent a terrible storm. Rain lashed the village, rivers overflowed, and the frightened people ran to Krishna.",
+      "image_prompt": "Violent rainstorm over Vrindavan at night, flooding river, villagers and calves running through the rain toward young Krishna who stands calm and glowing",
+      "motion": "pan_left"
+    },
+    {
+      "narration": "Krishna walked to Govardhan, and with just one little finger, he lifted the whole mountain like an umbrella.",
+      "image_prompt": "Low-angle epic shot: Krishna lifting the entire Govardhan mountain on the little finger of his left hand, smiling, rain pouring around, divine golden glow beneath the mountain",
+      "motion": "pan_up"
+    },
+    {
+      "narration": "For seven days and nights, every family and every cow stayed safe beneath it.",
+      "image_prompt": "Under the lifted mountain: warm lamp-lit shelter, families, children and cows huddled together happily, Krishna holding the mountain above them, rain curtain outside",
+      "motion": "pan_right"
+    },
+    {
+      "narration": "At last, Indra understood. He bowed before Krishna, and the storm melted into sunshine.",
+      "image_prompt": "Indra kneeling and bowing with folded hands before smiling Krishna, clouds parting, golden sunbeams and a rainbow over the mountain",
+      "motion": "zoom_out"
+    },
+    {
+      "narration": "Pride always falls. But whoever trusts Krishna is never left alone in the storm.",
+      "image_prompt": "Krishna sitting on a rock playing his flute at golden sunset, cows grazing around him, Govardhan Hill peaceful behind, peacocks, soft glowing light",
+      "motion": "zoom_in"
+    }
+  ],
+  "youtube": {
+    "title": "The Boy Who Lifted a Mountain 🏔️ | Krishna & Govardhan #shorts",
+    "description": "When Indra, king of the gods, sent a terrible storm on Vrindavan, little Krishna lifted Govardhan Hill on one finger to protect everyone. A Krishna story in 60 seconds.\n\n#krishna #govardhan #krishnastories #mythology #shorts",
+    "tags": ["krishna", "krishna story", "govardhan", "govardhan leela", "indra", "hindu mythology", "bal krishna", "kids story"]
+  }
+}
