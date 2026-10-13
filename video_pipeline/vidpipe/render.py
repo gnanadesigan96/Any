@@ -163,6 +163,61 @@ def _absolute_words(timing: list, timeline: list, scene_ids, offset: float, fps:
     return words
 
 
+def _narration_track(wavs: list, kinds: list, timeline: list, fps: int, duration: float, out: Path) -> None:
+    """One narration track for the whole video. The story scenes are cut from one continuous recording, so they're
+    laid end to end exactly as recorded: padding each scene to whole video frames would drop tiny silences into the
+    middle of the speech wherever the voice runs straight from one scene into the next. The timeline is built from
+    the same lengths, so the story stays within a frame of the pictures. Silence is added only where the picture
+    holds without voice (the countdown, a held answer or end screen, the end), and the track re-syncs there."""
+    import wave
+    import numpy as np
+    sr = 44100
+
+    def read(path: Path):
+        with wave.open(str(path)) as w:
+            return np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float32)
+
+    def fade(a, ms: float = 8):  # a few milliseconds in and out, so a separately recorded line never clicks
+        n = min(int(sr * ms / 1000), len(a) // 2)
+        if n:
+            a = a.copy()
+            a[:n] *= np.linspace(0, 1, n)
+            a[-n:] *= np.linspace(1, 0, n)
+        return a
+
+    parts, length = [], 0
+    for i, k in enumerate(kinds):
+        start = int(round(timeline[i]["start"] * sr))
+        story = not k and (i == 0 or not kinds[i - 1])  # carries straight on from the previous story scene
+        if not story or abs(length - start) > sr / fps:  # line up with the picture (pad, or trim a sliver)
+            if length < start:
+                parts.append(np.zeros(start - length, np.float32))
+            elif length > start:
+                cut = length - start
+                while cut and parts:
+                    take = min(cut, len(parts[-1]))
+                    parts[-1] = parts[-1][:len(parts[-1]) - take]
+                    cut -= take
+                    if not len(parts[-1]):
+                        parts.pop()
+            length = start
+        if k == "countdown":
+            continue
+        a = read(wavs[i])
+        if k:
+            a = fade(a)
+        parts.append(a)
+        length += len(a)
+    total = int(round(duration * sr))
+    track = np.concatenate(parts) if parts else np.zeros(0, np.float32)
+    track = np.concatenate([track[:total], np.zeros(max(total - len(track), 0), np.float32)])
+    with wave.open(str(out), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(sr)
+        w.writeframes(np.clip(track, -32768, 32767).astype(np.int16).tobytes())
+
+
 def _check_narration(path: Path, timeline: list, kinds: list, fps: int, duration: float) -> None:
     """Guards the quiz: the narration must be exactly as long as the picture, and silent during the countdown, so
     the answer can never be heard before it's shown. Stops the render instead of making a video that gives it away."""
@@ -209,21 +264,16 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
             else:
                 render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)], clips[i], cfg,
                                   index=i, text=text)
-        # Always rebuilt (it's cheap): a scene's old audio must never be reused against a new timeline. The countdown
-        # is written as pure silence, whatever its audio file holds.
-        if kinds[i] == "countdown":
-            run_ffmpeg(["-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", f"{timeline[i]['frames'] / fps:.6f}",
-                        "-ar", 44100, "-ac", 1, wavs[i]])
-        else:
-            _scene_wav(run_dir / "audio" / timing[i]["audio"], timeline[i]["frames"], fps, wavs[i])
+        if kinds[i] != "countdown":  # decoded as it is (no padding); _narration_track lines the scenes up
+            run_ffmpeg(["-i", run_dir / "audio" / timing[i]["audio"], "-ar", 44100, "-ac", 1, wavs[i]])
 
     log(f"Rendering {len(timing)} scene clips...")
     with ThreadPoolExecutor(max_workers=2) as pool:
         list(pool.map(work_scene, range(len(timing))))
 
     _concat(clips, work / "clips.txt", work / "video_noaudio.mp4")
-    _concat(wavs, work / "wavs.txt", work / "narration.wav", copy=False)
     duration = sum(t["frames"] for t in timeline) / fps
+    _narration_track(wavs, kinds, timeline, fps, duration, work / "narration.wav")
     _check_narration(work / "narration.wav", timeline, kinds, fps, duration)
 
     ass = ""
@@ -283,8 +333,12 @@ def render_shorts(run_dir: Path, image_paths: list, timing: list, shorts: list, 
             clips.append(clip)
         tag = f"short{k + 1}"
         _concat(clips, work / f"{tag}_clips.txt", work / f"{tag}_noaudio.mp4")
-        _concat([work / f"scene_{i:03d}.wav" for i in ids], work / f"{tag}_wavs.txt",
-                 work / f"{tag}_narration.wav", copy=False)
+        padded = []
+        for i in ids:  # each scene padded to its frames (render_main's own scene audio isn't padded)
+            padded.append(work / f"vscene_{i:03d}.wav")
+            if not padded[-1].exists():
+                _scene_wav(run_dir / "audio" / timing[i]["audio"], timeline[i]["frames"], fps, padded[-1])
+        _concat(padded, work / f"{tag}_wavs.txt", work / f"{tag}_narration.wav", copy=False)
         duration = sum(timeline[i]["frames"] for i in ids) / fps
         words = _absolute_words(timing, timeline, ids, timeline[ids[0]]["start"], fps)
         s = cfg["shorts"]

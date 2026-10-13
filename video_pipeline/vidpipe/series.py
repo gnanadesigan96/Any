@@ -10,6 +10,7 @@ Steps (each cached in the run folder, so the command can be re-run until it fini
 import copy
 import json
 import math
+import re
 from pathlib import Path
 
 from pydantic import BaseModel, ValidationError
@@ -269,6 +270,11 @@ def write_series(run_dir: Path, story: str, notes: str, cfg: dict, dry_run: bool
     return bible, [episodes[p] for p in sorted(episodes)]
 
 
+_FEMALE = re.compile(r"\b(woman|women|girls?|lady|ladies|bride|mother|wife|daughter|nurse|headmistress|sister|"
+                     r"actress|grandmother|she|her)\b", re.I)
+_FACIAL_HAIR = re.compile(r"moustache|mustache|beard|stubble", re.I)
+
+
 def image_prompt(scene: StoryScene, bible: SeriesBible) -> str:
     looks = {c.name.lower(): c for c in bible.characters}
     # At most 3 designs: the image model reads only the first few hundred words of a prompt.
@@ -276,6 +282,10 @@ def image_prompt(scene: StoryScene, bible: SeriesBible) -> str:
     # Framing first: the image model weighs the start of the prompt most, and the 2.5D camera moves crop the edges.
     text = (f"{scene.visual.strip().rstrip('.')}. Framing: every person's whole head and face inside the frame with "
             "clear space above the head, main subject in the centre of the frame, sharp natural faces")
+    if _FEMALE.search(scene.visual) and any(_FACIAL_HAIR.search(c.look) for c in cast):
+        # The image model spreads one person's features to the others: a man's moustache ends up on the woman.
+        text += (". Every woman and girl has a smooth, clean-shaven feminine face with no moustache and no facial "
+                 "hair; only the men described below have moustaches or beards")
     if cast:
         text += ". " + " ".join(f"{c.name}: {c.look.strip().rstrip('.')}." for c in cast)
     return text

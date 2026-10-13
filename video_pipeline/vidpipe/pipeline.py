@@ -208,7 +208,7 @@ def shorts_config(cfg: dict) -> dict:
     return vcfg
 
 
-RENDER_VERSION = 6  # bump when the look/sound of renders changes, so existing videos are rebuilt
+RENDER_VERSION = 7  # bump when the look/sound of renders changes, so existing videos are rebuilt
 
 
 def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
@@ -269,11 +269,13 @@ def _fit_length(short, sub: Path, vcfg: dict, timing: list, dry_run: bool) -> tu
 
 
 def _hold_special(scenes: list, timing: list) -> list:
-    """A reveal or end screen with `seconds` set stays up at least that long (the voice ends, the card holds)."""
+    """The answer and the end screen stay up at least `seconds`, and always a beat longer than their line, so the
+    voice never runs into the next screen or the end of the video."""
+    tail = {"reveal": 0.4, "outro": 0.9}
     out = []
     for sc, t in zip(scenes, timing):
-        if sc.kind in ("reveal", "outro") and sc.seconds and t["duration"] < sc.seconds:
-            t = {**t, "duration": sc.seconds}
+        if sc.kind in tail:
+            t = {**t, "duration": max(t["duration"] + tail[sc.kind], sc.seconds or 0)}
         out.append(t)
     return out
 

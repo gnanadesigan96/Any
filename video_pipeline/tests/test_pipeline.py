@@ -1318,3 +1318,47 @@ def test_posters_find_their_films_from_messy_file_names(tmp_path):
         "guess-movie-09": "pizza 2 villa first look.jpeg", "guess-movie-16": "தரமணி.png"}
     assert result["unsure"] == ["random holiday photo.jpg"] and result["missing"] == []
     assert all((stories / f / "poster.jpg").exists() for f, _ in films)
+
+
+def test_story_narration_plays_as_one_unbroken_recording(tmp_path):
+    """Scenes cut from one recording are laid end to end: no silence is dropped into the speech at scene cuts,
+    and the countdown / answer / end screen still start exactly with their pictures."""
+    import wave
+    import numpy as np
+    from vidpipe.render import _narration_track, build_timeline
+    sr, fps = 44100, 30
+    rng = np.random.default_rng(1)
+    take = (np.sin(np.arange(int(7.3 * sr)) * 0.03) * 8000 + rng.normal(0, 50, int(7.3 * sr))).astype(np.int16)
+    cuts = [0, int(2.217 * sr), int(4.901 * sr), len(take)]  # odd lengths: not whole frames
+    pieces = [take[a:b] for a, b in zip(cuts, cuts[1:])]
+    answer = (np.ones(int(1.1 * sr)) * 5000).astype(np.int16)
+    wavs = []
+    for i, a in enumerate(pieces + [np.zeros(1, np.int16), answer]):
+        p = tmp_path / f"s{i}.wav"
+        with wave.open(str(p), "wb") as w:
+            w.setnchannels(1); w.setsampwidth(2); w.setframerate(sr); w.writeframes(a.tobytes())
+        wavs.append(p)
+    timing = [{"duration": len(a) / sr} for a in pieces] + [{"duration": 5.0}, {"duration": 3.0}]
+    kinds = ["", "", "", "countdown", "reveal"]
+    timeline = build_timeline(timing, fps)
+    duration = sum(t["frames"] for t in timeline) / fps
+    out = tmp_path / "n.wav"
+    _narration_track(wavs, kinds, timeline, fps, duration, out)
+    with wave.open(str(out)) as w:
+        track = np.frombuffer(w.readframes(w.getnframes()), np.int16)
+    assert abs(len(track) / sr - duration) < 1e-3
+    assert np.array_equal(track[:len(take)], take)  # the story, sample for sample: nothing inserted
+    cd = int(round(timeline[3]["start"] * sr))
+    rv = int(round(timeline[4]["start"] * sr))
+    assert not track[cd + 10:rv - 10].any()  # silent countdown
+    assert track[rv + 2000] != 0 and abs(rv - cd - 5 * sr) < sr / fps  # the answer starts with its picture
+
+
+def test_women_never_get_the_hero_moustache():
+    from vidpipe import series
+    root = ROOT / "stories/guess-movie-11"
+    bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
+    ep = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes[0]
+    girl = series.image_prompt(ep.scenes[4], bible)  # the village girl, with the moustached photographer
+    assert "no moustache" in girl and girl.index("no moustache") < girl.index("Photographer:")
+    assert "no moustache" not in series.image_prompt(ep.scenes[2], bible)  # two men: unchanged
