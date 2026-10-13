@@ -179,9 +179,20 @@ def _visuals(scenes: list, timing: list, img_dir: Path, cfg: dict, dry_run: bool
         if p in todo:
             _to_library(library, prompt, p)
     write_json(manifest_path, manifest)
-    # A real video clip saved as scene_NNN.mp4 (e.g. made with an image-to-video app) wins.
-    return [img_dir / f"scene_{i:03d}.mp4" if (img_dir / f"scene_{i:03d}.mp4").exists() else p
-            for i, p in enumerate(paths)]
+    # Your own media wins: a clip saved as scene_NNN.mp4 (e.g. from an image-to-video app), or a picture of
+    # your own saved as scene_NNN.mine.jpg / .png / .jpeg / .webp. The generated picture is kept untouched.
+    return [_own_media(img_dir, i) or p for i, p in enumerate(paths)]
+
+
+OWN_PICTURE_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp")
+
+
+def _own_media(img_dir: Path, i: int):
+    clip = img_dir / f"scene_{i:03d}.mp4"
+    if clip.exists():
+        return clip
+    return next((img_dir / f"scene_{i:03d}.mine{ext}" for ext in OWN_PICTURE_SUFFIXES
+                 if (img_dir / f"scene_{i:03d}.mine{ext}").exists()), None)
 
 
 def shorts_config(cfg: dict) -> dict:

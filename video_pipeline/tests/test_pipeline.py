@@ -1197,3 +1197,23 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
             assert word not in shown, (m["n"], word)
         assert "போன வீடியோ" not in spoken  # answers go in the comments, not the next video
         assert short.title.startswith(m["tease"]) and short.title.endswith("| Guessinema") and len(short.title) <= 100
+
+
+def test_your_own_picture_replaces_a_scene_and_wide_stills_fit_the_tall_frame(cfg, tmp_path):
+    import cv2
+    import numpy as np
+    from vidpipe.animate import _fit_wide
+    from vidpipe.pipeline import _own_media
+    img_dir = tmp_path / "images"
+    img_dir.mkdir()
+    assert _own_media(img_dir, 2) is None
+    (img_dir / "scene_002.mine.jpg").write_bytes(b"x")
+    assert _own_media(img_dir, 2).name == "scene_002.mine.jpg"
+    (img_dir / "scene_002.mp4").write_bytes(b"x")
+    assert _own_media(img_dir, 2).name == "scene_002.mp4"  # a clip still wins
+    wide = np.full((360, 640, 3), 200, np.uint8)
+    wide[:, :20] = 0  # a dark left edge that a plain cover-crop would cut away
+    out = _fit_wide(wide, 1080, 1920)
+    assert out.shape == (1920, 1080, 3)
+    middle = out[960]
+    assert middle.mean() > 150 and out[50].mean() < middle.mean()  # still across the middle, dimmed background

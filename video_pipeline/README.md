@@ -81,6 +81,10 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
   --voice-model eleven_v3 --fast --yes`. The first frame is a title card, saved as `part_01_thumbnail.jpg`.
 - **Quicker pictures:** `--fast` makes local pictures at 576x1024 (about 40% quicker, a little softer);
   `--images openai` uses paid pictures made several at a time (OPENAI_API_KEY), by far the fastest.
+- **Your own picture for a scene:** save it next to the generated one as `scene_NNN.mine.jpg` (or .png/.jpeg/.webp),
+  e.g. `runs/series-guess-movie-05-tamil/part_01/images/scene_007.mine.jpg`, and run the same command again: that
+  scene uses your picture (with the same 2.5D motion) and only the video is re-rendered. Wide pictures such as film
+  stills are shown whole across the middle over a blurred copy, not cropped. Delete the file to go back.
 - **Try it small first:** `--first 1` renders only part 1 so you can check the style before committing hours.
   Run again without `--first` to render the rest.
 - **Tamil (or other languages):** `--language Tamil` writes the narration in natural spoken Tamil and voices it with

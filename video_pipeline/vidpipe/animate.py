@@ -75,7 +75,8 @@ def depth_map(image_path: Path, rgb: np.ndarray) -> np.ndarray:
     """Relative depth in [0, 1] (1 = nearest), cached next to the image as a 16-bit PNG."""
     import cv2
     cache = image_path.with_name(image_path.stem + ".depth.png")
-    if cache.exists():
+    # A replaced picture (same name, newer file) gets a fresh depth map.
+    if cache.exists() and cache.stat().st_mtime >= image_path.stat().st_mtime:
         d = cv2.imread(str(cache), cv2.IMREAD_UNCHANGED).astype(np.float32) / 65535.0
         if d.shape[:2] == rgb.shape[:2]:
             return d
@@ -169,6 +170,23 @@ def _ease(t: float) -> float:
     return t * t * (3 - 2 * t)
 
 
+def _fit_wide(bgr: np.ndarray, w: int, h: int) -> np.ndarray:
+    """Shows all of a wide picture in a tall frame: the picture across the middle (slightly enlarged so it still
+    fills a good part of the screen) over a blurred, darkened copy of itself, instead of cropping away its sides."""
+    import cv2
+    bg_scale = max(w / bgr.shape[1], h / bgr.shape[0])
+    bg = cv2.resize(bgr, (int(bgr.shape[1] * bg_scale), int(bgr.shape[0] * bg_scale)), interpolation=cv2.INTER_AREA)
+    y0, x0 = (bg.shape[0] - h) // 2, (bg.shape[1] - w) // 2
+    bg = cv2.GaussianBlur(bg[y0:y0 + h, x0:x0 + w], (0, 0), sigmaX=w / 40)
+    canvas = (bg * 0.45).astype(np.uint8)
+    fg_w = int(w * 1.15)  # a little wider than the frame: the camera moves need some margin anyway
+    fg_h = int(bgr.shape[0] * fg_w / bgr.shape[1])
+    fg = cv2.resize(bgr, (fg_w, fg_h), interpolation=cv2.INTER_CUBIC)
+    fx, fy = (fg_w - w) // 2, max((h - fg_h) // 2, 0)
+    canvas[fy:fy + min(fg_h, h), :] = fg[:min(fg_h, h), fx:fx + w]
+    return canvas
+
+
 def render_parallax_clip(image: Path, frames: int, index: int, out: Path, cfg: dict,
                          text: str = "") -> None:
     """Writes `frames` frames of 2.5D camera motion over `image` to `out` (H.264, no audio)."""
@@ -181,6 +199,8 @@ def render_parallax_clip(image: Path, frames: int, index: int, out: Path, cfg: d
     bgr = cv2.imread(str(image), cv2.IMREAD_COLOR)
     if bgr is None:
         raise RuntimeError(f"Could not read image {image}")
+    if bgr.shape[1] / bgr.shape[0] > 1.25 * w / h:  # a wide picture (e.g. a film still) in a tall frame
+        bgr = _fit_wide(bgr, w, h)
     rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
     depth = depth_map(image, rgb)
     # Cover-fit to the output frame with a little margin, so camera moves never reveal an edge.
