@@ -129,6 +129,9 @@ def main() -> int:
     add_series_flags(p_batch)
     add_make_flags(p_batch)
 
+    p_posters = sub.add_parser("posters", help="put film posters from one folder into the right guess-movie folders")
+    p_posters.add_argument("folder", nargs="?", default="postur", help="folder with the poster images (default: postur)")
+
     p_voices = sub.add_parser("voices", help="preview the free Kokoro voices (writes one mp3 per voice)")
     p_voices.add_argument("--say", default="In 1940, a brand new bridge began to twist in the wind. "
                                             "Within hours, it was gone.")
@@ -209,6 +212,15 @@ def main() -> int:
             for row in rows[: args.limit]:
                 print(f"[{row['subcategory']}] {row['title']}\n    {row['angle']}")
             print(f"\n{len(rows)} unused topics in '{args.niche}'.")
+        elif args.command == "posters":
+            from vidpipe.config import resolve
+            from vidpipe.posters import place_posters, report
+            src = Path(args.folder).expanduser()
+            src = src if src.is_absolute() or src.exists() else resolve(args.folder)
+            if not src.is_dir():
+                raise RuntimeError(f"No folder {src}: put the posters in video_pipeline/postur (or give its path)")
+            stories = resolve("stories")
+            report(place_posters(src, stories), stories / "guess_movies.json")
         elif args.command == "voices":
             from vidpipe.config import resolve
             from vidpipe.voice import (EDGE_SAMPLE_VOICES, GEMINI_STORY_VOICES, preview_edge_voices,

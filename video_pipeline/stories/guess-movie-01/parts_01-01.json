@@ -2,19 +2,21 @@
   "episodes": [
     {
       "part": 1,
-      "title": "இந்தப் படம் எது? #01 கண்டுபிடிங்க!",
-      "hook_text": "இந்தப் படம் எது?",
-      "hook_sub": "60 விநாடியில் முழுக் கதை",
-      "description": "60 விநாடியில ஒரு முழுப் படத்தோட கதை! படத்தோட பேரு என்ன?\n\nக்ளூ 1: தமிழ் படம், கதாநாயகியை மையமா வச்ச கதை\nக்ளூ 2: கதாநாயகி பேரு கீதா ராணி\nக்ளூ 3: 2019-ல வெளியான படம்\n\nபதிலை கமெண்ட்ல சொல்லுங்க! பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "title": "சோம்பேறிப் பள்ளியை மாத்தின ஒரு கண்டிப்பான டீச்சர்! 🤔 இந்தப் படம் எது? #01",
+      "hook_text": "கதையைக் கேளுங்க!",
+      "hook_sub": "படத்தைக் கண்டுபிடிங்க",
+      "description": "சோம்பேறிப் பள்ளியை மாத்தின ஒரு கண்டிப்பான டீச்சர்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: கதாநாயகி பேரு கீதா ராணி\n🔍 க்ளூ 2: ஜோதிகா தலைமை ஆசிரியையா நடிச்ச படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
       "hashtags": [
         "#GuessTheMovie",
         "#படம்எது",
+        "#Guessinema",
         "#TamilMovie",
         "#TamilShorts",
         "#Shorts"
       ],
-      "end_text": "இந்தப் படம் எது?",
-      "end_sub": "கமெண்ட் • லைக் • சப்ஸ்க்ரைப்",
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: ராட்சசி",
       "scenes": [
         {
           "narration": "ஒரு கிராமத்து அரசுப் பள்ளி. பசங்க சுவரேறி ஓடுறாங்க. வாத்தியார்கள் தூங்குறாங்க. யாருக்கும் கவலையே இல்ல.",
@@ -22,7 +24,7 @@
           "characters": []
         },
         {
-          "narration": "ஒரு நாள், கீதா ராணின்னு ஒரு புது தலைமை ஆசிரியை வர்றாங்க. முதல் நாளே எல்லாரும் நடுங்கிட்டாங்க.",
+          "narration": "ஒரு நாள், புது தலைமை ஆசிரியை வர்றாங்க. முதல் நாளே எல்லாரும் நடுங்கிட்டாங்க.",
           "visual": "the headmistress walking through the rusty iron gate of the village school in the morning light, children and teachers stopping to stare at her",
           "characters": [
             "Headmistress"
@@ -57,18 +59,31 @@
           ]
         },
         {
-          "narration": "கடைசியில அந்தப் பள்ளியே மாறிடுது. பசங்க சிரிச்சுட்டே படிக்கிறாங்க. ஊரே அவங்களைக் கொண்டாடுது.",
+          "narration": "கடைசியில அந்தப் பள்ளியே மாறிடுது. ஊரே அவங்களைக் கொண்டாடுது.",
           "visual": "the same village school now freshly painted and clean, happy children in neat uniforms cheering around the smiling headmistress in the courtyard, villagers clapping",
           "characters": [
             "Headmistress"
           ]
         },
         {
-          "narration": "சோம்பேறிகள் அவங்களுக்கு வச்ச அந்தப் பட்டப்பேர்தான்... இந்தப் படத்தோட பேரு! இந்தப் படம் எது? பதிலை கமெண்ட்ல சொல்லுங்க. பிடிச்சிருந்தா லைக் பண்ணுங்க, சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
           "visual": "silhouette of the headmistress standing tall at the school gate against a blazing orange sunset, children's silhouettes behind her",
           "characters": [
             "Headmistress"
           ]
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "பதில்... ராட்சசி! சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal"
         }
       ]
     }

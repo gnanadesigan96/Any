@@ -37,9 +37,30 @@ THRILLER = ("photorealistic cinematic crime thriller film still, Bengaluru at ni
 # Keep them hard: no character names, never a word from the title. Clues go only in the description.
 # Each film: spoken/written = the answer (kept out of the video by a test); clues = [main character's name, easy clue].
 MOVIES = [
- # Already made and posted from its own files (stories/guess-movie-01); kept here so #02 can open with its answer.
- dict(n=1, answer="Raatchasi (ராட்சசி, 2019)", spoken="ராட்சசி", written="ராட்சசி", published=True),
- dict(n=2, tease='செத்துப்போன கொலைகாரன் திரும்ப வந்தா?', answer="Imaikkaa Nodigal (இமைக்கா நொடிகள், 2018)", spoken="இமைக்கா நொடிகள்", written="இமைக்கா நொடிகள்",
+ dict(n=1, aliases=['Ratchasi', 'Ratchasi', 'Raatchasi', 'Rakshasi'], tease="சோம்பேறிப் பள்ளியை மாத்தின ஒரு கண்டிப்பான டீச்சர்!", answer="Raatchasi (ராட்சசி, 2019)",
+  spoken="ராட்சசி", written="ராட்சசி", title_words=["ராட்சசி"], style=VILLAGE,
+  clues=["கதாநாயகி பேரு கீதா ராணி", "ஜோதிகா தலைமை ஆசிரியையா நடிச்ச படம்"],
+  chars={"Headmistress": "Tamil woman in her late thirties, wheatish skin, determined eyes, black hair in a neat low bun, small red bindi, crisp plain maroon cotton saree, simple wristwatch, upright confident posture",
+         "SchoolOwner": "Tamil man in his fifties, heavy build, thick black moustache, oiled swept-back hair, white shirt and white veshti, thick gold chain and gold rings, smug expression"},
+  scenes=[
+   ("ஒரு கிராமத்து அரசுப் பள்ளி. பசங்க சுவரேறி ஓடுறாங்க. வாத்தியார்கள் தூங்குறாங்க. யாருக்கும் கவலையே இல்ல.",
+    "a crumbling village government school with cracked walls and faded paint, schoolchildren in uniforms climbing over the compound wall to run away, a teacher dozing in a chair inside a classroom", []),
+   ("ஒரு நாள், புது தலைமை ஆசிரியை வர்றாங்க. முதல் நாளே எல்லாரும் நடுங்கிட்டாங்க.",
+    "the headmistress walking through the rusty iron gate of the village school in the morning light, children and teachers stopping to stare at her", ["Headmistress"]),
+   ("நேரத்துக்கு வரணும். ஒழுங்கா பாடம் எடுக்கணும். பள்ளி முழுக்க சுத்தமா இருக்கணும். சோம்பேறி வாத்தியார்கள் அவங்களுக்கு ஒரு பட்டப்பேர் வச்சாங்க.",
+    "the headmistress in a shabby staff room pointing firmly at the wall clock while embarrassed teachers stand up from their chairs, two of them whispering behind her back", ["Headmistress"]),
+   ("படிப்பை நிறுத்தின பிள்ளைகளை, வீடு வீடா போய் மறுபடியும் பள்ளிக்குக் கூட்டிட்டு வர்றாங்க.",
+    "the headmistress kneeling outside a small village hut, gently holding the hand of a barefoot girl while the girl's worried mother listens", ["Headmistress"]),
+   ("ஊர்ல ஒரு தனியார் பள்ளி முதலாளி. அரசுப் பள்ளி உயர்ந்தா, அவன் வியாபாரம் படுத்துடும். அரசியல்வாதிங்க, அதிகாரிங்க, அடியாட்கள்... எல்லாரும் அவங்களுக்கு எதிரா.",
+    "the private school owner standing with arms crossed in front of a shiny new private school building, a few rough men and a politician in white beside him, smirking", ["SchoolOwner"]),
+   ("ஆனா அவங்க பயப்படல. அடிக்க வந்தவங்களையே அடிச்சு விரட்டுறாங்க!",
+    "dynamic action shot in a dusty school courtyard: the headmistress in her saree blocking a thug's punch and pushing him back, dust flying, children watching from a doorway", ["Headmistress"]),
+   ("கடைசியில அந்தப் பள்ளியே மாறிடுது. ஊரே அவங்களைக் கொண்டாடுது.",
+    "the same village school now freshly painted and clean, happy children in neat uniforms cheering around the smiling headmistress in the courtyard, villagers clapping", ["Headmistress"]),
+   ("கதை புரிஞ்சுதா? " + CTA,
+    "silhouette of the headmistress standing tall at the school gate against a blazing orange sunset, children's silhouettes behind her", ["Headmistress"]),
+  ]),
+ dict(n=2, aliases=['Imaikka Nodigal', 'Imaika Nodigal'], tease='செத்துப்போன கொலைகாரன் திரும்ப வந்தா?', answer="Imaikkaa Nodigal (இமைக்கா நொடிகள், 2018)", spoken="இமைக்கா நொடிகள்", written="இமைக்கா நொடிகள்",
   title_words=["இமைக்க", "நொடிகள்"], style=THRILLER,
   clues=["கதாநாயகி பேரு அஞ்சலி", "நயன்தாரா சிபிஐ அதிகாரியா நடிச்ச படம்"],
   chars={"Officer": "Tamil woman in her mid-thirties, sharp intense eyes, black hair tied in a tight low ponytail, dark formal trouser suit, ID card on a lanyard, holstered pistol, composed fearless expression",
@@ -63,7 +84,7 @@ MOVIES = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the officer's face half lit by a red emergency light, rain on the window behind her", ["Officer"]),
   ]),
- dict(n=3, tease='ஒரு சின்ன தவறு... பல பேரோட வாழ்க்கை!', answer="Maanagaram (மாநகரம், 2017)", spoken="மாநகரம்", written="மாநகரம்", title_words=["மாநகர"],
+ dict(n=3, aliases=['Managaram', 'Managaram'], tease='ஒரு சின்ன தவறு... பல பேரோட வாழ்க்கை!', answer="Maanagaram (மாநகரம், 2017)", spoken="மாநகரம்", written="மாநகரம்", title_words=["மாநகர"],
   style=("photorealistic cinematic crime thriller film still, Chennai at night, gritty teal and sodium-orange colour grade, "
          "busy wet streets, headlights and neon, handheld 35mm look, film grain, high detail, realistic expressions"),
   clues=["முக்கிய கதாபாத்திரம் பேரு பரணி", "லோகேஷ் கனகராஜ் இயக்கின முதல் படம்"],
@@ -87,7 +108,7 @@ MOVIES = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the newcomer standing on an empty Chennai street at dawn, looking back at the city", ["Newcomer"]),
   ]),
- dict(n=4, tease='அவன் பின்தொடர்ந்த எல்லாரும் சாகுறாங்க!', answer="Thegidi (தெகிடி, 2014)", spoken="தெகிடி", written="தெகிடி", title_words=["தெகிடி"],
+ dict(n=4, aliases=['Thegdi', 'Tegidi'], tease='அவன் பின்தொடர்ந்த எல்லாரும் சாகுறாங்க!', answer="Thegidi (தெகிடி, 2014)", spoken="தெகிடி", written="தெகிடி", title_words=["தெகிடி"],
   style=("photorealistic cinematic neo-noir mystery film still, Chennai, dark moody colour grade with deep greens and "
          "golden practical lights, venetian-blind shadows, 35mm film grain, high detail, realistic expressions"),
   clues=["ஹீரோ பேரு வெற்றி", "அசோக் செல்வன் துப்பறிவாளரா நடிச்ச படம்"],
@@ -122,7 +143,7 @@ WARM = ("photorealistic cinematic drama film still, Chennai, warm natural colour
 RETRO = ("photorealistic cinematic film still, a Tamil Nadu village in the early 1980s, warm faded film colours, dusty "
          "sunlight, vintage details, 35mm film grain, high detail, realistic expressions")
 NEW13 = [
- dict(n=5, tease='குண்டடிபட்ட குற்றவாளிக்கு ஆபரேஷன் பண்ண மாணவன்', answer="Onaayum Aattukkuttiyum (ஓநாயும் ஆட்டுக்குட்டியும், 2013)", spoken="ஓநாயும் ஆட்டுக்குட்டியும்",
+ dict(n=5, aliases=['Onayum Aatukuttiyum', 'Onaayum Aatukutiyum', 'Onayum Attukuttiyum'], tease='குண்டடிபட்ட குற்றவாளிக்கு ஆபரேஷன் பண்ண மாணவன்', answer="Onaayum Aattukkuttiyum (ஓநாயும் ஆட்டுக்குட்டியும், 2013)", spoken="ஓநாயும் ஆட்டுக்குட்டியும்",
   written="ஓநாயும் ஆட்டுக்குட்டியும்", title_words=["ஓநாய்", "ஆட்டுக்குட்டி"], style=NOIR,
   clues=["ஹீரோ பேரு சந்துரு", "மிஷ்கின் இயக்கி, நடிச்ச படம்; இதுல பாட்டே கிடையாது"],
   chars={"Student": "Tamil man in his early twenties, thin, short black hair, clean-shaven, frightened earnest eyes, plain shirt and trousers",
@@ -145,7 +166,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the student alone on a misty road at dawn, holding a pistol at his side, exhausted", ["Student"]),
   ]),
- dict(n=6, tease='உடம்பு மாறி சாகாம வாழுற விஞ்ஞானி!', answer="Maayavan (மாயவன், 2017)", spoken="மாயவன்", written="மாயவன்", title_words=["மாய"],
+ dict(n=6, aliases=['Mayavan'], tease='உடம்பு மாறி சாகாம வாழுற விஞ்ஞானி!', answer="Maayavan (மாயவன், 2017)", spoken="மாயவன்", written="மாயவன்", title_words=["மாய"],
   style=("photorealistic cinematic science-fiction thriller film still, Chennai, cool blue and steel colour grade, "
          "glowing lab screens, rain at night, 35mm anamorphic lens, film grain, high detail, realistic expressions"),
   clues=["ஹீரோ பேரு குமரன்", "சந்தீப் கிஷன் போலீஸா நடிச்ச சயின்ஸ் ஃபிக்ஷன் த்ரில்லர்"],
@@ -169,7 +190,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the cop's face reflected in a cracked mirror, two different reflections looking back", ["Cop"]),
   ]),
- dict(n=7, tease='ஒரு சரக்கு, ரெண்டு கும்பல், ஒரு பொண்ணு', answer="Aaranya Kaandam (ஆரண்ய காண்டம், 2010)", spoken="ஆரண்ய காண்டம்", written="ஆரண்ய காண்டம்",
+ dict(n=7, aliases=['Aranya Kandam', 'Aaranya Kandam'], tease='ஒரு சரக்கு, ரெண்டு கும்பல், ஒரு பொண்ணு', answer="Aaranya Kaandam (ஆரண்ய காண்டம், 2010)", spoken="ஆரண்ய காண்டம்", written="ஆரண்ய காண்டம்",
   title_words=["ஆரண்ய", "காண்டம்"], style=NOIR,
   clues=["முக்கிய கதாபாத்திரம் பேரு சுப்பு", "தேசிய விருது வாங்கின, தமிழோட முதல் நியோ-நாய்ர் படம்னு சொல்லப்படுற படம்"],
   chars={"Don": "Tamil man in his sixties, heavy build, grey hair, thick grey moustache, gold chains, loud silk shirt",
@@ -193,7 +214,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "a bag of money lying on a dusty road at sunset, footprints leading away", []),
   ]),
- dict(n=8, tease='ஒரு மழை இரவு, ஒரு விபத்து, பல கதைகள்', answer="Dhuruvangal Pathinaaru (துருவங்கள் பதினாறு, 2016)", spoken="துருவங்கள் பதினாறு",
+ dict(n=8, aliases=['D16', 'Thuruvangal Pathinaaru', 'Dhuruvangal Pathinaru', 'Dhuruvangal 16'], tease='ஒரு மழை இரவு, ஒரு விபத்து, பல கதைகள்', answer="Dhuruvangal Pathinaaru (துருவங்கள் பதினாறு, 2016)", spoken="துருவங்கள் பதினாறு",
   written="துருவங்கள் பதினாறு", title_words=["துருவ", "பதினாறு"],
   style=("photorealistic cinematic crime thriller film still, Coimbatore on a rainy night, cold blue-grey colour grade, "
          "heavy rain, headlights, 35mm anamorphic lens, film grain, high detail, realistic expressions"),
@@ -218,7 +239,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the officer alone at a rain-streaked window, looking out into the night", ["Officer"]),
   ]),
- dict(n=9, tease='எதிர்காலத்தை முன்னாடியே வரைஞ்ச அப்பா!', answer="Pizza 2: Villa (பீட்சா 2: வில்லா, 2013)", spoken="பீட்சா டூ, வில்லா", written="பீட்சா 2: வில்லா",
+ dict(n=9, aliases=['Pizza 2', 'Pizza II Villa', 'Villa'], tease='எதிர்காலத்தை முன்னாடியே வரைஞ்ச அப்பா!', answer="Pizza 2: Villa (பீட்சா 2: வில்லா, 2013)", spoken="பீட்சா டூ, வில்லா", written="பீட்சா 2: வில்லா",
   title_words=["பீட்சா", "வில்லா"], style=HORROR,
   clues=["ஹீரோ பேரு ஜெபின்", "அசோக் செல்வன் நடிச்ச, பாண்டிச்சேரியில நடக்குற திகில் படம்"],
   chars={"Writer": "Tamil man in his late twenties, short wavy hair, light beard, thoughtful eyes, casual linen shirt",
@@ -241,7 +262,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "an empty easel in a dark room with a single candle burning", []),
   ]),
- dict(n=10, tease='ஊரையே ஏமாத்துற ஒரு பக்கா ஏமாத்துக்காரன்', answer="Sathuranga Vettai (சதுரங்க வேட்டை, 2014)", spoken="சதுரங்க வேட்டை", written="சதுரங்க வேட்டை",
+ dict(n=10, aliases=['Sathuranga Vettai', 'Chathuranga Vettai', 'Sadhuranga Vettai'], tease='ஊரையே ஏமாத்துற ஒரு பக்கா ஏமாத்துக்காரன்', answer="Sathuranga Vettai (சதுரங்க வேட்டை, 2014)", spoken="சதுரங்க வேட்டை", written="சதுரங்க வேட்டை",
   title_words=["சதுரங்க", "வேட்டை"], style=WARM,
   clues=["ஹீரோ பேரு காந்தி பாபு", "இயக்குநர் ஹெச். வினோத்தோட முதல் படம்"],
   chars={"Conman": "Tamil man in his early thirties, slick combed hair, thin moustache, sly confident smile, crisp white shirt, gold watch",
@@ -264,7 +285,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the conman digging in the dirt at night under torchlight, men standing over him", ["Conman"]),
   ]),
- dict(n=11, tease='போட்டோ எடுத்தா செத்துடுவாங்களாம்!', answer="Mundasupatti (முண்டாசுப்பட்டி, 2014)", spoken="முண்டாசுப்பட்டி", written="முண்டாசுப்பட்டி",
+ dict(n=11, aliases=['Mundasupati', 'Mundaasupatti'], tease='போட்டோ எடுத்தா செத்துடுவாங்களாம்!', answer="Mundasupatti (முண்டாசுப்பட்டி, 2014)", spoken="முண்டாசுப்பட்டி", written="முண்டாசுப்பட்டி",
   title_words=["முண்டாசு"], style=RETRO,
   clues=["ஹீரோ பேரு கோபி", "விஷ்ணு விஷால் நடிச்ச, 1982-ல நடக்குற கிராமத்துக் காமெடி"],
   chars={"Photographer": "Tamil man in his late twenties, 1980s side-parted hair, thick moustache, bell-bottom trousers, an old box camera on a strap",
@@ -287,7 +308,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "an old black-and-white photograph of a village group, everyone looking scared of the camera", []),
   ]),
- dict(n=12, tease='தியேட்டர்ல தனியா பேய்ப் படம் பார்த்தா பரிசு!', answer="Maya (மாயா, 2015)", spoken="மாயா", written="மாயா", title_words=["மாய"], style=HORROR,
+ dict(n=12, aliases=['Maya'], tease='தியேட்டர்ல தனியா பேய்ப் படம் பார்த்தா பரிசு!', answer="Maya (மாயா, 2015)", spoken="மாயா", written="மாயா", title_words=["மாய"], style=HORROR,
   clues=["ஹீரோயின் பேரு அப்சரா", "நயன்தாராவோட 50-வது படம்"],
   chars={"Mother": "Tamil woman in her early thirties, long black hair, tired but strong eyes, simple cotton saree, a small daughter's hand in hers"},
   scenes=[
@@ -308,7 +329,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "a misty forest at night with an old abandoned asylum in the distance", []),
   ]),
- dict(n=13, tease='பாழடைஞ்ச பங்களாவுல இருந்து எடுத்த நகை', answer="Demonte Colony (டிமான்ட்டி காலனி, 2015)", spoken="டிமான்ட்டி காலனி", written="டிமான்ட்டி காலனி",
+ dict(n=13, aliases=['Demonte', 'De Monte Colony', 'Demonty Colony'], tease='பாழடைஞ்ச பங்களாவுல இருந்து எடுத்த நகை', answer="Demonte Colony (டிமான்ட்டி காலனி, 2015)", spoken="டிமான்ட்டி காலனி", written="டிமான்ட்டி காலனி",
   title_words=["டிமான்ட்டி", "டிமாண்டி", "காலனி"], style=HORROR,
   clues=["ஹீரோ பேரு சீனு", "அருள்நிதி நடிச்ச பேய்ப் படம்; 2024-ல இதோட ரெண்டாம் பாகம் வந்துச்சு"],
   chars={"Friend": "Tamil man in his late twenties, short hair, stubble, nervous eyes, plain t-shirt and jeans"},
@@ -330,7 +351,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "an old necklace lying on a wet floor in a beam of torchlight", []),
   ]),
- dict(n=14, tease='ஒரு டிவி ஸ்டுடியோவையே பிடிச்ச பொண்ணு!', answer="Aruvi (அருவி, 2017)", spoken="அருவி", written="அருவி", title_words=["அருவி"], style=WARM,
+ dict(n=14, aliases=['Aruvi'], tease='ஒரு டிவி ஸ்டுடியோவையே பிடிச்ச பொண்ணு!', answer="Aruvi (அருவி, 2017)", spoken="அருவி", written="அருவி", title_words=["அருவி"], style=WARM,
   clues=["அவளோட தோழி பேரு எமிலி", "புதுமுகம் அதிதி பாலன் நடிச்ச படம்"],
   chars={"Heroine": "young Tamil woman in her early twenties, short cropped hair, intense fearless eyes, plain kurta and jeans",
          "Emily": "Tamil trans woman in her late twenties, long hair, warm caring smile, colourful saree"},
@@ -352,7 +373,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "a camera flash capturing the heroine's smiling face", ["Heroine"]),
   ]),
- dict(n=15, tease='ஒருதலைக் காதல், ஒரு தற்கொலை நாடகம்', answer="Meyaadha Maan (மேயாத மான், 2017)", spoken="மேயாத மான்", written="மேயாத மான்", title_words=["மேயாத"],
+ dict(n=15, aliases=['Meyatha Maan', 'Meyadha Maan'], tease='ஒருதலைக் காதல், ஒரு தற்கொலை நாடகம்', answer="Meyaadha Maan (மேயாத மான், 2017)", spoken="மேயாத மான்", written="மேயாத மான்", title_words=["மேயாத"],
   style=("photorealistic cinematic film still, North Chennai, vibrant warm colour grade, festival lights and street life, "
          "35mm film grain, high detail, natural skin texture, realistic expressions"),
   clues=["ஹீரோ பேரு முரளி", "வைபவ், பிரியா பவானி சங்கர் நடிச்ச வட சென்னைக் காதல் படம்"],
@@ -376,7 +397,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the singer alone on a beach at sunset holding a microphone, waves behind him", ["Singer"]),
   ]),
- dict(n=16, tease='மழை, ஒரு பஸ் ஸ்டாப், ரெண்டு உடைஞ்ச இதயங்கள்', answer="Taramani (தரமணி, 2017)", spoken="தரமணி", written="தரமணி", title_words=["தரமணி"], style=WARM,
+ dict(n=16, aliases=['Tharamani', 'Taramani'], tease='மழை, ஒரு பஸ் ஸ்டாப், ரெண்டு உடைஞ்ச இதயங்கள்', answer="Taramani (தரமணி, 2017)", spoken="தரமணி", written="தரமணி", title_words=["தரமணி"], style=WARM,
   clues=["ஹீரோ பேரு பிரபுநாத்", "ஆண்ட்ரியா நடிச்ச, இயக்குநர் ராமோட படம்"],
   chars={"Woman": "Anglo-Indian woman in her early thirties, wavy shoulder-length hair, confident sharp eyes, office blazer over a blouse",
          "Man": "Tamil man in his late twenties, rugged unkempt hair, thick beard, brooding eyes, crumpled shirt"},
@@ -398,7 +419,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "an empty rain-soaked bus stop at night under a flickering streetlight", []),
   ]),
- dict(n=17, tease='அட்டைப் பெட்டியில வெட்டப்பட்ட கைகள்!', answer="Yuddham Sei (யுத்தம் செய், 2011)", spoken="யுத்தம் செய்", written="யுத்தம் செய்",
+ dict(n=17, aliases=['Yudham Sei', 'Yuttham Sei'], tease='அட்டைப் பெட்டியில வெட்டப்பட்ட கைகள்!', answer="Yuddham Sei (யுத்தம் செய், 2011)", spoken="யுத்தம் செய்", written="யுத்தம் செய்",
   title_words=["யுத்தம்", "போர்"], style=NOIR,
   clues=["போலீஸ் அதிகாரி பேரு ஜே.கே.", "சேரன் நடிச்ச, மிஷ்கின் இயக்கின படம்"],
   chars={"Officer": "Tamil man in his forties, short hair, neat moustache, grieving tired eyes, dark shirt with sleeves rolled up"},
@@ -459,6 +480,10 @@ for m in MOVIES:
     answers += [f"- **#{m['n']:02d}:** {m['answer']}  (clues: {c1}; {c2})"]
     print(f"#{m['n']:02d} {m['answer']}: {len(m['scenes'])} scenes, {words} words")
 (out / "GUESS_MOVIE_ANSWERS.md").write_text("\n".join(answers) + "\n")
+# For `make_video.py posters`: which folder each film's poster goes in (English and Tamil names, spellings).
+index = [{"folder": f"guess-movie-{m['n']:02d}", "names": [m["answer"].split(" (")[0], m["written"],
+          *m.get("aliases", [])]} for m in MOVIES]
+(out / "guess_movies.json").write_text(json.dumps(index, ensure_ascii=False, indent=1) + "\n")
 
 # Copy-paste sheet for uploading: the same title and description the pipeline uses, plus the comments to pin.
 sheet = ["# Guess the movie: YouTube titles and descriptions", "",

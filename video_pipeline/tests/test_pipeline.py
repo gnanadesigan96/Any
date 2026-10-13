@@ -1245,3 +1245,28 @@ def test_countdown_and_poster_reveal(cfg, tmp_path):
     assert counts == ["5", "4", "3", "2", "1"]
     assert "Reveal,,0,0,0,," in ass and "பதில்: படம்" in ass and "Guessinema" in ass
     assert "ஒன்று" in ass and "பதில்...}" not in ass and ",Cap,,0,0,0,,பதில்..." not in ass
+
+
+def test_posters_find_their_films_from_messy_file_names(tmp_path):
+    from PIL import Image
+    from vidpipe.posters import place_posters
+    stories = tmp_path / "stories"
+    films = [("guess-movie-02", ["Imaikkaa Nodigal", "இமைக்கா நொடிகள்", "Imaikka Nodigal"]),
+             ("guess-movie-06", ["Maayavan", "மாயவன்", "Mayavan"]), ("guess-movie-12", ["Maya", "மாயா"]),
+             ("guess-movie-08", ["Dhuruvangal Pathinaaru", "D16"]), ("guess-movie-09", ["Pizza 2: Villa", "Villa"]),
+             ("guess-movie-16", ["Taramani", "தரமணி", "Tharamani"])]
+    for folder, _ in films:
+        (stories / folder).mkdir(parents=True)
+    (stories / "guess_movies.json").write_text(json.dumps([{"folder": f, "names": n} for f, n in films]))
+    src = tmp_path / "postur"
+    src.mkdir()
+    for name in ["Imaikka Nodigal HD poster.jpg", "maayavan_2017.webp", "Maya (2015) Tamil.png", "D16 poster.jpg",
+                 "pizza 2 villa first look.jpeg", "தரமணி.png", "random holiday photo.jpg"]:
+        Image.new("RGB", (40, 60), (200, 50, 50)).save(src / name)
+    result = place_posters(src, stories)
+    assert dict((f, n) for n, f in result["placed"]) == {
+        "guess-movie-02": "Imaikka Nodigal HD poster.jpg", "guess-movie-06": "maayavan_2017.webp",
+        "guess-movie-12": "Maya (2015) Tamil.png", "guess-movie-08": "D16 poster.jpg",
+        "guess-movie-09": "pizza 2 villa first look.jpeg", "guess-movie-16": "தரமணி.png"}
+    assert result["unsure"] == ["random holiday photo.jpg"] and result["missing"] == []
+    assert all((stories / f / "poster.jpg").exists() for f, _ in films)

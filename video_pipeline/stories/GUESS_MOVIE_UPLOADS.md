@@ -3,6 +3,40 @@
 Copy each block when uploading `runs/series-guess-movie-NN-tamil/part_01.mp4`, and pin the comment.
 The answer is revealed at the end of each video, after a 5-second countdown over the blurred poster.
 
+## #01
+
+**Title** (86 characters)
+```
+சோம்பேறிப் பள்ளியை மாத்தின ஒரு கண்டிப்பான டீச்சர்! 🤔 இந்தப் படம் எது? #01 | Guessinema
+```
+
+**Description**
+```
+சோம்பேறிப் பள்ளியை மாத்தின ஒரு கண்டிப்பான டீச்சர்!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: கதாநாயகி பேரு கீதா ராணி
+🔍 க்ளூ 2: ஜோதிகா தலைமை ஆசிரியையா நடிச்ச படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-01/poster.jpg` before generating.
+
 ## #02
 
 **Title** (72 characters)

@@ -12,3 +12,6 @@ models/
 voice_samples/
 # Python virtual environment
 .venv/
+
+# Film posters you collect (copyrighted; placed into stories/ by `make_video.py posters`)
+postur/

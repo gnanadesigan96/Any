@@ -85,6 +85,9 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
   countdown with clock ticks over the film's blurred poster, then the poster sharp with "பதில்: <film>" and a boom.
   Save the poster as `stories/guess-movie-NN/poster.jpg` (or .png/.webp) first; without it the run stops before
   any voice or pictures are made.
+  Or put all the posters in one folder, `video_pipeline/postur/`, named after their films (any spelling, English or
+  Tamil, extra words like "HD poster" are fine) and run `python make_video.py posters`: each one is converted to
+  JPEG and placed in its film's folder, and anything it can't match is listed.
 - **Your own picture for a scene:** save it next to the generated one as `scene_NNN.mine.jpg` (or .png/.jpeg/.webp),
   e.g. `runs/series-guess-movie-05-tamil/part_01/images/scene_007.mine.jpg`, and run the same command again: that
   scene uses your picture (with the same 2.5D motion) and only the video is re-rendered. Wide pictures such as film
