@@ -1,0 +1,5 @@
+# rendered output, generated sounds and downloaded fonts are rebuilt on demand
+episodes/*/build/
+assets/_generated/
+fonts/
+__pycache__/

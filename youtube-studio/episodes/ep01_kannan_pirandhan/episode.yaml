@@ -1,0 +1,461 @@
+# Episode 1 - கண்ணன் பிறந்தான் (The Birth of Krishna)
+# Series: ஸ்ரீ கிருஷ்ணர் கதை - the complete life of Sri Krishna, in Tamil.
+# Sources followed: Srimad Bhagavatam, Canto 10, chapters 1-5.
+#
+# For every scene put ONE picture in images/ named by its number (01.jpg, 02.jpg ...).
+# Scenes marked `video_clip: true` look best with a 5-10 s AI video in clips/ (06.mp4 ...);
+# if there is no clip the image is used instead.
+#
+# music:    calm | night | sad | tension | storm | divine | celebration
+# ambience: rain | river | wind | crickets | heartbeat   (loops under the scene)
+# sfx:      temple_bell puja_bell conch thunder chains gate_open gate_close
+#           whoosh shimmer sword impact   (at = seconds from scene start; negative = from the end)
+# motion:   zoom_in | zoom_out | pan_left | pan_right | pan_up | pan_down | zoom_in_top | static
+
+slug: ep01_kannan_pirandhan
+title: "கண்ணன் பிறந்தான் | ஸ்ரீ கிருஷ்ணர் கதை - அத்தியாயம் 1"
+thumbnail_text: "கண்ணன்\nபிறந்தான்!"
+short_title: "கண்ணன் பிறந்த\nஅதிசய இரவு"
+
+voice:
+  # A FEMALE Tamil voice. In ElevenLabs: Voices > Voice Library > search "Tamil female storyteller"
+  # (or "Tamil female narrator"), add one you like, then copy its Voice ID here.
+  voice_id: PASTE_YOUR_TAMIL_FEMALE_VOICE_ID
+  model_id: eleven_multilingual_v2
+  stability: 0.45          # lower = more emotion, higher = steadier
+  similarity_boost: 0.8
+  style: 0.35
+  speed: 0.92              # a calm storytelling pace
+
+settings:
+  transition_seconds: 0.6
+  music_level: 0.35
+  music_duck_level: 0.14
+  ambience_level: 0.30
+  burn_subtitles: true
+
+image_style: >-
+  cinematic Indian devotional painting, inspired by Raja Ravi Varma and classic Amar Chitra Katha,
+  rich jewel colours, soft golden rim light, highly detailed, 16:9 widescreen, no text, no watermark
+
+characters:
+  KAMSA: >-
+    Kamsa, a tall muscular fearsome king of Mathura in his thirties, thick dark curled moustache,
+    cruel red-rimmed eyes, heavy gold crown and armour, red and black royal robes
+  DEVAKI: >-
+    Devaki, a gentle young princess with large expressive eyes, long black hair in a braid,
+    red silk saree with gold border, simple gold jewellery
+  VASUDEVA: >-
+    Vasudeva, a noble kind-faced man in his thirties with a short black beard, white and saffron
+    dhoti and angavastram, rudraksha beads
+  BABY_KRISHNA: >-
+    newborn baby Krishna with soft dark-blue skin, large lotus-shaped eyes, gentle smile,
+    a tiny peacock feather, surrounded by a soft divine golden glow
+  VISHNU: >-
+    Lord Vishnu with blue skin and four arms holding a conch, the Sudarshana chakra, a golden mace
+    and a lotus, tall golden crown, yellow silk garments, radiant halo
+  YOGAMAYA: >-
+    Goddess Yogamaya in the form of eight-armed Durga, red saree, gold crown, holding weapons,
+    fierce yet compassionate face, glowing in the night sky
+  YASHODA: >-
+    Yashoda, a warm motherly young woman of a cowherd village, simple cotton saree, sleeping peacefully
+
+intro:
+  title: "கண்ணன் பிறந்தான்"
+  subtitle: "ஸ்ரீ கிருஷ்ணர் கதை · அத்தியாயம் 1"
+  min_seconds: 5.5
+  music: divine
+  sfx:
+    - {name: conch, at: 0.3, volume: 0.9}
+
+scenes:
+  # 01 ------------------------------------------------------------- HOOK
+  - text: >-
+      ஒரு இருண்ட இரவு. வானமே இடிமுழக்கத்தால் அதிர்ந்தது. மதுரா நகரின் சிறைச்சாலையில்,
+      ஒரு சிறிய விளக்கின் ஒளியில், உலகையே காக்கப் போகும் ஒரு குழந்தை பிறக்கக் காத்திருந்தது.
+    music: night
+    ambience: [rain]
+    sfx: [{name: thunder, at: 0.2, volume: 0.9}]
+    motion: zoom_in
+    image_prompt: >-
+      An ancient stone prison fortress in Mathura at midnight during a violent storm, lightning
+      splitting the sky, heavy rain, a single barred window glowing with warm oil-lamp light
+
+  # 02 ------------------------------------------------------------- WELCOME
+  - text: >-
+      வணக்கம்! ஸ்ரீ கிருஷ்ணரின் முழு வாழ்க்கைக் கதையின் முதல் அத்தியாயத்திற்கு உங்களை அன்புடன்
+      வரவேற்கிறேன். அந்த அற்புத இரவுக்கு முன்பு என்ன நடந்தது? வாருங்கள், தொடக்கத்திலிருந்து பார்ப்போம்.
+    music: calm
+    sfx: [{name: temple_bell, at: 0.4, volume: 0.6}]
+    motion: pan_right
+    image_prompt: >-
+      The ancient city of Mathura at golden sunrise on the banks of the Yamuna river, temple towers,
+      palaces, boats on the river, birds in the sky, peaceful and prosperous
+
+  # 03 ------------------------------------------------------------- KAMSA
+  - text: >-
+      யமுனை நதிக்கரையில் அமைந்த அழகிய நகரம் மதுரா. அங்கே ஆட்சி செய்தவன் கம்சன். பெரும் வலிமை
+      கொண்டவன். ஆனால் அவன் மனம் முழுவதும் ஆணவமும் கொடுமையும் நிறைந்திருந்தது.
+    music: tension
+    sfx: [{name: impact, at: 0.3, volume: 0.6}]
+    motion: zoom_in_top
+    image_prompt: >-
+      KAMSA seated on a massive golden throne in a dark torch-lit palace hall, looking down with
+      arrogance, guards with spears on both sides, dramatic low-angle shot
+
+  # 04 ------------------------------------------------------------- WEDDING
+  - text: >-
+      கம்சனுக்கு ஒரு அன்புத் தங்கை இருந்தாள். அவள் பெயர் தேவகி. தேவகிக்கும், நல்லொழுக்கம் மிக்க
+      வசுதேவருக்கும் திருமணம் நடந்தது. மதுரா நகரமே விழாக் கோலம் பூண்டது.
+    music: celebration
+    sfx: [{name: puja_bell, at: 0.5, volume: 0.5}]
+    motion: pan_left
+    image_prompt: >-
+      The royal wedding of DEVAKI and VASUDEVA under a flower-decorated mandapam, sacred fire,
+      garlands, marigold and jasmine everywhere, smiling guests, joyful festive atmosphere
+
+  # 05 ------------------------------------------------------------- CHARIOT
+  - text: >-
+      தங்கையின் மீது கொண்ட பாசத்தால், கம்சனே தேரோட்டியாக மாறினான். மணமக்களை ஊர்வலமாக அழைத்துச்
+      சென்றான். எல்லோர் முகத்திலும் மகிழ்ச்சி பொங்கியது.
+    music: celebration
+    motion: pan_right
+    image_prompt: >-
+      KAMSA smiling and driving a grand golden chariot pulled by white horses, the newly married
+      DEVAKI and VASUDEVA seated behind him, a festive procession through Mathura's streets, flower
+      petals in the air
+
+  # 06 ------------------------------------------------------------- PROPHECY (video clip)
+  - text: >-
+      அப்போது திடீரென்று வானம் இருண்டது. மேகங்களுக்கு நடுவே ஒரு அசரீரி முழங்கியது: 'கம்சா! நீ
+      இவ்வளவு மகிழ்ச்சியுடன் அழைத்துச் செல்லும் இதே தங்கையின் எட்டாவது குழந்தைதான் உன் உயிரை
+      எடுக்கப் போகிறது!'
+    music: storm
+    ambience: [wind]
+    sfx: [{name: thunder, at: 0.1, volume: 1.0}, {name: whoosh, at: 1.4, volume: 0.6}]
+    transition: fadewhite
+    video_clip: true
+    motion: zoom_in
+    image_prompt: >-
+      The sky suddenly turning dark above the wedding procession, swirling black storm clouds with a
+      blazing beam of divine light breaking through, KAMSA looking up in shock from the chariot,
+      wind blowing the flower garlands
+
+  # 07 ------------------------------------------------------------- RAGE
+  - text: >-
+      அந்தச் சொற்களைக் கேட்டதும் கம்சனின் கண்கள் சிவந்தன. மகிழ்ச்சி மறைந்து, கோபம் பொங்கியது.
+      வாளை உருவிக்கொண்டு, தேவகியை நோக்கிப் பாய்ந்தான்.
+    music: storm
+    ambience: [wind]
+    sfx: [{name: sword, at: 0.6, volume: 0.7}]
+    motion: zoom_in
+    image_prompt: >-
+      KAMSA furious with blazing eyes drawing a gleaming sword, standing on the chariot, DEVAKI
+      frightened behind VASUDEVA, stormy sky, dramatic lighting, no blood
+
+  # 08 ------------------------------------------------------------- PLEA
+  - text: >-
+      வசுதேவர் கைகூப்பி வேண்டினார்: 'மன்னா, தேவகியால் உனக்கு எந்த ஆபத்தும் இல்லை. எங்களுக்குப்
+      பிறக்கும் ஒவ்வொரு குழந்தையையும் நானே உன்னிடம் ஒப்படைக்கிறேன். தயவுசெய்து அவளை விட்டுவிடு!'
+    music: sad
+    motion: zoom_in
+    image_prompt: >-
+      VASUDEVA with folded hands pleading before KAMSA, protecting DEVAKI behind him, KAMSA's sword
+      lowered, tense emotional moment, soft grey storm light
+
+  # 09 ------------------------------------------------------------- PRISON
+  - text: >-
+      வசுதேவரின் வார்த்தையை நம்பிய கம்சன், தேவகியைக் கொல்லவில்லை. ஆனால் இருவரையும் இரும்புச்
+      சங்கிலிகளால் கட்டி, இருண்ட சிறைச்சாலையில் அடைத்தான்.
+    music: tension
+    sfx: [{name: chains, at: 0.6, volume: 0.7}, {name: gate_close, at: -3.2, volume: 0.9}]
+    motion: pan_left
+    image_prompt: >-
+      DEVAKI and VASUDEVA in iron chains inside a dark stone prison cell, heavy iron bars, guards
+      locking the gate, a thin beam of light from a high window
+
+  # 10 ------------------------------------------------------------- SIX CHILDREN
+  - text: >-
+      ஆண்டுகள் உருண்டோடின. ஒவ்வொரு முறையும் தேவகிக்குக் குழந்தை பிறந்தபோது, கம்சன் ஓடி வந்தான்.
+      இரக்கமே இல்லாமல், ஆறு குழந்தைகளையும் ஒவ்வொன்றாகப் பறித்துச் சென்றான்.
+    music: sad
+    sfx: [{name: gate_open, at: 0.3, volume: 0.6}]
+    motion: zoom_out
+    image_prompt: >-
+      The dark silhouette of KAMSA standing in the prison doorway, DEVAKI weeping and holding
+      VASUDEVA inside the cell, six small oil lamps on the floor slowly going out, symbolic and
+      sorrowful, no violence shown
+
+  # 11 ------------------------------------------------------------- PRAYER
+  - text: >-
+      தேவகியின் கண்ணீர் வற்றவே இல்லை. ஆனாலும் அவள் இறைவனை நினைப்பதை நிறுத்தவில்லை. 'நாராயணா,
+      எங்களைக் காப்பாற்று' என்று இரவும் பகலும் மனமுருகி வேண்டினாள்.
+    music: sad
+    sfx: [{name: temple_bell, at: -3.0, volume: 0.35}]
+    motion: zoom_in
+    image_prompt: >-
+      DEVAKI praying with folded hands and tears in her eyes in front of a small oil lamp in the
+      prison cell, a faint vision of Lord Vishnu's silhouette glowing on the stone wall
+
+  # 12 ------------------------------------------------------------- BALARAMA
+  - text: >-
+      ஏழாவது முறை ஒரு அதிசயம் நடந்தது. இறைவனின் மாயசக்தியான யோகமாயை, அந்தக் குழந்தையை தேவகியின்
+      கருவிலிருந்து, கோகுலத்தில் வாழ்ந்த ரோகிணியின் கருவுக்கு மாற்றினாள். அந்தக் குழந்தையே பலராமன்.
+    music: divine
+    sfx: [{name: shimmer, at: 1.0, volume: 0.7}]
+    motion: zoom_out
+    image_prompt: >-
+      A glowing goddess of divine illusion floating in the night sky, a radiant orb of white light
+      travelling from the Mathura prison towards a peaceful cowherd village (Gokulam) across the
+      river, stars, magical mood
+
+  # 13 ------------------------------------------------------------- EIGHTH
+  - text: >-
+      பின்னர் தேவகி எட்டாவது முறையாகக் கருவுற்றாள். இந்த முறை அவள் முகத்தில் ஒரு தெய்வீக ஒளி
+      வீசியது. அதைக் கண்ட கம்சன் நடுங்கினான். சிறையைச் சுற்றிக் காவலை இரட்டிப்பாக்கினான்.
+    music: tension
+    ambience: [heartbeat]
+    motion: pan_right
+    image_prompt: >-
+      KAMSA peering through the prison bars with fear at DEVAKI, whose face glows with a soft divine
+      light, many armed guards with torches surrounding the prison
+
+  # 14 ------------------------------------------------------------- MIDNIGHT
+  - text: >-
+      ஆவணி மாதம், தேய்பிறை அஷ்டமி, ரோகிணி நட்சத்திரம். நள்ளிரவு நேரம். வெளியே மழை
+      கொட்டிக்கொண்டிருந்தது. சிறையின் உள்ளே ஒரு விசித்திரமான அமைதி நிலவியது.
+    music: night
+    ambience: [rain]
+    sfx: [{name: thunder, at: 0.5, volume: 0.5}]
+    motion: zoom_in
+    image_prompt: >-
+      Inside the prison cell at midnight, rain falling outside the barred window, a half moon behind
+      clouds, a single oil lamp flame, DEVAKI and VASUDEVA waiting in silence, calm mysterious mood
+
+  # 15 ------------------------------------------------------------- VISHNU (video clip)
+  - text: >-
+      திடீரென்று, அந்த இருண்ட சிறை முழுவதும் ஆயிரம் சூரியன்கள் உதித்தது போல ஒளி பரவியது. சங்கு,
+      சக்கரம், கதை, தாமரை ஏந்திய நான்கு திருக்கரங்களுடன், ஸ்ரீ மகாவிஷ்ணு அவர்கள் முன் தோன்றினார்.
+    music: divine
+    sfx: [{name: shimmer, at: 0.2, volume: 0.8}, {name: conch, at: 1.0, volume: 0.8}]
+    transition: fadewhite
+    video_clip: true
+    motion: zoom_out
+    image_prompt: >-
+      VISHNU appearing inside the dark prison cell in a blaze of golden light, DEVAKI and VASUDEVA
+      kneeling in awe, rays of light filling the cell, lotus petals floating
+
+  # 16 ------------------------------------------------------------- MESSAGE
+  - text: >-
+      'தாயே, அஞ்ச வேண்டாம். தர்மத்தைக் காக்கவே நான் உங்கள் மகனாகப் பிறக்கிறேன். தந்தையே, என்னை
+      உடனே கோகுலத்தில் உள்ள நந்தகோபரின் வீட்டுக்குக் கொண்டு செல்லுங்கள். அங்கே யசோதைக்குப்
+      பிறந்திருக்கும் பெண் குழந்தையை இங்கே கொண்டு வாருங்கள்.'
+    music: divine
+    motion: zoom_in
+    image_prompt: >-
+      VISHNU raising one hand in blessing (abhaya mudra), smiling gently at DEVAKI and VASUDEVA who
+      bow with folded hands, warm golden glow, peaceful
+
+  # 17 ------------------------------------------------------------- KANNAN IS BORN
+  - text: >-
+      இப்படிச் சொல்லிவிட்டு, இறைவன் ஒரு சின்னஞ்சிறு குழந்தையாக மாறினார். அந்தக் கணத்தில் பிறந்தான்
+      நம் கண்ணன்! நீலமேக வண்ணன், தாமரைக் கண்ணன். அந்தச் சிறு புன்னகையில் முழு உலகமும் மலர்ந்தது.
+    music: calm
+    sfx: [{name: shimmer, at: 2.5, volume: 0.6}, {name: temple_bell, at: 3.2, volume: 0.45}]
+    hold: 1.0
+    motion: zoom_in
+    image_prompt: >-
+      DEVAKI tenderly holding BABY_KRISHNA in her arms in the prison cell, tears of joy, VASUDEVA
+      looking on with love, the baby glowing softly, lotus flowers around, heavenly light
+
+  # 18 ------------------------------------------------------------- CHAINS FALL
+  - text: >-
+      அப்போது இன்னொரு அதிசயம்! வசுதேவரின் கைகால்களில் இருந்த இரும்புச் சங்கிலிகள் தானாகக் கழன்று
+      விழுந்தன. காவலர்கள் அனைவரும் ஆழ்ந்த உறக்கத்தில் மூழ்கினார்கள். பூட்டிய சிறைக் கதவுகள் தானாகவே
+      திறந்தன.
+    music: night
+    ambience: [rain]
+    sfx: [{name: chains, at: 1.0, volume: 0.8}, {name: gate_open, at: -4.0, volume: 0.9}]
+    motion: pan_right
+    image_prompt: >-
+      Iron chains falling open on their own from VASUDEVA's wrists, guards fast asleep against the
+      walls, the heavy prison gate swinging open by itself, magical blue light, rain outside
+
+  # 19 ------------------------------------------------------------- INTO THE STORM
+  - text: >-
+      வசுதேவர் குழந்தையை ஒரு கூடையில் மெதுவாக வைத்து, தலைமேல் சுமந்துகொண்டு, கொட்டும் மழையில்
+      வெளியே நடந்தார்.
+    music: storm
+    ambience: [rain]
+    sfx: [{name: thunder, at: 0.3, volume: 0.8}]
+    motion: pan_left
+    image_prompt: >-
+      VASUDEVA walking out of the prison into the stormy night carrying BABY_KRISHNA in a woven
+      bamboo basket on his head, heavy rain, lightning, determined face
+
+  # 20 ------------------------------------------------------------- YAMUNA IN FLOOD
+  - text: >-
+      எதிரே யமுனை நதி பெருவெள்ளமாகச் சீறிப் பாய்ந்துகொண்டிருந்தது. ஆனாலும் வசுதேவர் தயங்கவில்லை.
+      இறைவனை முழுமையாக நம்பி, நதியில் இறங்கினார்.
+    music: storm
+    ambience: [rain, river]
+    sfx: [{name: thunder, at: 2.0, volume: 0.6}]
+    motion: zoom_in
+    image_prompt: >-
+      The Yamuna river in raging flood at night, huge dark waves, VASUDEVA stepping into the water
+      with the basket held high on his head, lightning illuminating the scene
+
+  # 21 ------------------------------------------------------------- ADISHESHA (video clip)
+  - text: >-
+      அப்போது, ஆயிரம் தலைகள் கொண்ட ஆதிசேஷன் அவர்களின் பின்னால் தோன்றினான். தன் படங்களை விரித்துக்
+      குடையாக்கி, ஒரு மழைத்துளி கூடக் குழந்தையின் மேல் விழாமல் காத்தான்.
+    music: divine
+    ambience: [rain, river]
+    sfx: [{name: whoosh, at: 0.3, volume: 0.6}, {name: shimmer, at: 1.2, volume: 0.6}]
+    video_clip: true
+    motion: zoom_out
+    image_prompt: >-
+      The giant divine serpent Adishesha with many hooded heads rising from behind VASUDEVA in the
+      river, spreading its hoods like an umbrella over the basket with BABY_KRISHNA, rain bouncing
+      off the hoods, golden glow under them
+
+  # 22 ------------------------------------------------------------- YAMUNA PARTS
+  - text: >-
+      நீர்மட்டம் உயர்ந்து உயர்ந்து, வசுதேவரின் கழுத்து வரை வந்தது. ஆனால் யமுனை, குழந்தைக் கண்ணனின்
+      திருப்பாதங்களைத் தொட்டு வணங்கியதும், அமைதியாகி, இரண்டாகப் பிரிந்து வழிவிட்டாள்.
+    music: divine
+    ambience: [river]
+    sfx: [{name: whoosh, at: -4.5, volume: 0.6}, {name: shimmer, at: -4.0, volume: 0.6}]
+    motion: pan_up
+    image_prompt: >-
+      The river Yamuna parting into two walls of water, a glowing path opening in front of VASUDEVA,
+      BABY_KRISHNA's tiny foot touching the water from the basket, divine light, awe-inspiring
+
+  # 23 ------------------------------------------------------------- GOKULAM
+  - text: >-
+      வசுதேவர் கோகுலத்தை அடைந்தார். நந்தகோபரின் வீட்டில் எல்லோரும் ஆழ்ந்து உறங்கிக்கொண்டிருந்தார்கள்.
+      யசோதையின் அருகில், அப்போதுதான் பிறந்த ஒரு பெண் குழந்தை.
+    music: night
+    ambience: [crickets]
+    motion: pan_right
+    image_prompt: >-
+      A peaceful cowherd village (Gokulam) at night after the rain, mud houses with thatched roofs,
+      cows resting, inside one house YASHODA sleeping with a newborn baby girl beside her, a small
+      oil lamp, moonlight
+
+  # 24 ------------------------------------------------------------- EXCHANGE
+  - text: >-
+      வசுதேவர் கண்ணனை யசோதையின் அருகில் மெதுவாகப் படுக்க வைத்தார். அந்தப் பெண் குழந்தையைக் கையில்
+      ஏந்திக்கொண்டு, கனத்த இதயத்துடன் மதுராவுக்குத் திரும்பினார்.
+    music: sad
+    ambience: [crickets]
+    motion: zoom_in
+    image_prompt: >-
+      VASUDEVA gently laying BABY_KRISHNA beside the sleeping YASHODA and lifting the baby girl into
+      his arms, emotional, soft lamp light and moonlight
+
+  # 25 ------------------------------------------------------------- RETURN
+  - text: >-
+      அவர் சிறைக்குள் நுழைந்ததும், கதவுகள் மீண்டும் மூடிக்கொண்டன. சங்கிலிகள் மீண்டும் பூட்டிக்கொண்டன.
+      குழந்தையின் அழுகுரல் கேட்டு, காவலர்கள் விழித்தெழுந்து கம்சனுக்குச் செய்தி அனுப்பினார்கள்.
+    music: tension
+    sfx: [{name: gate_close, at: 0.8, volume: 0.9}, {name: chains, at: 3.6, volume: 0.7}]
+    motion: zoom_out
+    image_prompt: >-
+      Back in the prison cell, the gate closed again, DEVAKI holding the crying baby girl, guards
+      waking up startled with torches, one guard running out to call the king
+
+  # 26 ------------------------------------------------------------- KAMSA SEIZES
+  - text: >-
+      கம்சன் ஓடோடி வந்தான். தேவகி கதறினாள்: 'அண்ணா, இது பெண் குழந்தை! இவளையாவது விட்டுவிடு!'
+      ஆனால் கம்சன் கேட்கவில்லை. குழந்தையைப் பறித்து உயரே தூக்கினான். அந்தக் கணமே, அந்தக் குழந்தை
+      அவன் கையிலிருந்து நழுவி, வானை நோக்கிப் பறந்தது!
+    music: storm
+    sfx: [{name: impact, at: 0.3, volume: 0.7}, {name: whoosh, at: -3.0, volume: 0.8}]
+    motion: zoom_in_top
+    image_prompt: >-
+      KAMSA in rage lifting the baby girl high into the air inside the prison, DEVAKI pleading on
+      her knees, the baby beginning to glow and slip upward out of his hands, dramatic light
+
+  # 27 ------------------------------------------------------------- YOGAMAYA (video clip)
+  - text: >-
+      வானில், எட்டுக் கரங்களிலும் ஆயுதங்கள் ஏந்திய யோகமாயை தேவியாக அவள் ஒளிர்ந்தாள். 'மூடனே!
+      உன்னைக் கொல்லப் போகிறவன் ஏற்கனவே பிறந்துவிட்டான். அவன் வேறோர் இடத்தில் பாதுகாப்பாக
+      வளர்கிறான்!' என்று முழங்கி, மறைந்தாள்.
+    music: divine
+    ambience: [wind]
+    sfx: [{name: thunder, at: 0.2, volume: 0.9}, {name: shimmer, at: 0.8, volume: 0.7}]
+    transition: fadewhite
+    video_clip: true
+    motion: zoom_out
+    image_prompt: >-
+      YOGAMAYA appearing in the stormy night sky above the Mathura prison, eight arms holding weapons,
+      radiant and powerful, lightning around her, KAMSA below looking up terrified
+
+  # 28 ------------------------------------------------------------- FEAR
+  - text: >-
+      கம்சனின் கால்கள் நடுங்கின. முதன்முறையாக, அந்தக் கொடிய மன்னனின் இதயத்தில் பயம் குடிகொண்டது.
+    music: tension
+    ambience: [heartbeat]
+    hold: 0.8
+    motion: zoom_in
+    image_prompt: >-
+      Close-up of KAMSA's face in torchlight, eyes wide with fear for the first time, sweat on his
+      brow, dark shadows, dramatic portrait
+
+  # 29 ------------------------------------------------------------- CELEBRATION
+  - text: >-
+      மறுநாள் காலை, கோகுலம் முழுவதும் மகிழ்ச்சி வெள்ளம்! 'நந்தகோபருக்கு மகன் பிறந்திருக்கிறான்!'
+      என்று ஆயர்கள் ஆடிப் பாடினார்கள். யசோதையின் மடியில், நீலவண்ணக் கண்ணன் கலகலவென்று சிரித்தான்.
+    music: celebration
+    sfx: [{name: puja_bell, at: 0.5, volume: 0.5}, {name: temple_bell, at: -3.0, volume: 0.4}]
+    transition: fadewhite
+    motion: pan_left
+    image_prompt: >-
+      Gokulam at bright morning, villagers and cowherds dancing and celebrating, throwing turmeric and
+      flowers, Nanda smiling proudly, YASHODA holding a laughing BABY_KRISHNA, cows with decorated horns
+
+  # 30 ------------------------------------------------------------- MORAL + NEXT
+  - text: >-
+      இருள் எவ்வளவு அடர்ந்தாலும், நம்பிக்கையுடன் இருப்பவர்களை இறைவன் ஒருபோதும் கைவிடுவதில்லை.
+      ஆனால் கம்சன் சும்மா இருக்கவில்லை. கோகுலத்தில் வளரும் அந்தக் குழந்தையைத் தேடி, அவன் ஒரு கொடிய
+      அரக்கியை அனுப்பினான். அவள் யார்? அடுத்த அத்தியாயத்தில் பார்ப்போம்.
+    music: night
+    sfx: [{name: impact, at: -4.0, volume: 0.5}]
+    motion: zoom_in
+    image_prompt: >-
+      The shadow of a mysterious demoness flying through the night sky towards the sleeping village
+      of Gokulam, a full moon, ominous clouds, KAMSA's palace in the distance, cliffhanger mood
+
+outro:
+  text: >-
+    இந்தக் கதை உங்களுக்குப் பிடித்திருந்தால், லைக் செய்யுங்கள், சப்ஸ்கிரைப் செய்யுங்கள், உங்கள்
+    குடும்பத்தினருடன் பகிருங்கள். ஜெய் ஸ்ரீ கிருஷ்ணா!
+  title: "ஜெய் ஸ்ரீ கிருஷ்ணா!"
+  lines:
+    - "அடுத்த அத்தியாயம்: பூதனை"
+    - "லைக் • சப்ஸ்கிரைப் • ஷேர்"
+  min_seconds: 7
+  music: divine
+  sfx:
+    - {name: temple_bell, at: 0.3, volume: 0.6}
+
+youtube:
+  title: "கண்ணன் பிறந்தான் | ஸ்ரீ கிருஷ்ணர் கதை அத்தியாயம் 1 | Krishna Birth Story in Tamil"
+  description: |
+    மதுரா சிறையில், புயல் இரவில் பிறந்த கண்ணனின் அற்புதக் கதை! கம்சனுக்கு ஒலித்த அசரீரி,
+    தேவகி-வசுதேவரின் சிறை வாழ்க்கை, யமுனையைக் கடந்த அதிசயம், ஆதிசேஷனின் காவல், யோகமாயையின்
+    எச்சரிக்கை - ஸ்ரீமத் பாகவதத்தின்படி, முழுக் கதையும் தமிழில்.
+
+    ஸ்ரீ கிருஷ்ணர் கதை - பிறப்பு முதல் வைகுண்டம் வரை, ஒவ்வொரு வாரமும் புதிய அத்தியாயம்.
+    அடுத்த அத்தியாயம்: பூதனை.
+
+    The birth of Lord Krishna, told in Tamil - Episode 1 of the complete Sri Krishna story series,
+    based on the Srimad Bhagavatam (Canto 10).
+
+    Visuals created with AI tools. Narration voice generated with AI.
+
+    #கிருஷ்ணர் #KrishnaStory #Krishnajayanthi #TamilStory #கண்ணன் #Bhagavatam
+  tags: [கிருஷ்ணர் கதை, கண்ணன் பிறந்தான், கிருஷ்ண ஜெயந்தி, krishna story in tamil, krishna birth story,
+         gokulashtami, bhagavatam tamil, tamil devotional story, kamsan, yasodha krishna,
+         tamil mythology, ஆன்மீக கதைகள், krishna janmashtami, sri krishna, tamil kids story]
