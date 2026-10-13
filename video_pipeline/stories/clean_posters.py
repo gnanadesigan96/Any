@@ -1,14 +1,13 @@
 """Usage: python stories/clean_posters.py <originals dir> <out dir>
 
 Removes extra wording (logos, dates, taglines, credits) from the posters, keeping the artwork and the film's own
-title, and rebuilds the bottom band with just the film's name."""
+title, and cuts off the English-title strip at the bottom."""
 import sys, glob, time
 from pathlib import Path
 import cv2, numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 
 SRC, OUT = Path(sys.argv[1]), Path(sys.argv[2])
-FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 # (x0, y0, x1, y1, mode): "s" = remove only the letters inside the box, "f" = fill the whole box (solid logos/badges)
 BOXES = {
  "01": [(395,55,830,115,"s"),(245,195,960,275,"s"),(515,385,705,435,"s"),(370,625,810,665,"s")],
@@ -26,13 +25,12 @@ BOXES = {
         (530,1090,712,1378,"g"),(110,1395,1090,1600,"s")],
  "12": [(35,5,315,105,"s"),(815,5,1175,105,"s"),(845,1140,1135,1370,"s"),(380,1435,520,1490,"s"),(345,1410,535,1445,"s")],
  "13": [], "14": [(395,1295,845,1350,"s")], "15": [], "16": [],
- "17": [(20,50,185,165,"f"),(0,175,295,260,"s"),(1025,45,1200,115,"s"),(925,1520,1165,1585,"s")],
+ "17": [(20,50,185,165,"f"),(0,175,295,260,"s"),(1025,45,1200,115,"s"),(925,1520,1165,1585,"f")],
 }
-TITLES = {"01": "Raatchasi", "02": "Imaikkaa Nodigal", "03": "Maanagaram", "04": "Thegidi",
-          "05": "Onaayum Aattukkuttiyum", "06": "Maayavan", "07": "Aaranya Kaandam", "08": "Dhuruvangal Pathinaaru",
-          "09": "Pizza 2: Villa", "10": "Sathuranga Vettai", "11": "Mundasupatti", "12": "Maya",
-          "13": "Demonte Colony", "14": "Aruvi", "15": "Meyaadha Maan", "16": "Taramani", "17": "Yuddham Sei"}
-BAND_TOP = 1590
+STRIP_TOP = 1589  # where the English-title strip on the originals starts
+# Per-poster bottom edge: higher where credits sit just above the strip, lower where the title runs into it.
+CROP = {"01": 1585, "02": 1585, "06": 1580, "08": 1570, "09": 1540, "10": 1585, "11": 1585,
+        "12": 1655, "13": 1655, "15": 1650}
 
 def blank_badge(im, x0, y0, x1, y1):
     """Turns a text badge into a plain gold plaque: each row gets the median of its own gold pixels."""
@@ -94,35 +92,15 @@ def clean(path):
         soft = cv2.GaussianBlur(img, (0, 0), 2.2)
         m3 = cv2.GaussianBlur(mask, (0, 0), 3)[..., None] / 255.0
         img = (img * (1 - m3) + soft * m3).astype(np.uint8)
-    # Bottom band: fade into solid black (hides the credits that showed through), then just the title.
-    h, w = img.shape[:2]
-    a = np.zeros((h, 1), np.float32)
-    fade = 70
-    a[BAND_TOP - fade:BAND_TOP, 0] = np.linspace(0, 1, fade)
-    a[BAND_TOP:, 0] = 1
-    band = np.array([12, 10, 10], np.float32)
-    img = (img * (1 - a[..., None]) + band * a[..., None]).astype(np.uint8)
+    # Cut off the bottom strip (and the credits under it), keeping the artwork and its own title.
+    bottom = CROP.get(n, STRIP_TOP)
+    if bottom > STRIP_TOP:  # the strip is a see-through dark layer: lift it back to the artwork's own brightness
+        above = img[STRIP_TOP - 12:STRIP_TOP - 2].reshape(-1, 3).mean(0)
+        below = img[STRIP_TOP + 2:STRIP_TOP + 12].reshape(-1, 3).mean(0)
+        gain = np.clip(above / np.maximum(below, 1), 1, 4)
+        img[STRIP_TOP:] = np.clip(img[STRIP_TOP:] * gain, 0, 255).astype(np.uint8)
+    img = img[:bottom]
     pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    d = ImageDraw.Draw(pil)
-    title = TITLES[n]
-    size = 96
-    font = ImageFont.truetype(FONT, size)
-    lines = [title]
-    if d.textlength(title, font=font) > w - 120:  # long names: two lines, or smaller
-        words = title.split()
-        mid = len(words) // 2 or 1
-        lines = [" ".join(words[:mid]), " ".join(words[mid:])] if len(words) > 1 else [title]
-        size = 84
-        font = ImageFont.truetype(FONT, size)
-        while max(d.textlength(l, font=font) for l in lines) > w - 120:
-            size -= 4
-            font = ImageFont.truetype(FONT, size)
-    total = len(lines) * size * 1.15
-    y = BAND_TOP + (h - BAND_TOP - total) / 2
-    for line in lines:
-        tw = d.textlength(line, font=font)
-        d.text(((w - tw) / 2, y), line, font=font, fill=(255, 255, 255))
-        y += size * 1.15
     pil.save(OUT / path.name, quality=93)
 
 
