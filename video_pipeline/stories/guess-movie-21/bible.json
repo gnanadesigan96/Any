@@ -1,0 +1,27 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic film still, rural Tamil Nadu, warm golden colour grade with dusty earth tones, natural light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Elder",
+      "look": "Tamil man in his sixties, grey moustache, kind tired eyes, white shirt and white veshti with a green-bordered towel on his shoulder"
+    },
+    {
+      "name": "Wife",
+      "look": "Tamil woman in her late fifties, grey hair in a bun, big red bindi, simple cotton saree, gentle stubborn smile"
+    },
+    {
+      "name": "Driver",
+      "look": "Tamil man in his early thirties, lean, thick moustache, short hair, faded checked shirt, eager proud grin"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #21",
+      "summary": "A guess-the-movie Short retelling Pannaiyarum Padminiyum (பண்ணையாரும் பத்மினியும், 2014) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}
