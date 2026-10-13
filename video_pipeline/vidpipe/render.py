@@ -163,6 +163,24 @@ def _absolute_words(timing: list, timeline: list, scene_ids, offset: float, fps:
     return words
 
 
+def _render_poster_clip(image: Path, frames: int, out: Path, cfg: dict, blur: bool) -> None:
+    """The film's poster, whole, over a blurred and darkened copy of itself, with a slow push-in. blur=True hides it
+    (for the countdown) so it can't be read until the reveal."""
+    v = cfg["video"]
+    w, h, fps = v["width"], v["height"], v["fps"]
+    fg_w = int(w * 0.86) // 2 * 2
+    fg_blur = ",boxblur=luma_radius=28:luma_power=3" if blur else ""
+    vf = (f"[0:v]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},boxblur=luma_radius=40:luma_power=2,"
+          f"eq=brightness=-0.18[bg];"
+          f"[0:v]scale={fg_w}:{int(h * 0.8)}:force_original_aspect_ratio=decrease,"
+          f"scale=trunc(iw/2)*2:trunc(ih/2)*2{fg_blur}[fg];"
+          f"[bg][fg]overlay=(W-w)/2:(H-h)/2,scale={2 * w}:{2 * h},"
+          f"zoompan=z='min(1+0.0009*on,1.06)':d={frames}:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s={w}x{h}:fps={fps},"
+          f"format=yuv420p[v]")
+    run_ffmpeg(["-loop", "1", "-i", image, "-filter_complex", vf, "-map", "[v]", "-c:v", "libx264",
+                "-preset", v["preset"], "-crf", v["crf"], "-pix_fmt", "yuv420p", "-frames:v", frames, "-an", out])
+
+
 def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title: str = "",
                 scene_texts: list = None, overlay: dict = None) -> Path:
     """overlay (optional): {"hook": big opening text, "end_text"/"end_sub": end card} and, with
@@ -178,11 +196,16 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
     clips = [work / f"clip_{i:03d}.mp4" for i in range(len(timing))]
     wavs = [work / f"scene_{i:03d}.wav" for i in range(len(timing))]
 
+    kinds = overlay.get("kinds") or [""] * len(timing)
+
     def work_scene(i):
         if not clips[i].exists():
             text = scene_texts[i] if scene_texts else timing[i].get("text", "")
-            render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)], clips[i], cfg,
-                              index=i, text=text)
+            if kinds[i] in ("countdown", "reveal"):
+                _render_poster_clip(image_paths[i], timeline[i]["frames"], clips[i], cfg, blur=kinds[i] == "countdown")
+            else:
+                render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)], clips[i], cfg,
+                                  index=i, text=text)
         if not wavs[i].exists():
             _scene_wav(run_dir / "audio" / timing[i]["audio"], timeline[i]["frames"], fps, wavs[i])
 
@@ -197,19 +220,25 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
     ass = ""
     if v["captions"]:
         words = _absolute_words(timing, timeline, range(len(timing)), 0.0, fps)
+        countdown = [(timeline[i]["start"], timeline[i]["frames"] / fps) for i, k in enumerate(kinds) if k == "countdown"]
+        reveal = [timeline[i]["start"] for i, k in enumerate(kinds) if k == "reveal"]
         write_ass(group_words(words, v["caption_max_words"]), work / "captions.ass",
                   v["width"], v["height"], v["caption_font"], vertical=v["height"] > v["width"],
                   title=title, duration=duration, hook=overlay.get("hook", ""),
                   end_text=overlay.get("end_text", ""), end_sub=overlay.get("end_sub", ""),
-                  title_style=v.get("title_style", "banner"), hook_sub=overlay.get("hook_sub", ""))
+                  title_style=v.get("title_style", "banner"), hook_sub=overlay.get("hook_sub", ""),
+                  countdown=countdown[0] if countdown else None,
+                  reveal=(reveal[0], overlay.get("reveal_text", "")) if reveal else None)
         ass = "captions.ass"
     music, score = _pick_music(cfg, run_dir.name), False
     if v.get("score"):
         from .sound import build_score
         cuts = [t["start"] for t in timeline[1:]]
+        ticks = [timeline[i]["start"] + s for i, k in enumerate(kinds) if k == "countdown"
+                 for s in range(int(round(timeline[i]["frames"] / fps)))]
         music = build_score(work / "score.wav", duration, cuts, timeline[-1]["start"],
                             seed=sum(map(ord, run_dir.name)), whoosh=v.get("score_whoosh", False),
-                            riser=v.get("score_riser", False)).name
+                            riser=v.get("score_riser", False), ticks=ticks).name
         score = True
     log("Mixing final video...")
     _final_mix(work, "video_noaudio.mp4", "narration.wav", ass, final.resolve(), cfg, music, duration, score)

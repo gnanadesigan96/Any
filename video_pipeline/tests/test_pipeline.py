@@ -1184,10 +1184,15 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         assert short.hook_text == "" and ov["hook"] == "கதையைக் கேளுங்க!" and ov["hook_sub"]
         assert ov["end_text"] == "Guessinema" and ov["end_sub"]  # channel end card
         ep = eps[0]
-        spoken = " ".join(s.narration for s in ep.scenes)
-        last = ep.scenes[-1].narration
-        assert "கமெண்ட்" in last and "டிஸ்கிரிப்ஷன்" in last and "சப்ஸ்க்ரைப்" in last
-        assert spoken.count("சப்ஸ்க்ரைப்") == 1 and "லைக் பண்ண" not in spoken  # one call to action, said once
+        *story, countdown, reveal = ep.scenes
+        assert (countdown.kind, countdown.seconds, countdown.narration) == ("countdown", 5, "")
+        assert reveal.kind == "reveal" and reveal.narration.startswith(f"பதில்... {m['spoken']}!")
+        assert ep.reveal_text == f"பதில்: {m['written']}" and ov["kinds"][-2:] == ["countdown", "reveal"]
+        spoken = " ".join(s.narration for s in story)  # everything before the reveal
+        last = story[-1].narration
+        assert "கமெண்ட்" in last and "டிஸ்கிரிப்ஷன்" in last and "அஞ்சு விநாடில பதில்" in last
+        everything = spoken + " " + reveal.narration
+        assert everything.count("சப்ஸ்க்ரைப்") == 1 and "லைக் பண்ண" not in everything  # said once, at the reveal
         assert len(m["clues"]) == 2
         for i, c in enumerate(m["clues"], start=1):
             assert f"க்ளூ {i}: {c}" in short.description and c not in spoken  # clues only in the description
@@ -1195,7 +1200,7 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
                           *ep.hashtags, spoken])
         for word in [m["spoken"], *m.get("title_words", [])]:
             assert word not in shown, (m["n"], word)
-        assert "போன வீடியோ" not in spoken  # answers go in the comments, not the next video
+        assert "போன வீடியோ" not in spoken  # each video is self-contained
         assert short.title.startswith(m["tease"]) and short.title.endswith("| Guessinema") and len(short.title) <= 100
 
 
@@ -1217,3 +1222,26 @@ def test_your_own_picture_replaces_a_scene_and_wide_stills_fit_the_tall_frame(cf
     assert out.shape == (1920, 1080, 3)
     middle = out[960]
     assert middle.mean() > 150 and out[50].mean() < middle.mean()  # still across the middle, dimmed background
+
+
+def test_countdown_and_poster_reveal(cfg, tmp_path):
+    import types
+    from vidpipe.captions import write_ass
+    from vidpipe.voice import narrate_scenes
+    # The countdown is silent: no voice is asked for it, and the pace never shortens it.
+    cfg["voice"]["tempo"] = 1.2
+    scenes = [types.SimpleNamespace(narration="ஒன்று இரண்டு மூன்று", kind=""),
+              types.SimpleNamespace(narration="", kind="countdown", seconds=5),
+              types.SimpleNamespace(narration="பதில்... படம்!", kind="reveal")]
+    timing = narrate_scenes(scenes, tmp_path, cfg, dry_run=True)
+    assert abs(timing[1]["duration"] - 5) < 0.05 and timing[1]["words"] == []
+    assert media_duration(tmp_path / "audio" / timing[1]["audio"]) > 4.9
+    # Numbers 5..1, the answer over the poster, no captions on top of the poster, end card underneath.
+    phrases = [("ஒன்று", 0.2, 1.0), ("பதில்...", 9.2, 9.8)]
+    write_ass(phrases, tmp_path / "c.ass", 1080, 1920, "Arial", True, duration=12.0, end_text="Guessinema",
+              end_sub="சப்ஸ்க்ரைப்", countdown=(4.0, 5.0), reveal=(9.0, "பதில்: படம்"))
+    ass = (tmp_path / "c.ass").read_text()
+    counts = [l.rsplit("}", 1)[1] for l in ass.splitlines() if ",Count," in l and l.startswith("Dialogue")]
+    assert counts == ["5", "4", "3", "2", "1"]
+    assert "Reveal,,0,0,0,," in ass and "பதில்: படம்" in ass and "Guessinema" in ass
+    assert "ஒன்று" in ass and "பதில்...}" not in ass and ",Cap,,0,0,0,,பதில்..." not in ass

@@ -14,6 +14,8 @@ class Scene(BaseModel):
     narration: str
     visual: str
     search_query: str
+    kind: str = ""        # "" = a story scene; "countdown" (silent, blurred poster); "reveal" (the poster)
+    seconds: float = 0.0  # countdown length
 
 
 class Chapter(BaseModel):

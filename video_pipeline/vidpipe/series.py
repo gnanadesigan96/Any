@@ -44,6 +44,8 @@ class StoryScene(BaseModel):
     visual: str
     characters: list[str]
     subtitle: str = ""  # on-screen caption in another language than the narration (e.g. English under Tamil)
+    kind: str = ""      # "countdown" (silent, over the blurred poster) or "reveal" (the poster); last scenes only
+    seconds: float = 0.0
 
 
 class Episode(BaseModel):
@@ -54,6 +56,7 @@ class Episode(BaseModel):
     hashtags: list[str]
     scenes: list[StoryScene]
     hook_sub: str = ""  # optional second line under the opening title card, e.g. "60 விநாடியில் முழுக் கதை"
+    reveal_text: str = ""  # shown over the poster in the reveal scene, e.g. "பதில்: <film>"
     end_text: str = ""  # optional end card instead of "Part N+1 →" / "The End", e.g. a quiz question
     end_sub: str = ""
 
@@ -296,7 +299,8 @@ def to_pack(bible: SeriesBible, episodes: list, ui: dict = None) -> ShortsPack:
             hook_text=ui["tag"].format(n=e.part) if total > 1 else "",
             description=e.description.strip() + (f"\n\n{ui['of'].format(n=e.part, total=total)}" if total > 1 else ""),
             hashtags=hashtags,
-            scenes=[Scene(narration=s.narration, visual=image_prompt(s, bible), search_query="") for s in e.scenes],
+            scenes=[Scene(narration=s.narration, visual=s.visual if s.kind else image_prompt(s, bible), search_query="",
+                          kind=s.kind, seconds=s.seconds) for s in e.scenes],
             fact_check=[FactClaim(claim="(story retelling - no factual claims)", source="n/a")],
         ))
     return ShortsPack(shorts=shorts)
@@ -317,6 +321,8 @@ def overlays_for(bible: SeriesBible, episodes: list, cfg: dict) -> list:
         if e.end_text:
             end = {"end_text": e.end_text, "end_sub": e.end_sub}
         out.append({"hook": e.hook_text, **({"hook_sub": e.hook_sub} if e.hook_sub else {}), **end})
+        if any(sc.kind for sc in e.scenes):  # countdown / poster reveal at the end
+            out[-1].update(kinds=[sc.kind for sc in e.scenes], reveal_text=e.reveal_text)
         if subtitled:
             out[-1]["subtitles"] = [sc.subtitle for sc in e.scenes]
     return out
@@ -401,6 +407,8 @@ def make_series(story: str, notes: str, cfg: dict, dry_run: bool = False, redo: 
                 old.unlink()
 
     bible, episodes = write_series(run_dir, story, notes, cfg, dry_run)
+    if any(sc.kind for e in episodes for sc in e.scenes):  # needs the film's poster: check before spending anything
+        _copy_poster(resolve(script_dir) if script_dir else None, run_dir, dry_run)
     regenerated = not (run_dir / "metadata.json").exists()
     result = _make_shorts(run_dir, bible.series_title, to_pack(bible, episodes, ui_text(cfg, bible, episodes)), series_config(cfg, bible, episodes),
                           dry_run, assume_yes, regenerated, prefix="part", limit=first_n,
@@ -492,3 +500,34 @@ def _dummy_batch(bible: SeriesBible, first: int, last: int) -> EpisodeBatch:
 
 def batch_count(parts: int, per_batch: int) -> int:
     return math.ceil(parts / per_batch)
+
+
+POSTER_NAMES = [f"poster{ext}" for ext in (".jpg", ".jpeg", ".png", ".webp")]
+
+
+def find_poster(run_dir: Path):
+    return next((run_dir / n for n in POSTER_NAMES if (run_dir / n).exists()), None)
+
+
+def _copy_poster(src: Path, run_dir: Path, dry_run: bool) -> Path:
+    """The story folder's poster.jpg/.png/... is used for the countdown and the reveal."""
+    for name in POSTER_NAMES:
+        f = src / name if src else None
+        if f and f.exists():
+            for old in POSTER_NAMES:
+                if old != name:
+                    (run_dir / old).unlink(missing_ok=True)
+            dest = run_dir / name
+            if not dest.exists() or dest.read_bytes() != f.read_bytes():
+                dest.write_bytes(f.read_bytes())
+            return dest
+    if find_poster(run_dir):
+        return find_poster(run_dir)
+    if dry_run:  # a stand-in poster so dry runs work without one
+        from PIL import Image, ImageDraw
+        img = Image.new("RGB", (1000, 1500), (40, 30, 60))
+        ImageDraw.Draw(img).rectangle([80, 80, 920, 1420], outline=(230, 200, 80), width=12)
+        img.save(run_dir / "poster.jpg")
+        return run_dir / "poster.jpg"
+    where = src / "poster.jpg" if src else run_dir / "poster.jpg"
+    raise RuntimeError(f"This video ends with the film's poster: save it as {where} (or .png / .webp) and run again.")

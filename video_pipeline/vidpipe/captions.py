@@ -45,7 +45,8 @@ def _ass_escape(text: str) -> str:
 def write_ass(phrases: list, path: Path, width: int, height: int, font: str, vertical: bool,
               title: str = "", duration: float = 0.0, hook: str = "", end_text: str = "",
               end_sub: str = "", hook_seconds: float = 2.2, end_seconds: float = 2.6,
-              title_style: str = "banner", hook_sub: str = "") -> None:
+              title_style: str = "banner", hook_sub: str = "", countdown: tuple = None,
+              reveal: tuple = None) -> None:
     """Captions, plus optional overlays: `title` at the top for the whole video ("banner": big yellow text;
     "tag": a small, neat label on a soft dark box), `hook` as a big punch-in card for the first seconds,
     and an end card (`end_text` / `end_sub`) at the end."""
@@ -59,6 +60,8 @@ def write_ass(phrases: list, path: Path, width: int, height: int, font: str, ver
     else:
         title_line = (f"Style: Title,{font},{int(size * 1.15)},&H0000D7FF,&H0000D7FF,&H00000000,&H80000000,-1,0,0,0,"
                       f"100,100,0,0,1,{outline + 1},1,8,{int(width * 0.07)},{int(width * 0.07)},{int(height * 0.12)},1")
+    # With a poster reveal the end card sits low, under the poster, instead of covering it.
+    end_align, end_margin = (2, int(height * 0.035)) if reveal else (5, 0)
     header = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {width}
@@ -71,7 +74,9 @@ Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour,
 Style: Cap,{font},{size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,{outline},1,{align},{int(width * 0.08)},{int(width * 0.08)},{margin_v},1
 {title_line}
 Style: Hook,{font},{int(size * 1.7)},&H0000D7FF,&H0000D7FF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,5,{int(width * 0.06)},{int(width * 0.06)},0,1
-Style: End,{font},{int(size * 1.6)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,5,{int(width * 0.06)},{int(width * 0.06)},0,1
+Style: End,{font},{int(size * 1.6)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,{end_align},{int(width * 0.06)},{int(width * 0.06)},{end_margin},1
+Style: Count,{font},{int(size * 5)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 6},3,5,0,0,0,1
+Style: Reveal,{font},{int(size * 1.3)},&H0000D7FF,&H0000D7FF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,{outline + 3},2,8,{int(width * 0.06)},{int(width * 0.06)},{int(height * 0.04)},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -88,7 +93,18 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         sub = (f"\\N{{\\fs{int(size * 0.85)}\\c&H0000D7FF&}}{_ass_escape(end_sub.upper())}" if end_sub else "")
         lines.append(f"Dialogue: 2,{_ass_time(duration - end_seconds)},{_ass_time(duration)},End,,0,0,0,,"
                      "{\\fad(200,0)\\fscx120\\fscy120\\t(0,200,\\fscx100\\fscy100)}"
-                     + _ass_escape(end_text.upper()) + sub)
+                     + _ass_escape(end_text if reveal else end_text.upper()) + sub)  # a channel name keeps its case
+    if countdown:  # a big 5, 4, 3, 2, 1 over the blurred poster, one per second
+        start, seconds = countdown
+        n = int(round(seconds))
+        for k in range(n):
+            lines.append(f"Dialogue: 3,{_ass_time(start + k)},{_ass_time(start + k + 0.95)},Count,,0,0,0,,"
+                         "{\\fscx160\\fscy160\\t(0,180,\\fscx100\\fscy100)\\fad(0,150)}" + str(n - k))
+    if reveal and reveal[1] and duration > reveal[0]:
+        lines.append(f"Dialogue: 3,{_ass_time(reveal[0])},{_ass_time(duration)},Reveal,,0,0,0,,"
+                     "{\\fad(150,0)\\fscx120\\fscy120\\t(0,220,\\fscx100\\fscy100)}" + _ass_escape(reveal[1]))
+    if reveal:  # no captions over the poster: its title is usually at the bottom, and the answer is on screen
+        phrases = [(text, s, min(e, reveal[0])) for text, s, e in phrases if s < reveal[0] - 0.05]
     if hook:  # keep the first half second clean: that frame is the thumbnail
         phrases = [(text, max(s, 0.5), e) for text, s, e in phrases]
     lines += [

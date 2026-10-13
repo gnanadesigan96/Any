@@ -208,7 +208,7 @@ def shorts_config(cfg: dict) -> dict:
     return vcfg
 
 
-RENDER_VERSION = 3  # bump when the look/sound of renders changes, so existing videos are rebuilt
+RENDER_VERSION = 4  # bump when the look/sound of renders changes, so existing videos are rebuilt
 
 
 def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
@@ -286,8 +286,16 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
         kcfg, timing = _fit_length(short, sub, vcfg, timing, dry_run)
         log(f"  narration: {sum(t['duration'] for t in timing):.1f}s")
         siblings = [run_dir / n / "images" for j, n in enumerate(names, start=1) if j != k]
-        paths = _visuals(short.scenes, timing, sub / "images", kcfg, dry_run, used_ids(siblings),
+        # Countdown / reveal scenes (always last) show the film's poster instead of a generated picture.
+        story = next((i for i, sc in enumerate(short.scenes) if sc.kind), len(short.scenes))
+        paths = _visuals(short.scenes[:story], timing[:story], sub / "images", kcfg, dry_run, used_ids(siblings),
                          library=run_dir / "library")
+        if story < len(short.scenes):
+            from .series import find_poster
+            poster = find_poster(run_dir)
+            if not poster:
+                raise RuntimeError(f"No poster.jpg in {run_dir}: save the film's poster in its story folder.")
+            paths += [poster] * (len(short.scenes) - story)
         out = run_dir / f"{names[k - 1]}.mp4"
         overlay = (overlays or [{}] * len(pack.shorts))[k - 1]
         stamp, fp = sub / "fingerprint.txt", _fingerprint(short, overlay, paths, kcfg)

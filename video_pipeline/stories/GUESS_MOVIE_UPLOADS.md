@@ -1,8 +1,7 @@
 # Guess the movie: YouTube titles and descriptions
 
-Copy each block when uploading `runs/series-guess-movie-NN-tamil/part_01.mp4`. Pin the first comment when you
-upload; post the answer comment later (e.g. the next day) and pin it instead. This file contains the answers:
-keep the repository private.
+Copy each block when uploading `runs/series-guess-movie-NN-tamil/part_01.mp4`, and pin the comment.
+The answer is revealed at the end of each video, after a 5-second countdown over the blurred poster.
 
 ## #02
 
@@ -19,7 +18,7 @@ keep the repository private.
 🔍 க்ளூ 1: கதாநாயகி பேரு அஞ்சலி
 🔍 க்ளூ 2: நயன்தாரா சிபிஐ அதிகாரியா நடிச்ச படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -30,15 +29,13 @@ keep the repository private.
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: இமைக்கா நொடிகள்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-02/poster.jpg` before generating.
 
 ## #03
 
@@ -55,7 +52,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: முக்கிய கதாபாத்திரம் பேரு பரணி
 🔍 க்ளூ 2: லோகேஷ் கனகராஜ் இயக்கின முதல் படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -66,15 +63,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: மாநகரம்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-03/poster.jpg` before generating.
 
 ## #04
 
@@ -91,7 +86,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோ பேரு வெற்றி
 🔍 க்ளூ 2: அசோக் செல்வன் துப்பறிவாளரா நடிச்ச படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -102,15 +97,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: தெகிடி! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-04/poster.jpg` before generating.
 
 ## #05
 
@@ -127,7 +120,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோ பேரு சந்துரு
 🔍 க்ளூ 2: மிஷ்கின் இயக்கி, நடிச்ச படம்; இதுல பாட்டே கிடையாது
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -138,15 +131,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: ஓநாயும் ஆட்டுக்குட்டியும்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-05/poster.jpg` before generating.
 
 ## #06
 
@@ -163,7 +154,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோ பேரு குமரன்
 🔍 க்ளூ 2: சந்தீப் கிஷன் போலீஸா நடிச்ச சயின்ஸ் ஃபிக்ஷன் த்ரில்லர்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -174,15 +165,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: மாயவன்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-06/poster.jpg` before generating.
 
 ## #07
 
@@ -199,7 +188,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: முக்கிய கதாபாத்திரம் பேரு சுப்பு
 🔍 க்ளூ 2: தேசிய விருது வாங்கின, தமிழோட முதல் நியோ-நாய்ர் படம்னு சொல்லப்படுற படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -210,15 +199,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: ஆரண்ய காண்டம்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-07/poster.jpg` before generating.
 
 ## #08
 
@@ -235,7 +222,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: போலீஸ் அதிகாரி பேரு தீபக்
 🔍 க்ளூ 2: ரகுமான் நடிச்ச, இருபத்திரெண்டு வயசு இயக்குநரோட முதல் படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -246,15 +233,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: துருவங்கள் பதினாறு! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-08/poster.jpg` before generating.
 
 ## #09
 
@@ -271,7 +256,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோ பேரு ஜெபின்
 🔍 க்ளூ 2: அசோக் செல்வன் நடிச்ச, பாண்டிச்சேரியில நடக்குற திகில் படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -282,15 +267,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: பீட்சா 2: வில்லா! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-09/poster.jpg` before generating.
 
 ## #10
 
@@ -307,7 +290,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோ பேரு காந்தி பாபு
 🔍 க்ளூ 2: இயக்குநர் ஹெச். வினோத்தோட முதல் படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -318,15 +301,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: சதுரங்க வேட்டை! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-10/poster.jpg` before generating.
 
 ## #11
 
@@ -343,7 +324,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோ பேரு கோபி
 🔍 க்ளூ 2: விஷ்ணு விஷால் நடிச்ச, 1982-ல நடக்குற கிராமத்துக் காமெடி
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -354,15 +335,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: முண்டாசுப்பட்டி! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-11/poster.jpg` before generating.
 
 ## #12
 
@@ -379,7 +358,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோயின் பேரு அப்சரா
 🔍 க்ளூ 2: நயன்தாராவோட 50-வது படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -390,15 +369,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: மாயா! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-12/poster.jpg` before generating.
 
 ## #13
 
@@ -415,7 +392,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோ பேரு சீனு
 🔍 க்ளூ 2: அருள்நிதி நடிச்ச பேய்ப் படம்; 2024-ல இதோட ரெண்டாம் பாகம் வந்துச்சு
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -426,15 +403,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: டிமான்ட்டி காலனி! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-13/poster.jpg` before generating.
 
 ## #14
 
@@ -451,7 +426,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: அவளோட தோழி பேரு எமிலி
 🔍 க்ளூ 2: புதுமுகம் அதிதி பாலன் நடிச்ச படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -462,15 +437,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: அருவி! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-14/poster.jpg` before generating.
 
 ## #15
 
@@ -487,7 +460,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோ பேரு முரளி
 🔍 க்ளூ 2: வைபவ், பிரியா பவானி சங்கர் நடிச்ச வட சென்னைக் காதல் படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -498,15 +471,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: மேயாத மான்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-15/poster.jpg` before generating.
 
 ## #16
 
@@ -523,7 +494,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: ஹீரோ பேரு பிரபுநாத்
 🔍 க்ளூ 2: ஆண்ட்ரியா நடிச்ச, இயக்குநர் ராமோட படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -534,15 +505,13 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: தரமணி! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-16/poster.jpg` before generating.
 
 ## #17
 
@@ -559,7 +528,7 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 🔍 க்ளூ 1: போலீஸ் அதிகாரி பேரு ஜே.கே.
 🔍 க்ளூ 2: சேரன் நடிச்ச, மிஷ்கின் இயக்கின படம்
 
-👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
 🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
 
 #GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
@@ -570,13 +539,11 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
 ```
 
-**Pinned comment (on upload)**
+**Pinned comment**
 ```
-இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
 ```
 
-**Answer comment (later)**
-```
-✅ சரியான பதில்: யுத்தம் செய்! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉
-```
+**Poster**
+Save the film's poster as `stories/guess-movie-17/poster.jpg` before generating.
 

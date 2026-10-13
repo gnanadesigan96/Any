@@ -81,6 +81,10 @@ count with `--parts` (or `series.parts` in config.yaml) if a story needs more ro
   --voice-model eleven_v3 --fast --yes`. The first frame is a title card, saved as `part_01_thumbnail.jpg`.
 - **Quicker pictures:** `--fast` makes local pictures at 576x1024 (about 40% quicker, a little softer);
   `--images openai` uses paid pictures made several at a time (OPENAI_API_KEY), by far the fastest.
+- **Countdown reveal (guess the movie):** each quiz ends with "answer in 5 seconds, comment now", a 5-4-3-2-1
+  countdown with clock ticks over the film's blurred poster, then the poster sharp with "பதில்: <film>" and a boom.
+  Save the poster as `stories/guess-movie-NN/poster.jpg` (or .png/.webp) first; without it the run stops before
+  any voice or pictures are made.
 - **Your own picture for a scene:** save it next to the generated one as `scene_NNN.mine.jpg` (or .png/.jpeg/.webp),
   e.g. `runs/series-guess-movie-05-tamil/part_01/images/scene_007.mine.jpg`, and run the same command again: that
   scene uses your picture (with the same 2.5D motion) and only the video is re-rendered. Wide pictures such as film

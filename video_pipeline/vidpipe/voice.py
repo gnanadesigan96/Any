@@ -611,7 +611,22 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
            if vc["provider"] == "elevenlabs" else []),
         sort_keys=True)
 
+    for i, sc in enumerate(scenes):  # a countdown is silence: no voice, no credits, never sped up
+        if getattr(sc, "kind", "") == "countdown":
+            mp3 = audio_dir / f"scene_{i:03d}.mp3"
+            entry = cached.get(str(i), {})
+            if not (mp3.exists() and entry.get("silent") and entry.get("seconds") == sc.seconds):
+                run_ffmpeg(["-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", f"{sc.seconds:.3f}",
+                            "-c:a", "libmp3lame", "-q:a", "6", mp3])
+                cached[str(i)] = {"text": "", "audio": mp3.name, "sig": sig, "silent": True, "seconds": sc.seconds,
+                                  "duration": sc.seconds, "words": [], "tempo": float(cfg["voice"].get("tempo", 1.0))}
+
+    def silent(i):
+        return getattr(scenes[i], "kind", "") == "countdown"
+
     def fresh(i):
+        if silent(i):
+            return True
         entry = cached.get(str(i), {})
         return ((audio_dir / f"scene_{i:03d}.mp3").exists() and entry.get("text") == scenes[i].narration
                 and entry.get("sig", sig) == sig)
@@ -649,7 +664,8 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
             cached[str(i)] = info
     tempo = float(cfg["voice"].get("tempo", 1.0))
     for i in range(len(scenes)):
-        _apply_tempo(audio_dir / f"scene_{i:03d}.mp3", cached[str(i)], tempo)
+        if not silent(i):
+            _apply_tempo(audio_dir / f"scene_{i:03d}.mp3", cached[str(i)], tempo)
     write_json(timing_path, cached)
     return [cached[str(i)] for i in range(len(scenes))]
 

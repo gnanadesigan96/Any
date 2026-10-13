@@ -3,16 +3,22 @@
 Add a movie to MOVIES and run:  python stories/make_guess_movies.py stories
 
 Format: a title card ("கதையைக் கேளுங்க! / படத்தைக் கண்டுபிடிங்க") over the first picture, the story with no
-character names and no word from the title, then one spoken call to action (comment the answer, the clue is in
-the description, subscribe to the channel) and a channel end card. Answers are posted in the comments, not in the
-next video. The description has two clues: the main character's name and one easy clue."""
+character names and no word from the title, "the clue is in the description, answer in 5 seconds, comment now", a
+5-second countdown over the blurred poster, then the reveal: the poster, "பதில்: <film>", and subscribe (said once),
+with the channel end card under the poster. Save each film's poster as stories/guess-movie-NN/poster.jpg.
+The description has two clues: the main character's name and one easy clue."""
 import json, sys
 from pathlib import Path
 out = Path(sys.argv[1])
 CHANNEL = "Guessinema"            # shown on the end card and in descriptions
 CHANNEL_SPOKEN = "கெஸ்ஸினிமா"      # how the narrator says it
-CTA = (f"இந்தப் படம் எது? கமெண்ட்ல சொல்லுங்க. க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு! "
-       f"{CHANNEL_SPOKEN} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!")
+# The last story line leads into a 5-second countdown over the blurred poster, then the reveal.
+CTA = "இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!"
+COUNTDOWN_SECONDS = 5
+
+
+def reveal_line(spoken: str) -> str:
+    return f"பதில்... {spoken}! சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. {CHANNEL_SPOKEN} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க!"
 VILLAGE = ("photorealistic cinematic film still, rural Tamil Nadu, warm golden colour grade with dusty earth tones, natural "
            "light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions")
 NIGHT = ("photorealistic cinematic action film still, Tamil Nadu at night, high-contrast teal and orange colour grade, "
@@ -212,7 +218,7 @@ NEW13 = [
    ("கதை புரிஞ்சுதா? " + CTA,
     "the officer alone at a rain-streaked window, looking out into the night", ["Officer"]),
   ]),
- dict(n=9, tease='எதிர்காலத்தை முன்னாடியே வரைஞ்ச அப்பா!', answer="Pizza 2: Villa (பீட்சா 2: வில்லா, 2013)", spoken="வில்லா", written="பீட்சா 2: வில்லா",
+ dict(n=9, tease='எதிர்காலத்தை முன்னாடியே வரைஞ்ச அப்பா!', answer="Pizza 2: Villa (பீட்சா 2: வில்லா, 2013)", spoken="பீட்சா டூ, வில்லா", written="பீட்சா 2: வில்லா",
   title_words=["பீட்சா", "வில்லா"], style=HORROR,
   clues=["ஹீரோ பேரு ஜெபின்", "அசோக் செல்வன் நடிச்ச, பாண்டிச்சேரியில நடக்குற திகில் படம்"],
   chars={"Writer": "Tamil man in his late twenties, short wavy hair, light beard, thoughtful eyes, casual linen shirt",
@@ -436,11 +442,15 @@ for m in MOVIES:
           "hook_text": "கதையைக் கேளுங்க!", "hook_sub": "படத்தைக் கண்டுபிடிங்க",
           "description": (f"{m['tease']}\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n"
                           f"🔍 க்ளூ 1: {c1}\n🔍 க்ளூ 2: {c2}\n\n"
-                          f"👇 பதிலை கமெண்ட்ல சொல்லுங்க! சரியான பதில் பின் பண்ணின கமெண்ட்ல வரும்.\n"
+                          f"👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n"
                           f"🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு {CHANNEL} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க."),
           "hashtags": ["#GuessTheMovie", "#படம்எது", "#Guessinema", "#TamilMovie", "#TamilShorts", "#Shorts"],
           "end_text": CHANNEL, "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
-          "scenes": [{"narration": n, "visual": v, "characters": c} for n, v, c in m["scenes"]]}
+          "reveal_text": f"பதில்: {m['written']}",
+          "scenes": [{"narration": n, "visual": v, "characters": c} for n, v, c in m["scenes"]]
+                    + [{"narration": "", "visual": "poster", "characters": [], "kind": "countdown",
+                        "seconds": COUNTDOWN_SECONDS},
+                       {"narration": reveal_line(m["spoken"]), "visual": "poster", "characters": [], "kind": "reveal"}]}
     (d / "bible.json").write_text(json.dumps(bible, ensure_ascii=False, indent=2) + "\n")
     (d / "parts_01-01.json").write_text(json.dumps({"episodes": [ep]}, ensure_ascii=False, indent=2) + "\n")
     stale = d / "parts_01.json"
@@ -452,9 +462,8 @@ for m in MOVIES:
 
 # Copy-paste sheet for uploading: the same title and description the pipeline uses, plus the comments to pin.
 sheet = ["# Guess the movie: YouTube titles and descriptions", "",
-         "Copy each block when uploading `runs/series-guess-movie-NN-tamil/part_01.mp4`. Pin the first comment when you",
-         "upload; post the answer comment later (e.g. the next day) and pin it instead. This file contains the answers:",
-         "keep the repository private.", ""]
+         "Copy each block when uploading `runs/series-guess-movie-NN-tamil/part_01.mp4`, and pin the comment.",
+         "The answer is revealed at the end of each video, after a 5-second countdown over the blurred poster.", ""]
 for m in MOVIES:
     if m.get("published"):
         continue
@@ -463,6 +472,6 @@ for m in MOVIES:
     sheet += [f"## #{m['n']:02d}", "", "**Title** (" + str(len(title)) + " characters)", "```", title, "```", "",
               "**Description**", "```", ep["description"], "", " ".join(ep["hashtags"]), "```", "",
               "**Tags**", "```", ", ".join(h.lstrip("#") for h in ep["hashtags"]) + ", tamil movie quiz, guess the tamil movie", "```", "",
-              "**Pinned comment (on upload)**", "```", "இந்தப் படம் எது? 🤔 உங்க பதிலை கீழ கமெண்ட் பண்ணுங்க! 👇", "```", "",
-              "**Answer comment (later)**", "```", f"✅ சரியான பதில்: {m['written']}! சரியா சொன்னவங்களுக்கு வாழ்த்துக்கள் 🎉", "```", ""]
+              "**Pinned comment**", "```", "பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇", "```", "",
+              "**Poster**", f"Save the film's poster as `stories/guess-movie-{m['n']:02d}/poster.jpg` before generating.", ""]
 (out / "GUESS_MOVIE_UPLOADS.md").write_text("\n".join(sheet) + "\n")

@@ -35,6 +35,11 @@ def _whoosh(rng) -> np.ndarray:
     return airy * env * 0.6
 
 
+def _tick() -> np.ndarray:
+    t = np.arange(int(0.09 * SR)) / SR
+    return (np.sin(2 * np.pi * 1800 * t) * 0.6 + np.sin(2 * np.pi * 3600 * t) * 0.25) * np.exp(-t * 70)
+
+
 def _riser(seconds: float, rng) -> np.ndarray:
     n = int(seconds * SR)
     t = np.arange(n) / SR
@@ -46,7 +51,7 @@ def _riser(seconds: float, rng) -> np.ndarray:
 
 
 def build_score(path: Path, duration: float, cut_times: list, climax_time: float, seed: int = 0,
-                whoosh: bool = False, riser: bool = False) -> Path:
+                whoosh: bool = False, riser: bool = False, ticks: list = ()) -> Path:
     """Writes a mono 44.1 kHz WAV `duration` seconds long."""
     rng = np.random.default_rng(seed)
     n = int(duration * SR)
@@ -70,6 +75,8 @@ def build_score(path: Path, duration: float, cut_times: list, climax_time: float
     for cut in (cut_times if whoosh else []):
         if 0.5 < cut < duration - 0.3:
             place(_whoosh(rng), max(cut - 0.35, 0), 0.5)
+    for at in ticks:  # a clock tick each second of a countdown
+        place(_tick(), at, 0.8)
     if climax_time > 3.5:
         if riser:  # a rising whoosh into the last scene (off by default: it sounds like a whoosh at the end)
             place(_riser(3.0, rng), climax_time - 3.0, 0.9)
