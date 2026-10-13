@@ -1,0 +1,27 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic film still, Chennai, rich vibrant colour grade, soft natural light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Kidnapper",
+      "look": "Tamil man in his early forties, slightly paunchy, greying stubble, messy hair, faded shirt, calm sleepy eyes"
+    },
+    {
+      "name": "Boys",
+      "look": "three broke Tamil men in their mid twenties, crumpled casual shirts, restless hungry expressions"
+    },
+    {
+      "name": "MinisterSon",
+      "look": "spoiled Tamil man in his mid twenties, branded t-shirt, sunglasses pushed up on his head, cocky grin"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #20",
+      "summary": "A guess-the-movie Short retelling Soodhu Kavvum (சூது கவ்வும், 2013) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

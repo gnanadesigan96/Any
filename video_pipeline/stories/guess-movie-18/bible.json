@@ -1,0 +1,23 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic film still, Chennai, rich vibrant colour grade, soft natural light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Groom",
+      "look": "Tamil man in his late twenties, lean build, short messy black hair, light stubble, simple checked shirt, dazed confused eyes"
+    },
+    {
+      "name": "Friends",
+      "look": "three Tamil men in their late twenties, casual shirts and jeans, one stocky, one tall and thin, one with spectacles, nervous expressions"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #18",
+      "summary": "A guess-the-movie Short retelling Naduvula Konjam Pakkatha Kaanom (நடுவுல கொஞ்சம் பக்கத்தக் காணோம், 2012) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

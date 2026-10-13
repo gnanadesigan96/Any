@@ -581,3 +581,105 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 **Poster**
 Save the film's poster as `stories/guess-movie-17/poster.jpg` before generating.
 
+## #18
+
+**Title** (98 characters)
+```
+கல்யாணத்துக்கு ரெண்டு நாள் முன்னாடி ஞாபகத்தை இழந்த மாப்பிள்ளை! 🤔 இந்தப் படம் எது? #18 | Guessinema
+```
+
+**Description**
+```
+கல்யாணத்துக்கு ரெண்டு நாள் முன்னாடி ஞாபகத்தை இழந்த மாப்பிள்ளை!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: கதாநாயகன் பேரு பிரேம்
+🔍 க்ளூ 2: விஜய் சேதுபதி நடிச்ச, ஒரு ஒளிப்பதிவாளரோட வாழ்க்கையில நடந்த உண்மைக் கதை
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-18/poster.jpg` before generating.
+
+## #19
+
+**Title** (92 characters)
+```
+நேருக்கு நேரா மோதுற ரெண்டு பஸ்... உள்ள ரெண்டு காதல் கதை! 🤔 இந்தப் படம் எது? #19 | Guessinema
+```
+
+**Description**
+```
+நேருக்கு நேரா மோதுற ரெண்டு பஸ்... உள்ள ரெண்டு காதல் கதை!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: நர்ஸ் பேரு மணிமேகலை
+🔍 க்ளூ 2: ஜெய், அஞ்சலி நடிச்ச படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-19/poster.jpg` before generating.
+
+## #20
+
+**Title** (81 characters)
+```
+தன்னைத் தானே கடத்திக்கிட்ட ஒரு அமைச்சர் மகன்! 🤔 இந்தப் படம் எது? #20 | Guessinema
+```
+
+**Description**
+```
+தன்னைத் தானே கடத்திக்கிட்ட ஒரு அமைச்சர் மகன்!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: கடத்தல்காரன் பேரு தாஸ்
+🔍 க்ளூ 2: விஜய் சேதுபதிக்கு ஒரு கற்பனைக் காதலி இருக்கிற படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-20/poster.jpg` before generating.
+
