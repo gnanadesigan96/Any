@@ -1188,6 +1188,8 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         ep = eps[0]
         *story, countdown, reveal, outro = ep.scenes
         assert (countdown.kind, countdown.seconds, countdown.narration) == ("countdown", 5, "")
+        # The opening card sits on the first story picture: the poster is never shown before the countdown.
+        assert all(not sc.kind and sc.visual != "poster" for sc in story)
         # The answer is its own line, said only after the countdown; comment/subscribe/thanks follow on the end screen.
         assert reveal.kind == "reveal" and reveal.narration == f"பதில்... {m['spoken']}!" and reveal.seconds >= 2.5
         assert outro.kind == "outro" and "நன்றி" in outro.narration and outro.seconds >= 4
