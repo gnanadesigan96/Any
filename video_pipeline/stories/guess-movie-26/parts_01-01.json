@@ -2,11 +2,11 @@
   "episodes": [
     {
       "part": 1,
-      "title": "கடல் கடந்து போன ஒரு கொலை வழக்கு! 🤔 இந்தப் படம் எது? #26",
+      "title": "ஒரு போலீஸ் குடும்பத்தைத் துரத்துற மரணம்! 🤔 இந்தப் படம் எது? #26",
       "hook_text": "Guess the movie",
       "hook_sub": "from the story",
       "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
-      "description": "கடல் கடந்து போன ஒரு கொலை வழக்கு!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: டிசிபி பேரு ராகவன்\n🔍 க்ளூ 2: கமல்ஹாசன், ஜோதிகா நடிச்ச, கௌதம் மேனன் இயக்கின படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "description": "ஒரு போலீஸ் குடும்பத்தைத் துரத்துற மரணம்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: போலீஸ் அதிகாரி பேரு ராகவன்\n🔍 க்ளூ 2: கமல்ஹாசன், ஜோதிகா நடிச்ச, கௌதம் மேனன் இயக்கின படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
       "hashtags": [
         "#GuessTheMovie",
         "#படம்எது",
@@ -30,47 +30,45 @@
       "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
-          "narration": "ஒரு மூத்த போலீஸ் அதிகாரியோட மகள் காணாமப் போறா. கொஞ்ச நாள்ல, அவ உடல் கிடைக்குது.",
-          "visual": "police jeeps and torch beams in a dark field on the outskirts of a Tamil town at night, officers gathered, nothing graphic",
+          "narration": "ஒரு இளம் பொண்ணு காணாமப் போறா. சில நாள்ல, அவ உடல் கிடைக்குது.",
+          "visual": "torch beams in a dark empty field on the outskirts of a town at night, a few policemen standing in the distance, nothing graphic",
           "characters": []
         },
         {
-          "narration": "அந்த அதிகாரியைத் தன் குருவா மதிக்கிற, ஒரு கண்டிப்பான டிசிபி, வழக்கைக் கையில எடுக்கிறார்.",
-          "visual": "the DCP standing in the rain beside a police jeep at night, grim and determined",
-          "characters": [
-            "DCP"
-          ]
-        },
-        {
-          "narration": "ஆனா கொலையாளிங்க சிக்கல. உடைஞ்சு போன அந்தக் குடும்பம், அமெரிக்காவுக்குப் போயிடுது.",
-          "visual": "a grieving older couple with suitcases at an airport gate, the man holding his wife's shoulder",
+          "narration": "அவளோட அப்பா, ஒரு மூத்த போலீஸ் அதிகாரி. கொலையாளிங்க யாருன்னே தெரியல.",
+          "visual": "a grieving older police officer in uniform sitting alone at a dining table at night, staring at his daughter's empty chair",
           "characters": []
         },
         {
-          "narration": "சில மாசத்துல, அங்கேயும் அவங்க கொல்லப்படுறாங்க. டிசிபி, நியூயார்க்குக்குப் பறக்கிறார்.",
-          "visual": "the DCP in his overcoat walking down a snowy New York street at night, yellow cabs and neon behind him",
+          "narration": "மனசு உடைஞ்சு, அந்தக் குடும்பம் ஊரை விட்டே போயிடுது. ஆனா... அங்கேயும் மரணம் அவங்களைத் துரத்துது.",
+          "visual": "an older couple locking the front door of their house at dawn, suitcases beside them, a long shadow falling across the doorway",
+          "characters": []
+        },
+        {
+          "narration": "தன் மனைவியை இழந்த வலியோட வாழ்ற, ஒரு கண்டிப்பான போலீஸ் அதிகாரி. இந்த வழக்கைத் தேடி, அவர் கிளம்புறார்.",
+          "visual": "the officer standing alone in the rain at night under a streetlight, holding a small framed photo, grim and determined",
           "characters": [
-            "DCP"
+            "Officer"
           ]
         },
         {
-          "narration": "அங்க, கணவன்கிட்ட இருந்து தப்பி வந்த ஒரு பெண்ணைச் சந்திக்கிறார். அவரும், தன் மனைவியை இழந்த வலியோடதான் வாழ்றார்.",
-          "visual": "the DCP and the woman sitting quietly on a bench by the river at night, the city skyline behind them",
+          "narration": "போன இடத்துல, கணவன்கிட்ட இருந்து தப்பி வந்த ஒரு பெண்ணைச் சந்திக்கிறார். ரெண்டு உடைஞ்ச மனசுகள்.",
+          "visual": "the officer and the woman sitting quietly at opposite ends of a bench by a river at night, city lights blurred behind them",
           "characters": [
-            "DCP",
+            "Officer",
             "Woman"
           ]
         },
         {
-          "narration": "கொலையாளிங்க, எப்பவும் ஒரு அடி முன்னால. இந்தத் துரத்தல், எங்க போய் முடியும்?",
-          "visual": "the DCP running down an empty, dimly lit New York subway platform at night, gun drawn",
+          "narration": "ஆனா கொலையாளிங்க, ஒவ்வொரு தடவையும் அவரை விட ஒரு அடி முன்னால. இந்தத் துரத்தல் எங்க போய் முடியும்?",
+          "visual": "the officer running down a long, dimly lit underground corridor at night, gun drawn, his shadow stretched on the wall",
           "characters": [
-            "DCP"
+            "Officer"
           ]
         },
         {
           "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
-          "visual": "an empty rain-soaked New York alley at night, steam rising from a grate",
+          "visual": "an empty rain-soaked alley at night, steam rising from a grate, a single light at the far end",
           "characters": []
         },
         {
