@@ -785,3 +785,105 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 **Poster**
 Save the film's poster as `stories/guess-movie-23/poster.jpg` before generating.
 
+## #24
+
+**Title** (80 characters)
+```
+அவனுக்கே தெரியாம, அவனோட காதலியான ஒரு பொண்ணு! 🤔 இந்தப் படம் எது? #24 | Guessinema
+```
+
+**Description**
+```
+அவனுக்கே தெரியாம, அவனோட காதலியான ஒரு பொண்ணு!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: ஹீரோ பேரு சஞ்சய் ராமசாமி
+🔍 க்ளூ 2: சூர்யா, அசின் நடிச்ச, ஏ.ஆர். முருகதாஸ் இயக்கின படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-24/poster.jpg` before generating.
+
+## #25
+
+**Title** (71 characters)
+```
+சின்னத் தப்புக்கு, கொடூரமான தண்டனை! 🤔 இந்தப் படம் எது? #25 | Guessinema
+```
+
+**Description**
+```
+சின்னத் தப்புக்கு, கொடூரமான தண்டனை!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: ஹீரோவோட செல்லப் பேரு அம்பி
+🔍 க்ளூ 2: விக்ரம் நடிச்ச, ஷங்கர் இயக்கின படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-25/poster.jpg` before generating.
+
+## #26
+
+**Title** (68 characters)
+```
+கடல் கடந்து போன ஒரு கொலை வழக்கு! 🤔 இந்தப் படம் எது? #26 | Guessinema
+```
+
+**Description**
+```
+கடல் கடந்து போன ஒரு கொலை வழக்கு!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: டிசிபி பேரு ராகவன்
+🔍 க்ளூ 2: கமல்ஹாசன், ஜோதிகா நடிச்ச, கௌதம் மேனன் இயக்கின படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-26/poster.jpg` before generating.
+

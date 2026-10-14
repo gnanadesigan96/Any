@@ -1,0 +1,103 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "அவனுக்கே தெரியாம, அவனோட காதலியான ஒரு பொண்ணு! 🤔 இந்தப் படம் எது? #24",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "அவனுக்கே தெரியாம, அவனோட காதலியான ஒரு பொண்ணு!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: ஹீரோ பேரு சஞ்சய் ராமசாமி\n🔍 க்ளூ 2: சூர்யா, அசின் நடிச்ச, ஏ.ஆர். முருகதாஸ் இயக்கின படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: கஜினி",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "சென்னையில, ஒரு பெரிய செல்போன் கம்பெனியோட முதலாளி. ஒரு நாள் கேள்விப்படுறான்... ஒரு விளம்பர மாடல் பொண்ணு, தான்தான் அவனோட காதலின்னு ஊரெல்லாம் சொல்லிக்கிட்டு இருக்கா!",
+          "visual": "the tycoon in a glass-walled office high above Chennai, reading a newspaper with a surprised, amused smile",
+          "characters": [
+            "Tycoon"
+          ]
+        },
+        {
+          "narration": "கோபத்தோட அவளைப் பார்க்கப் போறான். ஆனா அவளோட வெகுளித்தனத்துல, அவனே விழுந்துடுறான்.",
+          "visual": "the model laughing and chatting on a busy Chennai street, the tycoon in a plain shirt watching her, smitten",
+          "characters": [
+            "Model",
+            "Tycoon"
+          ]
+        },
+        {
+          "narration": "தான் யாருன்னு சொல்லாம, ஒரு சாதாரண ஆளா அவகிட்ட பழகுறான்.",
+          "visual": "the tycoon in a simple shirt and the model sharing an ice cream on Marina beach at sunset, both laughing",
+          "characters": [
+            "Tycoon",
+            "Model"
+          ]
+        },
+        {
+          "narration": "அவளுக்கோ பெரிய மனசு. கடத்திட்டுப் போன சின்னப் பொண்ணுங்களை, ஒரு கும்பல்கிட்ட இருந்து காப்பாத்துறா.",
+          "visual": "the model bravely leading a group of frightened young girls out of a dark train compartment at a railway station at night",
+          "characters": [
+            "Model"
+          ]
+        },
+        {
+          "narration": "அந்தக் கும்பலோட தலைவன், அதை மறக்கல. ஒரு இரவு... எல்லாமே மாறிப் போகுது.",
+          "visual": "a menacing man in a dark shirt standing in a dim corridor, an iron rod in his hand, his face half in shadow",
+          "characters": []
+        },
+        {
+          "narration": "அதுக்கப்புறம், அவனோட வாழ்க்கைக்கு ஒரே நோக்கம்... பழி வாங்குறது!",
+          "visual": "the tycoon standing alone in the rain at night, fists clenched, a hard cold stare",
+          "characters": [
+            "Tycoon"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "a cracked mobile phone lying on a wet road at night under a streetlight",
+          "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "கஜினி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ]
+    }
+  ]
+}
