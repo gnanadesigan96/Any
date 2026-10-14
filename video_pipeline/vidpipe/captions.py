@@ -169,7 +169,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         lines.append(f"Dialogue: 2,{_ass_time(duration - end_seconds)},{_ass_time(duration)},End,,0,0,0,,"
                      "{\\fad(200,0)\\fscx120\\fscy120\\t(0,200,\\fscx100\\fscy100)}"
                      + _ass_escape(end_text if reveal else end_text.upper()) + sub)  # a channel name keeps its case
-    for start, seconds, label in [(*countdown, count_label)] * bool(countdown) + [clue_countdown] * bool(clue_countdown):
+    rings = ([(*countdown, count_label)] if countdown else []) + ([clue_countdown] if clue_countdown else [])
+    for start, seconds, label in rings:
         # a big 5, 4, 3, 2, 1 inside the countdown ring (finale.render_countdown), one per second
         from .finale import LAYOUT as L
         n = int(round(seconds))
