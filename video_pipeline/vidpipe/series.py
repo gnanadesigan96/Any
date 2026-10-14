@@ -271,8 +271,19 @@ def write_series(run_dir: Path, story: str, notes: str, cfg: dict, dry_run: bool
 
 
 _FEMALE = re.compile(r"\b(woman|women|girls?|lady|ladies|bride|mother|wife|daughter|nurse|headmistress|sister|"
-                     r"actress|grandmother|she|her)\b", re.I)
+                     r"actress|grandmother|granny|aunt|widow|heroine|she|her|hers|saree|half-saree)\b", re.I)
+_MALE = re.compile(r"\b(man|men|boys?|guy|groom|husband|father|son|brother|uncle|grandfather|king|hero|he|him|his|"
+                   r"veshti|lungi)\b", re.I)
 _FACIAL_HAIR = re.compile(r"moustache|mustache|beard|stubble", re.I)
+# The image model spreads one person's features to everyone in the picture: a man's moustache ends up on the woman
+# next to him, a bride's saree on the groom. Every picture with both men and women in it gets this, near the start.
+GENDER_RULE = ("Women and girls have smooth, clean-shaven feminine faces with no moustache, beard or facial hair; "
+               "men and boys wear only men's clothes (shirt, trousers, veshti or lungi), never a saree, blouse or "
+               "any women's clothes")
+
+
+def _is_female(look: str) -> bool:
+    return bool(re.search(r"\b(woman|girl|lady|grandmother)\b", look, re.I))
 
 
 def image_prompt(scene: StoryScene, bible: SeriesBible) -> str:
@@ -282,13 +293,21 @@ def image_prompt(scene: StoryScene, bible: SeriesBible) -> str:
     # Framing first: the image model weighs the start of the prompt most, and the 2.5D camera moves crop the edges.
     text = (f"{scene.visual.strip().rstrip('.')}. Framing: every person's whole head and face inside the frame with "
             "clear space above the head, main subject in the centre of the frame, sharp natural faces")
-    if _FEMALE.search(scene.visual) and any(_FACIAL_HAIR.search(c.look) for c in cast):
-        # The image model spreads one person's features to the others: a man's moustache ends up on the woman.
-        text += (". Every woman and girl has a smooth, clean-shaven feminine face with no moustache and no facial "
-                 "hair; only the men described below have moustaches or beards")
-    if cast:
-        text += ". " + " ".join(f"{c.name}: {c.look.strip().rstrip('.')}." for c in cast)
+    women = _FEMALE.search(scene.visual) or any(_is_female(c.look) for c in cast)
+    men = _MALE.search(scene.visual) or any(not _is_female(c.look) for c in cast)
+    if women and men:
+        text += ". " + GENDER_RULE
+    if cast:  # (pictures of men only are left exactly as they were)
+        text += ". " + " ".join(f"{c.name}: {_described(c) if women else c.look.strip().rstrip('.')}." for c in cast)
     return text
+
+
+def _described(c) -> str:
+    """A character's look, with the basics spelt out: a woman's face is clean-shaven, a man dresses as a man."""
+    look = c.look.strip().rstrip(".")
+    if _is_female(look):
+        return look + ", smooth clean-shaven face, no moustache"
+    return look + ", wearing men's clothes"
 
 
 def ui_text(cfg: dict, bible: SeriesBible, episodes: list) -> dict:

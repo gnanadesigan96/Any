@@ -1362,3 +1362,31 @@ def test_women_never_get_the_hero_moustache():
     girl = series.image_prompt(ep.scenes[4], bible)  # the village girl, with the moustached photographer
     assert "no moustache" in girl and girl.index("no moustache") < girl.index("Photographer:")
     assert "no moustache" not in series.image_prompt(ep.scenes[2], bible)  # two men: unchanged
+
+
+def test_women_are_never_drawn_with_moustaches_and_men_never_in_sarees():
+    """A basic rule for every story: each character is clearly a man or a woman, no woman's look has facial hair, no
+    man's look has a saree, and every picture with both men and women in it spells the difference out."""
+    import re
+    from vidpipe import series
+    for root in sorted(ROOT.glob("stories/guess-movie-*")):
+        bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
+        for c in bible.characters:
+            female = series._is_female(c.look)
+            assert female or re.search(r"\b(man|men|boys?)\b", c.look, re.I), (root.name, c.name, "say man or woman")
+            assert not (female and series._FACIAL_HAIR.search(c.look)), (root.name, c.name)
+            assert female or not re.search(r"saree|blouse", c.look, re.I), (root.name, c.name)
+        ep = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes[0]
+        looks = {c.name.lower(): c.look for c in bible.characters}
+        for i, sc in enumerate(ep.scenes):
+            if sc.kind:
+                continue
+            prompt = series.image_prompt(sc, bible)
+            cast = [looks[n.lower()] for n in sc.characters if n.lower() in looks]
+            women = series._FEMALE.search(sc.visual) or any(series._is_female(l) for l in cast)
+            men = series._MALE.search(sc.visual) or any(not series._is_female(l) for l in cast)
+            if women and men:
+                assert series.GENDER_RULE in prompt, (root.name, i)
+            for name in sc.characters:
+                if name.lower() in looks and series._is_female(looks[name.lower()]):
+                    assert "clean-shaven face, no moustache" in prompt, (root.name, i, name)
