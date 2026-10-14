@@ -1369,8 +1369,8 @@ def test_women_never_get_the_hero_moustache():
     root = ROOT / "stories/guess-movie-11"
     bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
     ep = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes[0]
-    girl = series.image_prompt(ep.scenes[4], bible)  # the village girl, with the moustached photographer
-    assert "no moustache" in girl and girl.index("no moustache") < girl.index("Photographer:")
+    girl = series.image_prompt(ep.scenes[4], bible)  # the village girl: alone in her picture now
+    assert "clean-shaven face, no moustache" in girl and "Photographer" not in girl and "moustache," not in girl
     assert "no moustache" not in series.image_prompt(ep.scenes[2], bible)  # two men: unchanged
 
 
@@ -1400,3 +1400,24 @@ def test_women_are_never_drawn_with_moustaches_and_men_never_in_sarees():
             for name in sc.characters:
                 if name.lower() in looks and series._is_female(looks[name.lower()]):
                     assert "clean-shaven face, no moustache" in prompt, (root.name, i, name)
+
+
+def test_empty_pictures_stay_empty_and_mixed_pictures_never_describe_a_moustache():
+    """Asking for 'every person's face' on an empty road made the model add heads and cropped crowds; a man's
+    moustache described next to a woman ended up on her. Neither can happen now."""
+    import re
+    from vidpipe import series
+    for root in sorted(ROOT.glob("stories/guess-movie-*")):
+        bible = series.SeriesBible.model_validate(json.loads((root / "bible.json").read_text()))
+        ep = series.EpisodeBatch.model_validate(json.loads((root / "parts_01-01.json").read_text())).episodes[0]
+        for i, sc in enumerate(ep.scenes):
+            if sc.kind:
+                continue
+            prompt = series.image_prompt(sc, bible)
+            if not sc.characters and not series._PEOPLE.search(sc.visual):
+                assert "no people" in prompt and "face inside the frame" not in prompt, (root.name, i)
+            if series.GENDER_RULE in prompt:
+                assert prompt.startswith(series.GENDER_RULE), (root.name, i)
+                rest = prompt[len(series.GENDER_RULE):]
+                assert not re.search(r"(thick|grey|neat|light|bushy|handlebar)\s+(moustache|beard)|stubble", rest, re.I), (
+                    root.name, i, rest)

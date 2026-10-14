@@ -31,21 +31,19 @@
       "scenes": [
         {
           "narration": "ஒரு கிராமத்து பெரிய மனுஷர். அவரோட நண்பர், கொஞ்ச நாளுக்கு ஒரு பழைய குட்டிக் காரை அவர்கிட்ட விட்டுட்டுப் போறார்.",
-          "visual": "one intact cream-coloured vintage 1970s Premier Padmini car (a small rounded Indian sedan), the whole car visible in a side view, nobody inside it, parked in front of an old village house with a tiled roof, the elder standing proudly beside it in the morning sun",
-          "characters": [
-            "Elder"
-          ]
+          "visual": "one intact cream-coloured vintage 1970s Premier Padmini car (a small rounded Indian sedan), the whole car visible in a side view, parked alone in front of an old village house with a tiled roof in the morning sun",
+          "characters": []
         },
         {
           "narration": "ஊரே அந்தக் காரைப் பார்க்க ஓடி வருது. ஆனா, அவருக்குக் கார் ஓட்டவே தெரியாது!",
-          "visual": "one intact cream-coloured vintage 1970s Premier Padmini car (a small rounded Indian sedan), the whole car visible in a side view, nobody inside it, excited village children and neighbours standing around it in wonder, the elder standing at the front looking proud but awkward",
+          "visual": "excited village children and neighbours gathered in a sunny courtyard, pointing and smiling at something just out of the picture, the elder standing among them looking proud but awkward",
           "characters": [
             "Elder"
           ]
         },
         {
           "narration": "அதனால ஒரு இளம் டிரைவரை வேலைக்கு வைக்கிறார். அவனுக்கு, அந்தக் கார்னா உயிர்.",
-          "visual": "one intact cream-coloured vintage 1970s Premier Padmini car (a small rounded Indian sedan), the whole car visible in a side view, nobody inside it, the driver standing beside it wiping the bonnet with a cloth, grinning, in a sunny village courtyard",
+          "visual": "portrait of the driver standing in a sunny village courtyard, grinning proudly, a folded cleaning cloth over his shoulder",
           "characters": [
             "Driver"
           ]
@@ -60,7 +58,7 @@
         },
         {
           "narration": "கல்யாண நாளன்னிக்கு, மனைவியைக் கோயிலுக்குக் கூட்டிட்டுப் போகணும். அதுக்காக அவர் கார் ஓட்டக் கத்துக்கிறார். டிரைவருக்கோ, தன் வேலை போயிடுமோன்னு பயம்!",
-          "visual": "one intact cream-coloured vintage 1970s Premier Padmini car (a small rounded Indian sedan), the whole car visible in a side view, nobody inside it, on a dusty village road; the elder and the driver standing next to it, the driver pointing and explaining, the elder listening nervously",
+          "visual": "the elder and the driver sitting on the verandah steps of the village house, the driver explaining with his hands, the elder listening nervously",
           "characters": [
             "Elder",
             "Driver"
@@ -68,11 +66,9 @@
         },
         {
           "narration": "இதுக்கு நடுவுல, அந்தக் கார் மேல ஆசைப்பட்ட அவரோட மகள், அதைத் தூக்கிட்டுப் போயிடுறா.",
-          "visual": "one intact cream-coloured vintage 1970s Premier Padmini car (a small rounded Indian sedan), the whole car visible in a side view, nobody inside it, at the gate of the village house; the daughter standing beside it holding up the car keys with a smug smile, the elder and the driver watching sadly from the porch",
+          "visual": "the daughter standing alone at the gate of the village house, holding up a car key with a smug smile",
           "characters": [
-            "Daughter",
-            "Elder",
-            "Driver"
+            "Daughter"
           ]
         },
         {
