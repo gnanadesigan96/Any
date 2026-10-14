@@ -271,7 +271,7 @@ def _fit_length(short, sub: Path, vcfg: dict, timing: list, dry_run: bool) -> tu
 def _hold_special(scenes: list, timing: list) -> list:
     """The answer and the end screen stay up at least `seconds`, and always a beat longer than their line, so the
     voice never runs into the next screen or the end of the video."""
-    tail = {"reveal": 0.4, "outro": 0.9}
+    tail = {"reveal": 0.4, "outro": 0.9, "clue": 0.6}
     out = []
     for sc, t in zip(scenes, timing):
         if sc.kind in tail:
@@ -308,7 +308,9 @@ def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assu
             poster = find_poster(run_dir)
             if not poster:
                 raise RuntimeError(f"No poster.jpg in {run_dir}: save the film's poster in its story folder.")
-            paths += [poster] * (len(short.scenes) - story)
+            # A clue round plays over the last story picture (blurred); everything after it over the poster.
+            paths += [paths[story - 1] if sc.kind.startswith("clue") and story else poster
+                      for sc in short.scenes[story:]]
         out = run_dir / f"{names[k - 1]}.mp4"
         overlay = (overlays or [{}] * len(pack.shorts))[k - 1]
         stamp, fp = sub / "fingerprint.txt", _fingerprint(short, overlay, paths, kcfg)

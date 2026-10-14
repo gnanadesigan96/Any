@@ -114,6 +114,9 @@ def build_score(path: Path, duration: float, cut_times: list, climax_time: float
         if kind == "reveal":
             place(_whoosh(rng), max(at - 0.38, 0), 0.9)
             place(_chime(rng), at + 0.02, 0.8)
+        elif kind == "clue":  # the clue card pops up
+            place(_whoosh(rng), max(at - 0.3, 0), 0.6)
+            place(_ding(), at + 0.05, 0.7)
         elif kind == "outro":
             from .finale import BUTTON_IN, TAP
             place(_pop(), at + BUTTON_IN, 0.6)

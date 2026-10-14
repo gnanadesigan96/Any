@@ -16,6 +16,11 @@ CHANNEL_SPOKEN = "கெஸ்ஸினிமா"      # how the narrator says i
 # The last story line leads into a 5-second countdown over the blurred poster, then the reveal.
 CTA = "இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!"
 COUNTDOWN_SECONDS = 5
+# An optional clue round (a movie with clue_round=...): the story ends with "a clue in five seconds" (and never sends
+# people to the description), a 5-second countdown, the clue card read out, then the normal answer countdown.
+CLUE_CTA = "இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!"
+CLUE_LABEL = "க்ளூ வருது... ரெடியா?"
+CLUE_THEN = "இப்போ கண்டுபிடிச்சீங்களா? அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!"
 
 
 REVEAL_SECONDS = 3.0  # the answer stays on screen at least this long
@@ -27,6 +32,14 @@ COUNT_LABEL = "உங்க பதிலை கமெண்ட் பண்ண�
 OUTRO = {"title": "Did you guess it right?", "sub": "கமெண்ட்ல சொல்லுங்க!", "button": "SUBSCRIBE", "done": "SUBSCRIBED",
          "handle": f"@{CHANNEL}", "thanks": "Thanks for watching!", "thanks_sub": "பார்த்ததுக்கு நன்றி!"}
 OUTRO_LINE = f"சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. {CHANNEL_SPOKEN} சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!"
+
+
+def clue_scenes(m: dict) -> list:
+    if not m.get("clue_round"):
+        return []
+    return [{"narration": "", "visual": "clue", "characters": [], "kind": "clue_countdown", "seconds": COUNTDOWN_SECONDS},
+            {"narration": m["clue_round"]["spoken"] + " " + CLUE_THEN, "visual": "clue", "characters": [], "kind": "clue",
+             "seconds": 6.0}]
 
 
 def reveal_line(spoken: str) -> str:  # just the name, the moment the poster appears (no pause before it)
@@ -620,6 +633,11 @@ NEXT = [
  dict(n=24, aliases=['Ghajini', 'Gajini', 'Ghajini 2005'],
   tease="அவ காதலிச்சது யாருன்னு, அவளுக்கே தெரியாது!",
   answer="Ghajini (கஜினி, 2005)", spoken="கஜினி", written="கஜினி", title_words=["கஜினி"], style=CITY,
+  # A trial of the clue round, for this film only (remove this to go back to the normal ending).
+  clue_round=dict(cards=[["ஹீரோ, ஒரு பெரிய", "செல்போன் கம்பெனியோட முதலாளி"],
+                         ["ஒரு விளம்பர மாடல், தான்தான்", "அவனோட காதலின்னு சொல்றா!"]],
+                  spoken="க்ளூ ஒண்ணு: ஹீரோ, ஒரு பெரிய செல்போன் கம்பெனியோட முதலாளி. "
+                         "க்ளூ ரெண்டு: ஒரு விளம்பர மாடல், தான்தான் அவனோட காதலின்னு எல்லார்கிட்டயும் சொல்லிக்கிட்டு இருக்கா."),
   clues=["ஹீரோ பேரு சஞ்சய் ராமசாமி", "சூர்யா, அசின் நடிச்ச, ஏ.ஆர். முருகதாஸ் இயக்கின படம்"],
   chars={"Rich": "Tamil man in his early thirties, athletic build, neat short hair, clean-shaven, simple plain shirt, warm shy smile",
          "Girl": "Tamil woman in her mid twenties, bubbly cheerful face, long wavy hair, colourful casual kurti, bright playful eyes"},
@@ -716,12 +734,17 @@ for m in MOVIES:
           "end_text": CHANNEL, "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
           "reveal_text": f"பதில்: {m['written']}", "outro": OUTRO, "count_label": COUNT_LABEL,
           "scenes": [{"narration": n, "visual": v, "characters": c} for n, v, c in m["scenes"]]
+                    + clue_scenes(m)
                     + [{"narration": "", "visual": "poster", "characters": [], "kind": "countdown",
                         "seconds": COUNTDOWN_SECONDS},
                        {"narration": reveal_line(m["spoken"]), "visual": "poster", "characters": [], "kind": "reveal",
                         "seconds": REVEAL_SECONDS},
                        {"narration": OUTRO_LINE, "visual": "poster", "characters": [], "kind": "outro",
                         "seconds": OUTRO_SECONDS}]}
+    if m.get("clue_round"):  # the story's last line leads into the clue, not the description
+        last = ep["scenes"][len(m["scenes"]) - 1]
+        last["narration"] = last["narration"].replace(CTA, CLUE_CTA)
+        ep.update(clue_label=CLUE_LABEL, clue_lines=m["clue_round"]["cards"])
     (d / "bible.json").write_text(json.dumps(bible, ensure_ascii=False, indent=2) + "\n")
     (d / "parts_01-01.json").write_text(json.dumps({"episodes": [ep]}, ensure_ascii=False, indent=2) + "\n")
     stale = d / "parts_01.json"

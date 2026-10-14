@@ -45,7 +45,8 @@ class StoryScene(BaseModel):
     visual: str
     characters: list[str]
     subtitle: str = ""  # on-screen caption in another language than the narration (e.g. English under Tamil)
-    kind: str = ""      # "countdown" (silent, blurred poster), "reveal" (the poster), "outro" (end screen); last only
+    kind: str = ""      # "countdown" (silent, blurred poster), "reveal" (the poster), "outro" (end screen), and an
+                        # optional clue round before them: "clue_countdown" (silent) and "clue" (the clue card); last only
     seconds: float = 0.0  # countdown length; for reveal / outro, the least time the scene is held on screen
 
 
@@ -62,6 +63,8 @@ class Episode(BaseModel):
     end_sub: str = ""
     hook_note: str = ""  # a third line on the opening card; makes it a panel card with the title in English
     count_label: str = ""  # a line above the countdown ring, e.g. "comment your answer"
+    clue_label: str = ""  # a line above the clue round's countdown ring, e.g. "a clue is coming"
+    clue_lines: list[list[str]] = []  # the clue card: each clue as its rows of text
     outro: dict = {}  # the closing screen of an "outro" scene: title, sub, button, handle, thanks, thanks_sub
 
 
@@ -354,7 +357,8 @@ def overlays_for(bible: SeriesBible, episodes: list, cfg: dict) -> list:
             end = {"end_text": e.end_text, "end_sub": e.end_sub}
         out.append({"hook": e.hook_text, **({"hook_sub": e.hook_sub} if e.hook_sub else {}),
                     **({"hook_note": e.hook_note} if e.hook_note else {}), **({"outro": e.outro} if e.outro else {}),
-                    **({"count_label": e.count_label} if e.count_label else {}), **end})
+                    **({"count_label": e.count_label} if e.count_label else {}),
+                    **({"clue_label": e.clue_label, "clue_lines": e.clue_lines} if e.clue_lines else {}), **end})
         if any(sc.kind for sc in e.scenes):  # countdown / poster reveal at the end
             out[-1].update(kinds=[sc.kind for sc in e.scenes], reveal_text=e.reveal_text)
         if subtitled:

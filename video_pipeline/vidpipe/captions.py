@@ -113,7 +113,8 @@ def write_ass(phrases: list, path: Path, width: int, height: int, font: str, ver
               title: str = "", duration: float = 0.0, hook: str = "", end_text: str = "",
               end_sub: str = "", hook_seconds: float = 2.2, end_seconds: float = 2.6,
               title_style: str = "banner", hook_sub: str = "", countdown: tuple = None,
-              reveal: tuple = None, hook_note: str = "", outro: tuple = None, count_label: str = "") -> None:
+              reveal: tuple = None, hook_note: str = "", outro: tuple = None, count_label: str = "",
+              clue_countdown: tuple = None, clue: tuple = None) -> None:
     """Captions, plus optional overlays: `title` at the top for the whole video ("banner": big yellow text;
     "tag": a small, neat label on a soft dark box), `hook` as a big punch-in card for the first seconds,
     and an end card (`end_text` / `end_sub`) at the end. With `hook_note` the opening is a panel card (intro_card);
@@ -168,17 +169,34 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         lines.append(f"Dialogue: 2,{_ass_time(duration - end_seconds)},{_ass_time(duration)},End,,0,0,0,,"
                      "{\\fad(200,0)\\fscx120\\fscy120\\t(0,200,\\fscx100\\fscy100)}"
                      + _ass_escape(end_text if reveal else end_text.upper()) + sub)  # a channel name keeps its case
-    if countdown:  # a big 5, 4, 3, 2, 1 inside the countdown ring (finale.render_countdown), one per second
+    for start, seconds, label in [(*countdown, count_label)] * bool(countdown) + [clue_countdown] * bool(clue_countdown):
+        # a big 5, 4, 3, 2, 1 inside the countdown ring (finale.render_countdown), one per second
         from .finale import LAYOUT as L
-        start, seconds = countdown
         n = int(round(seconds))
         cy = int(height * L["ring_y"])
         for k in range(n):
             lines.append(f"Dialogue: 3,{_ass_time(start + k)},{_ass_time(start + k + 0.97)},Count,,0,0,0,,"
                          f"{{\\an5\\pos({width // 2},{cy})\\fscx135\\fscy135\\t(0,220,\\fscx100\\fscy100)\\fad(60,120)}}" + str(n - k))
-        if count_label:
+        if label:
             lines.append(_text(start, start + seconds, width // 2, int(height * L["count_label_y"]), int(size * 0.8),
-                               WHITE, count_label, "\\fad(200,0)"))
+                               WHITE, label, "\\fad(200,0)"))
+    if clue:  # the clue card's words: the heading in its gold pill, then each clue as the narrator reaches it
+        from .finale import LAYOUT as L
+        start, end, words, rows = clue
+        lines.append(_text(start + 0.35, end, width // 2, int(height * L["clue_pill_y"]), int(size * 0.85),
+                           "&H00180E08&", "க்ளூ!", "\\bord0\\shad0\\fad(120,0)"))
+        # Each clue appears when the narrator starts it ("க்ளூ ஒண்ணு", "க்ளூ ரெண்டு"), else spread evenly.
+        marks = [start + w[1] for w in words if w[0].startswith("க்ளூ")] if words else []
+        for n, clue_rows in enumerate(rows):
+            at = marks[n] if n < len(marks) else start + 0.5 + n * (end - start - 1.0) / max(len(rows), 1)
+            y0 = height * L["clue_y"][min(n, len(L["clue_y"]) - 1)]
+            for r, text in enumerate(clue_rows):  # the first row carries the clue's number, in gold
+                text = (f"{{\\c{YELLOW}}}{n + 1}.{{\\c{WHITE}}} " if r == 0 else "") + _ass_escape(text)
+                lines.append(f"Dialogue: 5,{_ass_time(at)},{_ass_time(end)},Card,,0,0,0,,{{\\an5\\pos({width // 2},"
+                             f"{int(y0 + r * height * L['clue_row'])})\\fs{int(size * 0.78)}\\c{WHITE}\\fad(200,0)}}{text}")
+        phrases = [p for p in phrases if not (start - 0.05 <= p[1] < end)]  # the card shows the words already
+    if clue_countdown:
+        phrases = [p for p in phrases if not (clue_countdown[0] - 0.05 <= p[1] < clue_countdown[0] + clue_countdown[1])]
     if reveal and reveal[1] and duration > reveal[0]:
         from .finale import BANNER_IN, LAYOUT as L
         at = reveal[0] + BANNER_IN + 0.3  # once the gold banner has slid in

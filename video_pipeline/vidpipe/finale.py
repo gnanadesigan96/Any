@@ -27,6 +27,8 @@ LAYOUT = {
     "button_y": 0.53, "button_w": 0.62, "button_h": 0.074,
     "thanks_y": 0.625, "thanks_sub_y": 0.665,
 }
+# The clue card: a pill with the heading, then each clue (its rows of text are drawn by the captions).
+LAYOUT.update(clue_card_y=0.45, clue_card_h=0.44, clue_pill_y=0.285, clue_y=(0.37, 0.53), clue_row=0.042)
 # Outro timings (seconds from the start of the end screen).
 BUTTON_IN, TAP, THANKS_IN = 0.55, 1.75, 2.35
 REVEAL_FLASH, REVEAL_SHARP, BANNER_IN = 0.14, 0.45, 0.3
@@ -357,5 +359,33 @@ def render_outro(image: Path, frames: int, out: Path, cfg: dict) -> None:
     writer.close()
 
 
+def render_clue(image: Path, frames: int, out: Path, cfg: dict) -> None:
+    """The clue card over the dimmed last story picture: a glass card with a gold edge and a gold heading pill."""
+    v = cfg["video"]
+    w, h, fps = v["width"], v["height"], v["fps"]
+    _, _, dim = _backdrops(image, w, h)
+    vig = _vignette(w, h, 0.5)
+    L = LAYOUT
+    card = _round_rect_mask(w, h, w // 2, int(h * L["clue_card_y"]), int(w * 0.88), int(h * L["clue_card_h"]), w // 18)
+    edge = np.clip(card - _round_rect_mask(w, h, w // 2, int(h * L["clue_card_y"]), int(w * 0.88) - 6,
+                                           int(h * L["clue_card_h"]) - 6, w // 18 - 3), 0, 1)
+    total = frames / fps
+    writer = _Writer(out, w, h, cfg)
+    for n in range(frames):
+        t = n / fps
+        frame = _zoom(dim, 1.02 + 0.02 * t / total).astype(np.float32) * vig
+        k = _ease_back(t / 0.35)
+        frame = frame * (1 - card * 0.55 * min(k, 1)) + card * np.array([18, 14, 12], np.float32) * 0.55 * min(k, 1)
+        frame = _add(frame, GOLD, edge * 0.85 * min(k, 1))
+        pk = _ease_back((t - 0.1) / 0.35) if t > 0.1 else 0
+        if pk > 0:
+            pw, ph = int(w * 0.34 * pk), int(h * 0.06 * pk)
+            pill = _round_rect_mask(w, h, w // 2, int(h * L["clue_pill_y"]), max(pw, 2), max(ph, 2), max(ph // 2, 1))
+            frame = _add(frame, GOLD, pill)
+        writer.write(frame)
+    writer.close()
+
+
 def render_finale_clip(kind: str, image: Path, frames: int, out: Path, cfg: dict) -> None:
-    {"countdown": render_countdown, "reveal": render_reveal, "outro": render_outro}[kind](image, frames, out, cfg)
+    {"countdown": render_countdown, "clue_countdown": render_countdown, "clue": render_clue,
+     "reveal": render_reveal, "outro": render_outro}[kind](image, frames, out, cfg)

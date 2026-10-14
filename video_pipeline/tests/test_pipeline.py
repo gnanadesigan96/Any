@@ -1186,7 +1186,11 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         assert ov["outro"]["button"] == "SUBSCRIBE" and ov["outro"]["handle"] == "@Guessinema"
         assert ov["outro"]["thanks"] == "Thanks for watching!"
         ep = eps[0]
-        *story, countdown, reveal, outro = ep.scenes
+        story = [sc for sc in ep.scenes if not sc.kind]
+        clue = [sc for sc in ep.scenes if sc.kind.startswith("clue")]
+        countdown, reveal, outro = [sc for sc in ep.scenes if sc.kind in ("countdown", "reveal", "outro")]
+        assert [sc.kind for sc in ep.scenes[len(story):]] == ["clue_countdown", "clue"] * bool(clue) + [
+            "countdown", "reveal", "outro"]
         assert (countdown.kind, countdown.seconds, countdown.narration) == ("countdown", 5, "")
         # The opening card sits on the first story picture: the poster is never shown before the countdown.
         assert all(not sc.kind and sc.visual != "poster" for sc in story)
@@ -1196,13 +1200,19 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
         assert ep.reveal_text == f"பதில்: {m['written']}" and ov["kinds"][-3:] == ["countdown", "reveal", "outro"]
         spoken = " ".join(s.narration for s in story)  # everything before the reveal
         last = story[-1].narration
-        assert "கமெண்ட்" in last and "டிஸ்கிரிப்ஷன்" in last and "அஞ்சு விநாடில பதில்" in last
-        everything = spoken + " " + reveal.narration + " " + outro.narration
+        if clue:  # a clue round: "a clue in five seconds", never the description; the clue leads to the answer
+            assert "க்ளூ வருது" in last and "டிஸ்கிரிப்ஷன்" not in last and "டிஸ்கிரிப்ஷன்" not in clue[1].narration
+            assert clue[0].narration == "" and clue[0].seconds == 5 and "அஞ்சு விநாடில பதில்" in clue[1].narration
+            assert ep.clue_lines and ov["clue_lines"] == ep.clue_lines and ov["kinds"][-5:-3] == ["clue_countdown", "clue"]
+        else:
+            assert "கமெண்ட்" in last and "டிஸ்கிரிப்ஷன்" in last and "அஞ்சு விநாடில பதில்" in last
+        everything = " ".join([spoken, *(c.narration for c in clue), reveal.narration, outro.narration])
         assert everything.count("சப்ஸ்க்ரைப்") == 1 and "லைக் பண்ண" not in everything  # said once, at the end
         assert len(m["clues"]) == 2
         for i, c in enumerate(m["clues"], start=1):
             assert f"க்ளூ {i}: {c}" in short.description and c not in spoken  # clues only in the description
         shown = " ".join([short.title, ep.hook_text, ep.hook_sub, ep.hook_note, *ep.outro.values(), outro.narration,
+                          *(c.narration for c in clue), *(r for rows in ep.clue_lines for r in rows),
                           short.description, ep.end_text, ep.end_sub,
                           *ep.hashtags, spoken])
         for word in [m["spoken"], *m.get("title_words", [])]:

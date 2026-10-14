@@ -201,7 +201,7 @@ def _narration_track(wavs: list, kinds: list, timeline: list, fps: int, duration
                     if not len(parts[-1]):
                         parts.pop()
             length = start
-        if k == "countdown":
+        if k in ("countdown", "clue_countdown"):
             continue
         a = read(wavs[i])
         if k:
@@ -230,7 +230,7 @@ def _check_narration(path: Path, timeline: list, kinds: list, fps: int, duration
         raise RuntimeError(f"The narration is {n / sr:.2f}s but the picture is {duration:.2f}s; delete the run's work "
                            "folder and render again")
     for i, k in enumerate(kinds):
-        if k == "countdown":
+        if k in ("countdown", "clue_countdown"):
             a, b = int(timeline[i]["start"] * sr), int((timeline[i]["start"] + timeline[i]["frames"] / fps) * sr)
             seg = audio[a + int(0.05 * sr):b - int(0.05 * sr)]
             if len(seg) and np.sqrt((seg ** 2).mean()) > 0.003:
@@ -258,13 +258,13 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
     def work_scene(i):
         if not clips[i].exists():
             text = scene_texts[i] if scene_texts else timing[i].get("text", "")
-            if kinds[i] in ("countdown", "reveal", "outro"):
+            if kinds[i] in ("countdown", "reveal", "outro", "clue_countdown", "clue"):
                 from .finale import render_finale_clip
                 render_finale_clip(kinds[i], image_paths[i], timeline[i]["frames"], clips[i], cfg)
             else:
                 render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)], clips[i], cfg,
                                   index=i, text=text)
-        if kinds[i] != "countdown":  # decoded as it is (no padding); _narration_track lines the scenes up
+        if kinds[i] not in ("countdown", "clue_countdown"):  # decoded as it is (no padding); _narration_track lines the scenes up
             run_ffmpeg(["-i", run_dir / "audio" / timing[i]["audio"], "-ar", 44100, "-ac", 1, wavs[i]])
 
     log(f"Rendering {len(timing)} scene clips...")
@@ -281,6 +281,9 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
         words = _absolute_words(timing, timeline, range(len(timing)), 0.0, fps)
         countdown = [(timeline[i]["start"], timeline[i]["frames"] / fps) for i, k in enumerate(kinds) if k == "countdown"]
         reveal = [timeline[i]["start"] for i, k in enumerate(kinds) if k == "reveal"]
+        clue_count = [(timeline[i]["start"], timeline[i]["frames"] / fps) for i, k in enumerate(kinds) if k == "clue_countdown"]
+        clue = [(timeline[i]["start"], timeline[i]["start"] + timeline[i]["frames"] / fps, timing[i]["words"])
+                for i, k in enumerate(kinds) if k == "clue"]
         outro = [timeline[i]["start"] for i, k in enumerate(kinds) if k == "outro"]
         write_ass(group_words(words, v["caption_max_words"]), work / "captions.ass",
                   v["width"], v["height"], v["caption_font"], vertical=v["height"] > v["width"],
@@ -291,17 +294,19 @@ def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title
                   reveal=(reveal[0], overlay.get("reveal_text", "")) if reveal else None,
                   hook_note=overlay.get("hook_note", ""),
                   outro=(outro[0], overlay.get("outro") or {}) if outro else None,
-                  count_label=overlay.get("count_label", ""))
+                  count_label=overlay.get("count_label", ""),
+                  clue_countdown=(*clue_count[0], overlay.get("clue_label", "")) if clue_count else None,
+                  clue=(*clue[0], overlay.get("clue_lines") or []) if clue else None)
         ass = "captions.ass"
     music, score = _pick_music(cfg, run_dir.name), False
     if v.get("score"):
         from .sound import build_score
         cuts = [t["start"] for t in timeline[1:]]
-        ticks = [timeline[i]["start"] + s for i, k in enumerate(kinds) if k == "countdown"
+        ticks = [timeline[i]["start"] + s for i, k in enumerate(kinds) if k in ("countdown", "clue_countdown")
                  for s in range(int(round(timeline[i]["frames"] / fps)))]
         # The closing hit lands on the reveal when there is one, else on the last scene.
         climax = next((timeline[i]["start"] for i, k in enumerate(kinds) if k == "reveal"), timeline[-1]["start"])
-        events = [(k, timeline[i]["start"]) for i, k in enumerate(kinds) if k in ("reveal", "outro")]
+        events = [(k, timeline[i]["start"]) for i, k in enumerate(kinds) if k in ("reveal", "outro", "clue")]
         music = build_score(work / "score.wav", duration, cuts, climax,
                             seed=sum(map(ord, run_dir.name)), whoosh=v.get("score_whoosh", False),
                             riser=v.get("score_riser", False), ticks=ticks,

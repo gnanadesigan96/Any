@@ -612,7 +612,7 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
         sort_keys=True)
 
     for i, sc in enumerate(scenes):  # a countdown is silence: no voice, no credits, never sped up
-        if getattr(sc, "kind", "") == "countdown":
+        if getattr(sc, "kind", "") in ("countdown", "clue_countdown"):
             mp3 = audio_dir / f"scene_{i:03d}.mp3"
             entry = cached.get(str(i), {})
             if not (mp3.exists() and entry.get("silent") and entry.get("seconds") == sc.seconds):
@@ -622,7 +622,7 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
                                   "duration": sc.seconds, "words": [], "tempo": float(cfg["voice"].get("tempo", 1.0))}
 
     def silent(i):
-        return getattr(scenes[i], "kind", "") == "countdown"
+        return getattr(scenes[i], "kind", "") in ("countdown", "clue_countdown")
 
     def fresh(i):
         if silent(i):
@@ -652,7 +652,7 @@ def narrate_scenes(scenes: list, run_dir: Path, cfg: dict, dry_run: bool) -> lis
         log(f"Generating narration for {len(todo)} scenes ({chars} characters)...")
         # The story is one request, read as one performance. The answer and the end screen are recorded on their
         # own: cut out of that one take at a guessed boundary, the answer could end up spoken before the countdown.
-        batch = [i for i in todo if getattr(scenes[i], "kind", "") not in ("reveal", "outro")]
+        batch = [i for i in todo if getattr(scenes[i], "kind", "") not in ("reveal", "outro", "clue")]
         if hasattr(voice, "synthesize_many") and len(batch) > 1:  # one request for all of them
             todo = batch
             mp3s = [audio_dir / f"scene_{i:03d}.mp3" for i in todo]
