@@ -2,11 +2,11 @@
   "episodes": [
     {
       "part": 1,
-      "title": "சின்னத் தப்புக்கு, கொடூரமான தண்டனை! 🤔 இந்தப் படம் எது? #25",
+      "title": "ஒரு அமைதியான மனுஷன்... ஊர்ல மர்மமான மரணங்கள்! 🤔 இந்தப் படம் எது? #25",
       "hook_text": "Guess the movie",
       "hook_sub": "from the story",
       "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
-      "description": "சின்னத் தப்புக்கு, கொடூரமான தண்டனை!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: ஹீரோவோட செல்லப் பேரு அம்பி\n🔍 க்ளூ 2: விக்ரம் நடிச்ச, ஷங்கர் இயக்கின படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "description": "ஒரு அமைதியான மனுஷன்... ஊர்ல மர்மமான மரணங்கள்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: ஹீரோவோட செல்லப் பேரு அம்பி\n🔍 க்ளூ 2: விக்ரம் நடிச்ச, ஷங்கர் இயக்கின படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
       "hashtags": [
         "#GuessTheMovie",
         "#படம்எது",
@@ -30,50 +30,50 @@
       "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
-          "narration": "ரொம்ப நேர்மையான ஒரு வக்கீல். சின்னச் சின்ன விதிமீறல்களைப் பார்த்தாக்கூட, அவனுக்குத் தாங்காது.",
-          "visual": "the lawyer politely arguing with a bored clerk at a crowded government office counter, holding a complaint letter",
+          "narration": "ஒரு சாதாரண, அமைதியான மனுஷன். யாராவது ஒரு சின்ன தப்பு பண்ணாக்கூட, அவனுக்கு மனசு தாங்காது.",
+          "visual": "the quiet man frowning at rubbish dumped on a Chennai street corner, people walking past without caring",
           "characters": [
-            "Lawyer"
+            "Quiet"
           ]
         },
         {
-          "narration": "புகார் மேல புகார் கொடுக்கிறான். யாரும் கண்டுக்கல. எல்லாருக்கும் அவன் ஒரு கேலிப் பொருள்.",
-          "visual": "the lawyer walking down a Chennai street while men at a tea stall laugh and point at him",
+          "narration": "அவன் சொல்றதை யாரும் மதிக்கல. எல்லாருக்கும் அவன் ஒரு கேலிப் பொருள்.",
+          "visual": "the quiet man walking down a Chennai street while men at a tea stall laugh and point at him",
           "characters": [
-            "Lawyer"
+            "Quiet"
           ]
         },
         {
-          "narration": "பக்கத்து வீட்டுப் பொண்ணு மேல, ஒரு ரகசியக் காதல். தைரியம் வந்து சொன்னப்போ, அவ மறுத்துடுறா.",
-          "visual": "the neighbour shaking her head and turning away on a narrow street of old houses, the lawyer standing heartbroken holding a flower",
+          "narration": "பக்கத்து வீட்டுப் பொண்ணு மேல, ஒரு ரகசியக் காதல். ஆனா அவ, அவனை ஏத்துக்கல.",
+          "visual": "the neighbour shaking her head and turning away on a narrow street of old houses, the quiet man standing heartbroken holding a flower",
           "characters": [
             "Neighbour",
-            "Lawyer"
+            "Quiet"
           ]
         },
         {
-          "narration": "கொஞ்ச நாள்ல, ஒரு ஸ்டைலான மாடல் அவ வாழ்க்கைக்குள்ள வர்றான். அதே பொண்ணோட மனசை ஜெயிக்கிறான்!",
-          "visual": "the stylist striking a pose in front of the neighbour at a college fashion show, the neighbour laughing, charmed",
+          "narration": "கொஞ்ச நாள்ல, அவ மனசை வேற ஒருத்தன் ஜெயிக்கிறான்.",
+          "visual": "the neighbour laughing with a confident young man in a leather jacket at a busy college event",
           "characters": [
-            "Stylist",
-            "Neighbour"
+            "Neighbour",
+            "Other"
           ]
         },
         {
-          "narration": "இன்னொரு பக்கம், அலட்சியமா தப்பு பண்றவங்க, ஒவ்வொருத்தரா கொடூரமா சாகுறாங்க. ஒவ்வொரு தண்டனையும், ஒரு பழைய புராணத்துல சொன்ன மாதிரியே!",
-          "visual": "an old palm-leaf manuscript open on a dark wooden table, lit by a single oil lamp, ominous shadows",
+          "narration": "அதே நேரம், ஊர்ல சிலர் ஒவ்வொருத்தரா மர்மமா சாகுறாங்க. எல்லாருக்கும் ஒரே ஒரு பொதுவான விஷயம் இருக்கு...",
+          "visual": "police tape across a doorway on a quiet city street at night, a single streetlight flickering",
           "characters": []
         },
         {
-          "narration": "போலீஸ் தேடுது. இந்தக் கொலைகளுக்குப் பின்னாடி இருக்கிறது யாரு?",
-          "visual": "the cop staring at a wall of crime photos and newspaper clippings in a dim police office at night",
+          "narration": "போலீஸ் தேடுது. இந்த மர்மத்துக்குப் பின்னாடி இருக்கிறது யாரு?",
+          "visual": "the cop staring at a wall of photos and newspaper clippings in a dim police office at night",
           "characters": [
             "Cop"
           ]
         },
         {
           "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
-          "visual": "a shadowy hooded figure standing on a rooftop at night, back to the camera, city lights below",
+          "visual": "a shadowy figure standing on a rooftop at night, back to the camera, city lights below",
           "characters": []
         },
         {

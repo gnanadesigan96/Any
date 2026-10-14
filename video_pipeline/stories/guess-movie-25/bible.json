@@ -4,7 +4,7 @@
   "art_style": "photorealistic cinematic film still, Chennai, rich vibrant colour grade, soft natural light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
   "characters": [
     {
-      "name": "Lawyer",
+      "name": "Quiet",
       "look": "Tamil man in his early thirties, thin, neatly oiled side-parted hair, clean-shaven, plain half-sleeve shirt and trousers, timid earnest eyes"
     },
     {
@@ -12,8 +12,8 @@
       "look": "Tamil woman in her mid twenties, long black hair, simple salwar, big expressive eyes, sweet smile"
     },
     {
-      "name": "Stylist",
-      "look": "young man in his early thirties, long styled hair, designer sunglasses, leather jacket, flashy confident grin"
+      "name": "Other",
+      "look": "young man in his early thirties, long styled hair, leather jacket, confident grin"
     },
     {
       "name": "Cop",
