@@ -1,0 +1,127 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "வேலையில்லாத நண்பர்கள், ஒரு கொலை, ஒரு துரோகம்! 🤔 இந்தப் படம் எது? #27",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "வேலையில்லாத நண்பர்கள், ஒரு கொலை, ஒரு துரோகம்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: ஹீரோ பேரு அழகர்\n🔍 க்ளூ 2: சசிகுமார் இயக்கின முதல் படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: சுப்ரமணியபுரம்",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "எண்பதுகள்ல ஒரு ஊர். வேலை இல்லாம, தெருவுல சுத்துற நண்பர்கள்.",
+          "visual": "two young men sitting idle on a low wall on a dusty 1980s town street, a cycle leaning beside them, afternoon sun",
+          "characters": [
+            "Friend1",
+            "Friend2"
+          ]
+        },
+        {
+          "narration": "ஊர்ல செல்வாக்கான ஒரு அரசியல் குடும்பம். அவங்களுக்கு விசுவாசமா இருக்காங்க.",
+          "visual": "a big old house with a political party flag on the gate, a few men in white shirts talking on the veranda",
+          "characters": []
+        },
+        {
+          "narration": "அந்த வீட்டுப் பொண்ணு மேல, ஒருத்தனுக்கு அமைதியான காதல்.",
+          "visual": "the girl alone, peeking shyly through a wooden window of an old house, soft morning light",
+          "characters": [
+            "Girl"
+          ]
+        },
+        {
+          "narration": "அந்தக் குடும்பத்துக்காக, நண்பர்கள் ஒரு கொலை பண்றாங்க. வெளியே எடுக்கிறோம்னு வாக்கு கொடுக்கிறாங்க.",
+          "visual": "a dark narrow street at night, a single bicycle lying on its side under a flickering lamp",
+          "characters": []
+        },
+        {
+          "narration": "ஆனா ஜெயிலுக்குப் போனதும், யாரும் திரும்பிக்கூட பார்க்கல.",
+          "visual": "the two young men sitting behind iron jail bars, staring at the empty corridor",
+          "characters": [
+            "Friend1",
+            "Friend2"
+          ]
+        },
+        {
+          "narration": "வெளியே வந்ததும், பழி. ஆனா நம்பினவங்களே, அவங்களுக்குக் குழி தோண்டுறாங்க...",
+          "visual": "the two young men walking down a dark lane at night, wary, looking over their shoulders",
+          "characters": [
+            "Friend1",
+            "Friend2"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!",
+          "visual": "an empty dusty town street at dusk, an old cinema poster peeling on a wall",
+          "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue_countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "க்ளூ ஒண்ணு: கதை நடக்கிறது, ஆயிரத்துத் தொள்ளாயிரத்து எண்பதுல, மதுரையில. க்ளூ ரெண்டு: 'கண்கள் இரண்டால்' பாட்டு, இந்தப் படத்துலதான். இப்போ கண்டுபிடிச்சீங்களா? அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue",
+          "seconds": 6.0
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "சுப்ரமணியபுரம்!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ],
+      "clue_label": "க்ளூ வருது... ரெடியா?",
+      "clue_lines": [
+        [
+          "கதை நடக்கிறது,",
+          "1980ல மதுரையில"
+        ],
+        [
+          "'கண்கள் இரண்டால்' பாட்டு",
+          "இந்தப் படத்துலதான்!"
+        ]
+      ]
+    }
+  ]
+}

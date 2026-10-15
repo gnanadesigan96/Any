@@ -1,0 +1,126 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "ஊருக்கே தொல்லையானவனை, உயிரா காதலிக்கிற ஒரு பொண்ணு! 🤔 இந்தப் படம் எது? #28",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "ஊருக்கே தொல்லையானவனை, உயிரா காதலிக்கிற ஒரு பொண்ணு!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: ஹீரோயின் பேரு முத்தழகு\n🔍 க்ளூ 2: அமீர் இயக்கின படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: பருத்திவீரன்",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "ஒரு வறண்ட கிராமம். அங்க, ஊருக்கே தொல்லையான ஒரு முரட்டுப் பையன். அடிக்கடி ஜெயிலுக்குப் போயிட்டு வர்றவன்.",
+          "visual": "the ruffian swaggering down a dusty village road in harsh sunlight, villagers stepping aside",
+          "characters": [
+            "Ruffian"
+          ]
+        },
+        {
+          "narration": "ஆனா அவனையே, சின்ன வயசுல இருந்து உயிரா நினைக்கிற ஒரு பொண்ணு. அவனோட சொந்த மாமா பொண்ணு.",
+          "visual": "the cousin alone, standing at the edge of a dry field, looking into the distance with longing",
+          "characters": [
+            "Cousin"
+          ]
+        },
+        {
+          "narration": "அவளோட அப்பாவுக்கு, அவன் பேரைக் கேட்டாலே கோபம். ரெண்டு குடும்பத்துக்கும் நடுவுல, பழைய பகை.",
+          "visual": "the father standing at the gate of his house, glaring furiously down the road",
+          "characters": [
+            "Father"
+          ]
+        },
+        {
+          "narration": "அவ, அவனுக்காக எல்லாத்தையும் எதிர்க்கிறா. அடி, திட்டு, எதுவும் அவளை மாத்தல.",
+          "visual": "the cousin alone in a dim village house, tears in her eyes but jaw set firmly",
+          "characters": [
+            "Cousin"
+          ]
+        },
+        {
+          "narration": "மெல்ல மெல்ல, அந்த முரடனுக்குள்ளயும் காதல் துளிர்க்குது.",
+          "visual": "the ruffian sitting alone on a tree branch at sunset, a rare soft smile on his face",
+          "characters": [
+            "Ruffian"
+          ]
+        },
+        {
+          "narration": "ஆனா விதி, அவங்களுக்காக வேற ஒரு முடிவு வச்சிருக்கு...",
+          "visual": "an empty dirt road through dry fields under a dark stormy sky",
+          "characters": []
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!",
+          "visual": "a lone tree on a cracked, dry field at dusk",
+          "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue_countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "க்ளூ ஒண்ணு: இது, கார்த்தியோட முதல் படம். க்ளூ ரெண்டு: ப்ரியாமணிக்கு, தேசிய விருது வாங்கித் தந்த படம். இப்போ கண்டுபிடிச்சீங்களா? அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue",
+          "seconds": 6.0
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "பருத்திவீரன்!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ],
+      "clue_label": "க்ளூ வருது... ரெடியா?",
+      "clue_lines": [
+        [
+          "இது கார்த்தியோட",
+          "முதல் படம்"
+        ],
+        [
+          "ப்ரியாமணிக்கு தேசிய விருது",
+          "வாங்கித் தந்த படம்!"
+        ]
+      ]
+    }
+  ]
+}

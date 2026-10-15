@@ -1,0 +1,23 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic road-movie film still, eastern India in heavy monsoon rain, wet roads and grey skies, warm and cool colour grade, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Young",
+      "look": "Tamil man in his late twenties, neat styled hair, clean-shaven, branded jacket, sunglasses, impatient arrogant look"
+    },
+    {
+      "name": "Stranger",
+      "look": "Tamil man in his forties, scarred face, thick spectacles, short beard, shabby shirt and shawl, warm cheerful eyes"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #29",
+      "summary": "A guess-the-movie Short retelling Anbe Sivam (அன்பே சிவம், 2003) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

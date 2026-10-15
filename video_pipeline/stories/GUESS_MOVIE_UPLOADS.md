@@ -887,3 +887,139 @@ GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Short
 **Poster**
 Save the film's poster as `stories/guess-movie-26/poster.jpg` before generating.
 
+## #27
+
+**Title** (81 characters)
+```
+வேலையில்லாத நண்பர்கள், ஒரு கொலை, ஒரு துரோகம்! 🤔 இந்தப் படம் எது? #27 | Guessinema
+```
+
+**Description**
+```
+வேலையில்லாத நண்பர்கள், ஒரு கொலை, ஒரு துரோகம்!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: ஹீரோ பேரு அழகர்
+🔍 க்ளூ 2: சசிகுமார் இயக்கின முதல் படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-27/poster.jpg` before generating.
+
+## #28
+
+**Title** (86 characters)
+```
+ஊருக்கே தொல்லையானவனை, உயிரா காதலிக்கிற ஒரு பொண்ணு! 🤔 இந்தப் படம் எது? #28 | Guessinema
+```
+
+**Description**
+```
+ஊருக்கே தொல்லையானவனை, உயிரா காதலிக்கிற ஒரு பொண்ணு!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: ஹீரோயின் பேரு முத்தழகு
+🔍 க்ளூ 2: அமீர் இயக்கின படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-28/poster.jpg` before generating.
+
+## #29
+
+**Title** (87 characters)
+```
+ஒரு திமிரான இளைஞன், ஒரு வினோதமான மனுஷன், ஒரு பயணம்! 🤔 இந்தப் படம் எது? #29 | Guessinema
+```
+
+**Description**
+```
+ஒரு திமிரான இளைஞன், ஒரு வினோதமான மனுஷன், ஒரு பயணம்!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: இளைஞன் பேரு அன்பரசு
+🔍 க்ளூ 2: சுந்தர் சி இயக்கின படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-29/poster.jpg` before generating.
+
+## #30
+
+**Title** (69 characters)
+```
+முடிவே இல்லாத ஒரு காதல் குழப்பம்! 🤔 இந்தப் படம் எது? #30 | Guessinema
+```
+
+**Description**
+```
+முடிவே இல்லாத ஒரு காதல் குழப்பம்!
+ஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔
+
+🔍 க்ளூ 1: ஹீரோயின் பேரு ஜெஸ்ஸி
+🔍 க்ளூ 2: கௌதம் மேனன் இயக்கின படம்
+
+👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.
+🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.
+
+#GuessTheMovie #படம்எது #Guessinema #TamilMovie #TamilShorts #Shorts
+```
+
+**Tags**
+```
+GuessTheMovie, படம்எது, Guessinema, TamilMovie, TamilShorts, Shorts, tamil movie quiz, guess the tamil movie
+```
+
+**Pinned comment**
+```
+பதில் வர்றதுக்கு முன்னாடியே கண்டுபிடிச்சீங்களா? 🤔 கமெண்ட் பண்ணுங்க! 👇
+```
+
+**Poster**
+Save the film's poster as `stories/guess-movie-30/poster.jpg` before generating.
+
