@@ -1172,6 +1172,7 @@ def _guess_movies():
 
 
 def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_away(cfg):
+    import re
     from vidpipe import series
     movies = _guess_movies()
     assert movies
@@ -1204,6 +1205,9 @@ def test_guess_the_movie_shorts_are_tamil_quizzes_that_never_give_the_answer_awa
             assert "க்ளூ வருது" in last and "டிஸ்கிரிப்ஷன்" not in last and "டிஸ்கிரிப்ஷன்" not in clue[1].narration
             assert clue[0].narration == "" and clue[0].seconds == 5 and "அஞ்சு விநாடில பதில்" in clue[1].narration
             assert ep.clue_lines and ov["clue_lines"] == ep.clue_lines and ov["kinds"][-5:-3] == ["clue_countdown", "clue"]
+            # Clues are character names and things to think about: never actors, directors or song names.
+            for text in [clue[1].narration, *(r for rows in ep.clue_lines for r in rows), *m["clues"]]:
+                assert not re.search(r"நடிச்ச|இயக்கின|இயக்கிய|பாட்டு|பாடல்", text), (m["n"], text)
         else:
             assert "கமெண்ட்" in last and "டிஸ்கிரிப்ஷன்" in last and "அஞ்சு விநாடில பதில்" in last
         everything = " ".join([spoken, *(c.narration for c in clue), reveal.narration, outro.narration])
