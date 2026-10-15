@@ -30,6 +30,16 @@
       "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
       "scenes": [
         {
+          "narration": "இருபத்தேழு வருஷம் ஜெயில்ல இருந்துட்டு வெளியே வர்ற ஒருத்தன். ஜெயில் வாசல்லயே, கத்திக்குத்து!",
+          "visual": "the tall iron gate of an old prison at dusk, a dropped cloth bag lying on the ground outside it, nobody in sight",
+          "characters": []
+        },
+        {
+          "narration": "ஏன்? கதை, பல வருஷம் பின்னாடி போகுது...",
+          "visual": "an old faded black-and-white photograph of a small 1980s town street",
+          "characters": []
+        },
+        {
           "narration": "எண்பதுகள்ல ஒரு ஊர். வேலை இல்லாம, தெருவுல சுத்துற நண்பர்கள்.",
           "visual": "two young men sitting idle on a low wall on a dusty 1980s town street, a cycle leaning beside them, afternoon sun",
           "characters": [
@@ -69,6 +79,11 @@
             "Friend1",
             "Friend2"
           ]
+        },
+        {
+          "narration": "அவனோட காதலே, அவனுக்கு எதிரான ஆயுதமா மாறுது...",
+          "visual": "a single red rose lying on the ground of an empty temple courtyard at dusk",
+          "characters": []
         },
         {
           "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!",
