@@ -661,6 +661,10 @@ NEXT = [
  dict(n=25, aliases=['Anniyan', 'Anniyan 2005', 'Aparichit'],
   tease="ஒரு அமைதியான மனுஷன்... ஊர்ல மர்மமான மரணங்கள்!",
   answer="Anniyan (அந்நியன், 2005)", spoken="அந்நியன்", written="அந்நியன்", title_words=["அந்நியன்"], style=CITY,
+  clue_round=dict(cards=[["ஹீரோ, ரொம்ப நேர்மையான", "ஒரு வக்கீல்"],
+                         ["ஒவ்வொரு தண்டனையும்,", "கருட புராணத்துல சொன்னபடி!"]],
+                  spoken="க்ளூ ஒண்ணு: ஹீரோ, ரொம்ப நேர்மையான ஒரு வக்கீல். "
+                         "க்ளூ ரெண்டு: ஒவ்வொரு தண்டனையும், கருட புராணத்துல சொன்னபடியே நடக்குது."),
   clues=["ஹீரோவோட செல்லப் பேரு அம்பி", "விக்ரம் நடிச்ச, ஷங்கர் இயக்கின படம்"],
   chars={"Quiet": "Tamil man in his early thirties, thin, neatly oiled side-parted hair, clean-shaven, plain half-sleeve shirt and trousers, timid earnest eyes",
          "Neighbour": "Tamil woman in her mid twenties, long black hair, simple salwar, big expressive eyes, sweet smile",
@@ -688,6 +692,10 @@ NEXT = [
   title_words=["வேட்டையாடு", "விளையாடு", "வேட்டை"],
   style=("photorealistic cinematic crime thriller film still, cold steel-blue and amber colour grade, night, rain and wet "
          "reflections, deep shadows, 35mm anamorphic lens, film grain, high detail, natural skin texture, realistic expressions"),
+  clue_round=dict(cards=[["கொலையாளிகளைத் தேடி,", "அதிகாரி நியூயார்க் போறார்"],
+                         ["கமல்ஹாசனும் ஜோதிகாவும்", "நடிச்ச படம்"]],
+                  spoken="க்ளூ ஒண்ணு: கொலையாளிகளைத் தேடி, அந்தப் போலீஸ் அதிகாரி நியூயார்க் வரைக்கும் போறார். "
+                         "க்ளூ ரெண்டு: கமல்ஹாசனும் ஜோதிகாவும் நடிச்ச படம்."),
   clues=["போலீஸ் அதிகாரி பேரு ராகவன்", "கமல்ஹாசன், ஜோதிகா நடிச்ச, கௌதம் மேனன் இயக்கின படம்"],
   chars={"Officer": "Tamil man in his late forties, thick moustache, short slicked-back hair, sharp intense eyes, dark overcoat over a shirt",
          "Woman": "Tamil woman in her early thirties, long straight hair, sad gentle eyes, simple dark coat"},
