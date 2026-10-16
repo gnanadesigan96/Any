@@ -1,0 +1,269 @@
+#!/usr/bin/env python3
+"""Faceless YouTube video pipeline.
+
+  python make_video.py make "How the Tacoma Narrows Bridge Tore Itself Apart"
+  python make_video.py next --niche "Engineering Disasters"
+  python make_video.py topics --niche "Engineering Disasters" --limit 20
+  python make_video.py series "Dracula by Bram Stoker" --parts 3 --style "graphic novel"
+  python make_video.py upload runs/<run-folder> [--shorts] [--publish-at 2026-11-01T14:30:00Z]
+
+Add --dry-run to make/next to test everything offline (placeholder images, silent voice).
+"""
+
+import argparse
+import os
+import random
+import sys
+from pathlib import Path
+
+# macOS prints a harmless "MallocStackLogging" line for every subprocess when these are inherited.
+for _var in ("MallocStackLogging", "MallocStackLoggingNoCompact"):
+    os.environ.pop(_var, None)
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from vidpipe import bank  # noqa: E402
+from vidpipe.config import load_config  # noqa: E402
+from vidpipe.pipeline import REDO, ManualStepNeeded, make_video  # noqa: E402
+from vidpipe.series import SeriesStepNeeded, make_series  # noqa: E402
+
+TAMIL_SAMPLE = "அவன் கண்ணாடிய பாக்குறான். பின்னாடி ஒருத்தன் நிக்குறான். ஆனா கண்ணாடில… யாருமே இல்ல!"
+from vidpipe.upload import upload_run  # noqa: E402
+
+
+def _join_signed_values(argv: list) -> list:
+    """argparse reads "-6Hz" in `--voice-pitch -6Hz` as an option; pass it as `--voice-pitch=-6Hz` instead."""
+    out, i = [], 0
+    while i < len(argv):
+        if argv[i] in ("--voice-rate", "--voice-pitch") and i + 1 < len(argv):
+            out.append(f"{argv[i]}={argv[i + 1]}")
+            i += 2
+        else:
+            out.append(argv[i])
+            i += 1
+    return out
+
+
+def add_series_flags(p) -> None:
+    p.add_argument("--parts", type=int, help="number of parts (default from config: 3)")
+    p.add_argument("--style", default="", help='visual style hint, e.g. "anime", "watercolour storybook"')
+    p.add_argument("--notes", default="", help="anything Claude should know (focus, tone, ending)")
+    p.add_argument("--first", type=int, default=0, help="only render the first N parts this run")
+    p.add_argument("--language", default="", help='narration language, e.g. "Tamil" (default: English)')
+    p.add_argument("--voice", default="",
+                   help="Edge voice for non-English narration, e.g. ta-IN-PallaviNeural (with "
+                        "--voice-provider gemini: a Gemini voice such as Charon; elevenlabs: a voice name or ID)")
+    p.add_argument("--voice-rate", default="", help='speak faster/slower (non-English voices), e.g. +20%% or -5%%')
+    p.add_argument("--voice-pitch", default="", help='deeper/higher (non-English voices), e.g. -6Hz or +2Hz')
+    p.add_argument("--voice-provider", choices=["auto", "edge", "gemini", "elevenlabs"], default="",
+                   help="gemini: expressive storyteller voice, free tier (GEMINI_API_KEY); "
+                        "elevenlabs: most expressive (paid, ELEVENLABS_API_KEY)")
+    p.add_argument("--pace", type=float, default=0, help="narration speed, e.g. 1.1 (default) or 1.15; "
+                                                          "1.0 = as the voice speaks; no new voice credits")
+    p.add_argument("--seconds", type=float, default=0, help="make every part exactly this long, e.g. 60")
+    p.add_argument("--voice-model", default="", help="ElevenLabs model, e.g. eleven_v3 (most expressive)")
+    p.add_argument("--voice-style", default="",
+                   help='how a Gemini voice should tell it, e.g. "Whisper it like a ghost story, slow and tense"')
+    p.add_argument("--scenes-per-image", type=int, default=0,
+                   help="reuse each picture for N scenes (2 halves image-generation time)")
+    p.add_argument("--fast", action="store_true",
+                   help="smaller local pictures (576x1024, about 40%% quicker), upscaled to 1080x1920")
+    p.add_argument("--images", choices=["local", "openai"], default="",
+                   help="openai: paid pictures, made several at a time in under a minute each (OPENAI_API_KEY)")
+
+
+def run_batch(args, cfg) -> int:
+    """Each folder becomes its own run (named after the folder); one failure doesn't stop the others, and the local
+    picture model loads only once."""
+    done, failed = [], []
+    for n, folder in enumerate(args.script_dirs, start=1):
+        name = Path(folder).name
+        print(f"\n===== {n}/{len(args.script_dirs)}: {name} =====")
+        try:
+            done.append(make_series(name, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first, folder))
+        except Exception as e:  # keep going: the next story doesn't depend on this one
+            failed.append((name, str(e).splitlines()[0] if str(e) else type(e).__name__))
+            print(f"Failed: {name}: {failed[-1][1]}")
+    print(f"\nFinished {len(done)} of {len(args.script_dirs)}.")
+    for path in done:
+        print(f"  {path}")
+    for name, why in failed:
+        print(f"  FAILED {name}: {why}")
+    return 1 if failed else 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--config", help="path to config.yaml (default: ./config.yaml)")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    def add_make_flags(p):
+        p.add_argument("--dry-run", action="store_true", help="no API calls: placeholder images and silent audio")
+        p.add_argument("--redo", choices=sorted(REDO), help="throw away this stage's output (and everything after it)")
+        p.add_argument("--yes", "-y", action="store_true", help="don't ask before spending API credits")
+
+    p_make = sub.add_parser("make", help="make a video for a topic")
+    p_make.add_argument("topic")
+    p_make.add_argument("--angle", default="", help="optional hook/angle to build the script around")
+    add_make_flags(p_make)
+
+    p_next = sub.add_parser("next", help="make a video for the next unused topic in the topic bank")
+    p_next.add_argument("--niche", required=True)
+    p_next.add_argument("--subcategory", default="")
+    p_next.add_argument("--random", action="store_true", help="pick a random unused topic instead of the first")
+    add_make_flags(p_next)
+
+    p_topics = sub.add_parser("topics", help="list unused topics from the topic bank")
+    p_topics.add_argument("--niche", default="")
+    p_topics.add_argument("--subcategory", default="")
+    p_topics.add_argument("--limit", type=int, default=25)
+
+    p_series = sub.add_parser("series", help="retell one story as a numbered series of Shorts")
+    p_series.add_argument("story", help='e.g. "Dracula by Bram Stoker" or a movie title')
+    p_series.add_argument("--script-dir", default="", help="use a ready-made script, e.g. stories/dracula")
+    add_series_flags(p_series)
+    add_make_flags(p_series)
+
+    p_batch = sub.add_parser("batch", help="make several ready-made stories in one run, e.g. stories/guess-movie-*")
+    p_batch.add_argument("script_dirs", nargs="+", help="story folders, each with bible.json and parts_*.json")
+    add_series_flags(p_batch)
+    add_make_flags(p_batch)
+
+    p_posters = sub.add_parser("posters", help="put film posters from one folder into the right guess-movie folders")
+    p_posters.add_argument("folder", nargs="?", default="postur", help="folder with the poster images (default: postur)")
+
+    p_voices = sub.add_parser("voices", help="preview the free Kokoro voices (writes one mp3 per voice)")
+    p_voices.add_argument("--say", default="In 1940, a brand new bridge began to twist in the wind. "
+                                            "Within hours, it was gone.")
+    p_voices.add_argument("--only", nargs="*", default=[], help="e.g. am_michael bm_george")
+    p_voices.add_argument("--language", default="", help='e.g. "Tamil": preview the free Tamil voices instead')
+    p_voices.add_argument("--provider", choices=["edge", "gemini", "elevenlabs"], default="edge",
+                          help="gemini: Google's expressive voices (GEMINI_API_KEY); elevenlabs: your ElevenLabs "
+                               "voices plus Tamil ones from their Voice Library (ELEVENLABS_API_KEY)")
+    p_voices.add_argument("--model", default="", help="ElevenLabs model, e.g. eleven_v3 (most expressive)")
+    p_voices.add_argument("--gender", choices=["female", "male"], default="", help="ElevenLabs: only these voices")
+    p_voices.add_argument("--style", default="", help="Gemini only: how to tell it (default from config)")
+
+    p_up = sub.add_parser("upload", help="upload an approved run to YouTube (private)")
+    p_up.add_argument("run_dir")
+    p_up.add_argument("--shorts", action="store_true", help="also upload the Shorts")
+    p_up.add_argument("--publish-at", default="", help="ISO 8601 UTC time to go public, e.g. 2026-11-01T14:30:00Z")
+
+    args = parser.parse_args(_join_signed_values(sys.argv[1:]))
+    cfg = load_config(args.config)
+
+    try:
+        if args.command == "make":
+            make_video(args.topic, args.angle, cfg, args.dry_run, args.redo or "", args.yes)
+        elif args.command == "next":
+            pending = [] if args.dry_run else bank.unfinished(cfg, args.niche)
+            if pending:
+                row = pending[0]
+                print(f"Resuming unfinished video: {row['title']}")
+            else:
+                rows = bank.unused(cfg, args.niche, args.subcategory)
+                if not rows:
+                    print("No unused topics left for that niche/subcategory.")
+                    return 1
+                row = random.choice(rows) if args.random else rows[0]
+                print(f"Topic: {row['title']}\nAngle: {row['angle']}")
+            make_video(row["title"], row["angle"], cfg, args.dry_run, args.redo or "", args.yes)
+        elif args.command in ("series", "batch"):
+            if args.parts:
+                cfg["series"]["parts"] = args.parts
+            if args.style:
+                cfg["series"]["style_hint"] = args.style
+            if args.language:
+                cfg["series"]["language"] = args.language
+            if args.voice_provider:
+                cfg["series"]["voice_provider"] = args.voice_provider
+            if args.voice:
+                key = {"elevenlabs": "voice_id", "gemini": "gemini_voice"}.get(cfg["series"].get("voice_provider"),
+                                                                                  "edge_voice")
+                cfg["series"][key] = args.voice
+            if args.pace:
+                cfg["series"]["voice_tempo"] = args.pace
+            if args.seconds:
+                cfg["series"]["part_seconds"] = args.seconds
+            if args.voice_model:
+                cfg["voice"]["model_id"] = args.voice_model
+            if args.voice_style:
+                cfg["voice"]["gemini"]["style"] = args.voice_style
+            if args.voice_rate:
+                cfg["series"]["voice_rate"] = args.voice_rate if args.voice_rate[0] in "+-" else "+" + args.voice_rate
+            if args.voice_pitch:
+                cfg["series"]["voice_pitch"] = args.voice_pitch if args.voice_pitch[0] in "+-" else "+" + args.voice_pitch
+            if args.scenes_per_image:
+                cfg["series"]["scenes_per_image"] = args.scenes_per_image
+            if args.fast:
+                cfg["images"]["local"].update(width=576, height=1024)
+            if args.images:
+                cfg["series"]["images_provider"] = args.images
+            if args.command == "series":
+                make_series(args.story, args.notes, cfg, args.dry_run, args.redo or "", args.yes, args.first,
+                            args.script_dir)
+            else:
+                return run_batch(args, cfg)
+        elif args.command == "topics":
+            if not args.niche:
+                print("Niches:\n  " + "\n  ".join(bank.niches(cfg)))
+                return 0
+            rows = bank.unused(cfg, args.niche, args.subcategory)
+            for row in rows[: args.limit]:
+                print(f"[{row['subcategory']}] {row['title']}\n    {row['angle']}")
+            print(f"\n{len(rows)} unused topics in '{args.niche}'.")
+        elif args.command == "posters":
+            from vidpipe.config import resolve
+            from vidpipe.posters import place_posters, report
+            src = Path(args.folder).expanduser()
+            src = src if src.is_absolute() or src.exists() else resolve(args.folder)
+            if not src.is_dir():
+                raise RuntimeError(f"No folder {src}: put the posters in video_pipeline/postur (or give its path)")
+            stories = resolve("stories")
+            report(place_posters(src, stories), stories / "guess_movies.json")
+        elif args.command == "voices":
+            from vidpipe.config import resolve
+            from vidpipe.voice import (EDGE_SAMPLE_VOICES, GEMINI_STORY_VOICES, preview_edge_voices,
+                                       preview_gemini_voices, preview_voices)
+            out_dir = resolve("voice_samples")
+            lang = args.language.lower()
+            if args.model:
+                cfg["voice"]["model_id"] = args.model
+            if args.provider == "elevenlabs":
+                from vidpipe.voice import preview_eleven_voices
+                say = args.say if "--say" in sys.argv else TAMIL_SAMPLE
+                for path in preview_eleven_voices(cfg, say, out_dir, args.only, gender=args.gender):
+                    print(path)
+                print("Listen, then add --voice-provider elevenlabs --voice <name> to the series command.")
+            elif args.provider == "gemini":
+                say = args.say if "--say" in sys.argv else TAMIL_SAMPLE if lang in ("", "tamil") else args.say
+                if args.style:
+                    cfg["voice"]["gemini"]["style"] = args.style
+                for path in preview_gemini_voices(cfg, say, out_dir, args.only or GEMINI_STORY_VOICES):
+                    print(path)
+                print("Listen, then add --voice-provider gemini --voice <Name> to the series command.")
+            elif lang and lang != "english":
+                if lang not in EDGE_SAMPLE_VOICES and not args.only:
+                    raise RuntimeError(f"No sample voices listed for {args.language}; pass them with --only")
+                say = args.say if "--say" in sys.argv else TAMIL_SAMPLE
+                for path in preview_edge_voices(cfg, say, out_dir, args.only or EDGE_SAMPLE_VOICES[lang]):
+                    print(path)
+                print("Each voice is in 3 deliveries: story (+15%, -4Hz), thriller (+25%, -10Hz), dramatic "
+                      "(+5%, -14Hz).\nPick one, e.g. --voice ta-IN-ValluvarNeural --voice-rate +25% --voice-pitch -10Hz")
+            else:
+                for path in preview_voices(cfg, args.say, out_dir, args.only):
+                    print(path)
+                print("Listen, then set voice.kokoro.voice in config.yaml to the one you like.")
+        elif args.command == "upload":
+            upload_run(Path(args.run_dir).resolve(), cfg, args.shorts, args.publish_at)
+    except (ManualStepNeeded, SeriesStepNeeded) as e:
+        print(e)
+        return 0
+    except RuntimeError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

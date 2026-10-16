@@ -1,0 +1,27 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic film still, a Tamil Nadu village in the early 1980s, warm faded film colours, dusty sunlight, vintage details, 35mm film grain, high detail, realistic expressions",
+  "characters": [
+    {
+      "name": "Friend1",
+      "look": "Tamil man in his mid twenties, curly 1980s hair, thick moustache, loose printed shirt and veshti, restless eyes"
+    },
+    {
+      "name": "Friend2",
+      "look": "Tamil man in his late twenties, sideburns, heavy moustache, plain shirt with rolled sleeves, steady serious eyes"
+    },
+    {
+      "name": "Girl",
+      "look": "Tamil woman of about twenty, long black plait, small red bindi, simple cotton half-saree, shy gentle eyes"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #27",
+      "summary": "A guess-the-movie Short retelling Subramaniapuram (சுப்ரமணியபுரம், 2008) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

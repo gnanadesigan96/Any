@@ -1,0 +1,27 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic crime thriller film still, Bengaluru at night, cold steel-blue and amber colour grade, rain and wet neon reflections, deep shadows, 35mm anamorphic lens, film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Officer",
+      "look": "Tamil woman in her mid-thirties, sharp intense eyes, black hair tied in a tight low ponytail, dark formal trouser suit, ID card on a lanyard, holstered pistol, composed fearless expression"
+    },
+    {
+      "name": "Doctor",
+      "look": "Tamil man in his late twenties, short wavy black hair, light stubble, white doctor's coat over a grey t-shirt, stethoscope around his neck"
+    },
+    {
+      "name": "Killer",
+      "look": "tall man in a long black hooded raincoat and a plain black face mask, only cold staring eyes visible"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #02",
+      "summary": "A guess-the-movie Short retelling Imaikkaa Nodigal (இமைக்கா நொடிகள், 2018) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic film still, Chennai, rich vibrant colour grade, soft natural light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Boy",
+      "look": "Tamil man in his early twenties, slim, short messy hair, light stubble, t-shirt and jeans, earnest dreamy eyes"
+    },
+    {
+      "name": "Jessie",
+      "look": "Malayali woman in her mid twenties, long wavy hair, small cross pendant, elegant cotton salwar, calm thoughtful eyes"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #30",
+      "summary": "A guess-the-movie Short retelling Vinnaithaandi Varuvaayaa (விண்ணைத்தாண்டி வருவாயா, 2010) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

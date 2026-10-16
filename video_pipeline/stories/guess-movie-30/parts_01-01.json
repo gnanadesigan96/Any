@@ -1,0 +1,136 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "முடிவே இல்லாத ஒரு காதல் குழப்பம்! 🤔 இந்தப் படம் எது? #30",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "முடிவே இல்லாத ஒரு காதல் குழப்பம்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: ஹீரோயின் பேரு ஜெஸ்ஸி\n🔍 க்ளூ 2: ஹீரோ பேரு கார்த்திக்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: விண்ணைத்தாண்டி வருவாயா",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "சென்னையில ஒரு சாதாரண இளைஞன். அவங்க குடும்பம், ஒரு வீட்டு கீழ்ப்பகுதியில வாடகைக்கு.",
+          "visual": "the boy sitting on the steps of an old two-storey Chennai house in the evening, looking up at the balcony",
+          "characters": [
+            "Boy"
+          ]
+        },
+        {
+          "narration": "மாடியில, வீட்டுக்காரங்க பொண்ணு. அவளைப் பார்த்த நொடியே, காதல்.",
+          "visual": "the woman alone on an upstairs balcony with potted plants, the evening breeze in her hair",
+          "characters": [
+            "Jessie"
+          ]
+        },
+        {
+          "narration": "ஆனா அவங்களுக்கு நடுவுல, நிறைய தடைகள். அவளோட அப்பா ரொம்பக் கண்டிப்பானவர்.",
+          "visual": "a stern older man in a white shirt standing at the gate of the old house, arms folded",
+          "characters": []
+        },
+        {
+          "narration": "அவ ஆமான்னும் சொல்லல, இல்லன்னும் சொல்லல.",
+          "visual": "the woman alone by a window on a rainy evening, lost in thought, soft light",
+          "characters": [
+            "Jessie"
+          ]
+        },
+        {
+          "narration": "அவளைத் தேடி, ஊர் விட்டு ஊர் போறான்.",
+          "visual": "the boy alone at a rainy railway platform at dawn, a backpack on his shoulder, looking down the tracks",
+          "characters": [
+            "Boy"
+          ]
+        },
+        {
+          "narration": "அவ வீட்டுல, அவனை வெறும் ஒரு கிளாஸ்மேட்டுன்னு அறிமுகம் பண்றா.",
+          "visual": "the woman alone in a doorway, glancing back nervously, a family dinner table visible behind her",
+          "characters": [
+            "Jessie"
+          ]
+        },
+        {
+          "narration": "அவளுக்கு, வீட்டுல வேற ஒருத்தரோட கல்யாண ஏற்பாடு. கல்யாண நாள்ல, அவ ஒரு அதிர்ச்சியான முடிவு எடுக்கிறா!",
+          "visual": "an empty church aisle decorated with white flowers, a bridal bouquet lying on the floor",
+          "characters": []
+        },
+        {
+          "narration": "சேர்றாங்க, பிரியறாங்க, மறுபடியும் சேர்றாங்க... இந்தக் காதல் எங்க போய் முடியும்?",
+          "visual": "an empty rain-soaked street in Chennai at night, two coffee cups left on a café table by the window",
+          "characters": []
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!",
+          "visual": "an empty old two-storey house at dusk, a light glowing in the upstairs window",
+          "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue_countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "க்ளூ ஒண்ணு: அந்தப் பொண்ணோட பேரு, ஜெஸ்ஸி. க்ளூ ரெண்டு: அந்த இளைஞன், சினிமா டைரக்டர் ஆகணும்னு கனவு காணுறவன். இப்போ கண்டுபிடிச்சீங்களா? அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue",
+          "seconds": 6.0
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "விண்ணைத்தாண்டி வருவாயா!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ],
+      "clue_label": "க்ளூ வருது... ரெடியா?",
+      "clue_lines": [
+        [
+          "ஹீரோயின் பேரு",
+          "ஜெஸ்ஸி"
+        ],
+        [
+          "ஹீரோ, சினிமா டைரக்டர்",
+          "ஆகணும்னு கனவு காணுறவன்"
+        ]
+      ]
+    }
+  ]
+}

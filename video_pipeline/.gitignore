@@ -1,0 +1,17 @@
+# Generated videos and intermediate files
+runs/
+# Secrets
+.env
+client_secret.json
+youtube_token.json
+# Music you add may be licensed for use but not redistribution
+assets/music/*
+!assets/music/.gitkeep
+# Downloaded voice model and voice previews
+models/
+voice_samples/
+# Python virtual environment
+.venv/
+
+# Film posters you collect (copyrighted; placed into stories/ by `make_video.py posters`)
+postur/

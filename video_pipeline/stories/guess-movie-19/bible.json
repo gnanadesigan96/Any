@@ -1,0 +1,31 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic film still, Chennai, rich vibrant colour grade, soft natural light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "VillageGirl",
+      "look": "Tamil woman in her early twenties, slim, long black hair in a simple plait, plain cotton churidar, holding a file folder, shy nervous eyes"
+    },
+    {
+      "name": "Stranger",
+      "look": "Tamil man in his late twenties, neat short hair, clean-shaven, smart casual shirt, friendly confident smile"
+    },
+    {
+      "name": "Nurse",
+      "look": "Tamil woman in her mid twenties, hair tied back, white nurse's uniform, bold sharp eyes, arms crossed"
+    },
+    {
+      "name": "ShyMan",
+      "look": "Tamil man in his mid twenties, thin, simple shirt and trousers, oil-stained hands, shy hesitant smile"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #19",
+      "summary": "A guess-the-movie Short retelling Engeyum Eppodhum (எங்கேயும் எப்போதும், 2011) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

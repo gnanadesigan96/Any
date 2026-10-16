@@ -1,0 +1,23 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic drama film still, Chennai, warm natural colour grade, soft window light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Conman",
+      "look": "Tamil man in his early thirties, slick combed hair, thin moustache, sly confident smile, crisp white shirt, gold watch"
+    },
+    {
+      "name": "Wife",
+      "look": "young Tamil woman, long braid, innocent gentle eyes, simple cotton saree"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #10",
+      "summary": "A guess-the-movie Short retelling Sathuranga Vettai (சதுரங்க வேட்டை, 2014) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

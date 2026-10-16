@@ -1,0 +1,108 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "ஒரு கிராமம், ஒரு வினோதமான மூடநம்பிக்கை! 🤔 இந்தப் படம் எது? #11",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "ஒரு கிராமம், ஒரு வினோதமான மூடநம்பிக்கை!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: போட்டோகிராபர் பேரு கோபி\n🔍 க்ளூ 2: படத்தோட பேரே, அந்தக் கிராமத்தோட பேரு\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: முண்டாசுப்பட்டி",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "எண்பதுகள்ல ஒரு கிராமம். அந்த ஊர் மக்களுக்கு ஒரு வினோதமான நம்பிக்கை.",
+          "visual": "a sleepy early-1980s Tamil village with thatched houses, villagers in turbans gathered under a banyan tree",
+          "characters": []
+        },
+        {
+          "narration": "அந்த நம்பிக்கையால, ஊருக்குள்ள ஒரு குறிப்பிட்ட விஷயத்துக்கே தடை!",
+          "visual": "terrified villagers covering their faces and running from an old camera on a tripod in the village square",
+          "characters": []
+        },
+        {
+          "narration": "டவுன்ல ஸ்டுடியோ வச்சிருக்கிற ஒரு போட்டோகிராபரும் அவனோட உதவியாளும், அந்த ஊருக்குக் கூப்பிடப்படுறாங்க.",
+          "visual": "the photographer and his assistant riding into the village on a bicycle loaded with camera gear, villagers staring",
+          "characters": [
+            "Photographer",
+            "Assistant"
+          ]
+        },
+        {
+          "narration": "ஊர்ப் பெரியவரை போட்டோ எடுக்கணும். ஆனா ஏதோ ஒரு குழப்பத்தால, ரெண்டு பேரும் அந்த ஊர்லயே மாட்டிக்கிறாங்க.",
+          "visual": "the photographer and assistant standing nervously before a stern village council under a tree",
+          "characters": [
+            "Photographer",
+            "Assistant"
+          ]
+        },
+        {
+          "narration": "அங்க, ஊர்த் தலைவரோட பொண்ணு மேல போட்டோகிராபருக்குக் காதல்.",
+          "visual": "the girl alone, drawing water at a village well in soft morning light, a shy smile, nobody else in the picture",
+          "characters": [
+            "Girl"
+          ]
+        },
+        {
+          "narration": "ஆனா அவளுக்கு ஏற்கனவே வேற ஒருத்தரோட கல்யாணம் பேசி முடிச்சிருக்காங்க!",
+          "visual": "a village engagement ceremony with plates of fruit and flowers, the photographer watching sadly from behind a pillar",
+          "characters": [
+            "Photographer"
+          ]
+        },
+        {
+          "narration": "சினிமா ஹீரோ ஆகணும்னு கனவு காணுற ஒருத்தர், ஒரு கேமரா, ஒரு காதல்... சிரிப்புக்குப் பஞ்சமே இல்ல!",
+          "visual": "a funny villager striking a dramatic film-hero pose in front of the camera while the assistant laughs",
+          "characters": [
+            "Assistant"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "an old wooden box camera on a tripod standing alone in an empty village square at dusk",
+          "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "முண்டாசுப்பட்டி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ]
+    }
+  ]
+}

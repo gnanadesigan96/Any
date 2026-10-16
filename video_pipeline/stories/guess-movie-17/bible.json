@@ -1,0 +1,19 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic neo-noir film still, Chennai at night, moody teal and amber colour grade, wet streets, deep shadows, 35mm anamorphic lens, film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Officer",
+      "look": "Tamil man in his forties, short hair, neat moustache, grieving tired eyes, dark shirt with sleeves rolled up"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #17",
+      "summary": "A guess-the-movie Short retelling Yuddham Sei (யுத்தம் செய், 2011) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

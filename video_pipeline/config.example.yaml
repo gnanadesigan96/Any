@@ -1,0 +1,52 @@
+# Copy to config.yaml and edit. Anything you leave out uses the default in vidpipe/config.py.
+
+channel:
+  name: "Rise & Fall Files"            # your channel name
+  niche: "Engineering Disasters"       # what the channel is about (steers every script)
+  audience: "curious adults who enjoy documentaries"
+  tone: "calm, gripping documentary narrator; short sentences; no hype"
+  language: "English"
+
+script:
+  model: "claude-opus-5-5"
+  effort: "high"            # low | medium | high | xhigh | max (higher = more careful, more tokens)
+  target_words: 1500        # ~10 minutes of narration
+  words_per_scene: 28       # one image per scene, so this sets how often the picture changes (~10s)
+  max_scenes: 90
+  num_shorts: 3
+
+voice:
+  provider: "elevenlabs"
+  voice_id: ""              # REQUIRED: copy a voice ID from your ElevenLabs voice library
+  model_id: "eleven_multilingual_v2"
+  stability: 0.45
+  similarity_boost: 0.8
+  style: 0.15
+
+images:
+  provider: "openai"
+  model: "gpt-image-1"
+  size: "1536x1024"
+  quality: "medium"         # low | medium | high (cost scales with quality)
+  # Keep this identical for every video: a consistent look is your channel's brand.
+  style: "detailed digital illustration, cinematic documentary look, muted colours, soft dramatic lighting, no text, no logos, no watermarks"
+
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  captions: true
+  caption_font: "Inter"     # any font installed on your machine
+  caption_max_words: 5
+  music_dir: "assets/music" # drop royalty-free tracks here (e.g. YouTube Audio Library); empty = no music
+  music_volume: 0.10
+
+shorts:
+  enabled: true
+
+upload:
+  client_secrets: "client_secret.json"
+  token_file: "youtube_token.json"
+  category_id: "27"         # 27 = Education
+  made_for_kids: false
+  contains_synthetic_media: true   # YouTube's "altered or synthetic content" disclosure

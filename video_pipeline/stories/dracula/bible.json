@@ -1,0 +1,66 @@
+{
+  "series_title": "Dracula",
+  "art_style": "dark gothic graphic-novel illustration, bold black ink lines, heavy shadows, muted crimson and slate-blue palette, moonlit dramatic lighting, textured paper grain",
+  "characters": [
+    {
+      "name": "Jonathan",
+      "look": "young Englishman in his mid-twenties, slim build, clean-shaven, short neat brown hair, earnest brown eyes, dark brown three-piece Victorian travelling suit, white high-collared shirt, dark green tie, small silver crucifix on a chain"
+    },
+    {
+      "name": "Count Dracula",
+      "look": "very tall gaunt old nobleman, pale waxy skin, sharp hooked nose, thick white moustache, bushy white eyebrows, pointed ears, sharp white teeth, red-tinged eyes, long black cloak with a high collar over black clothes"
+    },
+    {
+      "name": "Mina",
+      "look": "young Englishwoman in her early twenties, dark auburn hair in a neat Victorian bun, intelligent green eyes, calm determined expression, high-necked deep blue Victorian dress with a white lace collar, small silver brooch"
+    },
+    {
+      "name": "Lucy",
+      "look": "young Englishwoman of nineteen, long wavy golden-blonde hair with a pale pink ribbon, porcelain skin, light blue eyes, delicate features, flowing white Victorian dress with lace sleeves"
+    },
+    {
+      "name": "Van Helsing",
+      "look": "elderly Dutch professor in his sixties, stocky build, broad forehead, bushy grey eyebrows, short grey beard, deep-set blue eyes behind round spectacles, black frock coat, grey waistcoat, black leather doctor's bag"
+    },
+    {
+      "name": "Dr. Seward",
+      "look": "serious Englishman around thirty, tall and thin, short dark hair, neatly trimmed dark moustache, tired grey eyes, charcoal-grey Victorian suit, white doctor's coat over it"
+    },
+    {
+      "name": "Arthur Holmwood",
+      "look": "aristocratic young Englishman, tall and broad-shouldered, wavy light-brown hair, clean-shaven square jaw, hazel eyes, elegant black tailcoat, burgundy cravat, silver tie pin"
+    },
+    {
+      "name": "Quincey Morris",
+      "look": "rugged young Texan, tall and lean, sun-tanned face, sandy-blond hair, short beard, wide-brimmed brown cowboy hat, long tan leather duster coat, large bowie knife on his belt"
+    },
+    {
+      "name": "Renfield",
+      "look": "wild-eyed thin man in his fifties, gaunt unshaven face, messy thinning grey hair, frantic darting eyes, stained loose grey asylum shirt and trousers"
+    },
+    {
+      "name": "The Three Sisters",
+      "look": "three pale ghostly women, two with dark hair and one with golden hair, blood-red lips, sharp gleaming teeth, faintly glowing eyes, long sheer flowing white gowns"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "The Guest Who Couldn't Leave",
+      "summary": "Jonathan Harker travels to Castle Dracula, discovers the Count has no reflection and is a prisoner, survives the three vampire women, and finds the Count asleep in a box of earth just as fifty boxes leave for London.",
+      "cliffhanger": "The Count is on his way to London, and Jonathan is left behind with the three women."
+    },
+    {
+      "part": 2,
+      "title": "The Lady in White",
+      "summary": "The Demeter runs aground in Whitby with a dead captain and fifty boxes of earth. The Count feeds on Lucy; Van Helsing's garlic fails, a wolf breaks in, and Lucy dies, then rises as the lady in white who lures children.",
+      "cliffhanger": "Lucy's tomb is empty, and the hunters must face what she has become."
+    },
+    {
+      "part": 3,
+      "title": "The Final Hunt",
+      "summary": "Arthur frees undead Lucy with a stake. The hunters destroy the Count's boxes, the Count attacks Mina, and through her hypnotic link they chase him home, defeat the three women and destroy him at sunset.",
+      "cliffhanger": "The Count turns to dust and Mina is free."
+    }
+  ]
+}

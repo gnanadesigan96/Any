@@ -1,0 +1,374 @@
+"""Runs the stages in order. Every stage caches its output in the run folder, so a failed or
+interrupted run picks up where it stopped (and you only pay for missing pieces)."""
+
+import copy
+import hashlib
+import json
+import shutil
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+from pydantic import ValidationError
+
+from .config import resolve
+from .images import generate_images
+from .render import check_output, render_main, render_shorts
+from .review import write_review, write_shorts_review
+from .script import (MANUAL_REPLY, dummy_script, dummy_shorts, generate_script, is_shorts, load_any,
+                     parse_manual_reply, write_manual_prompt)
+from .stock import credit_lines, fetch_thumbnail_photo, fetch_visuals, used_ids
+from .thumbnail import make_thumbnails
+from .util import check_ffmpeg_features, log, read_json, require_binary, run_ffmpeg, slugify, write_json
+from .voice import distribute_words, narrate_scenes
+
+# Downstream outputs to delete when a stage is redone.
+# (Shorts mode keeps each Short's working files in a short_N/ folder, hence the short_*/ patterns.)
+REDO = {
+    "script": ["script.json", "claude_reply.txt", "PROMPT_FOR_CLAUDE.txt", "metadata.json", "audio", "images",
+               "work", "video.mp4", "short_*", "thumbnail_*.jpg"],
+    "voice": ["audio", "work", "video.mp4", "short_*.mp4", "short_*/audio", "short_*/work", "short_*/video.mp4"],
+    "images": ["images", "work", "video.mp4", "short_*.mp4", "thumbnail_*.jpg", "short_*/images", "short_*/work",
+               "short_*/video.mp4"],
+    "video": ["work", "video.mp4", "short_*.mp4", "short_*/work", "short_*/video.mp4"],
+}
+
+
+class ManualStepNeeded(Exception):
+    """Raised (not an error) when the free manual-script mode is waiting for you."""
+
+
+def _uses_paid_services(cfg: dict) -> bool:
+    return cfg["voice"]["provider"] == "elevenlabs" or cfg["images"]["provider"] == "openai"
+
+
+def _clear(run_dir: Path, patterns: list) -> None:
+    for pattern in patterns:
+        for p in run_dir.glob(pattern):
+            shutil.rmtree(p) if p.is_dir() else p.unlink()
+
+
+def _confirm_spend(scenes: list, cfg: dict, assume_yes: bool) -> None:
+    chars = sum(len(s.narration) for s in scenes)
+    words = sum(len(s.narration.split()) for s in scenes)
+    log(f"Script ready: {len(scenes)} scenes, {words} words (~{words / 150:.1f} min of narration), "
+        f"{chars} characters.")
+    if assume_yes or not sys.stdin.isatty() or not _uses_paid_services(cfg):
+        return
+    if input("Generate voice and images now (uses paid API credits)? [y/N] ").strip().lower() != "y":
+        raise SystemExit("Stopped after the script. Read script.json, then re-run the same command to continue.")
+
+
+def make_video(topic: str, angle: str, cfg: dict, dry_run: bool = False, redo: str = "",
+               assume_yes: bool = False) -> Path:
+    require_binary("ffmpeg")
+    require_binary("ffprobe")
+    check_ffmpeg_features(cfg["video"]["captions"])
+    run_dir = resolve(cfg["runs_dir"]) / (slugify(topic) + ("-dryrun" if dry_run else ""))
+    run_dir.mkdir(parents=True, exist_ok=True)
+    if redo:
+        _clear(run_dir, REDO[redo])
+    if not (run_dir / "run.json").exists():
+        write_json(run_dir / "run.json", {"topic": topic, "angle": angle, "dry_run": dry_run,
+                                          "created": datetime.now(timezone.utc).isoformat()})
+    log(f"Run folder: {run_dir}")
+
+    script, regenerated = _script_stage(run_dir, topic, angle, cfg, dry_run)
+    if is_shorts(cfg):
+        return _make_shorts(run_dir, topic, script, cfg, dry_run, assume_yes, regenerated)
+    return _make_long(run_dir, topic, script, cfg, dry_run, assume_yes, regenerated)
+
+
+def _script_stage(run_dir: Path, topic: str, angle: str, cfg: dict, dry_run: bool):
+    """Returns (script, regenerated). Raises ManualStepNeeded while waiting for a pasted reply."""
+    script_path = run_dir / "script.json"
+    if script_path.exists():
+        try:
+            return load_any(read_json(script_path), cfg), False
+        except ValidationError as e:
+            fmt = "Shorts" if is_shorts(cfg) else "long-video"
+            raise RuntimeError(f"{run_dir.name} was made in the other format, not the {fmt} format set in "
+                               "config.yaml. Re-run with --redo script to rewrite it, or pick another topic.") from e
+    if dry_run:
+        script = dummy_shorts(topic, angle, cfg) if is_shorts(cfg) else dummy_script(topic, angle, cfg)
+    elif cfg["script"]["provider"] == "manual":
+        reply = run_dir / MANUAL_REPLY
+        if not reply.exists() or not reply.read_text(encoding="utf-8").strip():
+            prompt = write_manual_prompt(topic, angle, run_dir, cfg)
+            reply.touch()
+            raise ManualStepNeeded(
+                "Free script step:\n"
+                f"  1. Open {prompt} and copy all of it\n"
+                "  2. Paste it into a new chat at claude.ai and send\n"
+                f"  3. Paste Claude's whole reply into {reply} and save\n"
+                "  4. Run the same command again")
+        script = parse_manual_reply(reply.read_text(encoding="utf-8"), cfg)
+    else:
+        script = generate_script(topic, angle, cfg)
+    write_json(script_path, script.model_dump())
+    return script, True
+
+
+def _lib_key(prompt: str) -> str:
+    return hashlib.sha1(prompt.strip().encode()).hexdigest()[:16]
+
+
+def _to_library(library: Path, prompt: str, picture: Path) -> None:
+    """Keep a picture (and its movie clip, if one was made) under its description, for reuse."""
+    if not library or not picture.exists():
+        return
+    library.mkdir(parents=True, exist_ok=True)
+    key = _lib_key(prompt)
+    for src, ext in ((picture, ".png"), (picture.with_suffix(".mp4"), ".mp4")):
+        dest = library / f"{key}{ext}"
+        if src.exists() and not dest.exists():
+            shutil.copyfile(src, dest)
+
+
+def _from_library(library: Path, prompt: str, picture: Path) -> bool:
+    if not library:
+        return False
+    key = _lib_key(prompt)
+    if not (library / f"{key}.png").exists():
+        return False
+    shutil.copyfile(library / f"{key}.png", picture)
+    if (library / f"{key}.mp4").exists():
+        shutil.copyfile(library / f"{key}.mp4", picture.with_suffix(".mp4"))
+    return True
+
+
+def index_library(run_dir: Path, library: Path) -> None:
+    """Before re-rendering a rewritten script, remember every picture already made in this run."""
+    for manifest_path in run_dir.glob("*/images/prompts.json"):
+        for name, prompt in (read_json(manifest_path, {}) or {}).items():
+            _to_library(library, prompt, manifest_path.parent / name)
+
+
+def _visuals(scenes: list, timing: list, img_dir: Path, cfg: dict, dry_run: bool, exclude=frozenset(),
+             library: Path = None) -> list:
+    img_dir.mkdir(parents=True, exist_ok=True)
+    if cfg["images"]["provider"] == "stock" and not dry_run:
+        return fetch_visuals(scenes, [t["duration"] for t in timing], img_dir, cfg, exclude)
+    # scenes_per_image > 1 reuses each picture for that many consecutive scenes (each still gets its
+    # own camera move), dividing generation time; pictures that already exist are always kept.
+    k = max(1, int(cfg["images"].get("scenes_per_image", 1)))
+    manifest_path = img_dir / "prompts.json"
+    manifest = read_json(manifest_path, {}) or {}
+    own = [img_dir / f"scene_{i:03d}.png" for i in range(len(scenes))]
+    for i, p in enumerate(own):
+        # A picture made for a different description is stale (e.g. the script was rewritten):
+        # keep it in the library for reuse, then replace it. Pictures from before the manifest
+        # existed are trusted as-is.
+        if p.exists() and manifest.get(p.name, scenes[i].visual) != scenes[i].visual:
+            _to_library(library, manifest[p.name], p)
+            for stale in (p, p.with_suffix(".mp4"), p.with_name(p.stem + ".depth.png")):
+                stale.unlink(missing_ok=True)
+            manifest.pop(p.name, None)
+    paths = [p if p.exists() else own[i - i % k] for i, p in enumerate(own)]
+    missing = sorted({p for p in paths if not p.exists()})
+    reused = [p for p in missing if _from_library(library, scenes[int(p.stem[6:])].visual, p)]
+    if reused:
+        log(f"  reused {len(reused)} existing picture(s)")
+    todo = [p for p in missing if p not in reused]
+    generate_images([(scenes[int(p.stem[6:])].visual, p) for p in todo], cfg, dry_run)
+    for p in set(paths):
+        prompt = scenes[int(p.stem[6:])].visual
+        if p in missing:
+            manifest[p.name] = prompt
+        manifest.setdefault(p.name, prompt)
+        if p in todo:
+            _to_library(library, prompt, p)
+    write_json(manifest_path, manifest)
+    # Your own media wins: a clip saved as scene_NNN.mp4 (e.g. from an image-to-video app), or a picture of
+    # your own saved as scene_NNN.mine.jpg / .png / .jpeg / .webp. The generated picture is kept untouched.
+    return [_own_media(img_dir, i) or p for i, p in enumerate(paths)]
+
+
+OWN_PICTURE_SUFFIXES = (".jpg", ".jpeg", ".png", ".webp")
+
+
+def _own_media(img_dir: Path, i: int):
+    clip = img_dir / f"scene_{i:03d}.mp4"
+    if clip.exists():
+        return clip
+    return next((img_dir / f"scene_{i:03d}.mine{ext}" for ext in OWN_PICTURE_SUFFIXES
+                 if (img_dir / f"scene_{i:03d}.mine{ext}").exists()), None)
+
+
+def shorts_config(cfg: dict) -> dict:
+    """The config as seen while rendering a Short: vertical frame, short captions, brisk voice."""
+    sh = cfg["shorts"]
+    vcfg = copy.deepcopy(cfg)
+    vcfg["video"].update(width=sh["width"], height=sh["height"], caption_max_words=sh["caption_max_words"])
+    vcfg["voice"]["kokoro"].update(speed=sh["voice_speed"], sentence_pause=sh["sentence_pause"],
+                                   scene_pause=sh["scene_pause"], clause_pause=sh["clause_pause"])
+    vcfg["images"]["size"] = "1024x1536"  # portrait AI images when the paid image provider is used
+    if cfg["images"]["provider"] == "local":
+        vcfg["images"]["workers"] = 1
+    return vcfg
+
+
+RENDER_VERSION = 7  # bump when the look/sound of renders changes, so existing videos are rebuilt
+
+
+def _fingerprint(short, overlay: dict, paths: list, cfg: dict) -> str:
+    """Changes whenever anything that affects the rendered Short changes."""
+    v = cfg["video"]
+    data = [RENDER_VERSION, [[s.narration, s.seconds] for s in short.scenes], short.hook_text, overlay,
+            [f"{p.name}:{p.stat().st_mtime_ns}" for p in paths],
+            {k: v.get(k) for k in ("animation", "parallax", "effects", "score", "score_volume", "score_whoosh", "score_riser", "width",
+                                    "height", "fps", "captions", "caption_max_words", "title_style")},
+            cfg["voice"].get("kokoro"), cfg["voice"].get("provider")]
+    if cfg["voice"].get("tempo", 1.0) != 1.0:
+        data.append({"tempo": cfg["voice"]["tempo"]})
+    if cfg["shorts"].get("part_seconds"):
+        data.append({"part_seconds": cfg["shorts"]["part_seconds"]})
+    if cfg["voice"].get("provider") in ("edge", "gemini"):
+        data.append(cfg["voice"].get(cfg["voice"]["provider"]))
+    elif cfg["voice"].get("provider") == "elevenlabs":
+        data.append({k: cfg["voice"].get(k) for k in ("voice_id", "model_id", "stability", "similarity_boost", "style")})
+    return hashlib.sha1(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def _subtitle_timing(subtitles: list, timing: list) -> list:
+    """Captions in another language than the narration (e.g. English subtitles under Tamil): each scene's
+    subtitle is spread over the time that scene's narration is spoken."""
+    out = []
+    for sub, t in zip(subtitles, timing):
+        if sub.strip() and t["words"]:
+            t = {**t, "words": distribute_words(sub.strip(), t["words"][0][1], t["words"][-1][2])}
+        out.append(t)
+    return out
+
+
+END_HOLD = 1.5  # seconds of quiet after the last line, under the end card
+
+
+def _fit_length(short, sub: Path, vcfg: dict, timing: list, dry_run: bool) -> tuple:
+    """With shorts.part_seconds set, make each Short exactly that long: the narration's pace is adjusted (within
+    the chosen pace-1.3x, re-using the recording) so it ends END_HOLD seconds early, and the last scene holds for the
+    rest. Returns the config and timing to render with."""
+    target = float(vcfg["shorts"].get("part_seconds") or 0)
+    if not target:
+        return vcfg, timing
+    tempo = float(vcfg["voice"].get("tempo", 1.0))
+    raw = sum(t["duration"] for t in timing) * tempo  # length at the voice's own speed
+    # Never slower than the chosen pace (a slowed voice drags); a short script gets a longer quiet end instead.
+    want = round(min(max(raw / max(target - END_HOLD, 1.0), tempo, 0.9), 1.3), 3)
+    kcfg = copy.deepcopy(vcfg)
+    kcfg["voice"]["tempo"] = want
+    if abs(want - tempo) > 1e-3:
+        timing = narrate_scenes(short.scenes, sub, kcfg, dry_run)
+    total = sum(t["duration"] for t in timing)
+    if total > target + 0.05:
+        log(f"  Warning: the narration needs {total:.1f}s even at {want}x; shorten the script to fit {target:.0f}s")
+    timing = [dict(t) for t in timing]
+    timing[-1]["duration"] += max(target - total, 0.0)
+    log(f"  pace {want}x to fit {target:.0f}s")
+    return kcfg, timing
+
+
+def _hold_special(scenes: list, timing: list) -> list:
+    """The answer and the end screen stay up at least `seconds`, and always a beat longer than their line, so the
+    voice never runs into the next screen or the end of the video."""
+    tail = {"reveal": 0.4, "outro": 0.9, "clue": 0.6}
+    out = []
+    for sc, t in zip(scenes, timing):
+        if sc.kind in tail:
+            t = {**t, "duration": max(t["duration"] + tail[sc.kind], sc.seconds or 0)}
+        out.append(t)
+    return out
+
+
+def _make_shorts(run_dir: Path, topic: str, pack, cfg: dict, dry_run: bool, assume_yes: bool,
+                 regenerated: bool, prefix: str = "short", limit: int = 0, overlays: list = None) -> Path:
+    """Renders each item of pack.shorts as <prefix>_<k>.mp4. `limit` renders only the first N."""
+    if not dry_run:
+        _confirm_spend([sc for short in pack.shorts for sc in short.scenes], cfg, assume_yes)
+    vcfg = shorts_config(cfg)
+    index_library(run_dir, run_dir / "library")
+    names = [f"{prefix}_{k:02d}" if prefix != "short" else f"short_{k}" for k in range(1, len(pack.shorts) + 1)]
+    todo = pack.shorts[:limit] if limit else pack.shorts
+    outputs = []
+    for k, short in enumerate(todo, start=1):
+        sub = run_dir / names[k - 1]
+        sub.mkdir(exist_ok=True)
+        log(f"{prefix.title()} {k}/{len(pack.shorts)}: {short.title}")
+        timing = narrate_scenes(short.scenes, sub, vcfg, dry_run)
+        kcfg, timing = _fit_length(short, sub, vcfg, timing, dry_run)
+        timing = _hold_special(short.scenes, timing)
+        log(f"  narration: {sum(t['duration'] for t in timing):.1f}s")
+        siblings = [run_dir / n / "images" for j, n in enumerate(names, start=1) if j != k]
+        # Countdown / reveal scenes (always last) show the film's poster instead of a generated picture.
+        story = next((i for i, sc in enumerate(short.scenes) if sc.kind), len(short.scenes))
+        paths = _visuals(short.scenes[:story], timing[:story], sub / "images", kcfg, dry_run, used_ids(siblings),
+                         library=run_dir / "library")
+        if story < len(short.scenes):
+            from .series import find_poster
+            poster = find_poster(run_dir)
+            if not poster:
+                raise RuntimeError(f"No poster.jpg in {run_dir}: save the film's poster in its story folder.")
+            # A clue round plays over the last story picture (blurred); everything after it over the poster.
+            paths += [paths[story - 1] if sc.kind.startswith("clue") and story else poster
+                      for sc in short.scenes[story:]]
+        out = run_dir / f"{names[k - 1]}.mp4"
+        overlay = (overlays or [{}] * len(pack.shorts))[k - 1]
+        stamp, fp = sub / "fingerprint.txt", _fingerprint(short, overlay, paths, kcfg)
+        # No stamp = rendered by an older version of the pipeline: rebuild it too, to be safe.
+        if (stamp.exists() and stamp.read_text() != fp) or (not stamp.exists() and out.exists()):
+            log("  script or settings changed since the last render; re-rendering this one")
+            _clear(sub, ["work", "video.mp4"])
+            out.unlink(missing_ok=True)
+        if not out.exists():
+            video = sub / "video.mp4"
+            if not video.exists():
+                subs = overlay.get("subtitles")
+                render_main(sub, paths, _subtitle_timing(subs, timing) if subs else timing, kcfg,
+                            title=short.hook_text, scene_texts=[f"{sc.visual} {sc.narration}" for sc in short.scenes],
+                            overlay={k: v for k, v in overlay.items() if k != "subtitles"})
+            shutil.copyfile(video, out)
+        stamp.write_text(fp)
+        thumb = out.with_name(out.stem + "_thumbnail.jpg")
+        if not thumb.exists() or thumb.stat().st_mtime < out.stat().st_mtime:  # the title card in the first frame
+            run_ffmpeg(["-ss", "0.15", "-i", out, "-frames:v", "1", "-q:v", "2", thumb])
+        duration = check_output(out, check_silence=not dry_run)
+        if duration > 180:
+            log(f"  Warning: {out.name} is {duration:.0f}s; YouTube Shorts must be 3 minutes or less")
+        outputs.append(out)
+    if len(outputs) < len(pack.shorts):
+        log(f"Rendered {len(outputs)} of {len(pack.shorts)}. Run the same command without --first to finish.")
+        return run_dir
+    credits = [credit_lines(run_dir / n / "images") for n in names]
+    review = write_shorts_review(run_dir, topic, pack, outputs, credits, dry_run, regenerated)
+    log(f"Done: {len(outputs)} Shorts. Review {review} before uploading.")
+    return run_dir
+
+
+def _make_long(run_dir: Path, topic: str, script, cfg: dict, dry_run: bool, assume_yes: bool,
+               regenerated: bool) -> Path:
+    if not dry_run:
+        _confirm_spend(script.scenes, cfg, assume_yes)
+    timing = narrate_scenes(script.scenes, run_dir, cfg, dry_run)
+
+    img_dir = run_dir / "images"
+    image_paths = _visuals(script.scenes, timing, img_dir, cfg, dry_run)
+    if cfg["images"]["provider"] == "stock" and not dry_run:
+        thumb_bg = img_dir / "thumbnail_bg.jpg"
+        fetch_thumbnail_photo(script.thumbnail_search_query, thumb_bg, cfg)
+    else:
+        thumb_bg = img_dir / "thumbnail_bg.png"
+        generate_images([(script.thumbnail_visual, thumb_bg)], cfg, dry_run)
+
+    video = run_dir / "video.mp4"
+    if not video.exists():
+        render_main(run_dir, image_paths, timing, cfg)
+    check_output(video, check_silence=not dry_run)
+
+    shorts = []
+    if cfg["shorts"]["enabled"] and script.shorts:
+        shorts = render_shorts(run_dir, image_paths, timing, script.shorts, cfg)
+
+    thumbs = sorted(run_dir.glob("thumbnail_*.jpg")) or make_thumbnails(thumb_bg, script.thumbnail_texts, run_dir, cfg)
+    review = write_review(run_dir, topic, script, timing, cfg, thumbs, shorts, dry_run, regenerated)
+    log(f"Done. Review {review} before uploading.")
+    return run_dir

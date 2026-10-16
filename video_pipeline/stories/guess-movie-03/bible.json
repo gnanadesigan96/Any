@@ -1,0 +1,23 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic crime thriller film still, Chennai at night, gritty teal and sodium-orange colour grade, busy wet streets, headlights and neon, handheld 35mm look, film grain, high detail, realistic expressions",
+  "characters": [
+    {
+      "name": "Newcomer",
+      "look": "Tamil man in his late twenties from a small town, neat short black hair, clean-shaven, shy worried eyes, simple checked shirt tucked into trousers, office ID tag"
+    },
+    {
+      "name": "Driver",
+      "look": "Tamil man in his fifties, thin build, grey stubble, kind tired eyes, faded blue shirt, a towel on his shoulder"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #03",
+      "summary": "A guess-the-movie Short retelling Maanagaram (மாநகரம், 2017) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

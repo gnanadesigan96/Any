@@ -1,0 +1,23 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic science-fiction thriller film still, Chennai, cool blue and steel colour grade, glowing lab screens, rain at night, 35mm anamorphic lens, film grain, high detail, realistic expressions",
+  "characters": [
+    {
+      "name": "Cop",
+      "look": "Tamil man about thirty, short black hair, trimmed beard, intense tired eyes, khaki police inspector uniform"
+    },
+    {
+      "name": "Doctor",
+      "look": "Tamil woman in her late twenties, hair tied back, calm kind eyes, white coat over a simple kurta"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #06",
+      "summary": "A guess-the-movie Short retelling Maayavan (மாயவன், 2017) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

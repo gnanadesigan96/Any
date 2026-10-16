@@ -1,0 +1,141 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "ஒரு திமிரான இளைஞன், ஒரு வினோதமான மனுஷன், ஒரு பயணம்! 🤔 இந்தப் படம் எது? #29",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "ஒரு திமிரான இளைஞன், ஒரு வினோதமான மனுஷன், ஒரு பயணம்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: இளைஞன் பேரு அன்பரசு\n🔍 க்ளூ 2: அந்த வினோதமான மனுஷன், தெருவுல நாடகம் போடுற ஒரு போராளி\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: அன்பே சிவம்",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "ஒரு திமிரான இளைஞன். ஒரு முக்கியமான நாளுக்காக, அவசரமா ஊருக்குத் திரும்பணும்.",
+          "visual": "the young man standing under an umbrella in pouring rain, checking his watch impatiently",
+          "characters": [
+            "Young"
+          ]
+        },
+        {
+          "narration": "ஆனா பெரிய மழை, வெள்ளம். எல்லாப் பயணமும் ரத்து.",
+          "visual": "a flooded road under heavy monsoon rain, stalled buses and cycle rickshaws",
+          "characters": []
+        },
+        {
+          "narration": "வேற வழியில்லாம, பேசிக்கிட்டே இருக்கிற ஒரு வினோதமான மனுஷனோட சேர்ந்து பயணம்.",
+          "visual": "the stranger chatting cheerfully at a rainy bus stop, the young man standing apart, annoyed",
+          "characters": [
+            "Stranger",
+            "Young"
+          ]
+        },
+        {
+          "narration": "ஒவ்வொரு அடியிலும் சண்டை. ஒவ்வொரு அடியிலும், அந்த இளைஞனுக்கு ஒரு பாடம்.",
+          "visual": "the two men sitting at opposite ends of a wooden bench at a rainy roadside tea stall, the stranger laughing, the young man sulking",
+          "characters": [
+            "Stranger",
+            "Young"
+          ]
+        },
+        {
+          "narration": "அந்த மனுஷனோட கடந்த காலத்துல, ஒரு பெரிய காதல் கதையும், ஒரு பெரிய இழப்பும் இருக்கு.",
+          "visual": "the stranger alone by a train window at night, rain streaking the glass, looking at an old photograph",
+          "characters": [
+            "Stranger"
+          ]
+        },
+        {
+          "narration": "ஒரு காலத்துல, தான் எதிர்த்துப் போராடின முதலாளியோட மகளையே காதலிச்சவர் அவர்.",
+          "visual": "a crowd of factory workers holding protest placards outside an old factory gate, seen from a distance",
+          "characters": []
+        },
+        {
+          "narration": "ஒரு விபத்து, அவரோட வாழ்க்கையையே திசை மாத்திடுச்சு.",
+          "visual": "a lonely rain-soaked road at night, a broken bus window glinting under a streetlight, nobody in sight",
+          "characters": []
+        },
+        {
+          "narration": "பயணம் முடியும்போது, அந்தத் திமிரான இளைஞன் வேற மனுஷனா மாறியிருப்பானா?",
+          "visual": "a long wet railway track stretching into the misty distance at dawn",
+          "characters": []
+        },
+        {
+          "narration": "பயணத்தோட முடிவுல, ரெண்டு பேருக்குமே ஒரு அதிர்ச்சி காத்திருக்கு!",
+          "visual": "a decorated wedding hall entrance with marigold garlands, empty chairs inside, seen from the rainy street",
+          "characters": []
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!",
+          "visual": "an empty rain-soaked road at dusk with a single bus shelter",
+          "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue_countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "க்ளூ ஒண்ணு: அந்தத் திமிரான இளைஞன் பேரு, அன்பரசு. க்ளூ ரெண்டு: அந்த வினோதமான மனுஷன், தெருவுல நாடகம் போட்டு, ஏழைங்களுக்காகப் போராடுறவர். இப்போ கண்டுபிடிச்சீங்களா? அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue",
+          "seconds": 6.0
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "அன்பே சிவம்!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ],
+      "clue_label": "க்ளூ வருது... ரெடியா?",
+      "clue_lines": [
+        [
+          "இளைஞன் பேரு",
+          "அன்பரசு"
+        ],
+        [
+          "அந்த வினோதமான மனுஷன்,",
+          "தெருவுல நாடகம் போடுறவர்"
+        ]
+      ]
+    }
+  ]
+}

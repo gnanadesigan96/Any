@@ -1,0 +1,113 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "வீட்டை விட்டுத் துரத்தப்பட்ட ஒரு பொண்ணோட போராட்டம்! 🤔 இந்தப் படம் எது? #14",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "வீட்டை விட்டுத் துரத்தப்பட்ட ஒரு பொண்ணோட போராட்டம்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: அவளோட தோழி பேரு எமிலி\n🔍 க்ளூ 2: அவளோட பேருதான், படத்தோட பேரு\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: அருவி",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "போலீஸ் ஒரு இளம் பெண்ணைத் தீவிரவாதியா சந்தேகப்பட்டு விசாரிக்குது. அவ யாரு? அவளோட கடந்த காலம் என்ன?",
+          "visual": "the heroine sitting calmly in a bare police interrogation room, officers watching through glass",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "பாசமா வளர்ந்த ஒரு நடுத்தரக் குடும்பத்துப் பொண்ணு. ஆனா ஒரு நாள், குடும்பமே அவளை வீட்டை விட்டுத் துரத்துது.",
+          "visual": "the heroine standing outside her family's front door with a small bag, the door closing on her",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "தனியா நிக்கிற அவளுக்கு, ஒரு திருநங்கைத் தோழி மட்டும்தான் துணை.",
+          "visual": "the heroine and Emily sharing a simple meal in a tiny hostel room, laughing",
+          "characters": [
+            "Heroine",
+            "Emily"
+          ]
+        },
+        {
+          "narration": "அவளுக்கு ஒரு பெரிய நோய். பல ஆண்கள் அவளை ஏமாத்தி, கொடுமைப்படுத்தியிருக்காங்க.",
+          "visual": "the heroine sitting alone on a hospital bench holding a medical report, eyes empty",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "நியாயம் கேட்டு, ஊரே பார்க்கிற ஒரு இடத்துக்குப் போறா.",
+          "visual": "a bright television studio set with an audience and cameras, the heroine walking onto the stage",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "அங்க அவளுக்கு அவமானம். அடுத்த நொடி, அவ கையில துப்பாக்கி! மொத்த ஸ்டுடியோவையும் பிணைக்கைதியா பிடிக்கிறா.",
+          "visual": "the heroine holding a pistol in a TV studio as frightened crew members raise their hands",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "கடைசியில, அவளோட கதை இந்தச் சமூகத்தையே கேள்வி கேக்குது.",
+          "visual": "the heroine sitting on a quiet green hilltop at sunrise, smiling softly",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "a camera flash capturing the heroine's smiling face",
+          "characters": [
+            "Heroine"
+          ]
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "அருவி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ]
+    }
+  ]
+}

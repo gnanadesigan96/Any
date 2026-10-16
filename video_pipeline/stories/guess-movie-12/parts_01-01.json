@@ -1,0 +1,102 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "தியேட்டர்ல தனியா பேய்ப் படம் பார்த்தா பரிசு! 🤔 இந்தப் படம் எது? #12",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "தியேட்டர்ல தனியா பேய்ப் படம் பார்த்தா பரிசு!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: ஹீரோயின் பேரு அப்சரா\n🔍 க்ளூ 2: நயன்தாராவோட 50-வது படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: மாயா",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "கடன்ல மூழ்கியிருக்கிற ஒரு அம்மா. தனியா தன் குழந்தையை வளர்க்கிறா. சின்னச் சின்ன விளம்பரங்கள்ல நடிச்சு பொழைக்கிறா.",
+          "visual": "the mother counting a few rupee notes at a small kitchen table at night, her little daughter asleep nearby",
+          "characters": [
+            "Mother"
+          ]
+        },
+        {
+          "narration": "ஒரு பேய்ப் படத்தோட விளம்பரப் போட்டி: தியேட்டர்ல தனியா உட்கார்ந்து அந்தப் படத்தைப் பார்த்தா, பரிசுப் பணம்!",
+          "visual": "a dark horror film poster on a wall with a blank space for a title, a tiny cash-prize sticker in the corner",
+          "characters": []
+        },
+        {
+          "narration": "பணத்துக்காக, அவ அந்தச் சவாலை ஏத்துக்கிறா.",
+          "visual": "the mother sitting alone in a huge empty dark cinema hall, lit only by the flickering screen",
+          "characters": [
+            "Mother"
+          ]
+        },
+        {
+          "narration": "இன்னொரு பக்கம், ஒரு ஓவியன், ஒரு காட்டைப் பத்தின பேய்க் கதையை வரையறான்.",
+          "visual": "an illustrator drawing a dark forest with an old asylum building at his desk at night",
+          "characters": []
+        },
+        {
+          "narration": "அந்தக் காட்டுல ஒரு மனநல மருத்துவமனை. கணவனுக்கு விஷம் வச்சதா குற்றம் சாட்டப்பட்ட ஒரு கர்ப்பிணிப் பெண், அங்க அடைக்கப்பட்டா.",
+          "visual": "a pregnant woman in a white gown behind the bars of an old asylum deep in a misty forest",
+          "characters": []
+        },
+        {
+          "narration": "இருட்டான தியேட்டர்ல தனியா அவ. திரையில ஓடுற கதைக்கும், அவளோட வாழ்க்கைக்கும் ஏதோ ஒரு தொடர்பு இருக்கு...",
+          "visual": "the mother gripping the cinema seat in terror, a ghostly pale hand appearing on the seat beside her",
+          "characters": [
+            "Mother"
+          ]
+        },
+        {
+          "narration": "அந்தக் கர்ப்பிணிப் பெண் யாரு? அவ குழந்தைக்கு என்ன ஆச்சு? பதில் தெரிஞ்சா உறைஞ்சு போயிடுவீங்க!",
+          "visual": "an old diary lying open on a cinema seat under a single beam of projector light",
+          "characters": []
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "a misty forest at night with an old abandoned asylum in the distance",
+          "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "மாயா!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ]
+    }
+  ]
+}

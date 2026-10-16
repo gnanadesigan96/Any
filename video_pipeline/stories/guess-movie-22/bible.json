@@ -1,0 +1,23 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic film still, Chennai, rich vibrant colour grade, soft natural light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Girl",
+      "look": "Tamil woman in her mid twenties, slim, long black hair in a ponytail, simple kurti and jeans, an office ID card on a lanyard, anxious determined eyes"
+    },
+    {
+      "name": "Rowdy",
+      "look": "Tamil man in his mid thirties, unkempt hair, thick beard, loose shirt half-buttoned over a vest, gold chain, tired but soft eyes"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #22",
+      "summary": "A guess-the-movie Short retelling Kadhalum Kadandhu Pogum (காதலும் கடந்து போகும், 2016) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

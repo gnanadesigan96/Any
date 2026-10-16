@@ -1,0 +1,112 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "அவன் பின்தொடர்ந்த எல்லாரும் சாகுறாங்க! 🤔 இந்தப் படம் எது? #04",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "அவன் பின்தொடர்ந்த எல்லாரும் சாகுறாங்க!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: ஹீரோ பேரு வெற்றி\n🔍 க்ளூ 2: அசோக் செல்வன் துப்பறிவாளரா நடிச்ச படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: தெகிடி",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "குற்றவியல் படிச்சு முடிச்ச ஒரு இளைஞன். ஒரு தனியார் துப்பறியும் நிறுவனத்துல வேலைக்குச் சேர்றான்.",
+          "visual": "the detective walking into a small dim private detective office with frosted glass and filing cabinets",
+          "characters": [
+            "Detective"
+          ]
+        },
+        {
+          "narration": "அவனோட வேலை, சாதாரண மனுஷங்களை ரகசியமா பின்தொடர்ந்து, அவங்களைப் பத்தி எல்லா தகவலையும் சேகரிக்கிறது.",
+          "visual": "the detective photographing a stranger from across a busy street with a long-lens camera, hidden behind a tea stall",
+          "characters": [
+            "Detective"
+          ]
+        },
+        {
+          "narration": "அவனோட அஞ்சாவது ஆளு, ஒரு அழகான பொண்ணு. அவளைப் பின்தொடர்ந்து... அவளையே காதலிக்க ஆரம்பிக்கிறான்.",
+          "visual": "the woman laughing at a bus stop in soft evening light, the detective watching her from a distance, smiling despite himself",
+          "characters": [
+            "Woman",
+            "Detective"
+          ]
+        },
+        {
+          "narration": "அப்போதான் ஒரு அதிர்ச்சி. அவன் முன்னாடி கண்காணிச்ச ஒவ்வொருத்தரும், ஒருத்தர் பின்னால ஒருத்தரா மர்மமா சாகுறாங்க!",
+          "visual": "a desk covered in surveillance photos of four strangers, each one crossed out with a red marker, a desk lamp glowing",
+          "characters": []
+        },
+        {
+          "narration": "அடுத்தது... அவன் காதலிக்கிற அந்தப் பொண்ணா?",
+          "visual": "the woman walking alone down a dark lane at night, unaware of a shadow following her",
+          "characters": [
+            "Woman"
+          ]
+        },
+        {
+          "narration": "அவன் சேகரிச்ச தகவல்களை வச்சுதான் இந்தக் கொலைகள் நடக்குதா? அவனுக்கே தெரியாம, அவனையே யாரோ பயன்படுத்துறாங்களா?",
+          "visual": "the detective in the dark office staring at his own files, venetian-blind shadows across his face, realisation dawning",
+          "characters": [
+            "Detective"
+          ]
+        },
+        {
+          "narration": "உண்மையைத் தேடிப் போனா, பின்னாடி ஒரு பெரிய மோசடி... யாருமே எதிர்பார்க்காத ஒரு முகம்!",
+          "visual": "the detective running up a dark stairwell at night with a torch, a silhouette waiting at the top",
+          "characters": [
+            "Detective"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "the detective and the woman standing apart on a rainy road at night, looking at each other",
+          "characters": [
+            "Detective",
+            "Woman"
+          ]
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "தெகிடி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ]
+    }
+  ]
+}

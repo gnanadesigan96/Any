@@ -1,0 +1,115 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "ஒரே நாள், ஒரே நெடுஞ்சாலை... ரெண்டு காதல் கதைகள்! 🤔 இந்தப் படம் எது? #19",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "ஒரே நாள், ஒரே நெடுஞ்சாலை... ரெண்டு காதல் கதைகள்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: நர்ஸ் பேரு மணிமேகலை\n🔍 க்ளூ 2: ஜெய், அஞ்சலி நடிச்ச படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: எங்கேயும் எப்போதும்",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "ஒரு கிராமத்துப் பொண்ணு, வேலைக்கு இன்டர்வியூக்காக முதல் தடவையா சென்னைக்கு வர்றா.",
+          "visual": "the village girl stepping off a long-distance bus at a crowded Chennai bus terminus, holding her file folder tightly, looking lost",
+          "characters": [
+            "VillageGirl"
+          ]
+        },
+        {
+          "narration": "ஊரே புதுசு. ஒரு அந்நியன், நாள் முழுக்க அவளுக்கு வழிகாட்டி உதவி பண்றான்.",
+          "visual": "the stranger pointing the way for the village girl on a busy Chennai street, she looks at him unsure",
+          "characters": [
+            "VillageGirl",
+            "Stranger"
+          ]
+        },
+        {
+          "narration": "பேருகூட சரியா தெரியாம பிரியறாங்க. ஆனா ரெண்டு பேர் மனசுலயும் ஏதோ ஒண்ணு ஒட்டிக்கிச்சு.",
+          "visual": "the village girl and the stranger parting at a bus stand at dusk, both glancing back at each other",
+          "characters": [
+            "VillageGirl",
+            "Stranger"
+          ]
+        },
+        {
+          "narration": "திருச்சியில, ஒரு கூச்ச சுபாவமான பையன். எதிர் வீட்டு நர்ஸ் மேல காதல்.",
+          "visual": "the shy man peeking from his doorway at the nurse walking past in her white uniform on a narrow Trichy street",
+          "characters": [
+            "ShyMan",
+            "Nurse"
+          ]
+        },
+        {
+          "narration": "அவளோ, ஒவ்வொரு நாளும் அவனுக்கு ஒரு புது சோதனை வைக்கிறா. அவனும் எல்லாத்தையும் பொறுமையா தாங்குறான்!",
+          "visual": "the nurse with arms crossed giving orders, the shy man nervously holding out a small gift box",
+          "characters": [
+            "Nurse",
+            "ShyMan"
+          ]
+        },
+        {
+          "narration": "கடைசியா அவ சம்மதிக்கிறா. அவனோட குடும்பத்தைப் பார்க்க, ரெண்டு பேரும் ஒரு பஸ் ஏறுறாங்க.",
+          "visual": "the nurse and the shy man boarding a long-distance bus together at dawn, both smiling",
+          "characters": [
+            "Nurse",
+            "ShyMan"
+          ]
+        },
+        {
+          "narration": "அதே காலையில, அவளைத் தேடி அவன் ஒரு பஸ்ல. அவனைத் தேடி அவ இன்னொரு பஸ்ல. எல்லாரும் ஒரே நெடுஞ்சாலையில... விதி என்ன வச்சிருக்கோ?",
+          "visual": "the stranger gazing hopefully out of a bus window at dawn, a long highway stretching ahead",
+          "characters": [
+            "Stranger"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "an empty highway in early morning fog, a single pair of bus headlights far away",
+          "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "எங்கேயும் எப்போதும்!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ]
+    }
+  ]
+}

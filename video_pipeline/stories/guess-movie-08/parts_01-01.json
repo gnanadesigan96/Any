@@ -1,0 +1,105 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "ஒரு மழை இரவு, ஒரு விபத்து, பல கதைகள் 🤔 இந்தப் படம் எது? #08",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "ஒரு மழை இரவு, ஒரு விபத்து, பல கதைகள்\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: போலீஸ் அதிகாரி பேரு தீபக்\n🔍 க்ளூ 2: படத்தோட பேர்ல ஒரு நம்பர் இருக்கு\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: துருவங்கள் பதினாறு",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "ஓய்வுபெற்ற ஒரு போலீஸ் அதிகாரி. போலீஸ் ஆகணும்னு வந்த ஒரு இளைஞன்கிட்ட, தன்னோட பழைய வழக்கைச் சொல்ல ஆரம்பிக்கிறாரு.",
+          "visual": "the officer sitting in a dim living room with a cane beside his chair, the listener seated across from him",
+          "characters": [
+            "Officer",
+            "Listener"
+          ]
+        },
+        {
+          "narration": "அஞ்சு வருஷம் முன்னாடி, மழை பெய்யுற ஒரு ராத்திரி.",
+          "visual": "a dark city street in pouring rain at night, a lone streetlight, empty road",
+          "characters": []
+        },
+        {
+          "narration": "மூணு நண்பர்கள் போன கார், ஒருத்தன் மேல மோதுது. பயத்துல, அந்த உடலை வீட்டுக்குள்ளேயே ஒளிச்சு வைக்கிறாங்க.",
+          "visual": "three panicked young men dragging something wrapped in a sheet into a house at night in the rain, a dented car behind them",
+          "characters": []
+        },
+        {
+          "narration": "அதே ராத்திரி, ஒரு பார்க் பக்கத்துல ஒரு உடல். இன்னொரு இளைஞன் தற்கொலை பண்ணிக்கிட்டதா தகவல்.",
+          "visual": "police torches lighting up a wet park at night, a covered shape on the ground, nothing graphic",
+          "characters": []
+        },
+        {
+          "narration": "ஒவ்வொரு தடயமும், ஒவ்வொருத்தர் சொல்ற கதையும் வேற வேற. ஒரே சம்பவம், பல பார்வைகள்!",
+          "visual": "the younger version of the officer standing before a board covered in photos and maps connected with string",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "அந்த விசாரணை, அவரோட வாழ்க்கையையே மாத்திடுச்சு.",
+          "visual": "a police jeep crashed on its side on a rainy road at night, headlights still on",
+          "characters": []
+        },
+        {
+          "narration": "இப்போ, கதையைக் கேட்டுட்டு இருக்கிற அந்த இளைஞன் யாரு? கடைசி நிமிஷம் வரை யாராலயும் யூகிக்க முடியாது!",
+          "visual": "close-up of the listener's face half in shadow, an unreadable expression",
+          "characters": [
+            "Listener"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "the officer alone at a rain-streaked window, looking out into the night",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "துருவங்கள் பதினாறு!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ]
+    }
+  ]
+}

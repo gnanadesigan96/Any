@@ -1,0 +1,27 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic drama film still, rural Tamil Nadu, muted desaturated earth tones, harsh natural light and deep shadows, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Ruffian",
+      "look": "Tamil man in his late twenties, wild unkempt hair, rough stubble, sun-darkened skin, torn vest and lungi, reckless grin"
+    },
+    {
+      "name": "Cousin",
+      "look": "Tamil village woman in her early twenties, long oiled plait, small bindi, faded cotton saree, fierce loving eyes"
+    },
+    {
+      "name": "Father",
+      "look": "Tamil man in his fifties, grey handlebar moustache, white shirt and veshti, angry stern face"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #28",
+      "summary": "A guess-the-movie Short retelling Paruthiveeran (பருத்திவீரன், 2007) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

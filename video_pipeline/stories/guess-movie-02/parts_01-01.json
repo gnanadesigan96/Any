@@ -1,0 +1,111 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "செத்துப்போன கொலைகாரன் திரும்ப வந்தா? 🤔 இந்தப் படம் எது? #02",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "செத்துப்போன கொலைகாரன் திரும்ப வந்தா?\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: அதிகாரி பேரு அஞ்சலி\n🔍 க்ளூ 2: அந்த இளம் டாக்டர் பேரு அர்ஜுன்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: இமைக்கா நொடிகள்",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "அஞ்சு வருஷம் முன்னாடி செத்துட்டான்னு சொன்ன ஒரு தொடர் கொலைகாரன்... மறுபடியும் வந்துட்டான்!",
+          "visual": "a dark rain-soaked city street at night, the killer standing motionless under a flickering streetlight",
+          "characters": [
+            "Killer"
+          ]
+        },
+        {
+          "narration": "பணக்கார வீட்டுப் பிள்ளைகளைக் கடத்துறான். பணம் கேக்குறான். பணம் கொடுத்தாலும்... அவங்க உயிரோட திரும்ப வர்றதில்ல.",
+          "visual": "a missing-person poster of a young man on a wet wall at night, police tape and flashing police lights behind it",
+          "characters": []
+        },
+        {
+          "narration": "அவனைப் பிடிக்க வர்றாங்க, ஒரு துணிச்சலான பெண் அதிகாரி.",
+          "visual": "the officer stepping out of a car into the rain at a night crime scene, officers making way for her",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "அஞ்சு வருஷம் முன்னாடி அதே வழக்கை விசாரிச்சவங்க இவங்கதான். இந்த முறை, அவன் அவங்களுக்கே நேரடியா சவால் விடுறான்.",
+          "visual": "the officer alone in a dark office at night, studying a wall of photographs and red string, a phone glowing on the desk",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "அப்போ, ஒரு இளம் டாக்டரோட காதலியைக் கடத்துறான். அவளைத் தண்ணியில மூழ்கடிப்பேன்னு நேரலையில மிரட்டுறான்.",
+          "visual": "a laptop screen in a dark room showing a live video of a frightened young woman tied to a chair as water rises around her",
+          "characters": [
+            "Doctor"
+          ]
+        },
+        {
+          "narration": "அவளைக் காப்பாத்த, அந்த டாக்டர் கொலைகாரன் சொல்றதையெல்லாம் செய்யுறான். கடைசியில, கொலைகாரனே அவன்தான்னு போலீஸ் நம்புற மாதிரி மாட்டி விடப்படுறான்!",
+          "visual": "the doctor running through a crowded night market in the rain clutching a heavy bag, police torches sweeping behind him",
+          "characters": [
+            "Doctor"
+          ]
+        },
+        {
+          "narration": "அந்த இளைஞனுக்கும், அந்த அதிகாரிக்கும் நடுவுல ஒரு ரகசிய உறவு... அப்போ இந்தக் கொலைகாரன் உண்மையில யாரு?",
+          "visual": "the officer aiming her pistol across a dark parking garage at the hooded killer, her younger brother the doctor kneeling between them",
+          "characters": [
+            "Officer",
+            "Killer"
+          ]
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "the officer's face half lit by a red emergency light, rain on the window behind her",
+          "characters": [
+            "Officer"
+          ]
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "இமைக்கா நொடிகள்!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ]
+    }
+  ]
+}

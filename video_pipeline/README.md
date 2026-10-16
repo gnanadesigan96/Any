@@ -1,0 +1,264 @@
+# Faceless YouTube video pipeline
+
+One command turns a topic into a finished, reviewable YouTube package:
+
+```
+python make_video.py next --niche "Engineering Disasters"
+```
+
+| Stage | What happens | Tool |
+|---|---|---|
+| 1. Script | Research-style script split into ~10s scenes, 3 titles, description, tags, chapters, Shorts picks, and a fact-check list | Claude (`claude-opus-5-5`) |
+| 2. Voice | Narration per scene with word-level timestamps | ElevenLabs |
+| 3. Images | One illustration per scene in your fixed channel style, plus a thumbnail background | OpenAI image API |
+| 4. Video | 1080p, slow zoom/pan on every image, word-synced captions, background music, loudness normalised to -14 LUFS | ffmpeg |
+| 5. Shorts | 2-3 vertical 1080x1920 clips with a hook title | ffmpeg |
+| 6. Review | `REVIEW.md` checklist + `metadata.json` (title, description with chapters and sources, tags) | - |
+| 7. Upload | Only after you approve: private upload (optionally scheduled), thumbnail, Shorts | YouTube Data API |
+
+**You stay in the loop on purpose.** Nothing uploads until you've watched the video, checked the
+fact-check table and set `"approved": true`. That review is what keeps the channel monetisable under
+YouTube's rules on mass-produced content.
+
+Every stage saves its output in `runs/<topic>/`. If anything fails, fix it and re-run the same
+command: finished stages are reused, so you only pay for what's missing.
+
+## Shorts or long videos
+
+Set `format` in `config.yaml`:
+
+- `format: "shorts"` (default in `config.free.example.yaml`): each topic becomes **3 standalone vertical
+  Shorts** (`short_1.mp4` ... `short_3.mp4`), each with its own hook, ~35-45 seconds of narration, a new
+  visual every 3-4 seconds, big captions and the hook text on screen. Change the count with `shorts.per_topic`.
+- `format: "long"`: one ~10-minute video per topic plus a few Shorts cut from it.
+
+After rendering, the pipeline reports any silence longer than 1 second with its timestamp
+(`Warning: 1.4s of silence at 0:21.3 in short_2.mp4`) so you can spot voice dropouts without
+watching everything.
+
+## Story series (one story, 3 Shorts)
+
+```
+python make_video.py series "Dracula by Bram Stoker" --style "graphic novel"
+```
+
+Retells a whole story in 3 vertical Shorts of about 1 to 1:20 minutes each (`part_01.mp4` ... `part_03.mp4`):
+a beginning, a middle and an ending, each on its own cliffhanger. The top of the screen shows "Series · Part 2/3",
+and every image uses the same art style and character designs, so the series looks like one world. Change the
+count with `--parts` (or `series.parts` in config.yaml) if a story needs more room.
+
+- **Script (free):** the command writes `PROMPT_1_outline.txt`. Paste it into a new claude.ai chat and save the reply
+  as `reply_1_outline.txt`, then re-run. It then asks for the parts (`PROMPT_2_...`), so a 3-part series takes
+  2 paste rounds. Use a new chat for each prompt.
+- **Images (free):** illustrations are generated on your Mac by Z-Image-Turbo through mflux (Apache-2.0, commercial
+  use allowed). It needs an Apple Silicon Mac with 16 GB+ memory and about 20 GB free disk for the one-time model
+  download. Expect very roughly 30-90 seconds per image (much longer if the Mac is swapping, so close other apps),
+  about 50 images for a 3-part series. Leave it running; it resumes where it stopped if interrupted.
+- **Ready-made script:** `stories/dracula/` holds a complete 3-part Dracula script (outline, character designs and
+  every part), so you can skip the Claude.ai steps:
+  `python make_video.py series "Dracula" --script-dir stories/dracula`
+- **Animation (free):** series images are animated in 2.5D. A small depth model (Depth Anything V2 Small,
+  Apache-2.0, ~100 MB, downloaded once) works out what is near and far, so the camera moves through each
+  illustration with real parallax, and fog, rain, snow, embers, candle flicker or lightning are added when the scene
+  mentions them. Set `video.animation: "parallax"` to use this for any Shorts with still images too.
+- **Built for retention:** every part opens on its most dramatic moment (no slow recaps), shows a big hook line for
+  the first 2 seconds, ends on a cliffhanger plus a spoken teaser, and shows a "PART N+1 → Next: ..." end card. A
+  generated score adds a dark drone, a boom on the hook and the cliffhanger, and a riser into it.
+- **Real movement for key shots (free):** after each run, `ANIMATE_ME.md` lists up to 4 key shots of every part with the
+  image file and a ready motion prompt. Turn them into clips with a free image-to-video app (Meta AI, Kling, Hailuo,
+  Gemini), save each clip next to its image as `scene_NNN.mp4`, and re-run: clips replace the stills automatically.
+- **Editing is safe:** if the script changes, only the affected voice lines, pictures and videos are redone. Every
+  picture already made is kept in `library/` under its description, so a shot that moves to another scene or part
+  is copied instead of generated again.
+- **Neat and readable:** each part shows only a small "PART N" tag at the top (the story's name is never on
+  screen), pictures are prompted to keep every head and face in frame, and the narration plays at 1.1x speed
+  (`--pace 1.15` for quicker, `--pace 1.0` for the voice's own pace; changing it re-uses the recorded voice).
+- **Guess the movie (Shorts quiz):** `stories/guess-movie-01` … `-10` tell a whole Tamil film in under a minute
+  without naming it, end with a clue, "comment your answer" and like/subscribe, and open with the previous
+  video's answer. Answers are in `stories/GUESS_MOVIE_ANSWERS.md` (don't upload it). Add films in
+  `stories/make_guess_movies.py`. Make them all in one run (the picture model loads once):
+  `python make_video.py batch stories/guess-movie-* --pace 1.15 --voice-provider elevenlabs --voice George
+  --voice-model eleven_v3 --fast --yes`. The first frame is a title card, saved as `part_01_thumbnail.jpg`.
+- **Quicker pictures:** `--fast` makes local pictures at 576x1024 (about 40% quicker, a little softer);
+  `--images openai` uses paid pictures made several at a time (OPENAI_API_KEY), by far the fastest.
+- **Countdown reveal (guess the movie):** each quiz ends with "answer in 5 seconds, comment now", a 5-4-3-2-1
+  countdown with clock ticks over the film's blurred poster, then the poster sharp with "பதில்: <film>" and a boom.
+  Save the poster as `stories/guess-movie-NN/poster.jpg` (or .png/.webp) first; without it the run stops before
+  any voice or pictures are made.
+  Or put all the posters in one folder, `video_pipeline/postur/`, named after their films (any spelling, English or
+  Tamil, extra words like "HD poster" are fine) and run `python make_video.py posters`: each one is converted to
+  JPEG and placed in its film's folder, and anything it can't match is listed.
+- **Your own picture for a scene:** save it next to the generated one as `scene_NNN.mine.jpg` (or .png/.jpeg/.webp),
+  e.g. `runs/series-guess-movie-05-tamil/part_01/images/scene_007.mine.jpg`, and run the same command again: that
+  scene uses your picture (with the same 2.5D motion) and only the video is re-rendered. Wide pictures such as film
+  stills are shown whole across the middle over a blurred copy, not cropped. Delete the file to go back.
+- **Try it small first:** `--first 1` renders only part 1 so you can check the style before committing hours.
+  Run again without `--first` to render the rest.
+- **Tamil (or other languages):** `--language Tamil` writes the narration in natural spoken Tamil and voices it with
+  Microsoft's free Tamil neural voices through `edge-tts` (`pip install edge-tts`; no key, needs internet). Kokoro
+  speaks English only. Pictures are still described in English for the image model. Preview the voices with
+  `python make_video.py voices --language tamil`; pick one with `--voice ta-IN-PallaviNeural`. Tamil is spoken at a
+  brisk storytelling pace by default (`+15%`, a little deeper at `-4Hz`); change it with `--voice-rate +25%` and
+  `--voice-pitch -8Hz`. The log prints each part's real narration length before any pictures are made. Edge's voice
+  service is free but unofficial, so Microsoft could change or block it.
+- **More free samples:** `python make_video.py voices --language tamil` now renders all 8 free Tamil voices (India,
+  Sri Lanka, Malaysia, Singapore) in 3 deliveries each: `story`, `thriller` (faster, deeper) and `dramatic` (slow,
+  very deep). Use the one you like with `--voice`, `--voice-rate` and `--voice-pitch`.
+- **An expressive storyteller voice (free tier):** Google's Gemini voices speak Tamil and follow a plain-language
+  style instruction. Get a free key at aistudio.google.com/apikey, put `GEMINI_API_KEY=...` in `.env`, preview 12
+  story voices with `python make_video.py voices --provider gemini` (or any of the 30 with `--only Charon Fenrir`),
+  then add `--voice-provider gemini --voice Charon` to the series command. Change the delivery with
+  `--voice-style "Whisper it like a ghost story, slow and tense"`. The free tier allows only about 10 voice requests a day,
+  so each part is voiced in ONE request and cut into scenes at its pauses (a 3-part series uses 3); previews use one
+  request per voice, so preview a few at a time (`--only Charon Fenrir`). Check Google's terms before monetising.
+- **Pick an ElevenLabs voice:** `python make_video.py voices --provider elevenlabs` reads the Tamil sample in the
+  voices in your account and lists Tamil voices from ElevenLabs' Voice Library (add one on their site, then use
+  it by name). Add `--model eleven_v3` for the most expressive delivery and `--gender female` for female voices.
+  Each sample in your own voices costs about 120 credits; the Voice Library voices' own clips are downloaded free.
+- **A real storyteller voice (paid):** the free voices read evenly. For a gripping, emotional narrator in any
+  language (Tamil included), use ElevenLabs: put `ELEVENLABS_API_KEY=...` in `.env`, pick a voice in their Voice
+  Library (search "Tamil" or "storyteller") and run with `--voice-provider elevenlabs --voice <voice ID>`. Set
+  `voice.model_id: "eleven_v3"` in `config.yaml` for the most dramatic delivery. Changing the voice re-voices and
+  re-renders the parts but keeps every picture. The free plan is for testing only; monetised videos need a paid plan.
+- **English subtitles under another language:** give a scene a `subtitle` in the script JSON and that text is
+  shown instead of the spoken words, timed to the narration; the title and end cards then stay in English.
+  `stories/ratsasan/` is a ready-made example: Ratsasan (2018) in 3 thirty-second Tamil Shorts with English
+  subtitles, plus `PRODUCTION.md` (script, shot list, AI prompts, subtitles, sound design, YouTube metadata,
+  workflow).
+- **Choosing stories:** public-domain stories (classic novels, myths, folk tales, films from the 1920s) are safe to
+  retell in full. For recent movies, never use real footage, posters or actors' likenesses; your own narration over
+  your own illustrations is much safer, but retelling a whole recent film still carries some copyright risk.
+
+## Free setup ($0 per video)
+
+Every paid part has a free replacement. Start with this; switch any piece to the paid option later
+by changing one line in `config.yaml`.
+
+| Part | Free option | Paid option |
+|---|---|---|
+| Script | `script.provider: manual`: the pipeline writes a prompt, you paste it into the free **Claude.ai** chat and paste the reply back (about 5 minutes) | `api`: Claude API, fully automatic |
+| Voice | `voice.provider: kokoro`: open-source voice that runs on your computer (Apache-2.0, commercial use allowed) | `elevenlabs` |
+| Visuals | `images.provider: stock`: real stock **video clips** and photos from Pexels and Pixabay (free API keys, free for commercial use) | `openai`: AI illustrations |
+
+1. Do steps 1–3 of Setup below.
+2. `cp config.free.example.yaml config.yaml` and edit the `channel` section.
+3. Get two free keys and put them in `.env` (`cp .env.example .env`):
+   - Pexels: sign up at pexels.com, then go to pexels.com/api and click "Your API Key".
+   - Pixabay: sign up at pixabay.com; your key is shown on pixabay.com/api/docs.
+4. Pick a voice: `python make_video.py voices` writes a sample of each voice to `voice_samples/`.
+   Put your favourite in `voice.kokoro.voice`. The first run downloads the voice model (~350 MB, one time).
+5. Make a video:
+   ```
+   python make_video.py next --niche "Engineering Disasters"
+   ```
+   The first run stops and tells you to paste `PROMPT_FOR_CLAUDE.txt` into claude.ai and save the
+   reply as `claude_reply.txt` in the run folder. Run the same command again and it finishes the video.
+   If Claude's reply gets cut off, type "continue" in the chat and paste the rest after it.
+
+Notes:
+- **Captions:** Kokoro doesn't report exact word timings, so captions are timed per sentence and spread
+  across the words. They can run up to a fraction of a second ahead of or behind the voice.
+- **Visual matching:** stock footage is matched by keywords, so check the visuals during review. Generic
+  shots work for most scenes; for rare events you may want to swap a few clips by hand (replace
+  `images/scene_NNN.mp4` or `.jpg`, delete `video.mp4`, and re-run).
+- **Credits:** stock creators are credited automatically in the video description.
+
+## Setup (one time, ~30 minutes)
+
+1. **Install Python 3.10+ and ffmpeg** (macOS: `brew install ffmpeg`).
+2. **Install the Python packages:**
+   ```
+   cd video_pipeline
+   python3 -m venv .venv && source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+3. **Try it for free first:** `python make_video.py make "Test topic" --dry-run` builds a full
+   video with placeholder images and silent audio. No API keys needed. Open `runs/test-topic-dryrun/`.
+4. **API keys:** `cp .env.example .env` and fill in:
+   - `ANTHROPIC_API_KEY` from platform.claude.com
+   - `ELEVENLABS_API_KEY` from elevenlabs.io (Profile, API keys)
+   - `OPENAI_API_KEY` from platform.openai.com (used only for images)
+5. **Config:** `cp config.example.yaml config.yaml` and set at least `channel.name`, `channel.niche`
+   and `voice.voice_id` (pick a voice in ElevenLabs' Voice Library and copy its ID). Keep
+   `images.style` the same for every video; it's your channel's look.
+6. **Music (optional):** put a few royalty-free tracks (for example from the YouTube Audio Library)
+   in `assets/music/`. One is picked per video and mixed quietly under the voice.
+
+### YouTube upload setup (only needed for `upload`)
+
+1. In Google Cloud Console, create a project and enable **YouTube Data API v3**.
+2. Configure the OAuth consent screen (External) and add your own Google account as a test user.
+3. Create an **OAuth client ID** of type **Desktop app**, download the JSON, and save it as
+   `video_pipeline/client_secret.json`.
+4. The first `upload` opens a browser to sign in to the channel; the token is saved to
+   `youtube_token.json` for next time.
+
+**Important limitation:** YouTube keeps videos uploaded through an *unverified* API project
+locked as private. To publish them you must either pass YouTube's API audit (the "YouTube API
+Services - Audit and Quota Extension" form), or upload the finished `video.mp4`,
+thumbnail and metadata yourself in YouTube Studio, which takes about 2 minutes. Until you've
+passed the audit, uploading through Studio is the practical route. Custom thumbnails also
+require a phone-verified channel.
+
+## Daily use
+
+```
+# See unused topics from the 1,398-topic bank
+python make_video.py topics --niche "Engineering Disasters" --limit 20
+
+# Make the next unused topic (or a random one) in a niche
+python make_video.py next --niche "Engineering Disasters"
+python make_video.py next --niche "Tech Rise & Fall" --random
+
+# Make any topic you like, optionally with an angle
+python make_video.py make "Why the Concorde Failed" --angle "A technical triumph that never made money"
+```
+
+After the script is written you'll see the scene, word and character counts and be asked before any
+paid voice or image generation runs (`--yes` skips the question).
+
+Then open the run folder:
+
+1. Watch `video.mp4` and the `short_*.mp4` files.
+2. Work through `REVIEW.md`: check each fact-check claim against its source.
+3. Edit `metadata.json`: pick the `title` and `thumbnail`, tweak the description, then set
+   `"approved": true`.
+4. Upload (private):
+   ```
+   python make_video.py upload runs/<run-folder> --shorts
+   python make_video.py upload runs/<run-folder> --publish-at 2026-11-01T14:30:00Z   # scheduled
+   ```
+
+### Fixing one part
+
+| Problem | Command |
+|---|---|
+| A few visuals look wrong | Delete (or replace) those `images/scene_NNN.*` files, delete `video.mp4`, then re-run `make` |
+| Rewrite the whole script | `--redo script` (regenerates everything) |
+| New voice settings | `--redo voice` |
+| New image style | `--redo images` |
+| Re-render only (new music, captions, fonts) | `--redo video` |
+
+## Rough cost per 10-minute video (paid setup)
+
+The free setup costs $0.
+
+Prices change, so check each provider's current pricing.
+
+| Item | Approx. |
+|---|---|
+| Claude script (Opus, high effort) | $0.30-1.00 |
+| Images (~55 scenes + thumbnail, medium quality) | $2-4 |
+| ElevenLabs voice (~9,000 characters) | included in a monthly plan (~10 videos on a ~$22 plan) |
+| **Total** | **about $3-5 per video plus the ElevenLabs plan** |
+
+Rendering takes about 1.5-2x the video's length on a typical laptop, so roughly 15-20 minutes for a 10-minute video.
+
+## Tests
+
+```
+python -m pytest -q tests
+```
+
+The tests run the whole pipeline offline and check the Claude, ElevenLabs and OpenAI requests against
+mocked APIs. They need no keys and cost nothing.

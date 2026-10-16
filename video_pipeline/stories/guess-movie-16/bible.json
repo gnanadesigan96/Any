@@ -1,0 +1,23 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic drama film still, Chennai, warm natural colour grade, soft window light, shallow depth of field, 35mm film grain, high detail, natural skin texture, realistic expressions",
+  "characters": [
+    {
+      "name": "Woman",
+      "look": "Anglo-Indian woman in her early thirties, wavy shoulder-length hair, confident sharp eyes, office blazer over a blouse"
+    },
+    {
+      "name": "Man",
+      "look": "Tamil man in his late twenties, rugged unkempt hair, thick beard, brooding eyes, crumpled shirt"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #16",
+      "summary": "A guess-the-movie Short retelling Taramani (தரமணி, 2017) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

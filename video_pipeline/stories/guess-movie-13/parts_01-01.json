@@ -1,0 +1,107 @@
+{
+  "episodes": [
+    {
+      "part": 1,
+      "title": "யாருமே போகாத அந்த பங்களாவுக்குள்ள, நாலு நண்பர்கள்! 🤔 இந்தப் படம் எது? #13",
+      "hook_text": "Guess the movie",
+      "hook_sub": "from the story",
+      "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
+      "description": "யாருமே போகாத அந்த பங்களாவுக்குள்ள, நாலு நண்பர்கள்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: ஹீரோ பேரு சீனு\n🔍 க்ளூ 2: படத்தோட பேரு, சென்னையில நிஜமா இருக்கிற ஒரு இடத்தோட பேரு\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "hashtags": [
+        "#GuessTheMovie",
+        "#படம்எது",
+        "#Guessinema",
+        "#TamilMovie",
+        "#TamilShorts",
+        "#Shorts"
+      ],
+      "end_text": "Guessinema",
+      "end_sub": "சப்ஸ்க்ரைப் பண்ணுங்க!",
+      "reveal_text": "பதில்: டிமான்ட்டி காலனி",
+      "outro": {
+        "title": "Did you guess it right?",
+        "sub": "கமெண்ட்ல சொல்லுங்க!",
+        "button": "SUBSCRIBE",
+        "done": "SUBSCRIBED",
+        "handle": "@Guessinema",
+        "thanks": "Thanks for watching!",
+        "thanks_sub": "பார்த்ததுக்கு நன்றி!"
+      },
+      "count_label": "உங்க பதிலை கமெண்ட் பண்ணுங்க!",
+      "scenes": [
+        {
+          "narration": "மழை பெய்யுற ஒரு ராத்திரி. நாலு நண்பர்கள் நல்லா குடிச்சுட்டு, ஒருத்தருக்கொருத்தர் சவால் விடுறாங்க.",
+          "visual": "four young men laughing and drinking in a small room on a rainy night, empty bottles on the floor",
+          "characters": [
+            "Friend"
+          ]
+        },
+        {
+          "narration": "சென்னையில, பல வருஷமா யாருமே போகாத ஒரு பாழடைஞ்ச பங்களா. அங்க பேய் இருக்குன்னு ஊரே சொல்லுது.",
+          "visual": "a huge abandoned colonial mansion behind rusted gates on a stormy night, lightning flashing",
+          "characters": []
+        },
+        {
+          "narration": "தைரியத்தைக் காட்ட, நாலு பேரும் உள்ள போறாங்க.",
+          "visual": "four young men with phone torches stepping into the dark dusty hall of the mansion",
+          "characters": [
+            "Friend"
+          ]
+        },
+        {
+          "narration": "அந்த பங்களாவுக்கு ஒரு பயங்கரமான பழைய கதை இருக்கு...",
+          "visual": "an old portrait of a stern European man hanging crooked on a cobwebbed wall",
+          "characters": []
+        },
+        {
+          "narration": "அங்க இருந்து, ஒருத்தன் ஒரு பழைய பொருளை யாருக்கும் தெரியாம எடுத்துட்டு வந்துடுறான்.",
+          "visual": "a hand slipping an old ornate necklace into a pocket in the dark",
+          "characters": []
+        },
+        {
+          "narration": "அன்னைக்கு ராத்திரி, அவங்க அறைக்குள்ளேயே மாட்டிக்கிறாங்க. கதவு திறக்கல. விளக்கு அணையுது...",
+          "visual": "the friend pulling desperately at a locked door in a dark room, the bulb flickering out",
+          "characters": [
+            "Friend"
+          ]
+        },
+        {
+          "narration": "ஏதோ ஒண்ணு... அவங்களைத் தேடி வந்துட்டு இருக்கு!",
+          "visual": "a dark doorway with a faint shadowy figure standing in it, mist on the floor",
+          "characters": []
+        },
+        {
+          "narration": "அந்த அறைக்குள்ள, ஒவ்வொரு நிமிஷமும் ஏதோ நடக்குது. ஒருத்தர் ஒருத்தரா...",
+          "visual": "a dark room with a single flickering bulb, an overturned chair and a door slowly closing",
+          "characters": []
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "an old necklace lying on a wet floor in a beam of torchlight",
+          "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "poster",
+          "characters": [],
+          "kind": "countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "டிமான்ட்டி காலனி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "reveal",
+          "seconds": 3.0
+        },
+        {
+          "narration": "சரியா சொன்னீங்களா? கமெண்ட்ல சொல்லுங்க. கெஸ்ஸினிமா சேனலை சப்ஸ்க்ரைப் பண்ணுங்க. பார்த்ததுக்கு நன்றி!",
+          "visual": "poster",
+          "characters": [],
+          "kind": "outro",
+          "seconds": 4.5
+        }
+      ]
+    }
+  ]
+}

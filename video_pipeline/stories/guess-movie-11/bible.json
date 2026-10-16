@@ -1,0 +1,27 @@
+{
+  "series_title": "Guessinema",
+  "language": "Tamil",
+  "art_style": "photorealistic cinematic film still, a Tamil Nadu village in the early 1980s, warm faded film colours, dusty sunlight, vintage details, 35mm film grain, high detail, realistic expressions",
+  "characters": [
+    {
+      "name": "Photographer",
+      "look": "Tamil man in his late twenties, 1980s side-parted hair, thick moustache, bell-bottom trousers, an old box camera on a strap"
+    },
+    {
+      "name": "Assistant",
+      "look": "Tamil man in his twenties, thin, curly hair, cheerful face, loose 1980s shirt, carrying a tripod"
+    },
+    {
+      "name": "Girl",
+      "look": "Tamil village woman of about twenty, long black plait with jasmine flowers, small red bindi, half-saree, shy gentle eyes"
+    }
+  ],
+  "episodes": [
+    {
+      "part": 1,
+      "title": "இந்தப் படம் எது? #11",
+      "summary": "A guess-the-movie Short retelling Mundasupatti (முண்டாசுப்பட்டி, 2014) in about a minute without naming it.",
+      "cliffhanger": "Viewers guess the film in the comments."
+    }
+  ]
+}

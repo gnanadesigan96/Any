@@ -1,0 +1,365 @@
+"""Stage 4: assemble scenes into the long-form video and the vertical Shorts with ffmpeg."""
+
+import random
+import subprocess
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+from PIL import Image
+
+from .captions import group_words, write_ass
+from .config import resolve
+from .util import find_font_file, find_silences, log, media_duration, run_ffmpeg
+
+MOTIONS = ["zoom_in", "pan_right", "zoom_out", "pan_left"]
+VIDEO_SUFFIXES = {".mp4", ".mov", ".webm", ".m4v"}
+
+
+def build_timeline(timing: list, fps: int) -> list:
+    """Snap scene boundaries to whole frames so audio and video never drift apart.
+
+    Returns [{start, frames}] where start is in seconds (frame-aligned).
+    """
+    boundaries, t = [0], 0.0
+    for info in timing:
+        t += info["duration"]
+        boundaries.append(max(round(t * fps), boundaries[-1] + 1))
+    return [{"start": boundaries[i] / fps, "frames": boundaries[i + 1] - boundaries[i]}
+            for i in range(len(timing))]
+
+
+def _zoompan(motion: str, frames: int, zoom: float, out_w: int, out_h: int, fps: int) -> str:
+    n = max(frames - 1, 1)
+    center_x, center_y = "iw/2-(iw/zoom/2)", "ih/2-(ih/zoom/2)"
+    if motion == "zoom_in":
+        z, x, y = f"1+{zoom}*on/{n}", center_x, center_y
+    elif motion == "zoom_out":
+        z, x, y = f"1+{zoom}-{zoom}*on/{n}", center_x, center_y
+    elif motion == "pan_right":
+        z, x, y = f"1+{zoom}", f"(iw-iw/zoom)*on/{n}", center_y
+    else:  # pan_left
+        z, x, y = f"1+{zoom}", f"(iw-iw/zoom)*(1-on/{n})", center_y
+    return f"zoompan=z='{z}':x='{x}':y='{y}':d={frames}:s={out_w}x{out_h}:fps={fps}"
+
+
+def _media_size(path: Path):
+    if path.suffix.lower() in VIDEO_SUFFIXES:
+        out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                              "stream=width,height", "-of", "csv=p=0", str(path)],
+                             capture_output=True, text=True, check=True)
+        w, h = out.stdout.strip().split("\n")[0].split(",")[:2]
+        return int(w), int(h)
+    with Image.open(path) as im:
+        return im.width, im.height
+
+
+def _render_video_clip(src: Path, frames: int, out: Path, cfg: dict, vertical: bool, enc: list) -> None:
+    """Stock video: fill the frame, conform the frame rate, loop if the clip is too short."""
+    fps = cfg["video"]["fps"]
+    if not vertical:
+        w, h = cfg["video"]["width"], cfg["video"]["height"]
+        vf = (f"fps={fps},scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},"
+              "setsar=1,format=yuv420p")
+        run_ffmpeg(["-stream_loop", "-1", "-i", src, "-vf", vf, *enc])
+        return
+    w, h = cfg["shorts"]["width"], cfg["shorts"]["height"]
+    sw, sh = _media_size(src)
+    fg_h = int(w * sh / sw) // 2 * 2
+    fc = (f"[0:v]fps={fps},split[a][b];"
+          f"[a]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},boxblur=24:4,eq=brightness=-0.12[bg];"
+          f"[b]scale={w}:{fg_h},setsar=1[fg];"
+          f"[bg][fg]overlay=(W-w)/2:(H-h)/2-{int(h * 0.04)},format=yuv420p")
+    run_ffmpeg(["-stream_loop", "-1", "-i", src, "-filter_complex", fc, *enc])
+
+
+def render_scene_clip(image: Path, frames: int, motion: str, out: Path, cfg: dict,
+                      vertical: bool = False, index: int = 0, text: str = "") -> None:
+    v = cfg["video"]
+    fps, zoom = v["fps"], v["zoom"]
+    enc = ["-c:v", "libx264", "-preset", v["preset"], "-crf", v["crf"], "-pix_fmt", "yuv420p",
+           "-frames:v", frames, "-an", out]
+    if image.suffix.lower() in VIDEO_SUFFIXES:
+        _render_video_clip(image, frames, out, cfg, vertical, enc)
+        return
+    if v.get("animation") == "parallax" and not vertical:
+        from .animate import render_parallax_clip
+        render_parallax_clip(image, frames, index, out, cfg, text)
+        return
+    if not vertical:
+        w, h = v["width"], v["height"]
+        # Upscale 2x before zoompan: zoompan rounds to whole pixels, so this keeps motion smooth.
+        vf = (f"scale={2 * w}:{2 * h}:force_original_aspect_ratio=increase,crop={2 * w}:{2 * h},"
+              + _zoompan(motion, frames, zoom, w, h, fps) + ",format=yuv420p")
+        run_ffmpeg(["-i", image, "-vf", vf, *enc])
+        return
+
+    # Vertical: blurred full-bleed background + the whole landscape image, moving, in the middle.
+    s = cfg["shorts"]
+    w, h = s["width"], s["height"]
+    iw, ih = _media_size(image)
+    fg_h = int(w * ih / iw) // 2 * 2
+    fc = (f"[0:v]scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},"
+          f"boxblur=24:4,eq=brightness=-0.12,fps={fps}[bg];"
+          f"[1:v]scale={2 * w}:{2 * fg_h},"
+          + _zoompan(motion, frames, zoom * 0.6, w, fg_h, fps) + "[fg];"
+          f"[bg][fg]overlay=(W-w)/2:(H-h)/2-{int(h * 0.04)}:shortest=1,format=yuv420p")
+    run_ffmpeg(["-loop", "1", "-framerate", fps, "-i", image, "-i", image,
+                "-filter_complex", fc, *enc])
+
+
+def _scene_wav(mp3: Path, frames: int, fps: int, out: Path) -> None:
+    """Decode and pad/trim to exactly the scene's frame-aligned length."""
+    run_ffmpeg(["-i", mp3, "-af", f"apad,atrim=0:{frames / fps:.6f}", "-ar", 44100, "-ac", 1, out])
+
+
+def _concat(paths: list, list_file: Path, out: Path, copy: bool = True) -> None:
+    list_file.write_text("".join(f"file '{p.resolve()}'\n" for p in paths))
+    args = ["-f", "concat", "-safe", "0", "-i", list_file]
+    run_ffmpeg(args + (["-c", "copy"] if copy else []) + [out])
+
+
+def _pick_music(cfg: dict, seed: str):
+    music_dir = resolve(cfg["video"]["music_dir"])
+    tracks = sorted(p for p in music_dir.glob("*") if p.suffix.lower() in {".mp3", ".wav", ".m4a", ".ogg"})
+    return random.Random(seed).choice(tracks) if tracks else None
+
+
+def _final_mix(work_dir: Path, video: str, narration: str, ass: str, out: Path, cfg: dict,
+               music, duration: float, score: bool = False) -> None:
+    """Burn captions, mix music under the voice, normalise loudness. Runs inside work_dir so
+    the subtitles filter never needs path escaping."""
+    v = cfg["video"]
+    args = ["-i", video, "-i", narration]
+    # The ass filter with complex shaping: Tamil (and other Indic scripts) need their vowel signs reordered and
+    # joined; the plain subtitles filter draws them in typing order, e.g. பெண் as "பணெ".
+    vf = (f"[0:v]ass=filename={ass}:fontsdir={Path(find_font_file(v['caption_font'])).parent}:shaping=complex[v]"
+          if ass else "[0:v]null[v]")
+    loud = f"loudnorm=I={v['loudness_lufs']}:TP=-1.5:LRA=11"
+    if music and score:  # generated score is timed to this video: no looping, no fades
+        args += ["-i", music]
+        af = (f"[2:a]aformat=sample_rates=44100:channel_layouts=mono,volume={v.get('score_volume', 0.35)}[m];"
+              f"[1:a][m]amix=inputs=2:duration=first:normalize=0,{loud}[a]")
+    elif music:
+        args += ["-stream_loop", "-1", "-i", music]
+        fade_start = max(duration - 3, 0)
+        af = (f"[2:a]aformat=sample_rates=44100:channel_layouts=mono,volume={v['music_volume']},"
+              f"afade=t=in:d=2,afade=t=out:st={fade_start:.2f}:d=3[m];"
+              f"[1:a][m]amix=inputs=2:duration=first:normalize=0,{loud}[a]")
+    else:
+        af = f"[1:a]{loud}[a]"
+    run_ffmpeg([*args, "-filter_complex", f"{vf};{af}", "-map", "[v]", "-map", "[a]",
+                "-c:v", "libx264", "-preset", v["preset"], "-crf", v["crf"], "-pix_fmt", "yuv420p",
+                "-c:a", "aac", "-b:a", "192k", "-ar", 44100, "-t", f"{duration:.3f}",
+                "-movflags", "+faststart", out], cwd=work_dir)
+
+
+def _absolute_words(timing: list, timeline: list, scene_ids, offset: float, fps: int) -> list:
+    """Scene-relative word times -> times on the assembled video, clamped to each scene."""
+    words = []
+    for i in scene_ids:
+        base = timeline[i]["start"] - offset
+        limit = base + timeline[i]["frames"] / fps
+        words += [[w, min(base + s, limit), min(base + e, limit)] for w, s, e in timing[i]["words"]]
+    return words
+
+
+def _narration_track(wavs: list, kinds: list, timeline: list, fps: int, duration: float, out: Path) -> None:
+    """One narration track for the whole video. The story scenes are cut from one continuous recording, so they're
+    laid end to end exactly as recorded: padding each scene to whole video frames would drop tiny silences into the
+    middle of the speech wherever the voice runs straight from one scene into the next. The timeline is built from
+    the same lengths, so the story stays within a frame of the pictures. Silence is added only where the picture
+    holds without voice (the countdown, a held answer or end screen, the end), and the track re-syncs there."""
+    import wave
+    import numpy as np
+    sr = 44100
+
+    def read(path: Path):
+        with wave.open(str(path)) as w:
+            return np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float32)
+
+    def fade(a, ms: float = 8):  # a few milliseconds in and out, so a separately recorded line never clicks
+        n = min(int(sr * ms / 1000), len(a) // 2)
+        if n:
+            a = a.copy()
+            a[:n] *= np.linspace(0, 1, n)
+            a[-n:] *= np.linspace(1, 0, n)
+        return a
+
+    parts, length = [], 0
+    for i, k in enumerate(kinds):
+        start = int(round(timeline[i]["start"] * sr))
+        story = not k and (i == 0 or not kinds[i - 1])  # carries straight on from the previous story scene
+        if not story or abs(length - start) > sr / fps:  # line up with the picture (pad, or trim a sliver)
+            if length < start:
+                parts.append(np.zeros(start - length, np.float32))
+            elif length > start:
+                cut = length - start
+                while cut and parts:
+                    take = min(cut, len(parts[-1]))
+                    parts[-1] = parts[-1][:len(parts[-1]) - take]
+                    cut -= take
+                    if not len(parts[-1]):
+                        parts.pop()
+            length = start
+        if k in ("countdown", "clue_countdown"):
+            continue
+        a = read(wavs[i])
+        if k:
+            a = fade(a)
+        parts.append(a)
+        length += len(a)
+    total = int(round(duration * sr))
+    track = np.concatenate(parts) if parts else np.zeros(0, np.float32)
+    track = np.concatenate([track[:total], np.zeros(max(total - len(track), 0), np.float32)])
+    with wave.open(str(out), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(sr)
+        w.writeframes(np.clip(track, -32768, 32767).astype(np.int16).tobytes())
+
+
+def _check_narration(path: Path, timeline: list, kinds: list, fps: int, duration: float) -> None:
+    """Guards the quiz: the narration must be exactly as long as the picture, and silent during the countdown, so
+    the answer can never be heard before it's shown. Stops the render instead of making a video that gives it away."""
+    import wave
+    import numpy as np
+    with wave.open(str(path)) as w:
+        sr, n = w.getframerate(), w.getnframes()
+        audio = np.frombuffer(w.readframes(n), np.int16).astype(np.float32) / 32768
+    if abs(n / sr - duration) > 0.1:
+        raise RuntimeError(f"The narration is {n / sr:.2f}s but the picture is {duration:.2f}s; delete the run's work "
+                           "folder and render again")
+    for i, k in enumerate(kinds):
+        if k in ("countdown", "clue_countdown"):
+            a, b = int(timeline[i]["start"] * sr), int((timeline[i]["start"] + timeline[i]["frames"] / fps) * sr)
+            seg = audio[a + int(0.05 * sr):b - int(0.05 * sr)]
+            if len(seg) and np.sqrt((seg ** 2).mean()) > 0.003:
+                raise RuntimeError("There is voice in the countdown, so the answer would be heard early. Delete the "
+                                   f"audio and work folders in {path.parent.parent} and render again")
+
+
+def render_main(run_dir: Path, image_paths: list, timing: list, cfg: dict, title: str = "",
+                scene_texts: list = None, overlay: dict = None) -> Path:
+    """overlay (optional): {"hook": big opening text, "end_text"/"end_sub": end card} and, with
+    video.score enabled, a generated drone/whoosh/boom score timed to the cuts."""
+    overlay = overlay or {}
+    v = cfg["video"]
+    fps = v["fps"]
+    work = run_dir / "work"
+    work.mkdir(exist_ok=True)
+    timeline = build_timeline(timing, fps)
+    final = run_dir / "video.mp4"
+
+    clips = [work / f"clip_{i:03d}.mp4" for i in range(len(timing))]
+    wavs = [work / f"scene_{i:03d}.wav" for i in range(len(timing))]
+
+    kinds = overlay.get("kinds") or [""] * len(timing)
+
+    def work_scene(i):
+        if not clips[i].exists():
+            text = scene_texts[i] if scene_texts else timing[i].get("text", "")
+            if kinds[i] in ("countdown", "reveal", "outro", "clue_countdown", "clue"):
+                from .finale import render_finale_clip
+                render_finale_clip(kinds[i], image_paths[i], timeline[i]["frames"], clips[i], cfg)
+            else:
+                render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)], clips[i], cfg,
+                                  index=i, text=text)
+        if kinds[i] not in ("countdown", "clue_countdown"):  # decoded as it is (no padding); _narration_track lines the scenes up
+            run_ffmpeg(["-i", run_dir / "audio" / timing[i]["audio"], "-ar", 44100, "-ac", 1, wavs[i]])
+
+    log(f"Rendering {len(timing)} scene clips...")
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        list(pool.map(work_scene, range(len(timing))))
+
+    _concat(clips, work / "clips.txt", work / "video_noaudio.mp4")
+    duration = sum(t["frames"] for t in timeline) / fps
+    _narration_track(wavs, kinds, timeline, fps, duration, work / "narration.wav")
+    _check_narration(work / "narration.wav", timeline, kinds, fps, duration)
+
+    ass = ""
+    if v["captions"]:
+        words = _absolute_words(timing, timeline, range(len(timing)), 0.0, fps)
+        countdown = [(timeline[i]["start"], timeline[i]["frames"] / fps) for i, k in enumerate(kinds) if k == "countdown"]
+        reveal = [timeline[i]["start"] for i, k in enumerate(kinds) if k == "reveal"]
+        clue_count = [(timeline[i]["start"], timeline[i]["frames"] / fps) for i, k in enumerate(kinds) if k == "clue_countdown"]
+        clue = [(timeline[i]["start"], timeline[i]["start"] + timeline[i]["frames"] / fps, timing[i]["words"])
+                for i, k in enumerate(kinds) if k == "clue"]
+        outro = [timeline[i]["start"] for i, k in enumerate(kinds) if k == "outro"]
+        write_ass(group_words(words, v["caption_max_words"]), work / "captions.ass",
+                  v["width"], v["height"], v["caption_font"], vertical=v["height"] > v["width"],
+                  title=title, duration=duration, hook=overlay.get("hook", ""),
+                  end_text=overlay.get("end_text", ""), end_sub=overlay.get("end_sub", ""),
+                  title_style=v.get("title_style", "banner"), hook_sub=overlay.get("hook_sub", ""),
+                  countdown=countdown[0] if countdown else None,
+                  reveal=(reveal[0], overlay.get("reveal_text", "")) if reveal else None,
+                  hook_note=overlay.get("hook_note", ""),
+                  outro=(outro[0], overlay.get("outro") or {}) if outro else None,
+                  count_label=overlay.get("count_label", ""),
+                  clue_countdown=(*clue_count[0], overlay.get("clue_label", "")) if clue_count else None,
+                  clue=(*clue[0], overlay.get("clue_lines") or []) if clue else None)
+        ass = "captions.ass"
+    music, score = _pick_music(cfg, run_dir.name), False
+    if v.get("score"):
+        from .sound import build_score
+        cuts = [t["start"] for t in timeline[1:]]
+        ticks = [timeline[i]["start"] + s for i, k in enumerate(kinds) if k in ("countdown", "clue_countdown")
+                 for s in range(int(round(timeline[i]["frames"] / fps)))]
+        # The closing hit lands on the reveal when there is one, else on the last scene.
+        climax = next((timeline[i]["start"] for i, k in enumerate(kinds) if k == "reveal"), timeline[-1]["start"])
+        events = [(k, timeline[i]["start"]) for i, k in enumerate(kinds) if k in ("reveal", "outro", "clue")]
+        music = build_score(work / "score.wav", duration, cuts, climax,
+                            seed=sum(map(ord, run_dir.name)), whoosh=v.get("score_whoosh", False),
+                            riser=v.get("score_riser", False), ticks=ticks,
+                            bed=v.get("score_bed", True) and "countdown" not in kinds, events=events).name
+        score = True
+    log("Mixing final video...")
+    _final_mix(work, "video_noaudio.mp4", "narration.wav", ass, final.resolve(), cfg, music, duration, score)
+    return final
+
+
+def render_shorts(run_dir: Path, image_paths: list, timing: list, shorts: list, cfg: dict) -> list:
+    v, fps = cfg["video"], cfg["video"]["fps"]
+    work = run_dir / "work"
+    timeline = build_timeline(timing, fps)
+    outputs = []
+    for k, short in enumerate(shorts):
+        out = run_dir / f"short_{k + 1}.mp4"
+        outputs.append(out)
+        if out.exists():
+            continue
+        ids = list(range(short.start_scene, short.end_scene + 1))
+        log(f"Rendering Short {k + 1} (scenes {ids[0]}-{ids[-1]})...")
+        clips = []
+        for i in ids:
+            clip = work / f"vclip_{i:03d}.mp4"
+            if not clip.exists():
+                render_scene_clip(image_paths[i], timeline[i]["frames"], MOTIONS[i % len(MOTIONS)],
+                                  clip, cfg, vertical=True)
+            clips.append(clip)
+        tag = f"short{k + 1}"
+        _concat(clips, work / f"{tag}_clips.txt", work / f"{tag}_noaudio.mp4")
+        padded = []
+        for i in ids:  # each scene padded to its frames (render_main's own scene audio isn't padded)
+            padded.append(work / f"vscene_{i:03d}.wav")
+            if not padded[-1].exists():
+                _scene_wav(run_dir / "audio" / timing[i]["audio"], timeline[i]["frames"], fps, padded[-1])
+        _concat(padded, work / f"{tag}_wavs.txt", work / f"{tag}_narration.wav", copy=False)
+        duration = sum(timeline[i]["frames"] for i in ids) / fps
+        words = _absolute_words(timing, timeline, ids, timeline[ids[0]]["start"], fps)
+        s = cfg["shorts"]
+        write_ass(group_words(words, max(3, v["caption_max_words"] - 2)), work / f"{tag}.ass",
+                  s["width"], s["height"], v["caption_font"], vertical=True,
+                  title=short.hook_title, duration=duration)
+        _final_mix(work, f"{tag}_noaudio.mp4", f"{tag}_narration.wav", f"{tag}.ass", out.resolve(), cfg,
+                   _pick_music(cfg, run_dir.name + tag), duration)
+        if duration > 180:
+            log(f"Warning: Short {k + 1} is {duration:.0f}s; YouTube Shorts must be 3 minutes or less")
+    return outputs
+
+
+def check_output(path: Path, check_silence: bool = True) -> float:
+    d = media_duration(path)
+    log(f"Wrote {path.name} ({d:.1f}s)")
+    for start, length in (find_silences(path) if check_silence else []):
+        log(f"  Warning: {length:.1f}s of silence at {int(start // 60)}:{start % 60:04.1f} in {path.name}")
+    return d
