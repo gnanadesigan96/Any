@@ -71,23 +71,14 @@
           "characters": []
         },
         {
-          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!",
-          "visual": "an old necklace lying on a wet floor in a beam of torchlight",
+          "narration": "அந்த அறைக்குள்ள, ஒவ்வொரு நிமிஷமும் ஏதோ நடக்குது. ஒருத்தர் ஒருத்தரா...",
+          "visual": "a dark room with a single flickering bulb, an overturned chair and a door slowly closing",
           "characters": []
         },
         {
-          "narration": "",
-          "visual": "clue",
-          "characters": [],
-          "kind": "clue_countdown",
-          "seconds": 5
-        },
-        {
-          "narration": "க்ளூ ஒண்ணு: அவன் எடுத்துட்டு வந்தது, ஒரு பழைய நகை. க்ளூ ரெண்டு: படத்தோட பேரு, சென்னையில நிஜமா இருக்கிற ஒரு இடத்தோட பேரு! இப்போ கண்டுபிடிச்சீங்களா? அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
-          "visual": "clue",
-          "characters": [],
-          "kind": "clue",
-          "seconds": 6.0
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "an old necklace lying on a wet floor in a beam of torchlight",
+          "characters": []
         },
         {
           "narration": "",
@@ -110,17 +101,6 @@
           "kind": "outro",
           "seconds": 4.5
         }
-      ],
-      "clue_label": "க்ளூ வருது... ரெடியா?",
-      "clue_lines": [
-        [
-          "எடுத்துட்டு வந்தது,",
-          "ஒரு பழைய நகை"
-        ],
-        [
-          "படத்தோட பேரு, சென்னையில",
-          "நிஜமா இருக்கிற ஒரு இடம்!"
-        ]
       ]
     }
   ]

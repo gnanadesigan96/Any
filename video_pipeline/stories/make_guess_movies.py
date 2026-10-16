@@ -844,14 +844,17 @@ NEXT = [
 ]
 MOVIES += NEXT
 
-# Tightened stories (each film's giveaway kept out) and a clue round, as in #24. Narration lines are replaced by scene
-# number; the pictures stay as they were unless a new one is given.
+# Tightened stories: each film's giveaway kept out of the story and the title; the clues stay in the description (no
+# clue round for these). Narration lines are replaced by scene number, "add" puts new lines just before the last one;
+# the pictures stay as they were unless a new one is given.
 def _clue(c1, c2, s1, s2):
     return dict(cards=[c1, c2], spoken="க்ளூ ஒண்ணு: " + s1 + " க்ளூ ரெண்டு: " + s2)
 
 
 TIGHTEN = {
- 1: dict(lines={2: "நேரத்துக்கு வரணும். ஒழுங்கா பாடம் எடுக்கணும். சோம்பேறி வாத்தியார்களுக்கு, அவங்களைப் பார்த்தாலே நடுக்கம்.",
+ 1: dict(add=[("ஒரு கட்டத்துல, அவங்களையே அந்தப் பள்ளியை விட்டுத் துரத்த, ஒரு பெரிய சதி நடக்குது!",
+              "a dark office at night, a few men in white shirts whispering around a desk covered in files", [])],
+         lines={2: "நேரத்துக்கு வரணும். ஒழுங்கா பாடம் எடுக்கணும். சோம்பேறி வாத்தியார்களுக்கு, அவங்களைப் பார்த்தாலே நடுக்கம்.",
                 5: "ஆனா அவங்க, ஒரு அடி கூட பின்வாங்கல."},
          clues=["தலைமை ஆசிரியை பேரு கீதா ராணி", "வாத்தியார்கள் அவங்களுக்கு வச்ச பட்டப்பேர்தான், படத்தோட பேரு"],
          clue_round=_clue(["தலைமை ஆசிரியை பேரு", "கீதா ராணி"], ["வாத்தியார்கள் வச்ச பட்டப்பேர்தான்", "படத்தோட பேரு!"],
@@ -873,7 +876,9 @@ TIGHTEN = {
          clues=["போலீஸ் அதிகாரி பேரு தீபக்", "படத்தோட பேர்ல ஒரு நம்பர் இருக்கு"],
          clue_round=_clue(["அதிகாரி பேரு தீபக்.", "அந்த வழக்குல, அவர் ஒரு காலை இழந்தார்"], ["படத்தோட பேர்ல,", "ஒரு நம்பர் இருக்கு!"],
                           "அந்த அதிகாரி பேரு, தீபக். அந்த வழக்குல, அவர் தன்னோட ஒரு காலை இழந்தார்.", "படத்தோட பேர்லயே, ஒரு நம்பர் ஒளிஞ்சிருக்கு!")),
- 10: dict(lines={1: "சாதாரணப் பொருளை, கோடிக்கணக்கான மதிப்புள்ளதுன்னு நம்ப வைக்கிறான். சங்கிலித் தொடர் திட்டம் போட்டு, ஊரையே ஏமாத்துறான்.",
+ 10: dict(add=[("ஒவ்வொரு மோசடிக்கும், ஒரு புது வேஷம். ஒரு புது பேச்சு. ஏமாந்தவங்க, ஏமாந்ததே தெரியாம நிக்கிறாங்க!",
+               "a row of different disguises hanging on a wall in a cheap rented room: caps, glasses, a fake ID card", [])],
+          lines={1: "சாதாரணப் பொருளை, கோடிக்கணக்கான மதிப்புள்ளதுன்னு நம்ப வைக்கிறான். சங்கிலித் தொடர் திட்டம் போட்டு, ஊரையே ஏமாத்துறான்.",
                  6: "கடைசி வேலை: ஒரு பெரிய பணக்காரனையே ஏமாத்தணும்! ஆனா அதுக்கப்புறம் நடக்கிறது..."},
           clues=["ஹீரோ பேரு காந்தி பாபு", "படத்தோட பேர்ல ஒரு விளையாட்டு ஒளிஞ்சிருக்கு"],
           clue_round=_clue(["ஏமாத்துக்காரன் பேரு", "காந்தி பாபு"], ["படத்தோட பேர்ல,", "ஒரு விளையாட்டு ஒளிஞ்சிருக்கு!"],
@@ -883,7 +888,9 @@ TIGHTEN = {
           clues=["போட்டோகிராபர் பேரு கோபி", "படத்தோட பேரே, அந்தக் கிராமத்தோட பேரு"],
           clue_round=_clue(["ஊர் மக்களுக்கு பயம்:", "போட்டோ எடுத்தா ஆயுசு குறையும்!"], ["படத்தோட பேரே,", "அந்தக் கிராமத்தோட பேரு!"],
                            "அந்த ஊர் மக்களுக்கு பயம்: போட்டோ எடுத்தா ஆயுசு குறைஞ்சு செத்துப்போயிடுவாங்க!", "படத்தோட பேரே, அந்தக் கிராமத்தோட பேருதான்!")),
- 13: dict(tease="யாருமே போகாத அந்த பங்களாவுக்குள்ள, நாலு நண்பர்கள்!",
+ 13: dict(add=[("அந்த அறைக்குள்ள, ஒவ்வொரு நிமிஷமும் ஏதோ நடக்குது. ஒருத்தர் ஒருத்தரா...",
+               "a dark room with a single flickering bulb, an overturned chair and a door slowly closing", [])],
+          tease="யாருமே போகாத அந்த பங்களாவுக்குள்ள, நாலு நண்பர்கள்!",
           lines={4: "அங்க இருந்து, ஒருத்தன் ஒரு பழைய பொருளை யாருக்கும் தெரியாம எடுத்துட்டு வந்துடுறான்."},
           clues=["ஹீரோ பேரு சீனு", "படத்தோட பேரு, சென்னையில நிஜமா இருக்கிற ஒரு இடத்தோட பேரு"],
           clue_round=_clue(["எடுத்துட்டு வந்தது,", "ஒரு பழைய நகை"], ["படத்தோட பேரு, சென்னையில", "நிஜமா இருக்கிற ஒரு இடம்!"],
@@ -938,8 +945,9 @@ for m in MOVIES:
         scenes[i][0] = text
     for i, visual in t.get("visuals", {}).items():
         scenes[i][1] = visual
+    scenes[-1:-1] = [list(sc) for sc in t.get("add", [])]
     m["scenes"] = [tuple(sc) for sc in scenes]
-    m["clues"], m["clue_round"] = t["clues"], t["clue_round"]
+    m["clues"] = t["clues"]  # (the clue_round written above is not used for these films)
     if t.get("tease"):
         m["tease"] = t["tease"]
 

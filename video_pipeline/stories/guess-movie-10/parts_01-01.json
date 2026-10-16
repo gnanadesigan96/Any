@@ -80,25 +80,16 @@
           ]
         },
         {
-          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!",
+          "narration": "ஒவ்வொரு மோசடிக்கும், ஒரு புது வேஷம். ஒரு புது பேச்சு. ஏமாந்தவங்க, ஏமாந்ததே தெரியாம நிக்கிறாங்க!",
+          "visual": "a row of different disguises hanging on a wall in a cheap rented room: caps, glasses, a fake ID card",
+          "characters": []
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
           "visual": "the conman digging in the dirt at night under torchlight, men standing over him",
           "characters": [
             "Conman"
           ]
-        },
-        {
-          "narration": "",
-          "visual": "clue",
-          "characters": [],
-          "kind": "clue_countdown",
-          "seconds": 5
-        },
-        {
-          "narration": "க்ளூ ஒண்ணு: அந்த ஏமாத்துக்காரன் பேரு, காந்தி பாபு. க்ளூ ரெண்டு: படத்தோட பேர்ல, ஒரு பழைய விளையாட்டு ஒளிஞ்சிருக்கு. ராஜா, ராணி, குதிரை! இப்போ கண்டுபிடிச்சீங்களா? அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
-          "visual": "clue",
-          "characters": [],
-          "kind": "clue",
-          "seconds": 6.0
         },
         {
           "narration": "",
@@ -121,17 +112,6 @@
           "kind": "outro",
           "seconds": 4.5
         }
-      ],
-      "clue_label": "க்ளூ வருது... ரெடியா?",
-      "clue_lines": [
-        [
-          "ஏமாத்துக்காரன் பேரு",
-          "காந்தி பாபு"
-        ],
-        [
-          "படத்தோட பேர்ல,",
-          "ஒரு விளையாட்டு ஒளிஞ்சிருக்கு!"
-        ]
       ]
     }
   ]

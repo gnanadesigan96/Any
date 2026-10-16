@@ -77,25 +77,16 @@
           ]
         },
         {
-          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!",
+          "narration": "ஒரு கட்டத்துல, அவங்களையே அந்தப் பள்ளியை விட்டுத் துரத்த, ஒரு பெரிய சதி நடக்குது!",
+          "visual": "a dark office at night, a few men in white shirts whispering around a desk covered in files",
+          "characters": []
+        },
+        {
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
           "visual": "silhouette of the headmistress standing tall at the school gate against a blazing orange sunset, children's silhouettes behind her",
           "characters": [
             "Headmistress"
           ]
-        },
-        {
-          "narration": "",
-          "visual": "clue",
-          "characters": [],
-          "kind": "clue_countdown",
-          "seconds": 5
-        },
-        {
-          "narration": "க்ளூ ஒண்ணு: அந்தத் தலைமை ஆசிரியை பேரு, கீதா ராணி. க்ளூ ரெண்டு: பயந்துபோன வாத்தியார்கள் அவங்களுக்கு ஒரு பட்டப்பேர் வச்சாங்க. அந்தப் பட்டப்பேர்தான், படத்தோட பேரு! இப்போ கண்டுபிடிச்சீங்களா? அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
-          "visual": "clue",
-          "characters": [],
-          "kind": "clue",
-          "seconds": 6.0
         },
         {
           "narration": "",
@@ -118,17 +109,6 @@
           "kind": "outro",
           "seconds": 4.5
         }
-      ],
-      "clue_label": "க்ளூ வருது... ரெடியா?",
-      "clue_lines": [
-        [
-          "தலைமை ஆசிரியை பேரு",
-          "கீதா ராணி"
-        ],
-        [
-          "வாத்தியார்கள் வச்ச பட்டப்பேர்தான்",
-          "படத்தோட பேரு!"
-        ]
       ]
     }
   ]
