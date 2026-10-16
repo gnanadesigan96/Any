@@ -2,11 +2,11 @@
   "episodes": [
     {
       "part": 1,
-      "title": "தன்னைத் தானே கடத்திக்கிட்ட ஒரு அமைச்சர் மகன்! 🤔 இந்தப் படம் எது? #20",
+      "title": "ஒரு கடத்தல்காரன், அவனுக்குன்னு சில விதிகள்! 🤔 இந்தப் படம் எது? #20",
       "hook_text": "Guess the movie",
       "hook_sub": "from the story",
       "hook_note": "கதையைக் கேட்டு படத்தைக் கண்டுபிடிங்க!",
-      "description": "தன்னைத் தானே கடத்திக்கிட்ட ஒரு அமைச்சர் மகன்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: கடத்தல்காரன் பேரு தாஸ்\n🔍 க்ளூ 2: விஜய் சேதுபதிக்கு ஒரு கற்பனைக் காதலி இருக்கிற படம்\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
+      "description": "ஒரு கடத்தல்காரன், அவனுக்குன்னு சில விதிகள்!\nஒரு முழுப் படத்தோட கதை, ஒரு நிமிஷத்துல! படத்தோட பேரு என்ன? 🤔\n\n🔍 க்ளூ 1: கடத்தல்காரன் பேரு தாஸ்\n🔍 க்ளூ 2: அவனோட கற்பனைக் காதலி பேரு ஷாலு\n\n👇 பதில் வீடியோவோட கடைசியில! அதுக்கு முன்னாடியே கண்டுபிடிச்சா கமெண்ட் பண்ணுங்க.\n🎬 இது மாதிரி இன்னும் நிறைய படங்களுக்கு Guessinema சேனலை சப்ஸ்க்ரைப் பண்ணுங்க.",
       "hashtags": [
         "#GuessTheMovie",
         "#படம்எது",
@@ -37,8 +37,8 @@
           ]
         },
         {
-          "narration": "அவன் கூடவே எப்பவும் ஒரு அழகான காதலி. ஆனா... அவ அவனோட கற்பனை மட்டும்தான்!",
-          "visual": "the kidnapper smiling and talking to the empty passenger seat of the van, a faint glowing silhouette of a woman there",
+          "narration": "அவனுக்குன்னு ஒரு ரகசியம் இருக்கு. அது, அவனுக்கு மட்டும்தான் தெரியும்.",
+          "visual": "the kidnapper alone in the driver's seat of the battered van, smiling to himself as if sharing a private joke",
           "characters": [
             "Kidnapper"
           ]
@@ -60,7 +60,7 @@
           ]
         },
         {
-          "narration": "ஆனா போய்ப் பார்த்தா... அந்தப் பையனை யாரோ ஏற்கனவே கடத்தி வச்சிருக்காங்க! அந்தக் கடத்தலே, அவனோட சொந்த ஐடியா!",
+          "narration": "ஆனா போய்ப் பார்த்தா... அங்க ஒரு பெரிய அதிர்ச்சி காத்திருக்கு!",
           "visual": "the minister's son loosely tied to a chair in an empty warehouse, grinning at the stunned kidnapper and the three young men",
           "characters": [
             "MinisterSon",
@@ -69,7 +69,7 @@
           ]
         },
         {
-          "narration": "சொந்த அப்பாகிட்டயே பணம் பறிக்க, அவன் இந்தக் கும்பலோட கூட்டு சேர்றான்.",
+          "narration": "அந்தப் பையனே, இந்தக் கும்பலோட கூட்டு சேர்றான்!",
           "visual": "the minister's son and the gang crowded around a phone on speaker, the son making a ransom call and laughing",
           "characters": [
             "MinisterSon",
@@ -82,9 +82,23 @@
           "characters": []
         },
         {
-          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? க்ளூ டிஸ்கிரிப்ஷன்ல இருக்கு. அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "narration": "கதை புரிஞ்சுதா? இந்தப் படம் எது? கண்டுபிடிக்க முடியலையா? அஞ்சு விநாடில ஒரு க்ளூ வருது!",
           "visual": "the battered old van speeding away down a night road, a bag of cash on the back seat",
           "characters": []
+        },
+        {
+          "narration": "",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue_countdown",
+          "seconds": 5
+        },
+        {
+          "narration": "க்ளூ ஒண்ணு: அவன் கூடவே எப்பவும் ஒரு காதலி. ஆனா அவ, அவனோட கற்பனை மட்டும்தான்! க்ளூ ரெண்டு: கடத்தப் போன அந்த அமைச்சர் மகனே, தன்னைத் தானே கடத்திக்கிட்டு, அப்பாகிட்ட பணம் பறிக்கிறான்! இப்போ கண்டுபிடிச்சீங்களா? அஞ்சு விநாடில பதில்... அதுக்குள்ள கமெண்ட் பண்ணுங்க!",
+          "visual": "clue",
+          "characters": [],
+          "kind": "clue",
+          "seconds": 6.0
         },
         {
           "narration": "",
@@ -107,6 +121,17 @@
           "kind": "outro",
           "seconds": 4.5
         }
+      ],
+      "clue_label": "க்ளூ வருது... ரெடியா?",
+      "clue_lines": [
+        [
+          "அவன் கூடவே ஒரு காதலி.",
+          "ஆனா அவ, அவனோட கற்பனை!"
+        ],
+        [
+          "அந்த அமைச்சர் மகனே,",
+          "தன்னைக் கடத்தச் சொல்றான்!"
+        ]
       ]
     }
   ]
