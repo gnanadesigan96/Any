@@ -2,7 +2,7 @@
 
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -57,9 +57,12 @@ class Workflow:
     collection_channel: str
     approval_channel: str
     hr_channel: str
-    approvers: frozenset
+    reviewer: str            # handles flagged (out-of-period) entries and answers concerns
+    approver: str            # gives the final approval
     hr_group: str
     hr_users: tuple
+    period_start_day: int    # cycle "2026-10" covers 21 Sep (start, previous month) ..
+    period_end_day: int      # .. 20 Oct (end, this month)
     reminder: tuple          # (day, time)
     closing_reminder: tuple  # (day, time) or None
     close: tuple             # (day, time)
@@ -79,13 +82,37 @@ class Workflow:
             collection_channel=raw["collection_channel"],
             approval_channel=raw["approval_channel"],
             hr_channel=raw.get("hr_channel") or raw["approval_channel"],
-            approvers=frozenset(raw.get("approvers", [])),
+            reviewer=raw["reviewer"],
+            approver=raw["approver"],
             hr_group=raw.get("hr_group") or "",
             hr_users=tuple(raw.get("hr_users", [])),
+            period_start_day=int(raw.get("period", {}).get("start_day", 21)),
+            period_end_day=int(raw.get("period", {}).get("end_day", 20)),
             reminder=slot("reminder"),
             closing_reminder=slot("closing_reminder"),
             close=slot("close"),
         )
+
+    def resolve_emails(self, lookup) -> "Workflow":
+        """Swap any e-mail addresses (reviewer, approver, hr_users) for Slack user IDs using `lookup(email) -> id`."""
+        conv = lambda v: lookup(v) if "@" in v else v  # noqa: E731
+        return replace(self, reviewer=conv(self.reviewer), approver=conv(self.approver),
+                       hr_users=tuple(conv(u) for u in self.hr_users))
+
+    @property
+    def admins(self) -> frozenset:
+        """People who may see amounts and edit anyone's entries."""
+        return frozenset({self.reviewer, self.approver})
+
+    def period(self, cycle_id: str):
+        """(first_day, last_day) of support dates paid in this cycle, e.g. 21 Sep .. 20 Oct."""
+        year, month = map(int, cycle_id.split("-"))
+        py, pm = map(int, prev_cycle_id(cycle_id).split("-"))
+        return date(py, pm, self.period_start_day), date(year, month, self.period_end_day)
+
+    def period_text(self, cycle_id: str) -> str:
+        first, last = self.period(cycle_id)
+        return f"{first:%d %b %Y} - {last:%d %b %Y}"
 
     def at(self, cycle_id: str, slot: tuple) -> datetime:
         """The moment a schedule slot happens in a given cycle month ("YYYY-MM")."""
@@ -102,8 +129,6 @@ class Workflow:
         parts += [f"<@{u}>" for u in self.hr_users]
         return " ".join(parts) or "HR team"
 
-    def approver_mention(self) -> str:
-        return " ".join(f"<@{u}>" for u in sorted(self.approvers)) or "approver"
 
 
 def cycle_id_for(dt: datetime) -> str:

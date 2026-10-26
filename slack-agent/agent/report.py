@@ -7,6 +7,13 @@ from datetime import date
 from .config import Policy
 
 _SHIFT_LABEL = {"day": "Day", "night": "Night", "none": "-"}
+STATUS_LABEL = {
+    None: "Recorded",
+    "pending": "Awaiting review (outside period)",
+    "accepted": "Accepted (outside period)",
+    "rejected": "Rejected",
+    "removed": "Removed",
+}
 
 
 def money(amount: float, currency: str) -> str:
@@ -41,7 +48,11 @@ def _clip(text, n=40):
     return text if len(text) <= n else text[: n - 1] + "…"
 
 
-def _day_type_label(policy: Policy, d: date) -> str:
+def shift_label(shift: str) -> str:
+    return _SHIFT_LABEL[shift]
+
+
+def day_type_label(policy: Policy, d: date) -> str:
     kind = policy.day_type(d)
     if kind == "holiday":
         return f"Holiday ({policy.holidays[d.isoformat()]})"
@@ -59,11 +70,12 @@ def priced(entries, policy: Policy) -> list:
 def submission_table(entries, policy: Policy) -> str:
     """What a person sees after submitting: their details, no amounts."""
     rows = [
-        (d.strftime("%d %b %Y"), d.strftime("%a"), _SHIFT_LABEL[e["shift"]], _day_type_label(policy, d), _clip(e.get("extra_task")) or "-")
+        (d.strftime("%d %b %Y"), d.strftime("%a"), _SHIFT_LABEL[e["shift"]], day_type_label(policy, d),
+         _clip(e.get("extra_task")) or "-", STATUS_LABEL[e.get("review")])
         for e in entries
         for d in [date.fromisoformat(e["support_date"])]
     ]
-    return render_table(["Date", "Day", "Shift", "Day type", "Extra task"], rows)
+    return render_table(["Date", "Day", "Shift", "Day type", "Extra task", "Status"], rows)
 
 
 def final_report(entries, policy: Policy) -> dict:
@@ -75,7 +87,8 @@ def final_report(entries, policy: Policy) -> dict:
         d = e["date_obj"]
         detail_rows.append((
             i, e["person_name"], d.strftime("%d %b %Y"), d.strftime("%a"), _SHIFT_LABEL[e["shift"]],
-            _day_type_label(policy, d), _clip(e.get("extra_task"), 30) or "-", money(e["total"], cur),
+            day_type_label(policy, d), _clip(e.get("extra_task"), 30) or "-", money(e["total"], cur),
+            "Outside period - accepted" if e.get("review") == "accepted" else "",
         ))
         p = people.setdefault(e["person_id"], {"name": e["person_name"], "day": 0, "night": 0, "extra": 0, "total": 0.0})
         if e["shift"] in ("day", "night"):
@@ -91,7 +104,7 @@ def final_report(entries, policy: Policy) -> dict:
     summary_rows.append(("TOTAL", sum(p["day"] for p in people.values()), sum(p["night"] for p in people.values()),
                          sum(p["extra"] for p in people.values()), money(grand, cur)))
     return {
-        "detail": render_table(["#", "Employee", "Date", "Day", "Shift", "Day type", "Extra task", "Amount"], detail_rows),
+        "detail": render_table(["#", "Employee", "Date", "Day", "Shift", "Day type", "Extra task", "Amount", "Note"], detail_rows),
         "summary": render_table(["Employee", "Day shifts", "Night shifts", "Extra tasks", "Total"], summary_rows),
         "people": len(people),
         "entries": len(items),
@@ -105,9 +118,10 @@ def _csv(items, currency) -> str:
     buf = io.StringIO()
     w = csv.writer(buf)
     w.writerow(["Employee", "Slack ID", "Date", "Day", "Shift", "Day type", "Extra task",
-                f"Shift amount ({currency})", f"Extra amount ({currency})", f"Total ({currency})"])
+                f"Shift amount ({currency})", f"Extra amount ({currency})", f"Total ({currency})", "Note"])
     for e in items:
         d = e["date_obj"]
         w.writerow([e["person_name"], e["person_id"], d.isoformat(), d.strftime("%A"), _SHIFT_LABEL[e["shift"]],
-                    e["day_type"], e.get("extra_task") or "", e["shift_amount"], e["extra_amount"], e["total"]])
+                    e["day_type"], e.get("extra_task") or "", e["shift_amount"], e["extra_amount"], e["total"],
+                    "Outside period - accepted" if e.get("review") == "accepted" else ""])
     return buf.getvalue()

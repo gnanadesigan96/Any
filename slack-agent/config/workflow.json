@@ -1,14 +1,18 @@
 {
-  "_comment": "Slack IDs, not names: channel IDs start with C, user IDs with U, user-group (e.g. @hr-team) IDs with S. See README for how to find them.",
+  "_comment": "Channels need Slack channel IDs (C...). People can be e-mail addresses or Slack user IDs (U...). hr_group is a user-group ID (S...). See README.",
   "timezone": "Asia/Kolkata",
 
   "collection_channel": "C_REPLACE_ME_SUPPORT_CHANNEL",
   "approval_channel": "C_REPLACE_ME_APPROVAL_CHANNEL",
   "hr_channel": null,
 
-  "approvers": ["U_REPLACE_ME_APPROVER"],
+  "reviewer": "gnanadesigan@corestack.io",
+  "approver": "poornodhaya.reddy@corestack.io",
   "hr_group": "S_REPLACE_ME_HR_GROUP",
   "hr_users": [],
+
+  "_period_comment": "The cycle for month M pays support dates from start_day of M-1 to end_day of M (21 Sep -> 20 Oct for October). Dates outside it are flagged for the reviewer.",
+  "period": {"start_day": 21, "end_day": 20},
 
   "schedule": {
     "reminder":         {"day": 17, "time": "10:00"},

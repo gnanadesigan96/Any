@@ -1,5 +1,5 @@
 """Slack entry point: mention the bot in a channel (or DM it) and it replies in the thread.
-Also runs the monthly support-allowance workflow and handles its Approve / Needs-changes buttons.
+Also runs the monthly support-allowance workflow and handles its buttons and forms.
 
 Run:  python app.py   (needs SLACK_BOT_TOKEN, SLACK_APP_TOKEN, ANTHROPIC_API_KEY)
 """
@@ -11,7 +11,7 @@ import re
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-from agent import workflow
+from agent import slack_actions, workflow
 from agent.config import Workflow
 from agent.context import RequestContext
 from agent.core import run_agent
@@ -68,7 +68,8 @@ def _handle(event, client, context):
     else:
         convo = _readable(client, event.get("text", ""), bot_user_id)
 
-    ctx = RequestContext(user_id=event["user"], user_name=_user_name(client, event["user"]), channel_id=channel)
+    ctx = RequestContext(user_id=event["user"], user_name=_user_name(client, event["user"]),
+                         channel_id=channel, thread_ts=thread_ts)
     client.reactions_add(channel=channel, timestamp=event["ts"], name="eyes")
     try:
         replies = run_agent(convo, ctx)
@@ -98,33 +99,16 @@ def on_message(event, client, context):
     _handle(event, client, context)
 
 
-def _decide(ack, body, client, decide):
-    ack()
-    user_id = body["user"]["id"]
-    cycle_id = body["actions"][0]["value"]
-    result = decide(cycle_id, user_id)
-    if result == "not_authorised":
-        client.chat_postEphemeral(channel=body["channel"]["id"], user=user_id,
-                                  text="Only the configured approver can approve or send back the support allowance.")
-    elif result not in ("approved", "rejected"):
-        client.chat_postEphemeral(channel=body["channel"]["id"], user=user_id,
-                                  text=f"Nothing to do - this month is already *{result}*.")
-
-
-@app.action(workflow.APPROVE_ACTION)
-def on_approve(ack, body, client):
-    _decide(ack, body, client, workflow.get_instance().approve)
-
-
-@app.action(workflow.REJECT_ACTION)
-def on_reject(ack, body, client):
-    _decide(ack, body, client, workflow.get_instance().reject)
+slack_actions.register(app)
 
 
 def start_workflow():
     bot_user_id = app.client.auth_test()["user_id"]
+    # Reviewer / approver may be configured as e-mail addresses; Slack needs their user IDs.
+    cfg = Workflow.load().resolve_emails(lambda email: app.client.users_lookupByEmail(email=email)["user"]["id"])
+    log.info("support workflow: reviewer=%s approver=%s", cfg.reviewer, cfg.approver)
     wf = workflow.SupportWorkflow(
-        app.client, Store(os.environ.get("SUPPORT_DB_PATH", "support_allowance.db")), Workflow.load(), bot_user_id,
+        app.client, Store(os.environ.get("SUPPORT_DB_PATH", "support_allowance.db")), cfg, bot_user_id,
     )
     workflow.set_instance(wf)
     wf.start()

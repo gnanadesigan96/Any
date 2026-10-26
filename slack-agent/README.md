@@ -6,51 +6,46 @@ workflow**. It can also answer general questions, using web search when needed.
 
 ## Monthly support allowance flow
 
-| When (IST) | What the bot does |
-|---|---|
-| **17th, 10:00** | Posts in the support channel asking everyone to submit their support details, with the deadline. |
-| 17th–19th | People mention the bot with their days. The bot records them and replies with a **table of their details (no amounts)**. |
-| **19th, 10:00** | "Last day" reminder. |
-| **19th, 23:59 (EOD)** | Window closes. The bot posts the **final tables (summary + per-day detail + CSV)** in the approval channel and **tags the approver**, with *Approve* / *Needs changes* buttons. |
-| On approval | The bot **tags the HR group**: details for the month are updated and approved. |
+**Allocation period:** each month's cycle pays support dates from the **21st of
+last month to the 20th of this month**. For example, October covers
+21 Sep – 20 Oct.
 
-Everything should be done by the 20th.
+| When (IST) | What happens |
+|---|---|
+| **17th, 10:00** | The bot asks the support channel to submit details for the period, and states the deadline. |
+| 17th–19th | People mention the bot with their days. The bot records them and replies with a **table of their details (no amounts)**. |
+| any time | A date **outside the period** is kept but **flagged**. The reviewer (Gnanadesigan) gets a DM naming the member and date, with **Accept / Reject** buttons for each entry. The submitter is told the outcome in their thread. |
+| **19th, 10:00** | "Last day" reminder. |
+| **19th, 23:59 (EOD)** | Window closes. If flagged entries are still undecided, the reviewer is reminded and the final table **waits** until they're decided. |
+| then | The **final tables (summary + per-day detail + CSV)** are posted in the approval channel and the **approver (Poornodhaya)** is tagged with **Approve / Raise concern** buttons. |
+| Raise concern | A form asks for the concern and, optionally, the specific entries. It comes back to the reviewer as an **interactive table** in the thread, with ⋮ *Edit* / *Remove* (or *Restore*) on each row, plus *Add entry* and *Respond & send for approval*. The table updates in place as rows are fixed. The approver then gets the updated tables plus the response, with the buttons again. |
+| Approve | The **HR group is tagged**: details for the month are updated and approved. |
+
+All approvals and rejections are buttons. Each button only works for the right
+person (others get a private "only X can do this"), and double clicks are harmless.
+The bot is also conversational, so the same things can be done by asking it:
+"accept all of Priya's flagged dates", "show the October report", "close the
+window now", "approve October", "respond to the concern: fixed Arun's dates".
 
 ### Submitting (team members)
 
 > **@ops-agent** night shift 3 and 4 Oct, day shift 11 Oct. On 11th I also did the DB failover
 
-The bot replies:
-
 ```
 Support details - Priya Kumar - October 2026 (3 entries)
-Date        | Day | Shift | Day type | Extra task
-------------+-----+-------+----------+---------------
-03 Oct 2026 | Sat | Night | Weekend  | -
-04 Oct 2026 | Sun | Night | Weekend  | -
-11 Oct 2026 | Sun | Day   | Weekend  | DB failover
+Date        | Day | Shift | Day type | Extra task  | Status
+------------+-----+-------+----------+-------------+---------
+03 Oct 2026 | Sat | Night | Weekend  | -           | Recorded
+04 Oct 2026 | Sun | Night | Weekend  | -           | Recorded
+11 Oct 2026 | Sun | Day   | Weekend  | DB failover | Recorded
 ```
 
-People can also say "remove my 4 Oct night shift", "show my support details",
-or "when does the window close?". A lead can submit for someone else by
-mentioning them: "@Arun was on day shift 5–7 Oct". The bot refuses:
-
-- the same person + date + shift twice, even across months,
-- dates in the future,
-- edits to a month that is already approved.
-
-**Late submissions:** anything sent after the 19th EOD goes into **next month's**
-cycle, and the bot says so.
-
-### Approving (approver)
-
-- Click **Approve**. HR is tagged straight away. Only the configured approver's
-  click is accepted, and a double click doesn't notify HR twice.
-- Or click **Needs changes**, then tell the bot in that thread what to fix
-  ("remove Priya's 3 Oct night shift", "add a day shift for Arun on 12 Oct").
-  Then say "send it for approval again" and the updated tables are re-posted.
-- Approver-only chat commands: "close the window now", "show the October
-  report", "approve October".
+People can also say "remove my 4 Oct night shift", "show my support details" or
+"when does the window close?". A lead can submit for someone else by
+mentioning them. The same person + date + shift can't be claimed twice, even
+across months, and an approved month is locked. Anything sent after the 19th
+EOD goes into **next month's** cycle, and is flagged there if its dates fall
+outside that period.
 
 ### Rates (`config/allowance_policy.json`)
 
@@ -74,13 +69,14 @@ holidays (Holi, Eid, Diwali, …) to `holidays`.
    *From a manifest* → paste `manifest.yaml` → install it to the workspace.
    - Bot token (`xoxb-…`): *OAuth & Permissions*.
    - App token (`xapp-…`): *Basic Information → App-Level Tokens*, scope `connections:write`.
-2. **Fill in `config/workflow.json`:** the bot needs Slack **IDs**, not names.
+2. **Fill in `config/workflow.json`:**
    - `collection_channel`: channel where the team submits (open the channel → channel name → *About* → Channel ID, `C…`).
-   - `approval_channel`: the "other channel" where the final table goes.
-   - `hr_channel`: leave `null` to tag HR in the approval channel. Set a channel ID to send the tables and the HR tag somewhere else.
-   - `approvers`: the approver's member ID (profile → ⋮ → *Copy member ID*, `U…`).
-   - `hr_group`: the HR user group ID (`S…`; from the group's page in *People → User groups*). Or list individual people in `hr_users`.
-   - `schedule`: days and times; the defaults are 17th 10:00, 19th 10:00, 19th 23:59 in `Asia/Kolkata`.
+   - `approval_channel`: the channel where the final table goes for approval.
+   - `hr_channel`: leave `null` to tag HR in the approval channel. Set a channel ID to send the tables and the HR tag elsewhere.
+   - `reviewer` / `approver`: already set to `gnanadesigan@corestack.io` / `poornodhaya.reddy@corestack.io`. E-mails are looked up in Slack at startup; member IDs (`U…`) work too.
+   - `hr_group`: the HR user group ID (`S…`; from the group's page in *People → User groups*). Or list people (e-mails or IDs) in `hr_users`.
+   - `period`: `{"start_day": 21, "end_day": 20}`.
+   - `schedule`: defaults are 17th 10:00, 19th 10:00 and 19th 23:59, in `Asia/Kolkata`.
 3. **Invite the bot** to all those channels: `/invite @ops-agent`.
 4. **Run** on a machine that stays on:
    ```bash
@@ -111,9 +107,11 @@ text, such as a table, posted under the bot's reply.
 ## Layout
 
 ```
-app.py                      Slack events, Approve/Needs-changes buttons, starts the scheduler
+app.py                      Slack events, starts the scheduler
 agent/core.py               Claude tool-use loop + system prompt
-agent/workflow.py           Monthly cycle: reminders, close, approval post, HR notification
+agent/workflow.py           Monthly cycle: reminders, close, flag review, approval, concerns, HR
+agent/blocks.py             Buttons, interactive tables and forms (Block Kit)
+agent/slack_actions.py      What happens when someone clicks / submits a form
 agent/tools/                Tools Claude can call (support allowance, date helpers, ...)
 agent/config.py             Loads rates + workflow settings
 agent/store.py              SQLite: cycles and submitted entries
@@ -139,6 +137,7 @@ config/workflow.json          Channels, approver, HR group, schedule
 cd slack-agent && python -m pytest -q tests
 ```
 
-The tests simulate a whole month: reminders, submissions, the window closing
-at 19th EOD IST, approval, the HR tag, sending back for changes, and late
-submissions rolling into the next month.
+The tests simulate a whole month: reminders, submissions, out-of-period flags
+and the reviewer's decisions, the window closing at 19th EOD IST, final approval,
+a concern fixed through the interactive table, the HR tag, and the button and
+form handlers (including "only the right person can click").

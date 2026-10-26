@@ -1,8 +1,9 @@
 """Chat tools for the monthly support-allowance workflow.
 
 Team members submit / fix / view their own support days (no amounts shown).
-Approvers can also see amounts, edit anyone's entries, close the window early,
-approve, and re-send for approval.
+The reviewer decides out-of-period entries and fixes entries after a concern;
+the approver gives the final approval or raises a concern. Everything here can
+also be done with the buttons the bot posts - these tools let people just ask.
 """
 
 import json
@@ -27,33 +28,8 @@ def _err(msg: str) -> str:
     return json.dumps({"error": msg})
 
 
-def _is_approver(user_id: str) -> bool:
-    return user_id in get_instance().cfg.approvers
-
-
-def _name_for(user_id: str) -> str:
-    try:
-        u = get_instance().client.users_info(user=user_id)["user"]
-        return u.get("real_name") or u.get("name") or user_id
-    except Exception:
-        return user_id
-
-
-def _resolve(person_slack_id: str, cycle: str):
-    """Work out (person_id, person_name, cycle_id) for a request, enforcing who may touch what."""
-    req = current_request.get()
-    wf = get_instance()
-    person_slack_id = (person_slack_id or "").strip().strip("<@>")
-    person_id = person_slack_id or req.user_id
-    person_name = req.user_name if person_id == req.user_id else _name_for(person_id)
-    if cycle:
-        if not _is_approver(req.user_id):
-            raise PermissionError("Only approvers can change a specific month; your details go into the open window.")
-        c = wf.store.ensure_cycle(cycle)
-        if c["status"] == "approved":
-            raise PermissionError(f"{cycle_label(cycle)} is already approved and locked.")
-        return person_id, person_name, cycle
-    return person_id, person_name, wf.submission_cycle()
+def _uid(raw: str) -> str:
+    return (raw or "").strip().strip("<@>")
 
 
 def _attach_person_table(person_id, person_name, cid):
@@ -72,26 +48,13 @@ def _window_info(cid):
     late = cid != cycle_id_for(wf.now())
     return {
         "cycle": cycle_label(cid),
+        "allocation_period": wf.cfg.period_text(cid),
         "window_closes": f"{closes:%d %B %Y, %I:%M %p} {closes.tzname()}",
         "note": "This month's window has already closed, so these were added to next month's cycle." if late else None,
     }
 
 
-@beta_tool
-def submit_support_details(entries: list[SupportEntry], person_slack_id: str = "", cycle: str = "") -> str:
-    """Record support days someone was on duty. Call this whenever a person shares their support details. A table of what was recorded is posted automatically below your reply - don't repeat it or mention amounts.
-
-    Args:
-        entries: One item per date and shift. `date` is YYYY-MM-DD; `shift` is "day" or "night" ("none" only for an extra task done on a day without a support shift); `extra_task` briefly describes any additional task performed that day, otherwise omit it. Expand ranges like "3-5 Oct" into separate dates.
-        person_slack_id: Slack user ID (e.g. U0123ABC) when submitting on behalf of someone else. Leave empty for the person asking.
-        cycle: Approvers only - a YYYY-MM month to edit after its window closed. Leave empty normally.
-    """
-    try:
-        person_id, person_name, cid = _resolve(person_slack_id, cycle)
-    except PermissionError as e:
-        return _err(str(e))
-    wf = get_instance()
-    today = wf.now().date()
+def _parse(entries):
     clean, problems = [], []
     for e in entries:
         try:
@@ -105,16 +68,54 @@ def submit_support_details(entries: list[SupportEntry], person_slack_id: str = "
             problems.append(f"{d}: shift must be day or night")
         elif shift == "none" and not extra:
             problems.append(f"{d}: no shift and no extra task - nothing to record")
-        elif d > today:
-            problems.append(f"{d} is in the future - submit it after the shift")
         else:
             clean.append({"date": d.isoformat(), "shift": shift, "extra_task": extra})
+    return clean, problems
+
+
+@beta_tool
+def submit_support_details(entries: list[SupportEntry], person_slack_id: str = "", cycle: str = "") -> str:
+    """Record support days someone was on duty. Call this whenever a person shares their support details. A table of what was recorded is posted automatically below your reply - don't repeat it or mention amounts. Dates outside the allocation period are kept but flagged for the reviewer to accept or reject.
+
+    Args:
+        entries: One item per date and shift. `date` is YYYY-MM-DD; `shift` is "day" or "night" ("none" only for an extra task done on a day without a support shift); `extra_task` briefly describes any additional task performed that day, otherwise omit it. Expand ranges like "3-5 Oct" into separate dates.
+        person_slack_id: Slack user ID (e.g. U0123ABC) when submitting on behalf of someone else. Leave empty for the person asking.
+        cycle: Reviewer only - a YYYY-MM month to add entries to after its window closed (e.g. while fixing a concern). Leave empty normally.
+    """
+    req = current_request.get()
+    wf = get_instance()
+    person_id = _uid(person_slack_id) or req.user_id
+    person_name = req.user_name if person_id == req.user_id else wf.user_name(person_id)
+    clean, problems = _parse(entries)
+
+    if cycle:  # reviewer adding to a closed month - same rules as the "Add entry" button
+        if err := wf.check_reviewer_edit(cycle, req.user_id):
+            return _err(err)
+        added = 0
+        for e in clean:
+            if err := wf.add_entry(cycle, req.user_id, person_id, e["date"], e["shift"], e["extra_task"]):
+                problems.append(f"{e['date']} {e['shift']}: {err}")
+            else:
+                added += 1
+        _attach_person_table(person_id, person_name, cycle)
+        return json.dumps({"person": person_name, "added": added, "problems": problems, "cycle": cycle_label(cycle)})
+
+    cid = wf.submission_cycle()
+    for e in clean:
+        if reason := wf.flag_reason(cid, date.fromisoformat(e["date"])):
+            e.update(review="pending", flag_reason=reason)
     wf.store.ensure_cycle(cid)
-    added, duplicates = wf.store.add_entries(cid, person_id, person_name, clean, current_request.get().user_name)
+    added, duplicates = wf.store.add_entries(cid, person_id, person_name, clean, req.user_name,
+                                             thread=(req.channel_id, req.thread_ts))
+    flagged = [e for e in added if e.get("review") == "pending"]
+    if flagged:
+        wf.notify_reviewer(cid, [e["id"] for e in flagged])
     _attach_person_table(person_id, person_name, cid)
     return json.dumps({
         "person": person_name,
         "added": len(added),
+        "flagged_for_reviewer": [f"{e['date']} ({e['flag_reason']})" for e in flagged],
+        "reviewer": f"<@{wf.cfg.reviewer}>",
         "already_submitted": [f"{d['date']} {d['shift']} (in {cycle_label(d['already_in_cycle'])})" for d in duplicates],
         "problems": problems,
         **_window_info(cid),
@@ -128,109 +129,152 @@ def remove_support_details(dates: list[str], shift: str = "", person_slack_id: s
     Args:
         dates: Dates to remove, YYYY-MM-DD.
         shift: "day" or "night" to remove only that shift; empty removes every entry on those dates.
-        person_slack_id: Slack user ID when fixing someone else's details. Leave empty for the person asking.
-        cycle: Approvers only - YYYY-MM month to edit after its window closed.
+        person_slack_id: Slack user ID when the reviewer fixes someone else's details. Leave empty for the person asking.
+        cycle: Reviewer only - YYYY-MM month to edit after its window closed.
     """
-    try:
-        person_id, person_name, cid = _resolve(person_slack_id, cycle)
-    except PermissionError as e:
-        return _err(str(e))
     req = current_request.get()
-    if person_id != req.user_id and not _is_approver(req.user_id):
-        return _err("You can only remove your own support details.")
-    removed = get_instance().store.remove_entries(cid, person_id, dates, shift or None)
+    wf = get_instance()
+    person_id = _uid(person_slack_id) or req.user_id
+    person_name = req.user_name if person_id == req.user_id else wf.user_name(person_id)
+    if cycle or person_id != req.user_id:
+        cid = cycle or wf.submission_cycle()
+        if err := wf.check_reviewer_edit(cid, req.user_id):
+            return _err(err if req.user_id == wf.cfg.reviewer else "You can only remove your own support details.")
+        targets = [e for e in wf.store.entries(cid, person_id)
+                   if e["support_date"] in dates and (not shift or e["shift"] == shift)]
+        for e in targets:
+            wf.set_row_removed(e["id"], req.user_id, removed=True)
+        removed = len(targets)
+    else:
+        cid = wf.submission_cycle()
+        removed = wf.store.remove_entries(cid, person_id, dates, shift or None)
     _attach_person_table(person_id, person_name, cid)
     return json.dumps({"person": person_name, "removed": removed, "cycle": cycle_label(cid)})
 
 
 @beta_tool
 def show_support_details(person_slack_id: str = "", cycle: str = "") -> str:
-    """Show recorded support details. Team members see their own (no amounts). Approvers can see anyone's, or - with no person - the full report with amounts for a month. The table is posted automatically.
+    """Show recorded support details. Team members see their own (no amounts). The reviewer and approver can see anyone's, or - with no person - the full report with amounts for a month. The table is posted automatically.
 
     Args:
-        person_slack_id: Slack user ID of the person to show. Empty = the person asking (or everyone, for approvers asking about a month).
+        person_slack_id: Slack user ID of the person to show. Empty = the person asking (or everyone, for the reviewer/approver).
         cycle: YYYY-MM month. Empty = the currently open window.
     """
     req = current_request.get()
     wf = get_instance()
     cid = cycle or wf.submission_cycle()
-    approver = _is_approver(req.user_id)
-    pid = (person_slack_id or "").strip().strip("<@>")
-    if approver and not pid:
-        entries = wf.store.entries(cid)
+    admin = req.user_id in wf.cfg.admins
+    pid = _uid(person_slack_id)
+    if admin and not pid:
+        entries = wf.store.entries(cid, payable_only=True)
+        pending = wf.store.pending_reviews(cid)
+        status = (wf.store.cycle(cid) or {}).get("status", "open")
         if not entries:
-            return json.dumps({"cycle": cycle_label(cid), "entries": 0})
+            return json.dumps({"cycle": cycle_label(cid), "status": status, "entries": 0, "awaiting_review": len(pending)})
         report = final_report(entries, Policy.load())
-        req.attachments.append(f"*Support allowance - {cycle_label(cid)}* · {report['people']} people · total *{report['grand_total_text']}*")
+        req.attachments.append(f"*Support allowance - {cycle_label(cid)}* ({wf.cfg.period_text(cid)}) · "
+                               f"{report['people']} people · total *{report['grand_total_text']}*")
         req.attachments.extend(code_blocks(report["summary"]))
         req.attachments.extend(code_blocks(report["detail"]))
-        return json.dumps({"cycle": cycle_label(cid), "status": (wf.store.cycle(cid) or {}).get("status", "open"),
-                           "people": report["people"], "entries": report["entries"], "total": report["grand_total_text"]})
-    if pid and pid != req.user_id and not approver:
+        return json.dumps({"cycle": cycle_label(cid), "status": status, "people": report["people"],
+                           "entries": report["entries"], "total": report["grand_total_text"],
+                           "awaiting_review": len(pending)})
+    if pid and pid != req.user_id and not admin:
         return _err("You can only view your own support details.")
     person_id = pid or req.user_id
-    _attach_person_table(person_id, req.user_name if person_id == req.user_id else _name_for(person_id), cid)
+    _attach_person_table(person_id, req.user_name if person_id == req.user_id else wf.user_name(person_id), cid)
     return json.dumps({"cycle": cycle_label(cid), "shown_for": person_id})
 
 
 @beta_tool
 def support_window_status() -> str:
-    """Which month is currently collecting support details, when the window closes, and the status of last month's approval."""
+    """Which month is collecting support details, its allocation period, when the window closes, and where each month is in the approval process."""
     wf = get_instance()
     cid = wf.submission_cycle()
     this_month = cycle_id_for(wf.now())
     info = _window_info(cid)
     info["months"] = {
-        cycle_label(m): (wf.store.cycle(m) or {}).get("status", "open")
+        cycle_label(m): {"status": (wf.store.cycle(m) or {}).get("status", "open"),
+                         "awaiting_review": len(wf.store.pending_reviews(m))}
         for m in sorted({this_month, cid})
     }
+    info["reviewer"] = f"<@{wf.cfg.reviewer}>"
+    info["approver"] = f"<@{wf.cfg.approver}>"
     return json.dumps(info)
 
 
-def _approver_only():
+@beta_tool
+def review_flagged_entries(decision: Literal["accepted", "rejected"], person_slack_id: str = "", cycle: str = "") -> str:
+    """Reviewer only: accept or reject entries that were flagged for being outside the allocation period (same as the Accept / Reject buttons).
+
+    Args:
+        decision: "accepted" or "rejected".
+        person_slack_id: Only this person's flagged entries. Empty = all flagged entries of the month.
+        cycle: YYYY-MM. Empty = the currently open window.
+    """
     req = current_request.get()
-    return None if _is_approver(req.user_id) else _err("Only the configured approver can do this.")
+    wf = get_instance()
+    if req.user_id != wf.cfg.reviewer:
+        return _err("Only the reviewer can accept or reject flagged entries.")
+    cid = cycle or wf.submission_cycle()
+    pid = _uid(person_slack_id)
+    targets = [e for e in wf.store.pending_reviews(cid) if not pid or e["person_id"] == pid]
+    for e in targets:
+        wf.review(e["id"], decision, req.user_id)
+    return json.dumps({"cycle": cycle_label(cid), decision: [f"{e['person_name']} {e['support_date']} {e['shift']}" for e in targets],
+                       "status": (wf.store.cycle(cid) or {}).get("status", "open")})
 
 
 @beta_tool
 def close_window_now(cycle: str = "") -> str:
-    """Approvers only: close a month's submission window immediately and post the final tables for approval.
+    """Reviewer or approver only: close a month's submission window immediately and move it on to review / final approval.
 
     Args:
         cycle: YYYY-MM. Empty = the currently open window.
     """
-    if denied := _approver_only():
-        return denied
+    req = current_request.get()
     wf = get_instance()
+    if req.user_id not in wf.cfg.admins:
+        return _err("Only the reviewer or approver can close the window early.")
     cid = cycle or wf.submission_cycle()
     return json.dumps({"cycle": cycle_label(cid), "status": wf.close_cycle(cid)})
 
 
 @beta_tool
 def approve_support_allowance(cycle: str) -> str:
-    """Approvers only: approve a month's support allowance (same as pressing Approve) and notify HR.
+    """Approver only: give the final approval for a month (same as pressing Approve). HR is then tagged.
 
     Args:
         cycle: YYYY-MM month to approve.
     """
-    if denied := _approver_only():
-        return denied
     return json.dumps({"cycle": cycle_label(cycle), "status": get_instance().approve(cycle, current_request.get().user_id)})
 
 
 @beta_tool
-def resend_for_approval(cycle: str) -> str:
-    """Approvers only: after corrections, re-post the updated tables for approval.
+def raise_concern_on_allowance(cycle: str, concern: str) -> str:
+    """Approver only: send the month back to the reviewer with a concern (same as pressing Raise concern).
 
     Args:
-        cycle: YYYY-MM month to re-send.
+        cycle: YYYY-MM month.
+        concern: What the approver is unhappy about.
     """
-    if denied := _approver_only():
-        return denied
-    return json.dumps({"cycle": cycle_label(cycle), "status": get_instance().resubmit(cycle)})
+    return json.dumps({"cycle": cycle_label(cycle),
+                       "status": get_instance().raise_concern(cycle, current_request.get().user_id, concern)})
+
+
+@beta_tool
+def respond_to_concern(cycle: str, response: str) -> str:
+    """Reviewer only: after fixing entries, answer the approver's concern and re-send the updated tables for final approval.
+
+    Args:
+        cycle: YYYY-MM month.
+        response: The reviewer's answer to the concern.
+    """
+    return json.dumps({"cycle": cycle_label(cycle),
+                       "status": get_instance().respond_to_concern(cycle, current_request.get().user_id, response)})
 
 
 TOOLS = [
     submit_support_details, remove_support_details, show_support_details, support_window_status,
-    close_window_now, approve_support_allowance, resend_for_approval,
+    review_flagged_entries, close_window_now, approve_support_allowance, raise_concern_on_allowance, respond_to_concern,
 ]
