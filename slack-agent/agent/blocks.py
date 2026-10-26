@@ -69,12 +69,12 @@ def row_ids(message_blocks) -> list:
 
 def review_blocks(cid, entries, cfg: Workflow, policy: Policy):
     blocks = [{"type": "section", "text": _text(
-        f"<@{cfg.reviewer}> these support dates for *{cycle_label(cid)}* are outside the allocation period "
-        f"(*{cfg.period_text(cid)}*). Please accept or reject each one:")}]
+        f"<@{cfg.reviewer}> these *{cycle_label(cid)}* support entries need your decision - they are outside the "
+        f"allocation period (*{cfg.period_text(cid)}*) or overlap with someone else's shift. Accept or reject each one:")}]
     pending = []
     for e in entries:
         blocks.append({"type": "section", "block_id": f"row:{e['id']}",
-                       "text": _text(f"{entry_line(e, policy, with_amount=False)}\n:warning: {e.get('flag_reason') or 'outside period'}")})
+                       "text": _text(f"{entry_line(e, policy, with_amount=False)}\n:warning: {e.get('flag_reason') or 'needs review'}")})
         if e.get("review") == "pending":
             pending.append(e["id"])
             blocks.append({"type": "actions", "block_id": f"act:{e['id']}", "elements": [

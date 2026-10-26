@@ -128,6 +128,16 @@ class Store:
             ).fetchone()
         return row["cycle_id"] if row else None
 
+    def overlaps(self, support_date, shift, person_id, exclude_id=None) -> list:
+        """Other people's live entries for the same date and the same day/night shift (extra-task-only never overlaps)."""
+        if shift not in ("day", "night"):
+            return []
+        with self._db() as db:
+            return [dict(r) for r in db.execute(
+                f"""SELECT * FROM entries WHERE support_date = ? AND shift = ? AND person_id != ?
+                    AND (review IS NULL OR review NOT IN {_GONE}) AND id IS NOT ?""",
+                (support_date, shift, person_id, exclude_id)).fetchall()]
+
     def add_entries(self, cycle_id, person_id, person_name, entries, submitted_by, thread=(None, None)):
         """Insert entries; returns (added, duplicates). `added` items gain an `id`."""
         added, duplicates = [], []

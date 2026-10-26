@@ -9,8 +9,8 @@ from .config import Policy
 _SHIFT_LABEL = {"day": "Day", "night": "Night", "none": "-"}
 STATUS_LABEL = {
     None: "Recorded",
-    "pending": "Awaiting review (outside period)",
-    "accepted": "Accepted (outside period)",
+    "pending": "Awaiting review",
+    "accepted": "Accepted by reviewer",
     "rejected": "Rejected",
     "removed": "Removed",
 }
@@ -88,7 +88,7 @@ def final_report(entries, policy: Policy) -> dict:
         detail_rows.append((
             i, e["person_name"], d.strftime("%d %b %Y"), d.strftime("%a"), _SHIFT_LABEL[e["shift"]],
             day_type_label(policy, d), _clip(e.get("extra_task"), 30) or "-", money(e["total"], cur),
-            "Outside period - accepted" if e.get("review") == "accepted" else "",
+            _clip(f"Accepted: {e.get('flag_reason')}", 45) if e.get("review") == "accepted" else "",
         ))
         p = people.setdefault(e["person_id"], {"name": e["person_name"], "day": 0, "night": 0, "extra": 0, "total": 0.0})
         if e["shift"] in ("day", "night"):
@@ -123,5 +123,5 @@ def _csv(items, currency) -> str:
         d = e["date_obj"]
         w.writerow([e["person_name"], e["person_id"], d.isoformat(), d.strftime("%A"), _SHIFT_LABEL[e["shift"]],
                     e["day_type"], e.get("extra_task") or "", e["shift_amount"], e["extra_amount"], e["total"],
-                    "Outside period - accepted" if e.get("review") == "accepted" else ""])
+                    f"Accepted by reviewer: {e.get('flag_reason')}" if e.get("review") == "accepted" else ""])
     return buf.getvalue()

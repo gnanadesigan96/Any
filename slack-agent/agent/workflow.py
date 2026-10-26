@@ -89,6 +89,41 @@ class SupportWorkflow:
             return f"after the period ({self.cfg.period_text(cid)})"
         return None
 
+    @staticmethod
+    def _overlap_text(others, shift) -> str:
+        names = ", ".join(sorted({o["person_name"] for o in others}))
+        return f"overlaps with {names}'s {shift_label(shift).lower()} shift"
+
+    def entry_flags(self, cid, person_id, support_date: str, shift):
+        """(reason, overlapping_entries) - reason is None when the entry needs no review."""
+        reasons = []
+        if r := self.flag_reason(cid, date.fromisoformat(support_date)):
+            reasons.append(r)
+        others = self.store.overlaps(support_date, shift, person_id)
+        if others:
+            reasons.append(self._overlap_text(others, shift))
+        return "; ".join(reasons) or None, others
+
+    def flag_overlap_partners(self, new_entries) -> dict:
+        """When a new entry overlaps someone else's recorded shift, put that entry up for review too.
+
+        Returns {cycle_id: [entry ids newly flagged]} so the reviewer can be told.
+        """
+        flagged = {}
+        for new in new_entries:
+            for o in self.store.overlaps(new["date"], new["shift"], new["person_id"]):
+                cycle = self.store.cycle(o["cycle_id"]) or {}
+                if o.get("review") is not None or cycle.get("status", "open") not in EDITABLE_STATUSES:
+                    continue
+                self.store.update_entry(o["id"], review="pending",
+                                        flag_reason=self._overlap_text([{"person_name": new["person_name"]}], o["shift"]))
+                flagged.setdefault(o["cycle_id"], []).append(o["id"])
+                self._post_thread_note(o, (
+                    f"<@{o['person_id']}> heads up: {new['person_name']} also claimed the "
+                    f"{shift_label(o['shift']).lower()} shift on {date.fromisoformat(o['support_date']):%d %b %Y}. "
+                    f"<@{self.cfg.reviewer}> will decide which entry stands."))
+        return flagged
+
     def _post_thread_note(self, entry, text):
         if entry.get("thread_channel"):
             try:
@@ -187,7 +222,7 @@ class SupportWorkflow:
             self.post_for_approval(cid)
         return to_status
 
-    # -- out-of-period review -------------------------------------------------
+    # -- review of flagged entries (outside the period / overlapping shifts) ---
 
     def notify_reviewer(self, cid, entry_ids):
         policy = Policy.load()
@@ -196,7 +231,7 @@ class SupportWorkflow:
             names = ", ".join(sorted({e["person_name"] for e in chunk}))
             self.client.chat_postMessage(
                 channel=self.cfg.reviewer,
-                text=f"Support dates outside the {cycle_label(cid)} period need your review ({names}).",
+                text=f"Support entries for {cycle_label(cid)} need your review ({names}).",
                 blocks=B.review_blocks(cid, chunk, self.cfg, policy),
             )
 
@@ -216,7 +251,7 @@ class SupportWorkflow:
     def refresh_review_message(self, channel, ts, entry_ids):
         entries = [e for e in (self.store.entry(i) for i in entry_ids) if e]
         if entries:
-            self.client.chat_update(channel=channel, ts=ts, text="Support dates outside the period",
+            self.client.chat_update(channel=channel, ts=ts, text="Support entries needing review",
                                     blocks=B.review_blocks(entries[0]["cycle_id"], entries, self.cfg, Policy.load()))
 
     def _release_if_reviewed(self, cid):
@@ -335,6 +370,8 @@ class SupportWorkflow:
             return None, "Pick a shift or describe the extra task."
         if dup := self.store.duplicate_of(person_id, d, shift, exclude_id):
             return None, f"Already claimed for this date and shift in {cycle_label(dup)}."
+        if others := self.store.overlaps(d, shift, person_id, exclude_id):
+            return None, f"That {self._overlap_text(others, shift)} on this date - remove or change theirs first."
         return self.flag_reason(cid, date.fromisoformat(d)), None
 
     def set_row_removed(self, entry_id, user_id, removed: bool) -> str:
@@ -345,6 +382,8 @@ class SupportWorkflow:
             # Restoring: make sure nobody re-claimed the same day meanwhile.
             if dup := self.store.duplicate_of(e["person_id"], e["support_date"], e["shift"], entry_id):
                 return f"Can't restore - already claimed in {cycle_label(dup)}."
+            if others := self.store.overlaps(e["support_date"], e["shift"], e["person_id"], entry_id):
+                return f"Can't restore - it {self._overlap_text(others, e['shift'])}."
         review = "removed" if removed else ("accepted" if e.get("flag_reason") else None)
         self.store.update_entry(entry_id, review=review, reviewed_by=user_id)
         self.refresh_concern(e["cycle_id"])

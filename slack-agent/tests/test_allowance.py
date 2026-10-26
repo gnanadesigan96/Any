@@ -140,11 +140,12 @@ def test_submission_cycle_rolls_over_after_19th_eod(wf):
 def test_final_report_marks_accepted_out_of_period():
     entries = [
         {"person_id": PRIYA, "person_name": "Priya Kumar", "support_date": "2026-10-01", "shift": "night", "extra_task": None, "review": None},
-        {"person_id": PRIYA, "person_name": "Priya Kumar", "support_date": "2026-09-12", "shift": "day", "extra_task": "DB failover", "review": "accepted"},
+        {"person_id": PRIYA, "person_name": "Priya Kumar", "support_date": "2026-09-12", "shift": "day", "extra_task": "DB failover", "review": "accepted",
+         "flag_reason": "before the period (21 Sep 2026 - 20 Oct 2026)"},
     ]
     r = final_report(entries, POLICY)
     assert r["grand_total"] == 1000 + 1500
-    assert "Outside period - accepted" in r["detail"] and "Outside period - accepted" in r["csv"]
+    assert "Accepted: before the period" in r["detail"] and "Accepted by reviewer: before the period" in r["csv"]
 
 
 # -- the whole month ----------------------------------------------------------
@@ -163,7 +164,7 @@ def test_full_month_with_review_concern_and_approval(wf):
     ])
     assert out["added"] == 4 and len(out["flagged_for_reviewer"]) == 1
     table = "\n".join(attached)
-    assert "Awaiting review (outside period)" in table and "₹" not in table
+    assert "Awaiting review" in table and "₹" not in table
 
     review_msg = slack.with_blocks(ME)[-1]
     assert action_ids(review_msg["blocks"]) == {B.REVIEW_ACCEPT, B.REVIEW_REJECT}
@@ -324,3 +325,59 @@ def test_buttons_and_modals(wf):
 
     click(BOSS, B.APPROVE, "2026-10")
     assert wf.store.cycle("2026-10")["status"] == "approved"
+
+
+# -- period edges and overlaps --------------------------------------------------
+
+def test_18th_to_20th_can_be_submitted_in_advance_but_21st_is_flagged(wf):
+    wf.clock.dt = ist(2026, 10, 17, 11)
+    out, _ = as_user(PRIYA, tools.submit_support_details, entries=[
+        {"date": d, "shift": "day"} for d in ("2026-10-18", "2026-10-19", "2026-10-20", "2026-10-21")])
+    assert out["added"] == 4
+    assert out["flagged_for_reviewer"] == ["2026-10-21 (after the period (21 Sep 2026 - 20 Oct 2026))"]
+
+
+def test_same_shift_same_day_by_two_people_flags_both(wf):
+    slack = wf.client
+    out, _ = as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-10-03", "shift": "night"}])
+    assert out["flagged_for_reviewer"] == []
+    priya_id = wf.store.entries("2026-10", PRIYA)[0]["id"]
+
+    out, _ = as_user(ARUN, tools.submit_support_details, entries=[{"date": "2026-10-03", "shift": "night"}])
+    assert out["flagged_for_reviewer"] == ["2026-10-03 (overlaps with Priya Kumar's night shift)"]
+    arun_id = wf.store.entries("2026-10", ARUN)[0]["id"]
+
+    # Priya's earlier entry is pulled into review too, and she's told in her thread.
+    assert wf.store.entry(priya_id)["review"] == "pending"
+    assert "overlaps with Arun's night shift" == wf.store.entry(priya_id)["flag_reason"]
+    assert any("Arun also claimed the night shift" in t for t in slack.texts("CSUPPORT"))
+    review_msg = slack.with_blocks(ME)[-1]
+    assert sorted(B.row_ids(review_msg["blocks"])) == sorted([priya_id, arun_id])
+
+    # Reviewer keeps Priya's, rejects Arun's.
+    assert wf.review(priya_id, "accepted", ME) == "accepted"
+    assert wf.review(arun_id, "rejected", ME) == "rejected"
+    assert [e["person_id"] for e in wf.store.entries("2026-10", payable_only=True)] == [PRIYA]
+
+
+def test_extra_tasks_and_different_shifts_may_overlap(wf):
+    as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-10-03", "shift": "night"}])
+    out, _ = as_user(ARUN, tools.submit_support_details, entries=[
+        {"date": "2026-10-03", "shift": "day"},
+        {"date": "2026-10-04", "shift": "none", "extra_task": "Night call for P1 incident"},
+    ])
+    as_user(PRIYA, tools.submit_support_details, entries=[
+        {"date": "2026-10-04", "shift": "none", "extra_task": "Same night call"}])
+    assert out["flagged_for_reviewer"] == []
+    assert wf.store.pending_reviews("2026-10") == []
+
+
+def test_overlap_within_one_message_for_two_people_and_reviewer_edits_blocked(wf):
+    as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-10-05", "shift": "day"}])
+    as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-10-05", "shift": "day"}], person_slack_id=ARUN)
+    assert len(wf.store.pending_reviews("2026-10")) == 2
+    # The reviewer can't create a new overlap by hand.
+    as_user(ARUN, tools.submit_support_details, entries=[{"date": "2026-10-06", "shift": "night"}])
+    wf.store.update_cycle("2026-10", status="concern")
+    err = wf.add_entry("2026-10", ME, PRIYA, "2026-10-06", "night", None)
+    assert "overlaps with Arun's night shift" in err

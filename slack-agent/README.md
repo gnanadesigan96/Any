@@ -8,13 +8,20 @@ workflow**. It can also answer general questions, using web search when needed.
 
 **Allocation period:** each month's cycle pays support dates from the **21st of
 last month to the 20th of this month**. For example, October covers
-21 Sep – 20 Oct.
+21 Sep – 20 Oct. Submissions open on the 17th and close at 19th EOD, so the
+18th–20th can be submitted in advance and count normally. Anything after the
+20th is flagged.
+
+**Overlaps:** a day or night shift can only belong to one person on a given
+date. If two people claim the same shift on the same date, both entries are
+flagged for the reviewer. Different shifts on the same day (one day, one night)
+are fine, and extra tasks / night calls may overlap freely.
 
 | When (IST) | What happens |
 |---|---|
 | **17th, 10:00** | The bot asks the support channel to submit details for the period, and states the deadline. |
 | 17th–19th | People mention the bot with their days. The bot records them and replies with a **table of their details (no amounts)**. |
-| any time | A date **outside the period** is kept but **flagged**. The reviewer (Gnanadesigan) gets a DM naming the member and date, with **Accept / Reject** buttons for each entry. The submitter is told the outcome in their thread. |
+| any time | Some entries are kept but **flagged**: a date **outside the period**, or a **day/night shift that overlaps another person's same shift on the same date**. The reviewer (Gnanadesigan) gets a DM naming the member, date and reason, with **Accept / Reject** buttons for each entry. For overlaps, both people's entries are put up so the reviewer chooses which stands. Each submitter is told the outcome in their thread. |
 | **19th, 10:00** | "Last day" reminder. |
 | **19th, 23:59 (EOD)** | Window closes. If flagged entries are still undecided, the reviewer is reminded and the final table **waits** until they're decided. |
 | then | The **final tables (summary + per-day detail + CSV)** are posted in the approval channel and the **approver (Poornodhaya)** is tagged with **Approve / Raise concern** buttons. |

@@ -18,8 +18,10 @@ and the reviewer/approver mostly use buttons - but they can also just ask you):
 - When someone shares the days they were on support, call submit_support_details right away. Work out exact YYYY-MM-DD dates \
 (assume the most recent occurrence when no year/month is given; use expand_date_range for ranges). \
 Shift is "day" or "night"; if they don't say, ask. Put any additional task they did on a date in extra_task.
-- Each month's allocation period runs from the 21st of the previous month to the 20th. Dates outside it are still recorded but \
-flagged for the reviewer; tell the person which dates were flagged and that the reviewer will accept or reject them.
+- Each month's allocation period runs from the 21st of the previous month to the 20th (submissions open on the 17th, so the \
+18th-20th may be submitted in advance). Dates outside it, and day/night shifts that overlap another person's same shift on the \
+same date, are still recorded but flagged for the reviewer; tell the person what was flagged and why, and that the reviewer \
+will accept or reject it. Extra tasks / night calls may overlap freely.
 - If one message covers several people (with Slack IDs like U0123ABC), submit once per person using person_slack_id.
 - Tables are posted automatically under your reply from the tool output. Don't redraw them. \
 Never mention or estimate amounts to team members - only the reviewer and approver see money.

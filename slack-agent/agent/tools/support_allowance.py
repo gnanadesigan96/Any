@@ -75,7 +75,7 @@ def _parse(entries):
 
 @beta_tool
 def submit_support_details(entries: list[SupportEntry], person_slack_id: str = "", cycle: str = "") -> str:
-    """Record support days someone was on duty. Call this whenever a person shares their support details. A table of what was recorded is posted automatically below your reply - don't repeat it or mention amounts. Dates outside the allocation period are kept but flagged for the reviewer to accept or reject.
+    """Record support days someone was on duty. Call this whenever a person shares their support details. A table of what was recorded is posted automatically below your reply - don't repeat it or mention amounts. Entries outside the allocation period, or whose day/night shift overlaps someone else's on the same date, are kept but flagged for the reviewer to accept or reject.
 
     Args:
         entries: One item per date and shift. `date` is YYYY-MM-DD; `shift` is "day" or "night" ("none" only for an extra task done on a day without a support shift); `extra_task` briefly describes any additional task performed that day, otherwise omit it. Expand ranges like "3-5 Oct" into separate dates.
@@ -101,15 +101,21 @@ def submit_support_details(entries: list[SupportEntry], person_slack_id: str = "
         return json.dumps({"person": person_name, "added": added, "problems": problems, "cycle": cycle_label(cycle)})
 
     cid = wf.submission_cycle()
-    for e in clean:
-        if reason := wf.flag_reason(cid, date.fromisoformat(e["date"])):
-            e.update(review="pending", flag_reason=reason)
     wf.store.ensure_cycle(cid)
-    added, duplicates = wf.store.add_entries(cid, person_id, person_name, clean, req.user_name,
-                                             thread=(req.channel_id, req.thread_ts))
+    added, duplicates = [], []
+    for e in clean:  # one at a time so overlaps within the same message are caught too
+        reason, _ = wf.entry_flags(cid, person_id, e["date"], e["shift"])
+        if reason:
+            e.update(review="pending", flag_reason=reason)
+        a, d = wf.store.add_entries(cid, person_id, person_name, [e], req.user_name, thread=(req.channel_id, req.thread_ts))
+        added += a
+        duplicates += d
     flagged = [e for e in added if e.get("review") == "pending"]
-    if flagged:
-        wf.notify_reviewer(cid, [e["id"] for e in flagged])
+    to_review = wf.flag_overlap_partners([{**e, "person_id": person_id, "person_name": person_name} for e in added])
+    to_review.setdefault(cid, [])[:0] = [e["id"] for e in flagged]
+    for review_cid, ids in to_review.items():
+        if ids:
+            wf.notify_reviewer(review_cid, ids)
     _attach_person_table(person_id, person_name, cid)
     return json.dumps({
         "person": person_name,
@@ -205,7 +211,7 @@ def support_window_status() -> str:
 
 @beta_tool
 def review_flagged_entries(decision: Literal["accepted", "rejected"], person_slack_id: str = "", cycle: str = "") -> str:
-    """Reviewer only: accept or reject entries that were flagged for being outside the allocation period (same as the Accept / Reject buttons).
+    """Reviewer only: accept or reject flagged entries - outside the allocation period or overlapping another person's shift (same as the Accept / Reject buttons).
 
     Args:
         decision: "accepted" or "rejected".
