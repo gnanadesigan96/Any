@@ -1,18 +1,18 @@
 {
-  "_comment": "Support allowance policy. These rates are PLACEHOLDERS - replace them with your company's real numbers before going live.",
   "currency": "INR",
   "rates": {
-    "weekday": 1000,
-    "weekend": 2000,
-    "holiday": 3000
+    "day":   {"weekday": 500,  "weekend": 1000, "holiday": 1000},
+    "night": {"weekday": 1000, "weekend": 500,  "holiday": 1000}
   },
-  "half_day_factor": 0.5,
+  "extra_task": 500,
   "weekend_days": ["Saturday", "Sunday"],
+  "_holidays_note": "Government holidays. Only a holiday that falls on a weekday changes the rate. Add the festival holidays (Holi, Diwali, Eid, ...) from your company's official list - only fixed-date ones are pre-filled.",
   "holidays": {
     "2026-01-26": "Republic Day",
+    "2026-05-01": "Labour Day",
     "2026-08-15": "Independence Day",
     "2026-10-02": "Gandhi Jayanti",
-    "2026-11-08": "Diwali",
-    "2026-12-25": "Christmas"
+    "2026-12-25": "Christmas",
+    "2027-01-26": "Republic Day"
   }
 }

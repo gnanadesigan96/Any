@@ -1,0 +1,18 @@
+{
+  "_comment": "Slack IDs, not names: channel IDs start with C, user IDs with U, user-group (e.g. @hr-team) IDs with S. See README for how to find them.",
+  "timezone": "Asia/Kolkata",
+
+  "collection_channel": "C_REPLACE_ME_SUPPORT_CHANNEL",
+  "approval_channel": "C_REPLACE_ME_APPROVAL_CHANNEL",
+  "hr_channel": null,
+
+  "approvers": ["U_REPLACE_ME_APPROVER"],
+  "hr_group": "S_REPLACE_ME_HR_GROUP",
+  "hr_users": [],
+
+  "schedule": {
+    "reminder":         {"day": 17, "time": "10:00"},
+    "closing_reminder": {"day": 19, "time": "10:00"},
+    "close":            {"day": 19, "time": "23:59"}
+  }
+}

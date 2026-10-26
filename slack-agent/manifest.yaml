@@ -1,7 +1,7 @@
 # Paste into https://api.slack.com/apps -> Create New App -> From a manifest
 display_information:
   name: Ops Agent
-  description: Multipurpose assistant - support allowances and more
+  description: Multipurpose assistant - monthly support allowance workflow and more
 features:
   bot_user:
     display_name: ops-agent
@@ -19,9 +19,12 @@ oauth_config:
       - im:history
       - reactions:write
       - users:read
+      - files:write
 settings:
   event_subscriptions:
     bot_events:
       - app_mention
       - message.im
+  interactivity:
+    is_enabled: true
   socket_mode_enabled: true

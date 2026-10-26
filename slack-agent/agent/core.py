@@ -13,15 +13,18 @@ MODEL = os.environ.get("AGENT_MODEL", "claude-opus-5-5")
 SYSTEM_PROMPT = """You are a helpful operations assistant that lives in the team's Slack workspace. \
 People mention you in channels or DM you with all kinds of requests; answer anything you can, and use your tools whenever a request touches data they cover.
 
-Support allowances:
-- When someone shares who was on support and on which days, work out exact YYYY-MM-DD dates (use expand_date_range for ranges; assume the current year unless told otherwise).
-- If they ask to allocate / record / approve, call allocate_support_allowance. If they only ask how much, or it's unclear, use calculate_support_allowance and offer to allocate.
-- If several people are listed, handle each person separately.
-- If a date or name is genuinely ambiguous, ask instead of guessing.
-- Never invent rates - amounts come only from the tools.
+Support allowance workflow (runs monthly; the reminders, window closing, approval post and HR notification are automated):
+- When someone shares the days they were on support, call submit_support_details right away. Work out exact YYYY-MM-DD dates \
+(assume the most recent past occurrence when no year/month is given; use expand_date_range for ranges). \
+Shift is "day" or "night"; if they don't say, ask. Put any additional task they did on a date in extra_task.
+- If one message covers several people (with Slack IDs like U0123ABC), submit once per person using person_slack_id.
+- Tables are posted automatically under your reply from the tool output. Don't redraw them. \
+Never mention or estimate amounts to team members - only approvers see money.
+- Mention anything not recorded (duplicates, future dates, problems) and when the window closes.
+- If a date, shift or person is genuinely ambiguous, ask instead of guessing.
 
-Replies are posted to Slack, so keep them short and use Slack mrkdwn: *bold*, _italic_, `code`, bullet lists with "•". \
-No markdown headings or tables. For allowances, show one line per day (date, day type, amount) and the total."""
+Replies are posted to Slack, so keep them short (1-3 lines when a table follows) and use Slack mrkdwn: *bold*, _italic_, `code`, bullets with "•". \
+No markdown headings or tables."""
 
 # Server-side web search lets the bot answer general questions; set ENABLE_WEB_SEARCH=false to turn it off.
 _WEB_SEARCH = {"type": "web_search_20260209", "name": "web_search", "max_uses": 5}
@@ -43,11 +46,14 @@ def _tools():
     return tools
 
 
-def run_agent(conversation: str, ctx: RequestContext) -> str:
-    """Answer the latest request in `conversation` (a plain-text thread transcript)."""
+def run_agent(conversation: str, ctx: RequestContext) -> list:
+    """Answer the latest request in `conversation` (a plain-text thread transcript).
+
+    Returns the Slack messages to post: Claude's reply, then any tables the tools attached.
+    """
     token = current_request.set(ctx)
     try:
-        return _run(conversation, ctx)
+        return [_run(conversation, ctx), *ctx.attachments]
     finally:
         current_request.reset(token)
 
@@ -57,7 +63,7 @@ def _run(conversation: str, ctx: RequestContext) -> str:
     messages = [{
         "role": "user",
         "content": f"Today is {date.today().isoformat()} ({date.today():%A}). "
-                   f"Request from {ctx.user_name}.\n\n{conversation}",
+                   f"Request from {ctx.user_name} ({ctx.user_id}).\n\n{conversation}",
     }]
 
     # The tool runner doesn't resume `pause_turn` (long server-side web searches), so restart it when that happens.

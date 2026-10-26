@@ -1,4 +1,5 @@
 """Slack entry point: mention the bot in a channel (or DM it) and it replies in the thread.
+Also runs the monthly support-allowance workflow and handles its Approve / Needs-changes buttons.
 
 Run:  python app.py   (needs SLACK_BOT_TOKEN, SLACK_APP_TOKEN, ANTHROPIC_API_KEY)
 """
@@ -10,8 +11,11 @@ import re
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
+from agent import workflow
+from agent.config import Workflow
 from agent.context import RequestContext
 from agent.core import run_agent
+from agent.store import Store
 
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 log = logging.getLogger("slack-agent")
@@ -36,7 +40,7 @@ def _readable(client, text: str, bot_user_id: str) -> str:
     """Turn <@U123> mentions into names so Claude knows who people are."""
     def repl(m):
         uid = m.group(1)
-        return "" if uid == bot_user_id else f"@{_user_name(client, uid)}"
+        return "" if uid == bot_user_id else f"@{_user_name(client, uid)} ({uid})"
     return _MENTION.sub(repl, text or "").strip()
 
 
@@ -67,16 +71,18 @@ def _handle(event, client, context):
     ctx = RequestContext(user_id=event["user"], user_name=_user_name(client, event["user"]), channel_id=channel)
     client.reactions_add(channel=channel, timestamp=event["ts"], name="eyes")
     try:
-        reply = run_agent(convo, ctx)
+        replies = run_agent(convo, ctx)
     except Exception:
         log.exception("agent failed")
-        reply = "Sorry, something went wrong while handling that. Please try again."
+        replies = ["Sorry, something went wrong while handling that. Please try again."]
     finally:
         try:
             client.reactions_remove(channel=channel, timestamp=event["ts"], name="eyes")
         except Exception:
             pass
-    client.chat_postMessage(channel=channel, thread_ts=thread_ts, text=reply)
+    for text in replies:
+        if text:
+            client.chat_postMessage(channel=channel, thread_ts=thread_ts, text=text)
 
 
 @app.event("app_mention")
@@ -92,5 +98,38 @@ def on_message(event, client, context):
     _handle(event, client, context)
 
 
+def _decide(ack, body, client, decide):
+    ack()
+    user_id = body["user"]["id"]
+    cycle_id = body["actions"][0]["value"]
+    result = decide(cycle_id, user_id)
+    if result == "not_authorised":
+        client.chat_postEphemeral(channel=body["channel"]["id"], user=user_id,
+                                  text="Only the configured approver can approve or send back the support allowance.")
+    elif result not in ("approved", "rejected"):
+        client.chat_postEphemeral(channel=body["channel"]["id"], user=user_id,
+                                  text=f"Nothing to do - this month is already *{result}*.")
+
+
+@app.action(workflow.APPROVE_ACTION)
+def on_approve(ack, body, client):
+    _decide(ack, body, client, workflow.get_instance().approve)
+
+
+@app.action(workflow.REJECT_ACTION)
+def on_reject(ack, body, client):
+    _decide(ack, body, client, workflow.get_instance().reject)
+
+
+def start_workflow():
+    bot_user_id = app.client.auth_test()["user_id"]
+    wf = workflow.SupportWorkflow(
+        app.client, Store(os.environ.get("SUPPORT_DB_PATH", "support_allowance.db")), Workflow.load(), bot_user_id,
+    )
+    workflow.set_instance(wf)
+    wf.start()
+
+
 if __name__ == "__main__":
+    start_workflow()
     SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"]).start()
