@@ -13,3 +13,7 @@ local.settings.json
 .python_packages/
 bin/
 obj/
+
+# Slack agent: local secrets and allowance ledger
+.env
+*.db

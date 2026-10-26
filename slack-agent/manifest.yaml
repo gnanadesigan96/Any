@@ -1,0 +1,27 @@
+# Paste into https://api.slack.com/apps -> Create New App -> From a manifest
+display_information:
+  name: Ops Agent
+  description: Multipurpose assistant - support allowances and more
+features:
+  bot_user:
+    display_name: ops-agent
+    always_online: true
+  app_home:
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read
+      - chat:write
+      - channels:history
+      - groups:history
+      - im:history
+      - reactions:write
+      - users:read
+settings:
+  event_subscriptions:
+    bot_events:
+      - app_mention
+      - message.im
+  socket_mode_enabled: true
