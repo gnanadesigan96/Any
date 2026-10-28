@@ -318,7 +318,7 @@ def _latest_finished_cycle(wf) -> str:
 
 @beta_tool
 def compare_support_months(later_month: str = "", earlier_month: str = "", trend_months: int = 0, person_slack_id: str = "") -> str:
-    """Compare support allowance between months and show trends: totals, people, day/night/weekend/holiday shifts, extra tasks, flagged entries and a per-person breakdown of who went up or down. Use it for "compare with last month", "what's the trend", "how did October go", etc. Only specific people have access; for anyone else this returns no_access. When allowed, the tables AND your reply are delivered privately to the person who asked (the channel only sees a short note), so explain the story in the numbers fully: biggest changes, who drove them, holidays/weekends, new or missing people, anything unusual.
+    """Compare support allowance between months and show trends: totals, people, day/night/weekend/holiday shifts, extra tasks, flagged entries and a per-person breakdown of who went up or down. Use it for "compare with last month", "what's the trend", "how did October go", etc. Only specific people have access; for anyone else this returns no_access. When allowed, the tables AND your reply are shown only to the person who asked ("only visible to you" in the thread; the channel sees a short note), so explain the story in the numbers fully: biggest changes, who drove them, holidays/weekends, new or missing people, anything unusual.
 
     Args:
         later_month: YYYY-MM of the month to look at. Empty = the most recent month whose window has closed.

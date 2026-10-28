@@ -451,31 +451,16 @@ def test_trend_over_several_months(wf):
     assert "Trend - last 4 months" in "\n".join(ctx.attachments)
 
 
-def test_private_delivery_goes_to_dm_with_note_in_channel():
+def test_private_delivery_is_only_visible_to_requester():
     from agent.delivery import deliver
     slack = FakeSlack()
     ctx = RequestContext(UDAY, "Uday", "CAPPROVAL", "t-9", private_reply={"user": UDAY})
-    deliver(slack, ctx, "CAPPROVAL", "t-9", ["Here is the story", "```table```", ""])
-    assert [p["text"] for p in slack.posts if p["channel"] == UDAY] == ["Here is the story", "```table```"]
-    note = [p for p in slack.posts if p["channel"] == "CAPPROVAL"]
-    assert len(note) == 1 and "privately" in note[0]["text"] and note[0]["thread_ts"] == "t-9"
-    assert "₹" not in note[0]["text"] and "table" not in note[0]["text"]
-
-
-def test_private_delivery_falls_back_to_ephemeral():
-    from agent.delivery import deliver
-
-    class NoDM(FakeSlack):
-        def chat_postMessage(self, **kw):
-            if kw["channel"].startswith("U"):
-                raise RuntimeError("cannot_dm_bot")
-            return super().chat_postMessage(**kw)
-
-    slack = NoDM()
-    ctx = RequestContext(UDAY, "Uday", "CAPPROVAL", "t-9", private_reply={"user": UDAY})
-    deliver(slack, ctx, "CAPPROVAL", "t-9", ["secret numbers"])
-    assert slack.ephemeral[0]["user"] == UDAY and slack.ephemeral[0]["text"] == "secret numbers"
-    assert "privately" in slack.posts[-1]["text"] and "secret" not in slack.posts[-1]["text"]
+    deliver(slack, ctx, "CAPPROVAL", "t-9", ["Here is the story", "```table ₹3,500```", ""])
+    assert [(e["user"], e["channel"], e["thread_ts"], e["text"]) for e in slack.ephemeral] == [
+        (UDAY, "CAPPROVAL", "t-9", "Here is the story"), (UDAY, "CAPPROVAL", "t-9", "```table ₹3,500```")]
+    assert len(slack.posts) == 1 and "privately" in slack.posts[0]["text"] and slack.posts[0]["thread_ts"] == "t-9"
+    assert "₹" not in slack.posts[0]["text"] and "table" not in slack.posts[0]["text"]
+    assert not [p for p in slack.posts if p["channel"].startswith("U")]   # never a DM
 
 
 def test_normal_replies_stay_in_thread():
@@ -570,4 +555,4 @@ def test_bot_never_deletes_or_removes_anything():
 
     manifest = (root / "manifest.yaml").read_text()
     scopes = set(_re.findall(r"^\s+- ([a-z.:_]+)$", manifest.split("settings:")[0], _re.M))
-    assert scopes == {"app_mentions:read", "chat:write", "channels:history", "groups:history", "users:read", "im:write"}
+    assert scopes == {"app_mentions:read", "chat:write", "channels:history", "groups:history", "users:read"}

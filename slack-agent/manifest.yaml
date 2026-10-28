@@ -1,7 +1,7 @@
 # Paste into https://api.slack.com/apps -> your app -> App Manifest (or Create New App -> From a manifest).
 # Least privilege: the bot can only read/post in channels it is invited to. It cannot list channels,
-# look people up by e-mail, or read anyone's direct messages. It can SEND a private message (im:write) -
-# used only to deliver comparisons/trends to the authorised person; its messages tab is read-only.
+# look people up by e-mail, or read or send direct messages (private answers are "only visible to you"
+# messages in the thread, which need no extra permission).
 # No reaction or file permissions. Slack has no delete scope for bots; chat:write would only allow
 # deleting the bot's OWN messages, and the code never calls any delete/remove method (enforced by a test).
 display_information:
@@ -13,7 +13,7 @@ features:
     always_online: true
   app_home:
     home_tab_enabled: false
-    messages_tab_enabled: true
+    messages_tab_enabled: false
     messages_tab_read_only_enabled: true
 oauth_config:
   scopes:
@@ -23,7 +23,6 @@ oauth_config:
       - channels:history
       - groups:history
       - users:read
-      - im:write
 settings:
   event_subscriptions:
     bot_events:
