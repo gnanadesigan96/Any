@@ -26,6 +26,7 @@ are fine, and extra tasks / night calls may overlap freely.
 | **19th, 23:59 (EOD)** | Window closes. If flagged entries are still undecided, the reviewer is reminded and the final table **waits** until they're decided. |
 | then | The **final tables (summary + per-day detail)** are posted in the approval channel and the **approver (Poornodhaya)** is tagged with **Approve / Raise concern** buttons. |
 | Raise concern | A form asks for the concern and, optionally, the specific entries. It comes back to the reviewer as an **interactive table** in the thread, with ⋮ *Edit* / *Remove* (or *Restore*) on each row, plus *Add entry* and *Respond & send for approval*. The table updates in place as rows are fixed. The approver then gets the updated tables plus the response, with the buttons again. |
+| while waiting | **Nudges:** every 2 hours the bot re-tags whoever the next step is waiting on. That's the approver while approval is pending, and the reviewer while flags are undecided or a concern is open. At most 3 times per wait (`nudges` in the config). |
 | Approve | The **HR group is tagged**: details for the month are updated and approved. |
 
 All approvals and rejections are buttons. Each button only works for the right

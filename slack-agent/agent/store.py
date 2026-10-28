@@ -16,6 +16,7 @@ _CYCLE_FIELDS = {
     "status", "reminder_sent_at", "closing_reminder_sent_at", "closed_at",
     "approval_channel", "approval_ts", "decided_by", "decided_at",
     "concern_text", "concern_by", "concern_entry_ids", "concern_channel", "concern_ts",
+    "waiting_since", "nudges_sent",
 }
 _ENTRY_FIELDS = {"support_date", "shift", "extra_task", "review", "reviewed_by", "flag_reason"}
 _GONE = ("rejected", "removed")
@@ -46,7 +47,9 @@ class Store:
                     concern_by TEXT,
                     concern_entry_ids TEXT,
                     concern_channel TEXT,
-                    concern_ts TEXT
+                    concern_ts TEXT,
+                    waiting_since TEXT,                   -- when it started waiting on a person (for nudges)
+                    nudges_sent INTEGER NOT NULL DEFAULT 0
                 );
                 CREATE TABLE IF NOT EXISTS entries (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -68,6 +71,13 @@ class Store:
                 CREATE INDEX IF NOT EXISTS entries_person_date ON entries (person_id, support_date, shift);
                 """
             )
+
+        # Databases created before nudges existed: add the columns.
+        with self._db() as db:
+            cols = {r["name"] for r in db.execute("PRAGMA table_info(cycles)")}
+            if "waiting_since" not in cols:
+                db.execute("ALTER TABLE cycles ADD COLUMN waiting_since TEXT")
+                db.execute("ALTER TABLE cycles ADD COLUMN nudges_sent INTEGER NOT NULL DEFAULT 0")
 
     def _db(self):
         db = sqlite3.connect(self.path, timeout=30)
@@ -104,6 +114,13 @@ class Store:
         if bad:
             raise ValueError(f"unknown cycle fields: {bad}")
         return {k: json.dumps(v) if k == "concern_entry_ids" else v for k, v in fields.items()}
+
+    def waiting_cycles(self) -> list:
+        """Cycles that are waiting on a person: flag review, final approval, or an open concern."""
+        with self._db() as db:
+            ids = [r[0] for r in db.execute(
+                "SELECT cycle_id FROM cycles WHERE status IN ('reviewing', 'pending_approval', 'concern') ORDER BY cycle_id")]
+        return [self.cycle(i) for i in ids]
 
     def update_cycle(self, cycle_id: str, **fields):
         fields = self._cycle_values(fields)

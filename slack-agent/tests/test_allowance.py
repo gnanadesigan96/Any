@@ -184,7 +184,8 @@ def test_full_month_with_review_concern_and_approval(wf):
     as_user(ARUN, tools.submit_support_details, entries=[{"date": "2026-10-05", "shift": "day"}])
 
     # Window closes; a flagged entry is still open, so the final table waits.
-    wf.tick(ist(2026, 10, 20, 0, 0))
+    wf.clock.dt = ist(2026, 10, 20, 0, 0)
+    wf.tick(wf.clock.dt)
     assert wf.store.cycle("2026-10")["status"] == "reviewing"
     assert not slack.with_blocks("CAPPROVAL")
     assert "still need your decision" in slack.texts("CSUPPORT")[-2]
@@ -559,3 +560,73 @@ def test_bot_never_deletes_or_removes_anything():
     manifest = (root / "manifest.yaml").read_text()
     scopes = set(_re.findall(r"^\s+- ([a-z.:_]+)$", manifest.split("settings:")[0], _re.M))
     assert scopes == {"app_mentions:read", "chat:write", "channels:history", "groups:history", "users:read"}
+
+
+# -- nudges -----------------------------------------------------------------------------
+
+def _at(wf, dt):
+    wf.clock.dt = dt
+    wf.tick(dt)
+
+
+def _nudges(slack):
+    return [p for p in slack.posts if ":alarm_clock:" in p["text"]]
+
+
+def test_approver_nudged_every_2_hours_at_most_3_times_then_stops(wf):
+    slack = wf.client
+    as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-10-05", "shift": "day"}])
+    wf.clock.dt = ist(2026, 10, 20, 0, 0)
+    wf.close_cycle("2026-10")                                   # posted for approval at 00:00
+    _at(wf, ist(2026, 10, 20, 1, 59))
+    assert _nudges(slack) == []
+    _at(wf, ist(2026, 10, 20, 2, 0))
+    n = _nudges(slack)
+    assert len(n) == 1 and f"<@{BOSS}>" in n[0]["text"] and "2 hours" in n[0]["text"] and "₹500" in n[0]["text"]
+    assert n[0]["thread_ts"] == wf.store.cycle("2026-10")["approval_ts"] and n[0]["reply_broadcast"]
+    _at(wf, ist(2026, 10, 20, 2, 30))
+    assert len(_nudges(slack)) == 1                             # not again until 04:00
+    for hh in (4, 6, 8, 10, 12):
+        _at(wf, ist(2026, 10, 20, hh, 0))
+    assert len(_nudges(slack)) == 3                             # capped at 3
+    assert wf.approve("2026-10", BOSS) == "approved"
+
+
+def test_approval_stops_nudges(wf):
+    as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-10-05", "shift": "day"}])
+    wf.clock.dt = ist(2026, 10, 20, 0, 0)
+    wf.close_cycle("2026-10")
+    wf.approve("2026-10", BOSS)
+    _at(wf, ist(2026, 10, 20, 5, 0))
+    assert _nudges(wf.client) == []
+
+
+def test_reviewer_nudged_for_flags_and_concerns(wf):
+    slack = wf.client
+    as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-09-01", "shift": "day"}])
+    wf.clock.dt = ist(2026, 10, 20, 0, 0)
+    assert wf.close_cycle("2026-10") == "reviewing"
+    _at(wf, ist(2026, 10, 20, 2, 0))
+    n = _nudges(slack)[-1]
+    assert n["channel"] == "CSUPPORT" and f"<@{ME}>" in n["text"] and "1 flagged entry" in n["text"]
+
+    # Reviewer decides at 03:00 -> approval posted -> the approver's 2-hour clock starts fresh.
+    wf.clock.dt = ist(2026, 10, 20, 3, 0)
+    wf.review(wf.store.pending_reviews("2026-10")[0]["id"], "accepted", ME)
+    _at(wf, ist(2026, 10, 20, 4, 59))
+    assert len(_nudges(slack)) == 1
+    _at(wf, ist(2026, 10, 20, 5, 0))
+    assert f"<@{BOSS}>" in _nudges(slack)[-1]["text"]
+
+    # Concern raised at 06:00 -> reviewer nudged in the concern thread at 08:00.
+    wf.clock.dt = ist(2026, 10, 20, 6, 0)
+    wf.raise_concern("2026-10", BOSS, "Check Sep 1")
+    _at(wf, ist(2026, 10, 20, 8, 0))
+    n = _nudges(slack)[-1]
+    assert f"<@{ME}>" in n["text"] and "concern" in n["text"] and n["thread_ts"] == wf.store.cycle("2026-10")["concern_ts"]
+
+
+def test_test_config_nudges_every_10_minutes():
+    cfg = Workflow.load(Path(__file__).resolve().parent.parent / "config" / "workflow.test.json")
+    assert (cfg.nudge_every_minutes, cfg.nudge_max) == (10, 3)
+    assert (Workflow.load().nudge_every_minutes, Workflow.load().nudge_max) == (120, 3)

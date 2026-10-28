@@ -20,6 +20,9 @@
   "_outside_window_comment": "reject = submissions outside 17th..19th EOD get a 'window is closed' reply; next_cycle = accept them into the next month.",
   "submissions_outside_window": "reject",
 
+  "_nudges_comment": "Re-tag whoever a step is waiting on (approver, or reviewer for flags/concerns) every N minutes, at most max times.",
+  "nudges": {"every_minutes": 120, "max": 3},
+
   "schedule": {
     "reminder":         {"day": 17, "time": "10:00"},
     "closing_reminder": {"day": 19, "time": "10:00"},

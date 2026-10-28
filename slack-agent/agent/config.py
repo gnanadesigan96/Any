@@ -71,6 +71,8 @@ class Workflow:
     outside_window: str = "reject"    # "reject" (tell them the window is closed) or "next_cycle"
     test_timeline: tuple = None       # ((minutes_after_start, pretend_datetime), ...) - test mode only
     analytics_users: tuple = ()       # the only people who may ask for comparisons / trends (answered privately)
+    nudge_every_minutes: int = 120    # re-tag whoever a step is waiting on this often...
+    nudge_max: int = 3                # ...at most this many times per wait
 
     @classmethod
     def load(cls, path=None):
@@ -100,6 +102,8 @@ class Workflow:
             outside_window=raw.get("submissions_outside_window", "reject"),
             test_timeline=_test_timeline(raw, ZoneInfo(raw.get("timezone", "Asia/Kolkata"))),
             analytics_users=tuple(raw.get("analytics_users", [])),
+            nudge_every_minutes=int(raw.get("nudges", {}).get("every_minutes", 120)),
+            nudge_max=int(raw.get("nudges", {}).get("max", 3)),
         )
 
     def problems(self) -> list:

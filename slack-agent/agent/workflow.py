@@ -19,7 +19,7 @@ next tick instead of skipping or repeating a step.
 
 import logging
 import threading
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 from . import blocks as B
 from .config import Policy, PretendClock, Workflow, cycle_id_for, cycle_label, next_cycle_id, prev_cycle_id
@@ -189,6 +189,50 @@ class SupportWorkflow:
                     self.post_closing_reminder(cid)
             if now >= close_at and c.get("status") == "open" and (c.get("reminder_sent_at") or self.store.entries(cid)):
                 self.close_cycle(cid)
+        self.send_nudges(now)
+
+    # -- nudges -----------------------------------------------------------------
+
+    def _start_waiting(self) -> dict:
+        return {"waiting_since": self.now().isoformat(), "nudges_sent": 0}
+
+    def send_nudges(self, now: datetime = None):
+        """Re-tag whoever a step is waiting on, every `nudge_every_minutes`, at most `nudge_max` times."""
+        now = now or self.now()
+        every = timedelta(minutes=self.cfg.nudge_every_minutes)
+        for c in self.store.waiting_cycles():
+            if not c.get("waiting_since") or c["nudges_sent"] >= self.cfg.nudge_max:
+                continue
+            if now < datetime.fromisoformat(c["waiting_since"]) + every * (c["nudges_sent"] + 1):
+                continue
+            self.store.update_cycle(c["cycle_id"], nudges_sent=c["nudges_sent"] + 1)
+            self._nudge(c, waited=now - datetime.fromisoformat(c["waiting_since"]))
+
+    def _nudge(self, c, waited: timedelta):
+        cid, tag = c["cycle_id"], self._test_tag()
+        hours = waited.total_seconds() / 3600
+        waited_text = f"{hours:.0f} hour{'s' if round(hours) != 1 else ''}" if hours >= 1 else f"{waited.total_seconds() / 60:.0f} minutes"
+        if c["status"] == "pending_approval" and c.get("approval_ts"):
+            report = final_report(self.store.entries(cid, payable_only=True), Policy.load())
+            self.client.chat_postMessage(
+                channel=c["approval_channel"], thread_ts=c["approval_ts"], reply_broadcast=True,
+                text=f"{tag}:alarm_clock: <@{self.cfg.approver}> reminder: the support allowance for *{cycle_label(cid)}* "
+                     f"(total *{report['grand_total_text']}*) has been waiting for your approval for {waited_text}. "
+                     f"Please use the *Approve* / *Raise concern* buttons on the message above.")
+        elif c["status"] == "reviewing":
+            pending = self.store.pending_reviews(cid)
+            if pending:
+                self.client.chat_postMessage(
+                    channel=self.cfg.review_target,
+                    text=f"{tag}:alarm_clock: <@{self.cfg.reviewer}> reminder: {len(pending)} flagged "
+                         f"entr{'y' if len(pending) == 1 else 'ies'} for *{cycle_label(cid)}* still need your Accept / "
+                         f"Reject ({waited_text} so far). The final table goes to <@{self.cfg.approver}> once they're decided.")
+        elif c["status"] == "concern" and c.get("concern_ts"):
+            self.client.chat_postMessage(
+                channel=c["concern_channel"], thread_ts=c["concern_ts"],
+                text=f"{tag}:alarm_clock: <@{self.cfg.reviewer}> reminder: <@{c['concern_by']}>'s concern on "
+                     f"*{cycle_label(cid)}* is still open ({waited_text}). Fix the rows above and press "
+                     f"*Respond & send for approval*.")
 
     # -- reminders and closing ------------------------------------------------
 
@@ -229,7 +273,7 @@ class SupportWorkflow:
             return "empty"
         pending = self.store.pending_reviews(cid)
         to_status = "reviewing" if pending else "pending_approval"
-        if not self.store.transition(cid, ["open"], to_status, closed_at=_utc_now()):
+        if not self.store.transition(cid, ["open"], to_status, closed_at=_utc_now(), **self._start_waiting()):
             return self.store.cycle(cid)["status"]
         self.client.chat_postMessage(
             channel=self.cfg.collection_channel,
@@ -311,7 +355,7 @@ class SupportWorkflow:
         self._post_report(channel, cid, report, title)
         text, blocks = B.approval_blocks(cid, report, self.cfg, self.store.cycle(cid), response)
         resp = self.client.chat_postMessage(channel=channel, text=text, blocks=blocks)
-        self.store.update_cycle(cid, approval_channel=resp["channel"], approval_ts=resp["ts"])
+        self.store.update_cycle(cid, approval_channel=resp["channel"], approval_ts=resp["ts"], **self._start_waiting())
 
     def _replace_message(self, channel, ts, text):
         if not ts:
@@ -362,7 +406,7 @@ class SupportWorkflow:
             text=f"<@{self.cfg.reviewer}> concern from <@{user_id}> on {cycle_label(cid)}: {text}",
             blocks=self._concern_blocks(cid),
         )
-        self.store.update_cycle(cid, concern_channel=resp["channel"], concern_ts=resp["ts"])
+        self.store.update_cycle(cid, concern_channel=resp["channel"], concern_ts=resp["ts"], **self._start_waiting())
         return "concern"
 
     def _concern_blocks(self, cid, closed_note=None):

@@ -11,6 +11,7 @@ production settings and data are untouched.
 | 60 min | **19 Oct, 10:00** | `[TEST]` "Last day" reminder. |
 | 90 min | **19 Oct, EOD** | `[TEST]` "window is closed" message. From now on, anyone who submits gets *"The window is closed. The next window opens on 17 November…"*. |
 | after close | – | If flags are still undecided, Gnanadesigan is reminded and the final table waits. Once all are decided, the **summary + details** tables go to the test approval channel and **Manoj** is tagged with *Approve / Raise concern*. |
+| every 10 min while waiting | – | **Nudges** (`[TEST]` ⏰): Manoj is re-tagged while approval is pending; Gnanadesigan is reminded while flags are undecided or a concern is open. At most 3 each. (Production: every 2 hours.) |
 | Manoj approves | – | **Vijay** is tagged: support incentive data for 21 Sep – 20 Oct is approved, with the tables. |
 
 Every scheduled message says the real time the next step happens (e.g. *"that's
@@ -79,6 +80,7 @@ Ask the two teammates (A and B) to do these in channel 1 during the first hour:
 | 15 | B / Vijay | Click Approve / Accept | Private "only X can do this" |
 | 16 | Manoj | **Approve** | Vijay tagged with the 21 Sep – 20 Oct data |
 | 17 | Manoj (as Uday) | In #support-approval-test: `@ops-agent compare with last month and show the trend` | Channel thread: *"@Manoj I've shared the details with you privately"*. Manoj also sees the tables, amounts and explanation as "only visible to you" messages in that thread. Others in the channel don't see them (September will be empty in the test) |
+| 18a | Manoj | Don't click Approve for ~10 min after the final table is posted | ⏰ reminder tagging Manoj in the approval thread; repeats every 10 min, max 3 |
 | 18 | Gnanadesigan or A | the same comparison question | *"Sorry, you don't have access…"*, and no numbers anywhere |
 
 Check the amounts in the approval table by hand against the rates. For example,
