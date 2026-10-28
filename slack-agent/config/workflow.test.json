@@ -13,9 +13,9 @@
   },
 
   "_channels_comment": "#support-test and #support-approval-test - channel name > About (bottom) > Channel ID",
-  "collection_channel": "REPLACE-support-test-channel-id",
-  "review_channel": "REPLACE-support-test-channel-id",
-  "approval_channel": "REPLACE-support-approval-test-channel-id",
+  "collection_channel": "C0CCS25TRPU",
+  "review_channel": "C0CCS25TRPU",
+  "approval_channel": "C0CCLUWT7JR",
   "hr_channel": null,
 
   "reviewer": "U0C2TN3B562",

@@ -131,6 +131,9 @@ def test_configs_require_ids_and_restrict_channels():
     test = Workflow.load(Path(__file__).resolve().parent.parent / "config" / "workflow.test.json")
     assert (test.reviewer, test.approver, test.hr_users) == ("U0C2TN3B562", "U0BP446DWBD", ("U0C2TN3CC06",))
     assert test.analytics_users == ("U0BP446DWBD",)   # Manoj stands in for Uday in the test
+    assert test.problems() == [] and test.allowed_channels == {"C0CCS25TRPU", "C0CCLUWT7JR"}
+    assert (test.collection_channel, test.review_target, test.approval_channel, test.hr_channel) == (
+        "C0CCS25TRPU", "C0CCS25TRPU", "C0CCLUWT7JR", "C0CCLUWT7JR")
     filled = dataclasses.replace(test, collection_channel="C0SUPPORT1", review_channel="C0SUPPORT1",
                                  approval_channel="C0APPROVE1", hr_channel="C0APPROVE1")
     assert filled.problems() == []

@@ -18,14 +18,12 @@ about 4:30 PM real time today"*). The bot also logs the timeline when it starts.
 
 ## 1. Test config (`config/workflow.test.json`)
 
-The people are filled in. The two **channel IDs** are still needed. In Slack,
-click the channel name, open **About**, and copy the **Channel ID** at the
-bottom (`C…`).
+Everything is filled in, so the test config is ready.
 
 | Role | Who | Setting |
 |---|---|---|
-| Support channel + flag review | `#support-test` | `collection_channel`, `review_channel`: **channel ID needed** |
-| Final approval + HR | `#support-approval-test` | `approval_channel`: **channel ID needed** (`hr_channel` = same) |
+| Support channel + flag review | `#support-test` | `collection_channel`, `review_channel` = `C0CCS25TRPU` |
+| Final approval + HR | `#support-approval-test` | `approval_channel` = `C0CCLUWT7JR` (`hr_channel` = same) |
 | Reviewer | Gnanadesigan | `U0C2TN3B562` |
 | Final approver (test) | Manoj | `U0BP446DWBD` |
 | HR (test) | Vijay | `U0C2TN3CC06` |
