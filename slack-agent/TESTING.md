@@ -16,17 +16,17 @@ production settings and data are untouched.
 Every scheduled message says the real time the next step happens (e.g. *"that's
 about 4:30 PM real time today"*). The bot also logs the timeline when it starts.
 
-## 1. Fill in `config/workflow.test.json`
+## 1. Test config (`config/workflow.test.json`) - already filled in
 
-| Field | Put |
-|---|---|
-| `collection_channel` and `review_channel` | Test channel 1, `#support-test` (already filled in) |
-| `approval_channel` | Test channel 2, `#support-approval-test` (already filled in) |
-| `approver` | Manoj's e-mail, or his member ID (profile → ⋮ → *Copy member ID*) |
-| `hr_users` | `["<Vijay's e-mail or member ID>"]` |
+| Role | Who | Setting |
+|---|---|---|
+| Support channel + flag review | `#support-test` | `collection_channel`, `review_channel` |
+| Final approval + HR | `#support-approval-test` | `approval_channel` (`hr_channel` = same) |
+| Reviewer | Gnanadesigan | `U0C2TN3B562` |
+| Final approver (test) | Manoj | `U0BP446DWBD` |
+| HR (test) | Vijay | `U0C2TN3CC06` |
 
-`reviewer` is already `gnanadesigan@corestack.io`. The bot refuses to start
-while any `REPLACE-…` value is left.
+The bot refuses to start while any `REPLACE-…` value is left.
 
 ## 2. Slack app (one-time)
 
@@ -79,7 +79,7 @@ on a Saturday = ₹500; +₹500 per extra task.
 ## 5. Going live
 
 1. Fill in `config/workflow.json` (production): real channels, `reviewer`
-   (Gnanadesigan), `approver` (Poornodhaya, already set), the HR group or HR
+   (Gnanadesigan, already set), `approver` (Poornodhaya, already set), the HR group or HR
    people, and your festival holidays in `config/allowance_policy.json`.
 2. Invite the bot to the production channels.
 3. Start **without** `WORKFLOW_CONFIG_PATH`: `python app.py`. It uses
