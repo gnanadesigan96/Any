@@ -18,7 +18,7 @@ from agent.tools import support_allowance as tools  # noqa: E402
 
 IST = ZoneInfo("Asia/Kolkata")
 POLICY = Policy.load()  # the real config/allowance_policy.json
-ME, BOSS, PRIYA, ARUN = "UGNANA", "UBOSS", "UPRIYA", "UARUN"
+ME, BOSS, PRIYA, ARUN, UDAY = "UGNANA", "UBOSS", "UPRIYA", "UARUN", "UUDAY"
 
 
 def ist(y, m, d, hh=0, mm=0, ss=0):
@@ -59,6 +59,7 @@ CFG = Workflow(
     tz=IST, collection_channel="CSUPPORT", approval_channel="CAPPROVAL", hr_channel="CAPPROVAL",
     reviewer=ME, approver=BOSS, hr_group="SHR", hr_users=(), period_start_day=21, period_end_day=20,
     reminder=(17, time(10, 0)), closing_reminder=(19, time(10, 0)), close=(19, time(23, 59)),
+    analytics_users=(UDAY,),
 )
 
 
@@ -132,8 +133,9 @@ def test_configs_require_ids_and_restrict_channels():
     assert any(p.startswith("approver") for p in prod.problems())   # Poornodhaya's member ID still to fill in
     test = Workflow.load(Path(__file__).resolve().parent.parent / "config" / "workflow.test.json")
     assert (test.reviewer, test.approver, test.hr_users) == ("U0C2TN3B562", "U0BP446DWBD", ("U0C2TN3CC06",))
+    assert any(p.startswith("analytics_users") for p in test.problems())   # Uday's member ID still to fill in
     filled = dataclasses.replace(test, collection_channel="C0SUPPORT1", review_channel="C0SUPPORT1",
-                                 approval_channel="C0APPROVE1", hr_channel="C0APPROVE1")
+                                 approval_channel="C0APPROVE1", hr_channel="C0APPROVE1", analytics_users=("U0UDAY01",))
     assert filled.problems() == []
     assert filled.allowed_channels == {"C0SUPPORT1", "C0APPROVE1"}
     assert dataclasses.replace(filled, approver="manoj@corestack.io").problems()        # e-mails rejected
@@ -413,43 +415,77 @@ def _seed_two_months(wf):
     wf.close_cycle("2026-10")
 
 
-def test_compare_months_for_approver(wf):
+def _ask(user, fn, channel="CAPPROVAL", **kw):
+    ctx = RequestContext(user, user, channel, "t-1")
+    token = current_request.set(ctx)
+    try:
+        return json.loads(fn.call(kw)), ctx
+    finally:
+        current_request.reset(token)
+
+
+def test_comparison_for_uday_is_complete_and_private(wf):
     _seed_two_months(wf)
-    out, attached = as_user(BOSS, tools.compare_support_months, channel="CAPPROVAL")
+    out, ctx = _ask(UDAY, tools.compare_support_months)
+    assert ctx.private_reply == {"user": UDAY} and out["delivered_privately"]
     assert (out["earlier"]["label"], out["later"]["label"]) == ("September 2026", "October 2026")
     assert (out["earlier"]["total"], out["later"]["total"]) == (2000, 3500)
     assert out["later"]["holiday_shifts"] == 1 and out["later"]["extra_tasks"] == 1
     assert "2026-10-02 Gandhi Jayanti" in out["later"]["holidays_in_period"]
     assert out["biggest_person_changes"][0]["name"] == "Priya Kumar"   # +2000
-    text = "\n".join(attached)
+    text = "\n".join(ctx.attachments)
     assert "₹2,000" in text and "₹3,500" in text and "+₹1,500 (+75%)" in text
     assert "Arun" in text and "not in October" in text and "UNEW" in text and "new" in text
     assert "₹1,000 → ₹3,000" in text and "+0%" not in text
 
 
-def test_reviewer_comparison_in_team_channel_hides_money(wf):
+@pytest.mark.parametrize("who,channel", [(BOSS, "CAPPROVAL"), (ME, "CAPPROVAL"), (ME, "CSUPPORT"), (PRIYA, "CSUPPORT")])
+def test_comparison_denied_for_everyone_else(wf, who, channel):
     _seed_two_months(wf)
-    out, attached = as_user(ME, tools.compare_support_months)
-    text = "\n".join(attached)
-    assert "₹" not in text and "Arun" in text and out["amounts_visible"] is False and out["amounts_note"]
-    assert "total" not in out["later"]
-
-
-def test_compare_months_for_member_hides_money_and_others(wf):
-    _seed_two_months(wf)
-    out, attached = as_user(PRIYA, tools.compare_support_months, later_month="2026-10")
-    text = "\n".join(attached)
-    assert "₹" not in text and "Arun" not in text
-    assert out["amounts_visible"] is False and "total" not in out["later"]
-    assert (out["earlier"]["entries"], out["later"]["entries"]) == (2, 3)
-    assert "error" in as_user(PRIYA, tools.compare_support_months, person_slack_id=ARUN)[0]
+    out, ctx = _ask(who, tools.compare_support_months, channel=channel)
+    assert out["no_access"] and "don't have access" in out["message"]
+    assert ctx.attachments == [] and ctx.private_reply == {}
 
 
 def test_trend_over_several_months(wf):
     _seed_two_months(wf)
-    out, attached = as_user(ME, tools.compare_support_months, trend_months=4)
+    out, ctx = _ask(UDAY, tools.compare_support_months, channel="CSUPPORT", trend_months=4)
     assert [t["label"] for t in out["trend"]] == ["July 2026", "August 2026", "September 2026", "October 2026"]
-    assert "Trend - last 4 months" in "\n".join(attached)
+    assert "Trend - last 4 months" in "\n".join(ctx.attachments)
+
+
+def test_private_delivery_goes_to_dm_with_note_in_channel():
+    from agent.delivery import deliver
+    slack = FakeSlack()
+    ctx = RequestContext(UDAY, "Uday", "CAPPROVAL", "t-9", private_reply={"user": UDAY})
+    deliver(slack, ctx, "CAPPROVAL", "t-9", ["Here is the story", "```table```", ""])
+    assert [p["text"] for p in slack.posts if p["channel"] == UDAY] == ["Here is the story", "```table```"]
+    note = [p for p in slack.posts if p["channel"] == "CAPPROVAL"]
+    assert len(note) == 1 and "privately" in note[0]["text"] and note[0]["thread_ts"] == "t-9"
+    assert "₹" not in note[0]["text"] and "table" not in note[0]["text"]
+
+
+def test_private_delivery_falls_back_to_ephemeral():
+    from agent.delivery import deliver
+
+    class NoDM(FakeSlack):
+        def chat_postMessage(self, **kw):
+            if kw["channel"].startswith("U"):
+                raise RuntimeError("cannot_dm_bot")
+            return super().chat_postMessage(**kw)
+
+    slack = NoDM()
+    ctx = RequestContext(UDAY, "Uday", "CAPPROVAL", "t-9", private_reply={"user": UDAY})
+    deliver(slack, ctx, "CAPPROVAL", "t-9", ["secret numbers"])
+    assert slack.ephemeral[0]["user"] == UDAY and slack.ephemeral[0]["text"] == "secret numbers"
+    assert "privately" in slack.posts[-1]["text"] and "secret" not in slack.posts[-1]["text"]
+
+
+def test_normal_replies_stay_in_thread():
+    from agent.delivery import deliver
+    slack = FakeSlack()
+    deliver(slack, RequestContext(PRIYA, "Priya", "CSUPPORT", "t-1"), "CSUPPORT", "t-1", ["ok", "```t```"])
+    assert [(p["channel"], p["thread_ts"]) for p in slack.posts] == [("CSUPPORT", "t-1")] * 2
 
 
 # -- test mode: pretend clock and closed window -----------------------------------

@@ -12,6 +12,8 @@
   "approver": "REPLACE-poornodhaya-member-id",
   "hr_group": "S_REPLACE_ME_HR_GROUP",
   "hr_users": [],
+  "_analytics_comment": "Only these member IDs may ask for comparisons/trends; the answer is sent to them privately.",
+  "analytics_users": ["REPLACE-uday-member-id"],
 
   "_period_comment": "The cycle for month M pays support dates from start_day of M-1 to end_day of M (21 Sep -> 20 Oct for October). Dates outside it are flagged for the reviewer.",
   "period": {"start_day": 21, "end_day": 20},

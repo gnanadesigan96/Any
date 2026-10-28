@@ -18,6 +18,7 @@ from agent import slack_actions, workflow
 from agent.config import Workflow
 from agent.context import RequestContext
 from agent.core import run_agent
+from agent.delivery import deliver
 from agent.store import Store
 
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
@@ -84,9 +85,7 @@ def _handle(event, client, context):
             client.reactions_remove(channel=channel, timestamp=event["ts"], name="eyes")
         except Exception:
             pass
-    for text in replies:
-        if text:
-            client.chat_postMessage(channel=channel, thread_ts=thread_ts, text=text)
+    deliver(client, ctx, channel, thread_ts, replies)
 
 
 @app.event("app_mention")

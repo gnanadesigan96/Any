@@ -29,6 +29,7 @@ bottom (`C…`).
 | Reviewer | Gnanadesigan | `U0C2TN3B562` |
 | Final approver (test) | Manoj | `U0BP446DWBD` |
 | HR (test) | Vijay | `U0C2TN3CC06` |
+| Comparisons & trends (private) | Uday | `analytics_users`: **member ID needed** |
 
 The bot refuses to start while any `REPLACE-…` value is left. It acts **only**
 in these two channels and ignores mentions anywhere else.
@@ -40,7 +41,9 @@ Create the app from `manifest.yaml` (see README → Setup), install it, then
 
 If you created the app from an earlier version of the manifest: in the app's
 settings, open **App Manifest**, replace it with the current `manifest.yaml`, and
-**Save**. Then open **Install App** and click **Reinstall to Workspace**, so the
+**Save**. The current manifest adds `im:write` and a read-only messages tab, so
+the bot can send Uday his comparisons privately. Then open **Install App** and
+click **Reinstall to Workspace**, so the
 reduced permissions take effect. The bot token stays the same. Members of channel 1: you and
 the two teammates. Members of channel 2: you, Manoj and Vijay.
 
@@ -79,8 +82,8 @@ Ask the two teammates (A and B) to do these in channel 1 during the first hour:
 | 14 | Gnanadesigan | ⋮ **Edit** / **Remove** a row, **Add entry**, then **Respond & send for approval** | Table updates in place; Manoj gets the updated tables + your response |
 | 15 | B / Vijay | Click Approve / Accept | Private "only X can do this" |
 | 16 | Manoj | **Approve** | Vijay tagged with the 21 Sep – 20 Oct data |
-| 17 | Gnanadesigan | `@ops-agent compare with last month and show the trend` | Comparison tables + explanation (September will be empty in the test) |
-| 18 | A | the same comparison question | Only A's own counts, no amounts |
+| 17 | Uday | In #support-approval-test: `@ops-agent compare with last month and show the trend` | Channel thread: *"@Uday I've shared the details with you privately"*. Uday gets the tables, amounts and explanation in a direct message from the bot (September will be empty in the test) |
+| 18 | Gnanadesigan, Manoj or A | the same comparison question | *"Sorry, you don't have access…"*, and no numbers anywhere |
 
 Check the amounts in the approval table by hand against the rates. For example,
 a day shift on 2 Oct (Gandhi Jayanti, weekday holiday) = ₹1,000; a night shift

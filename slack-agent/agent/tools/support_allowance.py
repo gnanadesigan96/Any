@@ -318,35 +318,33 @@ def _latest_finished_cycle(wf) -> str:
 
 @beta_tool
 def compare_support_months(later_month: str = "", earlier_month: str = "", trend_months: int = 0, person_slack_id: str = "") -> str:
-    """Compare support allowance between months and show trends: totals, people, day/night/weekend/holiday shifts, extra tasks, flagged entries and a per-person breakdown of who went up or down. Use it for "compare with last month", "what's the trend", "how did October go", etc. Detailed tables are posted automatically below your reply; your job is to explain the story in the numbers (biggest changes, who drove them, holidays/weekends, new or missing people, anything unusual). Team members only get their own numbers; amounts appear only for the reviewer/approver in the approval channel.
+    """Compare support allowance between months and show trends: totals, people, day/night/weekend/holiday shifts, extra tasks, flagged entries and a per-person breakdown of who went up or down. Use it for "compare with last month", "what's the trend", "how did October go", etc. Only specific people have access; for anyone else this returns no_access. When allowed, the tables AND your reply are delivered privately to the person who asked (the channel only sees a short note), so explain the story in the numbers fully: biggest changes, who drove them, holidays/weekends, new or missing people, anything unusual.
 
     Args:
         later_month: YYYY-MM of the month to look at. Empty = the most recent month whose window has closed.
         earlier_month: YYYY-MM to compare against. Empty = the month before later_month.
         trend_months: Also show a trend over this many months ending at later_month (3-12). 0 = just the two-month comparison.
-        person_slack_id: Only this person's numbers (reviewer/approver can pick anyone; others always see only themselves).
+        person_slack_id: Only this person's numbers. Empty = the whole team.
     """
     req = current_request.get()
     wf = get_instance()
-    admin = req.user_id in wf.cfg.admins
+    if req.user_id not in wf.cfg.analytics_users:
+        return json.dumps({"no_access": True,
+                           "message": "Sorry, you don't have access to support allowance comparisons and trends."})
+    req.private_reply["user"] = req.user_id   # everything below is sent to them privately
     pid = _uid(person_slack_id) or None
-    if not admin:
-        if pid and pid != req.user_id:
-            return _err("You can only look at your own support history.")
-        pid = req.user_id
     later = later_month or _latest_finished_cycle(wf)
     earlier = earlier_month or prev_cycle_id(later)
     policy = Policy.load()
     a = analytics.cycle_stats(wf.store, policy, earlier, pid)
     b = analytics.cycle_stats(wf.store, policy, later, pid)
-    money = _money_visible(req, wf)
-    cmp = analytics.compare(a, b, policy.currency, with_money=money)
+    cmp = analytics.compare(a, b, policy.currency, with_money=True)  # private to an authorised person
 
     who = f" - {wf.user_name(pid)}" if pid else ""
     req.attachments.append(f"*Support allowance: {a['label']} vs {b['label']}{who}*\n"
                            f"Periods: {wf.cfg.period_text(earlier)} vs {wf.cfg.period_text(later)}")
     req.attachments.extend(code_blocks(cmp["summary_table"]))
-    if cmp["person_table"] and not pid:  # team view (reviewer/approver only)
+    if cmp["person_table"] and not pid:  # team view
         req.attachments.append(f"*Per person* ({cmp['columns_note']})")
         req.attachments.extend(code_blocks(cmp["person_table"]))
 
@@ -357,7 +355,7 @@ def compare_support_months(later_month: str = "", earlier_month: str = "", trend
             cids.insert(0, prev_cycle_id(cids[0]))
         series = [analytics.cycle_stats(wf.store, policy, c, pid) for c in cids]
         req.attachments.append(f"*Trend - last {len(cids)} months{who}*")
-        req.attachments.extend(code_blocks(analytics.trend_table(series, policy.currency, with_money=money)))
+        req.attachments.extend(code_blocks(analytics.trend_table(series, policy.currency, with_money=True)))
 
     def holidays_in(cid):
         first, last = wf.cfg.period(cid)
@@ -366,17 +364,9 @@ def compare_support_months(later_month: str = "", earlier_month: str = "", trend
     def slim(st):
         out = {k: v for k, v in st.items() if k != "by_person"}
         out["holidays_in_period"] = holidays_in(st["cycle"])
-        if not money:
-            for k in ("shift_amount", "extra_amount", "total", "avg_per_person"):
-                out.pop(k)
         return out
 
     people = cmp["people"][:15]
-    if not money:
-        people = [{k: v for k, v in p.items() if k not in ("change",)} for p in people]
-        for p in people:
-            for side in ("before", "after"):
-                p[side] = {k: v for k, v in p[side].items() if k != "total"}
     notes = []
     if b["status"] in ("open", "reviewing"):
         notes.append(f"{b['label']} is still {b['status']} - its numbers may change.")
@@ -386,9 +376,7 @@ def compare_support_months(later_month: str = "", earlier_month: str = "", trend
         "earlier": slim(a), "later": slim(b),
         "biggest_person_changes": people,
         "trend": [slim(t) for t in series],
-        "amounts_visible": money,
-        "amounts_note": None if money or not admin else
-            "Amounts are hidden here because this channel is visible to the team - ask in the approval channel for them.",
+        "delivered_privately": True,
         "notes": notes,
     })
 

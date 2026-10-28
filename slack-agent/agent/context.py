@@ -12,6 +12,8 @@ class RequestContext:
     thread_ts: str = None
     # Text that tools want posted verbatim after Claude's reply (e.g. tables), so the model can't alter it.
     attachments: list = field(default_factory=list)
+    # Set by a tool ({"user": U...}) when the whole answer must go to that person privately, not the channel.
+    private_reply: dict = field(default_factory=dict)
 
 
 current_request: ContextVar[RequestContext] = ContextVar("current_request")

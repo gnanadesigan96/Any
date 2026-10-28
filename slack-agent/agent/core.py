@@ -29,6 +29,8 @@ approval channel, because other channels are visible to the whole team. If a too
 - Mention anything not recorded (duplicates, problems) and when the window closes. If the tool says the window is closed, \
 tell the person exactly that (with the next opening date) and nothing was recorded.
 - If a date, shift or person is genuinely ambiguous, ask instead of guessing.
+- Comparisons and trends are restricted: if compare_support_months returns no_access, politely say the person doesn't have \
+access (no numbers, no hints). When it works, the answer is delivered privately to the requester, so give the full story.
 - For comparisons, trends or "how did last month go" questions, use compare_support_months (add trend_months for longer views; \
 call it again for drill-downs on a person or another pair of months). Lead with the headline change, then explain what drove it: \
 which people moved most, day vs night, weekends/holidays (holidays_in_period), extra tasks, new or missing people, flagged entries, \

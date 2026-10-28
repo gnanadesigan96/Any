@@ -70,6 +70,7 @@ class Workflow:
     review_channel: str = None        # where flagged entries go; None = DM the reviewer
     outside_window: str = "reject"    # "reject" (tell them the window is closed) or "next_cycle"
     test_timeline: tuple = None       # ((minutes_after_start, pretend_datetime), ...) - test mode only
+    analytics_users: tuple = ()       # the only people who may ask for comparisons / trends (answered privately)
 
     @classmethod
     def load(cls, path=None):
@@ -98,6 +99,7 @@ class Workflow:
             review_channel=raw.get("review_channel") or None,
             outside_window=raw.get("submissions_outside_window", "reject"),
             test_timeline=_test_timeline(raw, ZoneInfo(raw.get("timezone", "Asia/Kolkata"))),
+            analytics_users=tuple(raw.get("analytics_users", [])),
         )
 
     def problems(self) -> list:
@@ -112,7 +114,8 @@ class Workflow:
             if v and not re.fullmatch(r"[CG][A-Z0-9]{6,}", v):
                 out.append(f"{name} = {v!r} (needs a channel ID like C0123ABCD)")
         people = {"reviewer": self.reviewer, "approver": self.approver,
-                  **{f"hr_users[{i}]": u for i, u in enumerate(self.hr_users)}}
+                  **{f"hr_users[{i}]": u for i, u in enumerate(self.hr_users)},
+                  **{f"analytics_users[{i}]": u for i, u in enumerate(self.analytics_users)}}
         for name, v in people.items():
             if not re.fullmatch(r"[UW][A-Z0-9]{6,}", v or ""):
                 out.append(f"{name} = {v!r} (needs a member ID like U0123ABCD)")
