@@ -20,8 +20,8 @@ about 4:30 PM real time today"*). The bot also logs the timeline when it starts.
 
 | Field | Put |
 |---|---|
-| `collection_channel` and `review_channel` | Test channel 1, e.g. `#support-test` (same channel for both) |
-| `approval_channel` | Test channel 2, e.g. `#support-approval-test` |
+| `collection_channel` and `review_channel` | Test channel 1, `#support-test` (already filled in) |
+| `approval_channel` | Test channel 2, `#support-approval-test` (already filled in) |
 | `approver` | Manoj's e-mail, or his member ID (profile → ⋮ → *Copy member ID*) |
 | `hr_users` | `["<Vijay's e-mail or member ID>"]` |
 

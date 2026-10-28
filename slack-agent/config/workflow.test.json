@@ -12,9 +12,9 @@
     ]
   },
 
-  "collection_channel": "#REPLACE-test-support-channel",
-  "review_channel": "#REPLACE-test-support-channel",
-  "approval_channel": "#REPLACE-test-approval-channel",
+  "collection_channel": "#support-test",
+  "review_channel": "#support-test",
+  "approval_channel": "#support-approval-test",
   "hr_channel": null,
 
   "reviewer": "gnanadesigan@corestack.io",
