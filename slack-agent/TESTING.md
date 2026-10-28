@@ -16,22 +16,32 @@ production settings and data are untouched.
 Every scheduled message says the real time the next step happens (e.g. *"that's
 about 4:30 PM real time today"*). The bot also logs the timeline when it starts.
 
-## 1. Test config (`config/workflow.test.json`) - already filled in
+## 1. Test config (`config/workflow.test.json`)
+
+The people are filled in. The two **channel IDs** are still needed. In Slack,
+click the channel name, open **About**, and copy the **Channel ID** at the
+bottom (`C…`).
 
 | Role | Who | Setting |
 |---|---|---|
-| Support channel + flag review | `#support-test` | `collection_channel`, `review_channel` |
-| Final approval + HR | `#support-approval-test` | `approval_channel` (`hr_channel` = same) |
+| Support channel + flag review | `#support-test` | `collection_channel`, `review_channel`: **channel ID needed** |
+| Final approval + HR | `#support-approval-test` | `approval_channel`: **channel ID needed** (`hr_channel` = same) |
 | Reviewer | Gnanadesigan | `U0C2TN3B562` |
 | Final approver (test) | Manoj | `U0BP446DWBD` |
 | HR (test) | Vijay | `U0C2TN3CC06` |
 
-The bot refuses to start while any `REPLACE-…` value is left.
+The bot refuses to start while any `REPLACE-…` value is left. It acts **only**
+in these two channels and ignores mentions anywhere else.
 
 ## 2. Slack app (one-time)
 
 Create the app from `manifest.yaml` (see README → Setup), install it, then
-`/invite @ops-agent` into **both** test channels. Members of channel 1: you and
+`/invite @ops-agent` into the two test channels and **no others**.
+
+If you created the app from an earlier version of the manifest: in the app's
+settings, open **App Manifest**, replace it with the current `manifest.yaml`, and
+**Save**. Then open **Install App** and click **Reinstall to Workspace**, so the
+reduced permissions take effect. The bot token stays the same. Members of channel 1: you and
 the two teammates. Members of channel 2: you, Manoj and Vijay.
 
 ## 3. Start the test

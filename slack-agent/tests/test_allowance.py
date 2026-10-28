@@ -125,21 +125,20 @@ def test_period_is_21st_to_20th(wf):
     assert wf.flag_reason("2026-10", date(2026, 10, 21)).startswith("after")
 
 
-def test_bundled_config_loads_and_resolves_emails():
-    # Member IDs pass through untouched; e-mails are looked up.
-    cfg = Workflow.load().resolve_emails(lambda email: {"poornodhaya.reddy@corestack.io": BOSS}[email])
-    assert (cfg.reviewer, cfg.approver) == ("U0C2TN3B562", BOSS)
-    assert cfg.period_text("2026-10") == "21 Sep 2026 - 20 Oct 2026"
-
-
-def test_test_config_is_complete():
-    cfg = Workflow.load(Path(__file__).resolve().parent.parent / "config" / "workflow.test.json")
-    assert (cfg.reviewer, cfg.approver, cfg.hr_users) == ("U0C2TN3B562", "U0BP446DWBD", ("U0C2TN3CC06",))
-    assert (cfg.collection_channel, cfg.review_channel, cfg.approval_channel) == (
-        "#support-test", "#support-test", "#support-approval-test")
-    values = [cfg.collection_channel, cfg.approval_channel, cfg.hr_channel, cfg.review_channel,
-              cfg.reviewer, cfg.approver, cfg.hr_group, *cfg.hr_users]
-    assert not [v for v in values if v and "REPLACE" in v]
+def test_configs_require_ids_and_restrict_channels():
+    import dataclasses
+    prod = Workflow.load()
+    assert prod.reviewer == "U0C2TN3B562" and prod.period_text("2026-10") == "21 Sep 2026 - 20 Oct 2026"
+    assert any(p.startswith("approver") for p in prod.problems())   # Poornodhaya's member ID still to fill in
+    test = Workflow.load(Path(__file__).resolve().parent.parent / "config" / "workflow.test.json")
+    assert (test.reviewer, test.approver, test.hr_users) == ("U0C2TN3B562", "U0BP446DWBD", ("U0C2TN3CC06",))
+    filled = dataclasses.replace(test, collection_channel="C0SUPPORT1", review_channel="C0SUPPORT1",
+                                 approval_channel="C0APPROVE1", hr_channel="C0APPROVE1")
+    assert filled.problems() == []
+    assert filled.allowed_channels == {"C0SUPPORT1", "C0APPROVE1"}
+    assert dataclasses.replace(filled, approver="manoj@corestack.io").problems()        # e-mails rejected
+    assert dataclasses.replace(filled, approval_channel="#support-approval-test").problems()  # names rejected
+    assert dataclasses.replace(filled, review_channel=None).review_target == "C0SUPPORT1"
 
 
 def test_submission_cycle_rolls_over_after_19th_eod(wf):
@@ -176,7 +175,7 @@ def test_full_month_with_review_concern_and_approval(wf):
     table = "\n".join(attached)
     assert "Awaiting review" in table and "₹" not in table
 
-    review_msg = slack.with_blocks(ME)[-1]
+    review_msg = slack.with_blocks("CSUPPORT")[-1]
     assert action_ids(review_msg["blocks"]) == {B.REVIEW_ACCEPT, B.REVIEW_REJECT}
     flagged_id = B.row_ids(review_msg["blocks"])[0]
 
@@ -186,7 +185,7 @@ def test_full_month_with_review_concern_and_approval(wf):
     wf.tick(ist(2026, 10, 20, 0, 0))
     assert wf.store.cycle("2026-10")["status"] == "reviewing"
     assert not slack.with_blocks("CAPPROVAL")
-    assert "still need your decision" in slack.texts(ME)[-2]
+    assert "still need your decision" in slack.texts("CSUPPORT")[-2]
 
     # Only the reviewer can decide; deciding the last one releases the final table to the boss.
     assert wf.review(flagged_id, "accepted", PRIYA) == "not_authorised"
@@ -283,7 +282,7 @@ def test_buttons_and_modals(wf):
 
     as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-09-01", "shift": "night"},
                                                           {"date": "2026-10-01", "shift": "day"}])
-    msg = slack.with_blocks(ME)[-1]
+    msg = slack.with_blocks("CSUPPORT")[-1]
     flagged_id = B.row_ids(msg["blocks"])[0]
 
     def click(user, action, value=None, **extra):
@@ -361,7 +360,7 @@ def test_same_shift_same_day_by_two_people_flags_both(wf):
     assert wf.store.entry(priya_id)["review"] == "pending"
     assert "overlaps with Arun's night shift" == wf.store.entry(priya_id)["flag_reason"]
     assert any("Arun also claimed the night shift" in t for t in slack.texts("CSUPPORT"))
-    review_msg = slack.with_blocks(ME)[-1]
+    review_msg = slack.with_blocks("CSUPPORT")[-1]
     assert sorted(B.row_ids(review_msg["blocks"])) == sorted([priya_id, arun_id])
 
     # Reviewer keeps Priya's, rejects Arun's.

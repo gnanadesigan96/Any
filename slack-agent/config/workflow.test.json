@@ -1,5 +1,5 @@
 {
-  "_comment": "TEST setup. Run with WORKFLOW_CONFIG_PATH=config/workflow.test.json. Channels can be '#channel-name' or a channel ID; people can be e-mail or Slack member ID.",
+  "_comment": "TEST setup. Run with WORKFLOW_CONFIG_PATH=config/workflow.test.json. Use Slack IDs only: channel IDs (C...) and member IDs (U...). The bot acts only in the channels listed here.",
   "timezone": "Asia/Kolkata",
 
   "test_mode": {
@@ -12,9 +12,10 @@
     ]
   },
 
-  "collection_channel": "#support-test",
-  "review_channel": "#support-test",
-  "approval_channel": "#support-approval-test",
+  "_channels_comment": "#support-test and #support-approval-test - channel name > About (bottom) > Channel ID",
+  "collection_channel": "REPLACE-support-test-channel-id",
+  "review_channel": "REPLACE-support-test-channel-id",
+  "approval_channel": "REPLACE-support-approval-test-channel-id",
   "hr_channel": null,
 
   "reviewer": "U0C2TN3B562",

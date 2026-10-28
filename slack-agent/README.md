@@ -1,7 +1,7 @@
 # Slack Ops Agent
 
-A multipurpose Slack bot powered by Claude. Mention it in a channel (or DM it)
-and it replies in the thread. Its main job is the **monthly support allowance
+A multipurpose Slack bot powered by Claude. Mention it in one of its configured
+channels and it replies in the thread. Its main job is the **monthly support allowance
 workflow**. It can also answer general questions, using web search when needed.
 
 ## Monthly support allowance flow
@@ -21,7 +21,7 @@ are fine, and extra tasks / night calls may overlap freely.
 |---|---|
 | **17th, 10:00** | The bot asks the support channel to submit details for the period, and states the deadline. |
 | 17th–19th | People mention the bot with their days. The bot records them and replies with a **table of their details (no amounts)**. |
-| any time | Some entries are kept but **flagged**: a date **outside the period**, or a **day/night shift that overlaps another person's same shift on the same date**. The reviewer (Gnanadesigan) gets a DM naming the member, date and reason, with **Accept / Reject** buttons for each entry. For overlaps, both people's entries are put up so the reviewer chooses which stands. Each submitter is told the outcome in their thread. |
+| any time | Some entries are kept but **flagged**: a date **outside the period**, or a **day/night shift that overlaps another person's same shift on the same date**. They are posted in the review channel (by default the support channel) for the reviewer (Gnanadesigan), naming the member, date and reason, with **Accept / Reject** buttons for each entry. For overlaps, both people's entries are put up so the reviewer chooses which stands. Each submitter is told the outcome in their thread. |
 | **19th, 10:00** | "Last day" reminder. |
 | **19th, 23:59 (EOD)** | Window closes. If flagged entries are still undecided, the reviewer is reminded and the final table **waits** until they're decided. |
 | then | The **final tables (summary + per-day detail + CSV)** are posted in the approval channel and the **approver (Poornodhaya)** is tagged with **Approve / Raise concern** buttons. |
@@ -110,11 +110,25 @@ hours, using test channels and test approver/HR people.
    - `collection_channel`: channel where the team submits (open the channel → channel name → *About* → Channel ID, `C…`).
    - `approval_channel`: the channel where the final table goes for approval.
    - `hr_channel`: leave `null` to tag HR in the approval channel. Set a channel ID to send the tables and the HR tag elsewhere.
-   - `reviewer` / `approver`: already set to `gnanadesigan@corestack.io` / `poornodhaya.reddy@corestack.io`. E-mails are looked up in Slack at startup; member IDs (`U…`) work too.
-   - `hr_group`: the HR user group ID (`S…`; from the group's page in *People → User groups*). Or list people (e-mails or IDs) in `hr_users`.
+   - `review_channel`: where flagged entries are posted for the reviewer (`null` = the collection channel).
+   - `reviewer`: Gnanadesigan (`U0C2TN3B562`, already set). `approver`: Poornodhaya's **member ID** (profile → ⋮ → *Copy member ID*).
+   - `hr_group`: the HR user group ID (`S…`; from the group's page in *People → User groups*). Or list member IDs in `hr_users`.
    - `period`: `{"start_day": 21, "end_day": 20}`.
    - `schedule`: defaults are 17th 10:00, 19th 10:00 and 19th 23:59, in `Asia/Kolkata`.
-3. **Invite the bot** to all those channels: `/invite @ops-agent`.
+3. **Invite the bot** to those channels **only**: `/invite @ops-agent`.
+
+### Access is limited to the configured channels
+
+Slack always installs an app for the whole workspace, so the limit is enforced
+by permissions and by the bot itself:
+
+- **Permissions** (`manifest.yaml`): the bot can only read and post in channels
+  it has been **invited** to. It has no permission to list channels, look people
+  up by e-mail, or read or send direct messages. Its messages tab is turned off.
+- **Bot behaviour:** it acts only in the channel IDs in the workflow config.
+  Mentions in any other channel are ignored, even if someone invites it there.
+- That's why the config takes **IDs only**: channel IDs (`C…`) and member IDs
+  (`U…`). The bot refuses to start if it finds a name or an e-mail.
 4. **Run** on a machine that stays on:
    ```bash
    cd slack-agent

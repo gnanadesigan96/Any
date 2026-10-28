@@ -1,5 +1,8 @@
-"""Slack entry point: mention the bot in a channel (or DM it) and it replies in the thread.
+"""Slack entry point: mention the bot in one of its configured channels and it replies in the thread.
 Also runs the monthly support-allowance workflow and handles its buttons and forms.
+
+The bot only acts in the channels named in the workflow config; mentions anywhere else are ignored,
+and it doesn't take direct messages.
 
 Run:  python app.py   (needs SLACK_BOT_TOKEN, SLACK_APP_TOKEN, ANTHROPIC_API_KEY)
 """
@@ -88,13 +91,9 @@ def _handle(event, client, context):
 
 @app.event("app_mention")
 def on_mention(event, client, context):
-    _handle(event, client, context)
-
-
-@app.event("message")
-def on_message(event, client, context):
-    # Channel messages arrive via app_mention; here we only answer direct messages from people.
-    if event.get("channel_type") != "im" or event.get("bot_id") or event.get("subtype"):
+    wf = workflow.get_instance()
+    if event.get("channel") not in wf.cfg.allowed_channels:
+        log.warning("ignoring mention in non-configured channel %s", event.get("channel"))
         return
     _handle(event, client, context)
 
@@ -102,36 +101,11 @@ def on_message(event, client, context):
 slack_actions.register(app)
 
 
-def _channel_id(name: str) -> str:
-    cursor = None
-    while True:
-        resp = app.client.conversations_list(types="public_channel,private_channel", limit=1000, cursor=cursor,
-                                             exclude_archived=True)
-        for ch in resp["channels"]:
-            if ch["name"] == name:
-                return ch["id"]
-        cursor = (resp.get("response_metadata") or {}).get("next_cursor")
-        if not cursor:
-            raise SystemExit(f"Channel #{name} not found - check the name and invite the bot to it (/invite @ops-agent).")
-
-
-def _user_id(email: str) -> str:
-    try:
-        return app.client.users_lookupByEmail(email=email)["user"]["id"]
-    except Exception:
-        raise SystemExit(f"No Slack user with e-mail {email} - use their member ID instead.") from None
-
-
 def start_workflow():
-    raw_cfg = Workflow.load()
-    placeholders = [v for v in (raw_cfg.collection_channel, raw_cfg.approval_channel, raw_cfg.hr_channel,
-                                raw_cfg.review_channel, raw_cfg.reviewer, raw_cfg.approver, raw_cfg.hr_group,
-                                *raw_cfg.hr_users) if v and "REPLACE" in v]
-    if placeholders:
-        raise SystemExit(f"Fill these in the workflow config first: {', '.join(placeholders)}")
+    cfg = Workflow.load()
+    if problems := cfg.problems():
+        raise SystemExit("Fix the workflow config first:\n  " + "\n  ".join(problems))
     bot_user_id = app.client.auth_test()["user_id"]
-    # Channels may be given as #names and people as e-mails; Slack needs IDs.
-    cfg = raw_cfg.resolve_emails(_user_id).resolve_channels(_channel_id)
     log.info("support workflow: reviewer=%s approver=%s hr=%s channels: collect=%s review=%s approve=%s hr=%s",
              cfg.reviewer, cfg.approver, cfg.hr_users or cfg.hr_group, cfg.collection_channel,
              cfg.review_target, cfg.approval_channel, cfg.hr_channel)

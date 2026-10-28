@@ -1,14 +1,17 @@
-# Paste into https://api.slack.com/apps -> Create New App -> From a manifest
+# Paste into https://api.slack.com/apps -> your app -> App Manifest (or Create New App -> From a manifest).
+# Least privilege: the bot can only read/post in channels it is invited to. It cannot list channels,
+# look people up by e-mail, or read/send direct messages.
 display_information:
   name: Ops Agent
-  description: Multipurpose assistant - monthly support allowance workflow and more
+  description: Monthly support allowance workflow
 features:
   bot_user:
     display_name: ops-agent
     always_online: true
   app_home:
-    messages_tab_enabled: true
-    messages_tab_read_only_enabled: false
+    home_tab_enabled: false
+    messages_tab_enabled: false
+    messages_tab_read_only_enabled: true
 oauth_config:
   scopes:
     bot:
@@ -16,19 +19,13 @@ oauth_config:
       - chat:write
       - channels:history
       - groups:history
-      - im:history
       - reactions:write
       - users:read
-      - channels:read
-      - groups:read
-      - users:read.email
-      - im:write
       - files:write
 settings:
   event_subscriptions:
     bot_events:
       - app_mention
-      - message.im
   interactivity:
     is_enabled: true
   socket_mode_enabled: true

@@ -2,7 +2,8 @@
 
 import json
 import os
-from dataclasses import dataclass, replace
+import re
+from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -99,22 +100,35 @@ class Workflow:
             test_timeline=_test_timeline(raw, ZoneInfo(raw.get("timezone", "Asia/Kolkata"))),
         )
 
-    def resolve_emails(self, lookup) -> "Workflow":
-        """Swap any e-mail addresses (reviewer, approver, hr_users) for Slack user IDs using `lookup(email) -> id`."""
-        conv = lambda v: lookup(v) if "@" in v else v  # noqa: E731
-        return replace(self, reviewer=conv(self.reviewer), approver=conv(self.approver),
-                       hr_users=tuple(conv(u) for u in self.hr_users))
+    def problems(self) -> list:
+        """Config values that are missing or not Slack IDs.
 
-    def resolve_channels(self, lookup) -> "Workflow":
-        """Swap "#channel-name" values for channel IDs using `lookup(name) -> id`."""
-        conv = lambda v: lookup(v[1:]) if v and v.startswith("#") else v  # noqa: E731
-        return replace(self, collection_channel=conv(self.collection_channel), approval_channel=conv(self.approval_channel),
-                       hr_channel=conv(self.hr_channel), review_channel=conv(self.review_channel))
+        The app deliberately has no permission to list channels or look people up by
+        e-mail (so it can't see beyond the channels it's invited to) - hence IDs only.
+        """
+        out = []
+        for name in ("collection_channel", "approval_channel", "hr_channel", "review_channel"):
+            v = getattr(self, name)
+            if v and not re.fullmatch(r"[CG][A-Z0-9]{6,}", v):
+                out.append(f"{name} = {v!r} (needs a channel ID like C0123ABCD)")
+        people = {"reviewer": self.reviewer, "approver": self.approver,
+                  **{f"hr_users[{i}]": u for i, u in enumerate(self.hr_users)}}
+        for name, v in people.items():
+            if not re.fullmatch(r"[UW][A-Z0-9]{6,}", v or ""):
+                out.append(f"{name} = {v!r} (needs a member ID like U0123ABCD)")
+        if self.hr_group and not re.fullmatch(r"S[A-Z0-9]{6,}", self.hr_group):
+            out.append(f"hr_group = {self.hr_group!r} (needs a user-group ID like S0123ABCD, or leave it empty)")
+        return out
 
     @property
     def review_target(self) -> str:
-        """Channel (or the reviewer's DM) where flagged entries are posted."""
-        return self.review_channel or self.reviewer
+        """Channel where flagged entries are posted for the reviewer."""
+        return self.review_channel or self.collection_channel
+
+    @property
+    def allowed_channels(self) -> frozenset:
+        """The only channels the bot listens to; anything else is ignored."""
+        return frozenset(c for c in (self.collection_channel, self.review_channel, self.approval_channel, self.hr_channel) if c)
 
     @property
     def admins(self) -> frozenset:
