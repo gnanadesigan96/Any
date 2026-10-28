@@ -15,7 +15,7 @@ from anthropic import beta_tool
 from .. import analytics
 from ..config import Policy, cycle_id_for, cycle_label, prev_cycle_id
 from ..context import current_request
-from ..report import code_blocks, final_report, submission_table
+from ..report import code_blocks, final_report, submission_table, team_table
 from ..workflow import get_instance
 
 
@@ -31,6 +31,12 @@ def _err(msg: str) -> str:
 
 def _uid(raw: str) -> str:
     return (raw or "").strip().strip("<@>")
+
+
+def _money_visible(req, wf) -> bool:
+    """Amounts are shown only to the reviewer/approver, and only in the approval (or HR) channel -
+    replies in the support channel are visible to the whole team."""
+    return req.user_id in wf.cfg.admins and req.channel_id in {wf.cfg.approval_channel, wf.cfg.hr_channel}
 
 
 def _attach_person_table(person_id, person_name, cid):
@@ -189,6 +195,16 @@ def show_support_details(person_slack_id: str = "", cycle: str = "") -> str:
         entries = wf.store.entries(cid, payable_only=True)
         pending = wf.store.pending_reviews(cid)
         status = (wf.store.cycle(cid) or {}).get("status", "open")
+        if not _money_visible(req, wf):
+            everyone = wf.store.entries(cid)
+            req.attachments.append(f"*Support details - {cycle_label(cid)}* ({wf.cfg.period_text(cid)}) · "
+                                   f"{len({e['person_id'] for e in everyone})} people · {len(everyone)} entries")
+            if everyone:
+                req.attachments.extend(code_blocks(team_table(everyone, Policy.load())))
+            return json.dumps({"cycle": cycle_label(cid), "status": status, "entries": len(everyone),
+                               "awaiting_review": len(pending),
+                               "amounts_hidden": "Amounts are only shown in the approval channel, since this channel is "
+                                                 "visible to the team."})
         if not entries:
             return json.dumps({"cycle": cycle_label(cid), "status": status, "entries": 0, "awaiting_review": len(pending)})
         report = final_report(entries, Policy.load())
@@ -302,7 +318,7 @@ def _latest_finished_cycle(wf) -> str:
 
 @beta_tool
 def compare_support_months(later_month: str = "", earlier_month: str = "", trend_months: int = 0, person_slack_id: str = "") -> str:
-    """Compare support allowance between months and show trends: totals, people, day/night/weekend/holiday shifts, extra tasks, flagged entries and a per-person breakdown of who went up or down. Use it for "compare with last month", "what's the trend", "how did October go", etc. Detailed tables are posted automatically below your reply; your job is to explain the story in the numbers (biggest changes, who drove them, holidays/weekends, new or missing people, anything unusual). Team members only get their own numbers without amounts.
+    """Compare support allowance between months and show trends: totals, people, day/night/weekend/holiday shifts, extra tasks, flagged entries and a per-person breakdown of who went up or down. Use it for "compare with last month", "what's the trend", "how did October go", etc. Detailed tables are posted automatically below your reply; your job is to explain the story in the numbers (biggest changes, who drove them, holidays/weekends, new or missing people, anything unusual). Team members only get their own numbers; amounts appear only for the reviewer/approver in the approval channel.
 
     Args:
         later_month: YYYY-MM of the month to look at. Empty = the most recent month whose window has closed.
@@ -323,7 +339,8 @@ def compare_support_months(later_month: str = "", earlier_month: str = "", trend
     policy = Policy.load()
     a = analytics.cycle_stats(wf.store, policy, earlier, pid)
     b = analytics.cycle_stats(wf.store, policy, later, pid)
-    cmp = analytics.compare(a, b, policy.currency, with_money=admin)
+    money = _money_visible(req, wf)
+    cmp = analytics.compare(a, b, policy.currency, with_money=money)
 
     who = f" - {wf.user_name(pid)}" if pid else ""
     req.attachments.append(f"*Support allowance: {a['label']} vs {b['label']}{who}*\n"
@@ -340,7 +357,7 @@ def compare_support_months(later_month: str = "", earlier_month: str = "", trend
             cids.insert(0, prev_cycle_id(cids[0]))
         series = [analytics.cycle_stats(wf.store, policy, c, pid) for c in cids]
         req.attachments.append(f"*Trend - last {len(cids)} months{who}*")
-        req.attachments.extend(code_blocks(analytics.trend_table(series, policy.currency, with_money=admin)))
+        req.attachments.extend(code_blocks(analytics.trend_table(series, policy.currency, with_money=money)))
 
     def holidays_in(cid):
         first, last = wf.cfg.period(cid)
@@ -349,13 +366,13 @@ def compare_support_months(later_month: str = "", earlier_month: str = "", trend
     def slim(st):
         out = {k: v for k, v in st.items() if k != "by_person"}
         out["holidays_in_period"] = holidays_in(st["cycle"])
-        if not admin:
+        if not money:
             for k in ("shift_amount", "extra_amount", "total", "avg_per_person"):
                 out.pop(k)
         return out
 
     people = cmp["people"][:15]
-    if not admin:
+    if not money:
         people = [{k: v for k, v in p.items() if k not in ("change",)} for p in people]
         for p in people:
             for side in ("before", "after"):
@@ -369,7 +386,9 @@ def compare_support_months(later_month: str = "", earlier_month: str = "", trend
         "earlier": slim(a), "later": slim(b),
         "biggest_person_changes": people,
         "trend": [slim(t) for t in series],
-        "amounts_visible": admin,
+        "amounts_visible": money,
+        "amounts_note": None if money or not admin else
+            "Amounts are hidden here because this channel is visible to the team - ask in the approval channel for them.",
         "notes": notes,
     })
 

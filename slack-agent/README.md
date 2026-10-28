@@ -77,7 +77,9 @@ It then explains what drove the change: who moved most, holidays in the
 period, night vs day, extra tasks, and caveats such as a month not yet approved
 or entries still awaiting review. It offers follow-ups like drilling into a
 person. The reviewer and approver see everything. Team members asking the same
-question get only their own history, without amounts.
+question get only their own history, without amounts. Amounts are shown only
+when the reviewer or approver asks in the approval channel. In the support
+channel even they get the numbers without money.
 
 ### Rates (`config/allowance_policy.json`)
 
@@ -129,6 +131,11 @@ by permissions and by the bot itself:
   Mentions in any other channel are ignored, even if someone invites it there.
 - That's why the config takes **IDs only**: channel IDs (`C…`) and member IDs
   (`U…`). The bot refuses to start if it finds a name or an e-mail.
+- No direct messages: everyone talks to the bot by **@mentioning it in one of
+  the two channels**, and it answers in a thread.
+- **Amounts appear only in the approval channel**, for the reviewer and
+  approver. The support channel is visible to the whole team, so there the bot
+  shows the same details (and, for the reviewer, everyone's entries) without money.
 4. **Run** on a machine that stays on:
    ```bash
    cd slack-agent

@@ -79,8 +79,8 @@ def wf(tmp_path):
     workflow.set_instance(None)
 
 
-def as_user(user_id, fn, **kwargs):
-    ctx = RequestContext(user_id, FakeSlack().users_info(user_id)["user"]["real_name"], "CSUPPORT", f"t-{user_id}")
+def as_user(user_id, fn, channel="CSUPPORT", **kwargs):
+    ctx = RequestContext(user_id, FakeSlack().users_info(user_id)["user"]["real_name"], channel, f"t-{user_id}")
     token = current_request.set(ctx)
     try:
         return json.loads(fn.call(kwargs)), ctx.attachments
@@ -243,8 +243,11 @@ def test_rejected_entry_is_not_paid_and_can_be_claimed_again(wf):
 def test_members_only_see_their_own_and_no_money(wf):
     as_user(ARUN, tools.submit_support_details, entries=[{"date": "2026-10-05", "shift": "day"}])
     assert "error" in as_user(PRIYA, tools.show_support_details, person_slack_id=ARUN)[0]
-    out, attached = as_user(BOSS, tools.show_support_details)
+    out, attached = as_user(BOSS, tools.show_support_details, channel="CAPPROVAL")
     assert out["total"] == "₹500" and any("Arun" in a for a in attached)
+    # The same request in the team channel shows everyone's details but no money.
+    out, attached = as_user(BOSS, tools.show_support_details)
+    assert "₹" not in "\n".join(attached) and any("Arun" in a for a in attached) and out["amounts_hidden"]
     assert "error" in as_user(PRIYA, tools.close_window_now)[0]
     assert "error" in as_user(PRIYA, tools.remove_support_details, dates=["2026-10-05"], person_slack_id=ARUN)[0]
 
@@ -412,7 +415,7 @@ def _seed_two_months(wf):
 
 def test_compare_months_for_approver(wf):
     _seed_two_months(wf)
-    out, attached = as_user(BOSS, tools.compare_support_months)
+    out, attached = as_user(BOSS, tools.compare_support_months, channel="CAPPROVAL")
     assert (out["earlier"]["label"], out["later"]["label"]) == ("September 2026", "October 2026")
     assert (out["earlier"]["total"], out["later"]["total"]) == (2000, 3500)
     assert out["later"]["holiday_shifts"] == 1 and out["later"]["extra_tasks"] == 1
@@ -422,6 +425,14 @@ def test_compare_months_for_approver(wf):
     assert "₹2,000" in text and "₹3,500" in text and "+₹1,500 (+75%)" in text
     assert "Arun" in text and "not in October" in text and "UNEW" in text and "new" in text
     assert "₹1,000 → ₹3,000" in text and "+0%" not in text
+
+
+def test_reviewer_comparison_in_team_channel_hides_money(wf):
+    _seed_two_months(wf)
+    out, attached = as_user(ME, tools.compare_support_months)
+    text = "\n".join(attached)
+    assert "₹" not in text and "Arun" in text and out["amounts_visible"] is False and out["amounts_note"]
+    assert "total" not in out["later"]
 
 
 def test_compare_months_for_member_hides_money_and_others(wf):

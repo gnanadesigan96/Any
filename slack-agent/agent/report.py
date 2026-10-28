@@ -78,6 +78,17 @@ def submission_table(entries, policy: Policy) -> str:
     return render_table(["Date", "Day", "Shift", "Day type", "Extra task", "Status"], rows)
 
 
+def team_table(entries, policy: Policy) -> str:
+    """Everyone's details for a month, without amounts (safe to show in the team channel)."""
+    rows = [
+        (e["person_name"], d.strftime("%d %b %Y"), d.strftime("%a"), _SHIFT_LABEL[e["shift"]], day_type_label(policy, d),
+         _clip(e.get("extra_task"), 30) or "-", STATUS_LABEL[e.get("review")])
+        for e in entries
+        for d in [date.fromisoformat(e["support_date"])]
+    ]
+    return render_table(["Employee", "Date", "Day", "Shift", "Day type", "Extra task", "Status"], rows)
+
+
 def final_report(entries, policy: Policy) -> dict:
     """Detailed + per-person summary tables (with amounts) for the approver and HR."""
     items = priced(entries, policy)
