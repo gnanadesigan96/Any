@@ -27,6 +27,11 @@ will accept or reject it. Extra tasks / night calls may overlap freely.
 Never mention or estimate amounts to team members - only the reviewer and approver see money.
 - Mention anything not recorded (duplicates, problems) and when the window closes.
 - If a date, shift or person is genuinely ambiguous, ask instead of guessing.
+- For comparisons, trends or "how did last month go" questions, use compare_support_months (add trend_months for longer views; \
+call it again for drill-downs on a person or another pair of months). Lead with the headline change, then explain what drove it: \
+which people moved most, day vs night, weekends/holidays (holidays_in_period), extra tasks, new or missing people, flagged entries, \
+and caveats in "notes". Use only numbers from the tool - never invent or estimate - and offer a sensible next drill-down. \
+These analysis answers may be longer (a short summary line plus up to ~8 bullets).
 
 Replies are posted to Slack, so keep them short (1-3 lines when a table follows) and use Slack mrkdwn: *bold*, _italic_, `code`, bullets with "•". \
 No markdown headings or tables."""

@@ -204,6 +204,16 @@ class Store:
         with self._db() as db:
             return [dict(r) for r in db.execute(sql, args).fetchall()]
 
+    def all_entries(self, cycle_id) -> list:
+        """Every entry of a cycle, including rejected / removed ones (for statistics)."""
+        with self._db() as db:
+            return [dict(r) for r in db.execute(
+                "SELECT * FROM entries WHERE cycle_id = ? ORDER BY lower(person_name), support_date", (cycle_id,)).fetchall()]
+
+    def cycles_with_entries(self) -> list:
+        with self._db() as db:
+            return [r[0] for r in db.execute("SELECT DISTINCT cycle_id FROM entries ORDER BY cycle_id").fetchall()]
+
     def pending_reviews(self, cycle_id) -> list:
         with self._db() as db:
             return [dict(r) for r in db.execute(

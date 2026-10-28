@@ -12,7 +12,8 @@ from typing import Literal, TypedDict
 
 from anthropic import beta_tool
 
-from ..config import Policy, cycle_id_for, cycle_label
+from .. import analytics
+from ..config import Policy, cycle_id_for, cycle_label, prev_cycle_id
 from ..context import current_request
 from ..report import code_blocks, final_report, submission_table
 from ..workflow import get_instance
@@ -280,7 +281,88 @@ def respond_to_concern(cycle: str, response: str) -> str:
                        "status": get_instance().respond_to_concern(cycle, current_request.get().user_id, response)})
 
 
+def _latest_finished_cycle(wf) -> str:
+    cycles = wf.store.cycles_with_entries()
+    finished = [c for c in cycles if (wf.store.cycle(c) or {}).get("status", "open") != "open"]
+    return (finished or cycles or [wf.submission_cycle()])[-1]
+
+
+@beta_tool
+def compare_support_months(later_month: str = "", earlier_month: str = "", trend_months: int = 0, person_slack_id: str = "") -> str:
+    """Compare support allowance between months and show trends: totals, people, day/night/weekend/holiday shifts, extra tasks, flagged entries and a per-person breakdown of who went up or down. Use it for "compare with last month", "what's the trend", "how did October go", etc. Detailed tables are posted automatically below your reply; your job is to explain the story in the numbers (biggest changes, who drove them, holidays/weekends, new or missing people, anything unusual). Team members only get their own numbers without amounts.
+
+    Args:
+        later_month: YYYY-MM of the month to look at. Empty = the most recent month whose window has closed.
+        earlier_month: YYYY-MM to compare against. Empty = the month before later_month.
+        trend_months: Also show a trend over this many months ending at later_month (3-12). 0 = just the two-month comparison.
+        person_slack_id: Only this person's numbers (reviewer/approver can pick anyone; others always see only themselves).
+    """
+    req = current_request.get()
+    wf = get_instance()
+    admin = req.user_id in wf.cfg.admins
+    pid = _uid(person_slack_id) or None
+    if not admin:
+        if pid and pid != req.user_id:
+            return _err("You can only look at your own support history.")
+        pid = req.user_id
+    later = later_month or _latest_finished_cycle(wf)
+    earlier = earlier_month or prev_cycle_id(later)
+    policy = Policy.load()
+    a = analytics.cycle_stats(wf.store, policy, earlier, pid)
+    b = analytics.cycle_stats(wf.store, policy, later, pid)
+    cmp = analytics.compare(a, b, policy.currency, with_money=admin)
+
+    who = f" - {wf.user_name(pid)}" if pid else ""
+    req.attachments.append(f"*Support allowance: {a['label']} vs {b['label']}{who}*\n"
+                           f"Periods: {wf.cfg.period_text(earlier)} vs {wf.cfg.period_text(later)}")
+    req.attachments.extend(code_blocks(cmp["summary_table"]))
+    if cmp["person_table"] and not pid:  # team view (reviewer/approver only)
+        req.attachments.append(f"*Per person* ({cmp['columns_note']})")
+        req.attachments.extend(code_blocks(cmp["person_table"]))
+
+    series = []
+    if trend_months and trend_months >= 3:
+        cids = [later]
+        for _ in range(min(int(trend_months), 12) - 1):
+            cids.insert(0, prev_cycle_id(cids[0]))
+        series = [analytics.cycle_stats(wf.store, policy, c, pid) for c in cids]
+        req.attachments.append(f"*Trend - last {len(cids)} months{who}*")
+        req.attachments.extend(code_blocks(analytics.trend_table(series, policy.currency, with_money=admin)))
+
+    def holidays_in(cid):
+        first, last = wf.cfg.period(cid)
+        return [f"{d} {n}" for d, n in sorted(policy.holidays.items()) if first.isoformat() <= d <= last.isoformat()]
+
+    def slim(st):
+        out = {k: v for k, v in st.items() if k != "by_person"}
+        out["holidays_in_period"] = holidays_in(st["cycle"])
+        if not admin:
+            for k in ("shift_amount", "extra_amount", "total", "avg_per_person"):
+                out.pop(k)
+        return out
+
+    people = cmp["people"][:15]
+    if not admin:
+        people = [{k: v for k, v in p.items() if k not in ("change",)} for p in people]
+        for p in people:
+            for side in ("before", "after"):
+                p[side] = {k: v for k, v in p[side].items() if k != "total"}
+    notes = []
+    if b["status"] in ("open", "reviewing"):
+        notes.append(f"{b['label']} is still {b['status']} - its numbers may change.")
+    if b["flags"]["pending"]:
+        notes.append(f"{b['flags']['pending']} entries in {b['label']} are still awaiting review and are not counted.")
+    return json.dumps({
+        "earlier": slim(a), "later": slim(b),
+        "biggest_person_changes": people,
+        "trend": [slim(t) for t in series],
+        "amounts_visible": admin,
+        "notes": notes,
+    })
+
+
 TOOLS = [
     submit_support_details, remove_support_details, show_support_details, support_window_status,
     review_flagged_entries, close_window_now, approve_support_allowance, raise_concern_on_allowance, respond_to_concern,
+    compare_support_months,
 ]

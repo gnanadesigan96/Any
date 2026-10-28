@@ -54,6 +54,31 @@ across months, and an approved month is locked. Anything sent after the 19th
 EOD goes into **next month's** cycle, and is flagged there if its dates fall
 outside that period.
 
+### Comparisons and trends
+
+Ask the bot in plain words, for example:
+
+- "@ops-agent compare with last month and tell me the trend"
+- "how did October go vs September?"
+- "show the trend for the last 6 months"
+- "why did night shifts go up?" / "show Priya's last 3 months"
+
+The bot posts exact tables, all computed from the recorded data:
+
+- **Month vs month:** total amount (split into shift and extra-task allowance),
+  people, entries, day/night shifts, weekday/weekend/holiday shifts, extra
+  tasks, average per person, and flagged entries accepted/rejected, each with
+  its change and %.
+- **Per person:** shifts, nights, weekend/holiday shifts, extra tasks and
+  amount, shown as "Sep → Oct", plus who is new or missing.
+- **Trend:** one row per month, with the change from the previous month.
+
+It then explains what drove the change: who moved most, holidays in the
+period, night vs day, extra tasks, and caveats such as a month not yet approved
+or entries still awaiting review. It offers follow-ups like drilling into a
+person. The reviewer and approver see everything. Team members asking the same
+question get only their own history, without amounts.
+
 ### Rates (`config/allowance_policy.json`)
 
 | Shift | Weekday | Weekend | Govt. holiday on a weekday |
@@ -123,6 +148,7 @@ agent/tools/                Tools Claude can call (support allowance, date helpe
 agent/config.py             Loads rates + workflow settings
 agent/store.py              SQLite: cycles and submitted entries
 agent/report.py             Tables and CSV
+agent/analytics.py          Month-over-month comparison and trends
 config/allowance_policy.json  Rates and holidays
 config/workflow.json          Channels, approver, HR group, schedule
 ```

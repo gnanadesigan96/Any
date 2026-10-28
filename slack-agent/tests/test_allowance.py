@@ -381,3 +381,52 @@ def test_overlap_within_one_message_for_two_people_and_reviewer_edits_blocked(wf
     wf.store.update_cycle("2026-10", status="concern")
     err = wf.add_entry("2026-10", ME, PRIYA, "2026-10-06", "night", None)
     assert "overlaps with Arun's night shift" in err
+
+
+# -- comparisons and trends -------------------------------------------------------
+
+def _seed_two_months(wf):
+    wf.clock.dt = ist(2026, 9, 18, 12)
+    as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-09-05", "shift": "night"},   # Sat 500
+                                                          {"date": "2026-09-08", "shift": "day"}])    # Tue 500
+    as_user(ARUN, tools.submit_support_details, entries=[{"date": "2026-09-09", "shift": "night"}])   # Wed 1000
+    wf.close_cycle("2026-09")
+    wf.approve("2026-09", BOSS)
+    wf.clock.dt = ist(2026, 10, 18, 12)
+    as_user(PRIYA, tools.submit_support_details, entries=[
+        {"date": "2026-10-02", "shift": "day", "extra_task": "Prod patch"},                            # holiday 1000 + 500
+        {"date": "2026-10-03", "shift": "night"}, {"date": "2026-10-06", "shift": "night"}])           # 500 + 1000
+    as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-10-07", "shift": "day"}],
+            person_slack_id="UNEW")                                                                    # 500
+    wf.close_cycle("2026-10")
+
+
+def test_compare_months_for_approver(wf):
+    _seed_two_months(wf)
+    out, attached = as_user(BOSS, tools.compare_support_months)
+    assert (out["earlier"]["label"], out["later"]["label"]) == ("September 2026", "October 2026")
+    assert (out["earlier"]["total"], out["later"]["total"]) == (2000, 3500)
+    assert out["later"]["holiday_shifts"] == 1 and out["later"]["extra_tasks"] == 1
+    assert "2026-10-02 Gandhi Jayanti" in out["later"]["holidays_in_period"]
+    assert out["biggest_person_changes"][0]["name"] == "Priya Kumar"   # +2000
+    text = "\n".join(attached)
+    assert "₹2,000" in text and "₹3,500" in text and "+₹1,500 (+75%)" in text
+    assert "Arun" in text and "not in October" in text and "UNEW" in text and "new" in text
+    assert "₹1,000 → ₹3,000" in text and "+0%" not in text
+
+
+def test_compare_months_for_member_hides_money_and_others(wf):
+    _seed_two_months(wf)
+    out, attached = as_user(PRIYA, tools.compare_support_months, later_month="2026-10")
+    text = "\n".join(attached)
+    assert "₹" not in text and "Arun" not in text
+    assert out["amounts_visible"] is False and "total" not in out["later"]
+    assert (out["earlier"]["entries"], out["later"]["entries"]) == (2, 3)
+    assert "error" in as_user(PRIYA, tools.compare_support_months, person_slack_id=ARUN)[0]
+
+
+def test_trend_over_several_months(wf):
+    _seed_two_months(wf)
+    out, attached = as_user(ME, tools.compare_support_months, trend_months=4)
+    assert [t["label"] for t in out["trend"]] == ["July 2026", "August 2026", "September 2026", "October 2026"]
+    assert "Trend - last 4 months" in "\n".join(attached)
