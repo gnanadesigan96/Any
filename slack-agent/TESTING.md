@@ -29,7 +29,7 @@ bottom (`C…`).
 | Reviewer | Gnanadesigan | `U0C2TN3B562` |
 | Final approver (test) | Manoj | `U0BP446DWBD` |
 | HR (test) | Vijay | `U0C2TN3CC06` |
-| Comparisons & trends (private) | Uday | `analytics_users`: **member ID needed** |
+| Comparisons & trends (private) | Uday, played by Manoj in the test | `U0BP446DWBD` |
 
 The bot refuses to start while any `REPLACE-…` value is left. It acts **only**
 in these two channels and ignores mentions anywhere else.
@@ -80,8 +80,8 @@ Ask the two teammates (A and B) to do these in channel 1 during the first hour:
 | 14 | Gnanadesigan | ⋮ **Edit** / **Remove** a row, **Add entry**, then **Respond & send for approval** | Table updates in place; Manoj gets the updated tables + your response |
 | 15 | B / Vijay | Click Approve / Accept | Private "only X can do this" |
 | 16 | Manoj | **Approve** | Vijay tagged with the 21 Sep – 20 Oct data |
-| 17 | Uday | In #support-approval-test: `@ops-agent compare with last month and show the trend` | Channel thread: *"@Uday I've shared the details with you privately"*. Uday also sees the tables, amounts and explanation as "only visible to you" messages in that thread. Others in the channel don't see them (September will be empty in the test) |
-| 18 | Gnanadesigan, Manoj or A | the same comparison question | *"Sorry, you don't have access…"*, and no numbers anywhere |
+| 17 | Manoj (as Uday) | In #support-approval-test: `@ops-agent compare with last month and show the trend` | Channel thread: *"@Manoj I've shared the details with you privately"*. Manoj also sees the tables, amounts and explanation as "only visible to you" messages in that thread. Others in the channel don't see them (September will be empty in the test) |
+| 18 | Gnanadesigan or A | the same comparison question | *"Sorry, you don't have access…"*, and no numbers anywhere |
 
 Check the amounts in the approval table by hand against the rates. For example,
 a day shift on 2 Oct (Gandhi Jayanti, weekday holiday) = ₹1,000; a night shift

@@ -130,9 +130,9 @@ def test_configs_require_ids_and_restrict_channels():
     assert any(p.startswith("approver") for p in prod.problems())   # Poornodhaya's member ID still to fill in
     test = Workflow.load(Path(__file__).resolve().parent.parent / "config" / "workflow.test.json")
     assert (test.reviewer, test.approver, test.hr_users) == ("U0C2TN3B562", "U0BP446DWBD", ("U0C2TN3CC06",))
-    assert any(p.startswith("analytics_users") for p in test.problems())   # Uday's member ID still to fill in
+    assert test.analytics_users == ("U0BP446DWBD",)   # Manoj stands in for Uday in the test
     filled = dataclasses.replace(test, collection_channel="C0SUPPORT1", review_channel="C0SUPPORT1",
-                                 approval_channel="C0APPROVE1", hr_channel="C0APPROVE1", analytics_users=("U0UDAY01",))
+                                 approval_channel="C0APPROVE1", hr_channel="C0APPROVE1")
     assert filled.problems() == []
     assert filled.allowed_channels == {"C0SUPPORT1", "C0APPROVE1"}
     assert dataclasses.replace(filled, approver="manoj@corestack.io").problems()        # e-mails rejected
