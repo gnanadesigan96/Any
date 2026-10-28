@@ -126,10 +126,20 @@ def test_period_is_21st_to_20th(wf):
 
 
 def test_bundled_config_loads_and_resolves_emails():
-    cfg = Workflow.load().resolve_emails(lambda email: {"gnanadesigan@corestack.io": ME,
-                                                        "poornodhaya.reddy@corestack.io": BOSS}[email])
-    assert (cfg.reviewer, cfg.approver) == (ME, BOSS)
+    # Member IDs pass through untouched; e-mails are looked up.
+    cfg = Workflow.load().resolve_emails(lambda email: {"poornodhaya.reddy@corestack.io": BOSS}[email])
+    assert (cfg.reviewer, cfg.approver) == ("U0C2TN3B562", BOSS)
     assert cfg.period_text("2026-10") == "21 Sep 2026 - 20 Oct 2026"
+
+
+def test_test_config_is_complete():
+    cfg = Workflow.load(Path(__file__).resolve().parent.parent / "config" / "workflow.test.json")
+    assert (cfg.reviewer, cfg.approver, cfg.hr_users) == ("U0C2TN3B562", "U0BP446DWBD", ("U0C2TN3CC06",))
+    assert (cfg.collection_channel, cfg.review_channel, cfg.approval_channel) == (
+        "#support-test", "#support-test", "#support-approval-test")
+    values = [cfg.collection_channel, cfg.approval_channel, cfg.hr_channel, cfg.review_channel,
+              cfg.reviewer, cfg.approver, cfg.hr_group, *cfg.hr_users]
+    assert not [v for v in values if v and "REPLACE" in v]
 
 
 def test_submission_cycle_rolls_over_after_19th_eod(wf):
