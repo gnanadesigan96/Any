@@ -64,6 +64,7 @@ class Store:
                     submitted_by TEXT,
                     submitted_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
                 CREATE INDEX IF NOT EXISTS entries_person_date ON entries (person_id, support_date, shift);
                 """
             )
@@ -72,6 +73,14 @@ class Store:
         db = sqlite3.connect(self.path, timeout=30)
         db.row_factory = sqlite3.Row
         return db
+
+    def meta(self, key: str, default: str = None) -> str:
+        """Read a setting; if missing and `default` is given, store and return it (first writer wins)."""
+        with self._db() as db:
+            if default is not None:
+                db.execute("INSERT OR IGNORE INTO meta (key, value) VALUES (?, ?)", (key, default))
+            row = db.execute("SELECT value FROM meta WHERE key = ?", (key,)).fetchone()
+        return row["value"] if row else None
 
     # -- cycles ---------------------------------------------------------------
 

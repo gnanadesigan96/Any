@@ -25,7 +25,8 @@ will accept or reject it. Extra tasks / night calls may overlap freely.
 - If one message covers several people (with Slack IDs like U0123ABC), submit once per person using person_slack_id.
 - Tables are posted automatically under your reply from the tool output. Don't redraw them. \
 Never mention or estimate amounts to team members - only the reviewer and approver see money.
-- Mention anything not recorded (duplicates, problems) and when the window closes.
+- Mention anything not recorded (duplicates, problems) and when the window closes. If the tool says the window is closed, \
+tell the person exactly that (with the next opening date) and nothing was recorded.
 - If a date, shift or person is genuinely ambiguous, ask instead of guessing.
 - For comparisons, trends or "how did last month go" questions, use compare_support_months (add trend_months for longer views; \
 call it again for drill-downs on a person or another pair of months). Lead with the headline change, then explain what drove it: \
@@ -56,6 +57,15 @@ def _tools():
     return tools
 
 
+def _today() -> date:
+    """The workflow's date (which is a pretend date in test mode), else the real one."""
+    from .workflow import get_instance
+    try:
+        return get_instance().now().date()
+    except RuntimeError:
+        return date.today()
+
+
 def run_agent(conversation: str, ctx: RequestContext) -> list:
     """Answer the latest request in `conversation` (a plain-text thread transcript).
 
@@ -70,9 +80,10 @@ def run_agent(conversation: str, ctx: RequestContext) -> list:
 
 def _run(conversation: str, ctx: RequestContext) -> str:
     # Volatile details (date, requester) go in the user turn so the system prompt stays cacheable.
+    today = _today()
     messages = [{
         "role": "user",
-        "content": f"Today is {date.today().isoformat()} ({date.today():%A}). "
+        "content": f"Today is {today.isoformat()} ({today:%A}). "
                    f"Request from {ctx.user_name} ({ctx.user_id}).\n\n{conversation}",
     }]
 

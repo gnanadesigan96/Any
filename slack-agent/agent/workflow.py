@@ -22,7 +22,7 @@ import threading
 from datetime import date, datetime, timezone
 
 from . import blocks as B
-from .config import Policy, Workflow, cycle_id_for, cycle_label, next_cycle_id, prev_cycle_id
+from .config import Policy, PretendClock, Workflow, cycle_id_for, cycle_label, next_cycle_id, prev_cycle_id
 from .report import code_blocks, final_report, shift_label
 from .store import Store
 
@@ -55,11 +55,37 @@ class SupportWorkflow:
         self.cfg = cfg
         self.bot_mention = f"<@{bot_user_id}>" if bot_user_id else "@me"
         self._names = {}
+        self.pretend_clock = None
+        if cfg.test_timeline:
+            # Remember the first start so a restart doesn't rewind the pretend clock.
+            started = self.store.meta("test_started_at", datetime.now(cfg.tz).isoformat())
+            self.pretend_clock = PretendClock(cfg.test_timeline, datetime.fromisoformat(started))
 
     # -- helpers --------------------------------------------------------------
 
     def now(self) -> datetime:
-        return datetime.now(self.cfg.tz)
+        real = datetime.now(self.cfg.tz)
+        return self.pretend_clock.at_real(real).astimezone(self.cfg.tz) if self.pretend_clock else real
+
+    def _test_tag(self, pretend: datetime = None) -> str:
+        """In test mode: a label (and the real time a pretend moment happens) for messages."""
+        if not self.pretend_clock:
+            return ""
+        if pretend is None:
+            return ":test_tube: *[TEST]* "
+        real = self.pretend_clock.real_for(pretend).astimezone(self.cfg.tz)
+        return f" _(test mode: that's about {real:%I:%M %p} real time today)_"
+
+    def window_state(self, now: datetime = None) -> dict:
+        """Is the submission window open right now? Window = reminder time (17th) .. close (19th EOD)."""
+        now = now or self.now()
+        cid = cycle_id_for(now)
+        opens, closes = self.cfg.at(cid, self.cfg.reminder), self.cfg.close_at(cid)
+        status = (self.store.cycle(cid) or {}).get("status", "open")
+        if opens <= now < closes and status == "open":
+            return {"open": True, "cycle": cid, "closes": closes}
+        nxt = next_cycle_id(cid) if now >= opens else cid
+        return {"open": False, "cycle": cid, "next_cycle": nxt, "next_opens": self.cfg.at(nxt, self.cfg.reminder)}
 
     def user_name(self, user_id: str) -> str:
         if user_id not in self._names:
@@ -175,12 +201,12 @@ class SupportWorkflow:
         self.client.chat_postMessage(
             channel=self.cfg.collection_channel,
             text=(
-                f"<!channel> :wave: Time to submit your *support details for {cycle_label(cid)}* "
+                f"{self._test_tag()}<!channel> :wave: Time to submit your *support details for {cycle_label(cid)}* "
                 f"(support dates *{self.cfg.period_text(cid)}*).\n"
                 f"Mention me in this channel with the dates and shifts, for example:\n"
                 f"> {self.bot_mention} Night shift 3, 4 Oct; day shift 11 Oct, on 11th also did the DB failover\n"
                 f"I'll reply with a table of what I recorded so you can check it.\n"
-                f"*Window closes: {self._deadline_text(cid)}.*"
+                f"*Window closes: {self._deadline_text(cid)}.*{self._test_tag(self.cfg.close_at(cid))}"
             ),
         )
 
@@ -188,8 +214,8 @@ class SupportWorkflow:
         self.store.update_cycle(cid, closing_reminder_sent_at=_utc_now())
         self.client.chat_postMessage(
             channel=self.cfg.collection_channel,
-            text=f"<!channel> :hourglass_flowing_sand: Last day to submit support details for {cycle_label(cid)} - "
-                 f"the window closes *{self._deadline_text(cid)}*.",
+            text=f"{self._test_tag()}<!channel> :hourglass_flowing_sand: Last day to submit support details for {cycle_label(cid)} - "
+                 f"the window closes *{self._deadline_text(cid)}*.{self._test_tag(self.cfg.close_at(cid))}",
         )
 
     def close_cycle(self, cid) -> str:
@@ -207,13 +233,14 @@ class SupportWorkflow:
             return self.store.cycle(cid)["status"]
         self.client.chat_postMessage(
             channel=self.cfg.collection_channel,
-            text=f":lock: The support details window for {cycle_label(cid)} is closed and has been sent for approval. "
-                 f"Anything new will go into next month's cycle.",
+            text=f"{self._test_tag()}:lock: The support details window for {cycle_label(cid)} is closed and has been "
+                 f"sent for approval. " + ("Anything new will go into next month's cycle." if self.cfg.outside_window == "next_cycle"
+                                           else f"The next window opens on {self.cfg.at(next_cycle_id(cid), self.cfg.reminder):%d %B}."),
         )
         if pending:
             self.client.chat_postMessage(
-                channel=self.cfg.reviewer,
-                text=f"The {cycle_label(cid)} window is closed. *{len(pending)} flagged "
+                channel=self.cfg.review_target,
+                text=f"<@{self.cfg.reviewer}> the {cycle_label(cid)} window is closed. *{len(pending)} flagged "
                      f"entr{'y' if len(pending) == 1 else 'ies'}* still need your decision before the final table goes "
                      f"to <@{self.cfg.approver}>:",
             )
@@ -230,7 +257,7 @@ class SupportWorkflow:
             chunk = self.store.entries(cid, ids=entry_ids[i:i + B.ROWS_PER_MESSAGE])
             names = ", ".join(sorted({e["person_name"] for e in chunk}))
             self.client.chat_postMessage(
-                channel=self.cfg.reviewer,
+                channel=self.cfg.review_target,
                 text=f"Support entries for {cycle_label(cid)} need your review ({names}).",
                 blocks=B.review_blocks(cid, chunk, self.cfg, policy),
             )
@@ -258,7 +285,7 @@ class SupportWorkflow:
         if self.store.pending_reviews(cid):
             return
         if self.store.transition(cid, ["reviewing"], "pending_approval"):
-            self.client.chat_postMessage(channel=self.cfg.reviewer,
+            self.client.chat_postMessage(channel=self.cfg.review_target,
                                          text=f"All flagged entries for {cycle_label(cid)} are decided - "
                                               f"sending the final table to <@{self.cfg.approver}>.")
             self.post_for_approval(cid)
@@ -287,7 +314,7 @@ class SupportWorkflow:
     def post_for_approval(self, cid, response: str = None):
         report = final_report(self.store.entries(cid, payable_only=True), Policy.load())
         channel = self.cfg.approval_channel
-        title = f"Support allowance - {cycle_label(cid)}" + (" (updated)" if response else "")
+        title = f"{self._test_tag()}Support allowance - {cycle_label(cid)}" + (" (updated)" if response else "")
         self._post_report(channel, cid, report, title)
         text, blocks = B.approval_blocks(cid, report, self.cfg, self.store.cycle(cid), response)
         resp = self.client.chat_postMessage(channel=channel, text=text, blocks=blocks)
@@ -317,9 +344,10 @@ class SupportWorkflow:
             self._post_report(self.cfg.hr_channel, cid, report, f"Support allowance - {cycle_label(cid)} (approved)")
         self.client.chat_postMessage(
             channel=self.cfg.hr_channel,
-            text=(f"{self.cfg.hr_mention()} The support allowance details for *{cycle_label(cid)}* "
-                  f"(period {self.cfg.period_text(cid)}) are updated and approved by <@{user_id}>. "
-                  f"{report['people']} people, total *{report['grand_total_text']}*. The tables and CSV are above."),
+            text=(f"{self._test_tag()}{self.cfg.hr_mention()} The support incentive data for *{self.cfg.period_text(cid)}* "
+                  f"({cycle_label(cid)} cycle) is updated and approved by <@{user_id}>. "
+                  f"{report['people']} people, total *{report['grand_total_text']}*. "
+                  f"Please find the detailed tables and the CSV above for processing."),
         )
         return "approved"
 

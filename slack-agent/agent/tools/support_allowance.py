@@ -101,7 +101,20 @@ def submit_support_details(entries: list[SupportEntry], person_slack_id: str = "
         _attach_person_table(person_id, person_name, cycle)
         return json.dumps({"person": person_name, "added": added, "problems": problems, "cycle": cycle_label(cycle)})
 
-    cid = wf.submission_cycle()
+    if wf.cfg.outside_window == "reject":
+        window = wf.window_state()
+        if not window["open"]:
+            return json.dumps({
+                "window_closed": True,
+                "message": f"The support details window is closed. The next window opens on "
+                           f"{window['next_opens']:%d %B %Y} for {cycle_label(window['next_cycle'])} "
+                           f"(support dates {wf.cfg.period_text(window['next_cycle'])}). "
+                           f"For anything urgent, contact <@{wf.cfg.reviewer}>.",
+                "nothing_recorded": True,
+            })
+        cid = window["cycle"]
+    else:
+        cid = wf.submission_cycle()
     wf.store.ensure_cycle(cid)
     added, duplicates = [], []
     for e in clean:  # one at a time so overlaps within the same message are caught too

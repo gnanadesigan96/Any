@@ -66,6 +66,9 @@ class Workflow:
     reminder: tuple          # (day, time)
     closing_reminder: tuple  # (day, time) or None
     close: tuple             # (day, time)
+    review_channel: str = None        # where flagged entries go; None = DM the reviewer
+    outside_window: str = "reject"    # "reject" (tell them the window is closed) or "next_cycle"
+    test_timeline: tuple = None       # ((minutes_after_start, pretend_datetime), ...) - test mode only
 
     @classmethod
     def load(cls, path=None):
@@ -91,6 +94,9 @@ class Workflow:
             reminder=slot("reminder"),
             closing_reminder=slot("closing_reminder"),
             close=slot("close"),
+            review_channel=raw.get("review_channel") or None,
+            outside_window=raw.get("submissions_outside_window", "reject"),
+            test_timeline=_test_timeline(raw, ZoneInfo(raw.get("timezone", "Asia/Kolkata"))),
         )
 
     def resolve_emails(self, lookup) -> "Workflow":
@@ -98,6 +104,17 @@ class Workflow:
         conv = lambda v: lookup(v) if "@" in v else v  # noqa: E731
         return replace(self, reviewer=conv(self.reviewer), approver=conv(self.approver),
                        hr_users=tuple(conv(u) for u in self.hr_users))
+
+    def resolve_channels(self, lookup) -> "Workflow":
+        """Swap "#channel-name" values for channel IDs using `lookup(name) -> id`."""
+        conv = lambda v: lookup(v[1:]) if v and v.startswith("#") else v  # noqa: E731
+        return replace(self, collection_channel=conv(self.collection_channel), approval_channel=conv(self.approval_channel),
+                       hr_channel=conv(self.hr_channel), review_channel=conv(self.review_channel))
+
+    @property
+    def review_target(self) -> str:
+        """Channel (or the reviewer's DM) where flagged entries are posted."""
+        return self.review_channel or self.reviewer
 
     @property
     def admins(self) -> frozenset:
@@ -129,6 +146,47 @@ class Workflow:
         parts += [f"<@{u}>" for u in self.hr_users]
         return " ".join(parts) or "HR team"
 
+
+
+def _test_timeline(raw, tz):
+    tm = raw.get("test_mode") or {}
+    if not tm.get("enabled"):
+        return None
+    points = tuple(sorted(
+        (float(p["after_minutes"]), datetime.fromisoformat(p["pretend"]).replace(tzinfo=tz)) for p in tm["timeline"]))
+    if len(points) < 2 or points[0][0] != 0:
+        raise ValueError("test_mode.timeline needs at least two points, the first at after_minutes 0")
+    return points
+
+
+class PretendClock:
+    """Test mode: real minutes since the bot first started map onto pretend dates.
+
+    Between two timeline points pretend time moves proportionally; after the last
+    point it moves at normal speed.
+    """
+
+    def __init__(self, timeline, started_real: datetime):
+        self.timeline = timeline
+        self.started = started_real
+
+    def at_real(self, real: datetime) -> datetime:
+        minutes = (real - self.started).total_seconds() / 60
+        pts = self.timeline
+        for (m0, p0), (m1, p1) in zip(pts, pts[1:]):
+            if minutes <= m1:
+                frac = max(minutes, m0) - m0
+                return p0 + (p1 - p0) * (frac / (m1 - m0))
+        return pts[-1][1] + timedelta(minutes=minutes - pts[-1][0])
+
+    def real_for(self, pretend: datetime) -> datetime:
+        """When (real time) the pretend clock reaches `pretend`."""
+        pts = self.timeline
+        for (m0, p0), (m1, p1) in zip(pts, pts[1:]):
+            if pretend <= p1:
+                frac = max((pretend - p0) / (p1 - p0), 0)
+                return self.started + timedelta(minutes=m0 + (m1 - m0) * frac)
+        return self.started + timedelta(minutes=pts[-1][0]) + (pretend - pts[-1][1])
 
 
 def cycle_id_for(dt: datetime) -> str:

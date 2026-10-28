@@ -1,8 +1,10 @@
 {
-  "_comment": "Channels need Slack channel IDs (C...). People can be e-mail addresses or Slack user IDs (U...). hr_group is a user-group ID (S...). See README.",
+  "_comment": "PRODUCTION setup. Channels can be '#channel-name' or a channel ID (C...). People can be e-mail addresses or Slack user IDs (U...). hr_group is a user-group ID (S...). See README.",
   "timezone": "Asia/Kolkata",
 
   "collection_channel": "C_REPLACE_ME_SUPPORT_CHANNEL",
+  "_review_channel_comment": "null = flagged entries go to the reviewer's DM; or a channel to post them there.",
+  "review_channel": null,
   "approval_channel": "C_REPLACE_ME_APPROVAL_CHANNEL",
   "hr_channel": null,
 
@@ -13,6 +15,8 @@
 
   "_period_comment": "The cycle for month M pays support dates from start_day of M-1 to end_day of M (21 Sep -> 20 Oct for October). Dates outside it are flagged for the reviewer.",
   "period": {"start_day": 21, "end_day": 20},
+  "_outside_window_comment": "reject = submissions outside 17th..19th EOD get a 'window is closed' reply; next_cycle = accept them into the next month.",
+  "submissions_outside_window": "reject",
 
   "schedule": {
     "reminder":         {"day": 17, "time": "10:00"},

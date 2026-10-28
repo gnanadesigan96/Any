@@ -102,14 +102,46 @@ def on_message(event, client, context):
 slack_actions.register(app)
 
 
+def _channel_id(name: str) -> str:
+    cursor = None
+    while True:
+        resp = app.client.conversations_list(types="public_channel,private_channel", limit=1000, cursor=cursor,
+                                             exclude_archived=True)
+        for ch in resp["channels"]:
+            if ch["name"] == name:
+                return ch["id"]
+        cursor = (resp.get("response_metadata") or {}).get("next_cursor")
+        if not cursor:
+            raise SystemExit(f"Channel #{name} not found - check the name and invite the bot to it (/invite @ops-agent).")
+
+
+def _user_id(email: str) -> str:
+    try:
+        return app.client.users_lookupByEmail(email=email)["user"]["id"]
+    except Exception:
+        raise SystemExit(f"No Slack user with e-mail {email} - use their member ID instead.") from None
+
+
 def start_workflow():
+    raw_cfg = Workflow.load()
+    placeholders = [v for v in (raw_cfg.collection_channel, raw_cfg.approval_channel, raw_cfg.hr_channel,
+                                raw_cfg.review_channel, raw_cfg.reviewer, raw_cfg.approver, raw_cfg.hr_group,
+                                *raw_cfg.hr_users) if v and "REPLACE" in v]
+    if placeholders:
+        raise SystemExit(f"Fill these in the workflow config first: {', '.join(placeholders)}")
     bot_user_id = app.client.auth_test()["user_id"]
-    # Reviewer / approver may be configured as e-mail addresses; Slack needs their user IDs.
-    cfg = Workflow.load().resolve_emails(lambda email: app.client.users_lookupByEmail(email=email)["user"]["id"])
-    log.info("support workflow: reviewer=%s approver=%s", cfg.reviewer, cfg.approver)
-    wf = workflow.SupportWorkflow(
-        app.client, Store(os.environ.get("SUPPORT_DB_PATH", "support_allowance.db")), cfg, bot_user_id,
-    )
+    # Channels may be given as #names and people as e-mails; Slack needs IDs.
+    cfg = raw_cfg.resolve_emails(_user_id).resolve_channels(_channel_id)
+    log.info("support workflow: reviewer=%s approver=%s hr=%s channels: collect=%s review=%s approve=%s hr=%s",
+             cfg.reviewer, cfg.approver, cfg.hr_users or cfg.hr_group, cfg.collection_channel,
+             cfg.review_target, cfg.approval_channel, cfg.hr_channel)
+    default_db = "test_support_allowance.db" if cfg.test_timeline else "support_allowance.db"
+    wf = workflow.SupportWorkflow(app.client, Store(os.environ.get("SUPPORT_DB_PATH", default_db)), cfg, bot_user_id)
+    if wf.pretend_clock:
+        for minutes, pretend in cfg.test_timeline:
+            real = wf.pretend_clock.real_for(pretend).astimezone(cfg.tz)
+            log.warning("TEST MODE: pretend %s at real %s", f"{pretend:%d %b %H:%M}", f"{real:%d %b %H:%M}")
+        log.warning("TEST MODE: pretend time now is %s", f"{wf.now():%d %b %Y %H:%M}")
     workflow.set_instance(wf)
     wf.start()
 

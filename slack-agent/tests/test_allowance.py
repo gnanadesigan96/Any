@@ -430,3 +430,72 @@ def test_trend_over_several_months(wf):
     out, attached = as_user(ME, tools.compare_support_months, trend_months=4)
     assert [t["label"] for t in out["trend"]] == ["July 2026", "August 2026", "September 2026", "October 2026"]
     assert "Trend - last 4 months" in "\n".join(attached)
+
+
+# -- test mode: pretend clock and closed window -----------------------------------
+
+from datetime import timedelta  # noqa: E402
+
+from agent.config import PretendClock  # noqa: E402
+
+
+def test_pretend_clock_maps_real_minutes_to_test_dates():
+    tl = Workflow.load(Path(__file__).resolve().parent.parent / "config" / "workflow.test.json").test_timeline
+    start = ist(2026, 10, 28, 15, 0)
+    c = PretendClock(tl, start)
+    assert c.at_real(start) == ist(2026, 10, 17, 10, 0)
+    assert c.at_real(start + timedelta(minutes=60)) == ist(2026, 10, 19, 10, 0)
+    assert c.at_real(start + timedelta(minutes=90)) == ist(2026, 10, 20, 0, 0)
+    assert c.at_real(start + timedelta(minutes=100)) == ist(2026, 10, 20, 0, 10)
+    assert c.real_for(ist(2026, 10, 20, 0, 0)) == start + timedelta(minutes=90)
+
+
+def test_simulated_test_run_end_to_end(tmp_path):
+    """Drive the real test timeline minute by minute: 17th reminder, 19th reminder, close, then 'window closed'."""
+    import dataclasses
+    tl = Workflow.load(Path(__file__).resolve().parent.parent / "config" / "workflow.test.json").test_timeline
+    cfg = dataclasses.replace(CFG, test_timeline=tl, review_channel="CSUPPORT")
+    w = workflow.SupportWorkflow(FakeSlack(), Store(tmp_path / "t.db"), cfg, "UBOT")
+    start = datetime.fromisoformat(w.store.meta("test_started_at"))
+    real = {"t": start}
+    w.now = lambda: w.pretend_clock.at_real(real["t"]).astimezone(IST)
+    workflow.set_instance(w)
+    slack = w.client
+    try:
+        w.tick()
+        assert "[TEST]" in slack.posts[0]["text"] and "Time to submit" in slack.posts[0]["text"]
+        assert "real time today" in slack.posts[0]["text"]
+
+        real["t"] = start + timedelta(minutes=20)        # pretend ~17th evening
+        out, _ = as_user(PRIYA, tools.submit_support_details, entries=[
+            {"date": "2026-10-03", "shift": "night"}, {"date": "2026-10-22", "shift": "day"}])
+        assert out["added"] == 2 and out["flagged_for_reviewer"]
+        assert slack.with_blocks("CSUPPORT")  # flagged entry posted for review in the test group, not a DM
+        as_user(ARUN, tools.submit_support_details, entries=[{"date": "2026-10-03", "shift": "night"}])
+
+        for minute in range(21, 95):
+            real["t"] = start + timedelta(minutes=minute)
+            w.tick()
+            if minute == 60:
+                assert "Last day" in slack.texts("CSUPPORT")[-1]
+        assert any("window for October 2026 is closed" in t for t in slack.texts("CSUPPORT"))
+        assert w.store.cycle("2026-10")["status"] == "reviewing"  # 3 flags still open
+
+        out, _ = as_user(ARUN, tools.submit_support_details, entries=[{"date": "2026-10-10", "shift": "day"}])
+        assert out["window_closed"] and "17 November 2026" in out["message"]
+
+        for e in w.store.pending_reviews("2026-10"):
+            w.review(e["id"], "rejected" if e["person_id"] == ARUN or e["support_date"] == "2026-10-22" else "accepted", ME)
+        approval = slack.with_blocks("CAPPROVAL")[-1]
+        assert f"<@{BOSS}>" in approval["text"] and "₹500" in approval["text"]
+        assert w.approve("2026-10", BOSS) == "approved"
+        hr = slack.texts("CAPPROVAL")[-1]
+        assert "21 Sep 2026 - 20 Oct 2026" in hr and "[TEST]" in hr
+    finally:
+        workflow.set_instance(None)
+
+
+def test_submissions_before_the_17th_get_window_closed(wf):
+    wf.clock.dt = ist(2026, 10, 16, 18)
+    out, _ = as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-10-10", "shift": "day"}])
+    assert out["window_closed"] and "17 October 2026" in out["message"]

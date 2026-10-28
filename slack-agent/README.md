@@ -95,6 +95,11 @@ amounts. Only the approver and HR do.
 Gandhi Jayanti, Christmas) are pre-filled. Add your company's festival
 holidays (Holi, Eid, Diwali, …) to `holidays`.
 
+## Testing before go-live
+
+See **[TESTING.md](TESTING.md)**. Test mode runs the whole month in about 1.5
+hours, using test channels and test approver/HR people.
+
 ## Setup
 
 1. **Create the Slack app:** https://api.slack.com/apps → *Create New App* →
