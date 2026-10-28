@@ -303,13 +303,6 @@ class SupportWorkflow:
         self.client.chat_postMessage(channel=channel, text="*Details*")
         for block in code_blocks(report["detail"]):
             self.client.chat_postMessage(channel=channel, text=block)
-        try:
-            self.client.files_upload_v2(
-                channel=channel, content=report["csv"],
-                filename=f"support-allowance-{cid}.csv", title=f"Support allowance {cycle_label(cid)} (CSV)",
-            )
-        except Exception:
-            log.exception("CSV upload failed (does the app have the files:write scope?)")
 
     def post_for_approval(self, cid, response: str = None):
         report = final_report(self.store.entries(cid, payable_only=True), Policy.load())
@@ -347,7 +340,7 @@ class SupportWorkflow:
             text=(f"{self._test_tag()}{self.cfg.hr_mention()} The support incentive data for *{self.cfg.period_text(cid)}* "
                   f"({cycle_label(cid)} cycle) is updated and approved by <@{user_id}>. "
                   f"{report['people']} people, total *{report['grand_total_text']}*. "
-                  f"Please find the detailed tables and the CSV above for processing."),
+                  f"Please find the detailed tables above for processing."),
         )
         return "approved"
 

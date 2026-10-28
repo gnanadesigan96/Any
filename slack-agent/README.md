@@ -24,7 +24,7 @@ are fine, and extra tasks / night calls may overlap freely.
 | any time | Some entries are kept but **flagged**: a date **outside the period**, or a **day/night shift that overlaps another person's same shift on the same date**. They are posted in the review channel (by default the support channel) for the reviewer (Gnanadesigan), naming the member, date and reason, with **Accept / Reject** buttons for each entry. For overlaps, both people's entries are put up so the reviewer chooses which stands. Each submitter is told the outcome in their thread. |
 | **19th, 10:00** | "Last day" reminder. |
 | **19th, 23:59 (EOD)** | Window closes. If flagged entries are still undecided, the reviewer is reminded and the final table **waits** until they're decided. |
-| then | The **final tables (summary + per-day detail + CSV)** are posted in the approval channel and the **approver (Poornodhaya)** is tagged with **Approve / Raise concern** buttons. |
+| then | The **final tables (summary + per-day detail)** are posted in the approval channel and the **approver (Poornodhaya)** is tagged with **Approve / Raise concern** buttons. |
 | Raise concern | A form asks for the concern and, optionally, the specific entries. It comes back to the reviewer as an **interactive table** in the thread, with ⋮ *Edit* / *Remove* (or *Restore*) on each row, plus *Add entry* and *Respond & send for approval*. The table updates in place as rows are fixed. The approver then gets the updated tables plus the response, with the buttons again. |
 | Approve | The **HR group is tagged**: details for the month are updated and approved. |
 
@@ -133,6 +133,13 @@ by permissions and by the bot itself:
   up by e-mail, or read anyone's direct messages. It can *send* a private message
   (`im:write`), which is used only to deliver comparisons to Uday. Its messages
   tab is read-only, so nobody can message it there.
+- **No delete permissions.** The bot has no reaction or file permissions. Slack
+  has no delete permission for bots, and `chat:write` would only let it delete
+  its *own* messages. The code never calls any delete, remove, archive, join,
+  invite or settings method, and a test fails the build if one is added.
+  Full permission list: post and edit its own messages (`chat:write`), see its
+  @mentions and the threads in its two channels, look up people's names
+  (`users:read`), and send Uday's private comparisons (`im:write`).
 - **Bot behaviour:** it acts only in the channel IDs in the workflow config.
   Mentions in any other channel are ignored, even if someone invites it there.
 - That's why the config takes **IDs only**: channel IDs (`C…`) and member IDs
@@ -180,7 +187,7 @@ agent/slack_actions.py      What happens when someone clicks / submits a form
 agent/tools/                Tools Claude can call (support allowance, date helpers, ...)
 agent/config.py             Loads rates + workflow settings
 agent/store.py              SQLite: cycles and submitted entries
-agent/report.py             Tables and CSV
+agent/report.py             Tables
 agent/analytics.py          Month-over-month comparison and trends
 config/allowance_policy.json  Rates and holidays
 config/workflow.json          Channels, approver, HR group, schedule

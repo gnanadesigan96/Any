@@ -42,9 +42,6 @@ class FakeSlack:
     def views_open(self, **kw):
         self.views.append(kw["view"])
 
-    def files_upload_v2(self, **kw):
-        self.files.append(kw)
-
     def users_info(self, user):
         return {"user": {"real_name": {PRIYA: "Priya Kumar", ARUN: "Arun", ME: "Gnanadesigan", BOSS: "Poornodhaya"}.get(user, user)}}
 
@@ -555,3 +552,22 @@ def test_submissions_before_the_17th_get_window_closed(wf):
     wf.clock.dt = ist(2026, 10, 16, 18)
     out, _ = as_user(PRIYA, tools.submit_support_details, entries=[{"date": "2026-10-10", "shift": "day"}])
     assert out["window_closed"] and "17 October 2026" in out["message"]
+
+
+# -- permissions guard --------------------------------------------------------------
+
+def test_bot_never_deletes_or_removes_anything():
+    """The bot may only read, post and edit its own messages. Fail if any destructive Slack call appears."""
+    import re as _re
+    root = Path(__file__).resolve().parent.parent
+    allowed = {"auth_test", "chat_postMessage", "chat_postEphemeral", "chat_update",
+               "conversations_replies", "users_info", "views_open"}
+    used = set()
+    for f in [root / "app.py", *root.glob("agent/**/*.py")]:
+        used |= set(_re.findall(r"client\.([a-z_]+)\(", f.read_text()))
+    assert used <= allowed, f"unexpected Slack calls: {used - allowed}"
+    assert not [m for m in used if _re.search(r"delete|remove|archive|kick|leave|rename|set_|invite|join", m)]
+
+    manifest = (root / "manifest.yaml").read_text()
+    scopes = set(_re.findall(r"^\s+- ([a-z.:_]+)$", manifest.split("settings:")[0], _re.M))
+    assert scopes == {"app_mentions:read", "chat:write", "channels:history", "groups:history", "users:read", "im:write"}

@@ -99,7 +99,7 @@ def review_blocks(cid, entries, cfg: Workflow, policy: Policy):
 def approval_blocks(cid, report, cfg: Workflow, cycle: dict, response: str = None):
     text = (f"<@{cfg.approver}> please review the support allowance for *{cycle_label(cid)}* "
             f"(period {cfg.period_text(cid)}): {report['people']} people, {report['entries']} entries, "
-            f"total *{report['grand_total_text']}*. Tables and CSV are above.")
+            f"total *{report['grand_total_text']}*. The detailed tables are above.")
     blocks = [{"type": "section", "text": _text(text)}]
     if response:
         blocks.append({"type": "section", "text": _text(

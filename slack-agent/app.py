@@ -74,17 +74,11 @@ def _handle(event, client, context):
 
     ctx = RequestContext(user_id=event["user"], user_name=_user_name(client, event["user"]),
                          channel_id=channel, thread_ts=thread_ts)
-    client.reactions_add(channel=channel, timestamp=event["ts"], name="eyes")
     try:
         replies = run_agent(convo, ctx)
     except Exception:
         log.exception("agent failed")
         replies = ["Sorry, something went wrong while handling that. Please try again."]
-    finally:
-        try:
-            client.reactions_remove(channel=channel, timestamp=event["ts"], name="eyes")
-        except Exception:
-            pass
     deliver(client, ctx, channel, thread_ts, replies)
 
 

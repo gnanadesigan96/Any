@@ -2,6 +2,8 @@
 # Least privilege: the bot can only read/post in channels it is invited to. It cannot list channels,
 # look people up by e-mail, or read anyone's direct messages. It can SEND a private message (im:write) -
 # used only to deliver comparisons/trends to the authorised person; its messages tab is read-only.
+# No reaction or file permissions. Slack has no delete scope for bots; chat:write would only allow
+# deleting the bot's OWN messages, and the code never calls any delete/remove method (enforced by a test).
 display_information:
   name: Ops Agent
   description: Monthly support allowance workflow
@@ -20,9 +22,7 @@ oauth_config:
       - chat:write
       - channels:history
       - groups:history
-      - reactions:write
       - users:read
-      - files:write
       - im:write
 settings:
   event_subscriptions:

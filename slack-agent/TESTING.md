@@ -10,8 +10,8 @@ production settings and data are untouched.
 | 0–60 min | 17th → 19th | Members submit fake data. Flagged entries go to the review in the same channel, for Gnanadesigan. |
 | 60 min | **19 Oct, 10:00** | `[TEST]` "Last day" reminder. |
 | 90 min | **19 Oct, EOD** | `[TEST]` "window is closed" message. From now on, anyone who submits gets *"The window is closed. The next window opens on 17 November…"*. |
-| after close | – | If flags are still undecided, Gnanadesigan is reminded and the final table waits. Once all are decided, the **summary + details + CSV** go to the test approval channel and **Manoj** is tagged with *Approve / Raise concern*. |
-| Manoj approves | – | **Vijay** is tagged: support incentive data for 21 Sep – 20 Oct is approved, with the tables and CSV. |
+| after close | – | If flags are still undecided, Gnanadesigan is reminded and the final table waits. Once all are decided, the **summary + details** tables go to the test approval channel and **Manoj** is tagged with *Approve / Raise concern*. |
+| Manoj approves | – | **Vijay** is tagged: support incentive data for 21 Sep – 20 Oct is approved, with the tables. |
 
 Every scheduled message says the real time the next step happens (e.g. *"that's
 about 4:30 PM real time today"*). The bot also logs the timeline when it starts.
