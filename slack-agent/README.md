@@ -1,5 +1,9 @@
 # Slack Ops Agent
 
+> **Slack-hosted version:** `../slack-hosted` runs the same bot on Slack's own servers (Run on
+> Slack), with no laptop or server to keep running. This folder is the self-hosted Python version,
+> which is still useful for the laptop test.
+
 A multipurpose Slack bot powered by Claude. Mention it in one of its configured
 channels and it replies in the thread. Its main job is the **monthly support allowance
 workflow**. It can also answer general questions, using web search when needed.

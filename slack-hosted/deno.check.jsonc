@@ -1,0 +1,8 @@
+{
+  // Local type-checking only (deno.land is unreachable in the build sandbox); same SDK, served from jsr.
+  "lock": false,
+  "imports": {
+    "deno-slack-sdk/": "jsr:/@slack/sdk@2.15.2/",
+    "deno-slack-api/mod.ts": "jsr:@slack/api@2.9.0"
+  }
+}

@@ -1,0 +1,6 @@
+# Slack CLI local state (app IDs per workspace) and local env
+.slack/apps.json
+.slack/apps.dev.json
+.slack/cache/
+.env
+dist/

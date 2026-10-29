@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/denoland/deno/main/cli/schemas/config-file.v1.json",
+  "fmt": { "lineWidth": 120 },
+  "lock": false,
+  "tasks": {
+    "test": "deno test --allow-read --allow-env tests/",
+    "check": "deno check manifest.ts functions/*.ts triggers/*.ts triggers/test/*.ts"
+  },
+  "imports": {
+    "deno-slack-sdk/": "https://deno.land/x/deno_slack_sdk@2.15.1/",
+    "deno-slack-api/": "https://deno.land/x/deno_slack_api@2.8.0/"
+  }
+}
