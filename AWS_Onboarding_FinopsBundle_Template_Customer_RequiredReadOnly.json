@@ -1,0 +1,278 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "Creates a new IAM role for your AWS account with only the read permissions marked Required for the CoreStack FinOps Bundle (no write permissions)",
+	"Parameters": {
+		"RoleName": {
+			"Type": "String",
+			"Description": "The name of the IAM role to create. Use alphanumeric and '+=,.@-_' characters.",
+			"AllowedPattern": "[\\w+=,.@-]{1,64}",
+			"MinLength": "1",
+			"MaxLength": "64"
+		},
+		"ExternalId": {
+			"Type": "String",
+			"Description": "The external ID can be any word or number that is agreed upon between you and the third-party (Corestack - 028811834831) account. Use alphanumeric and '=,.@:/-' characters.",
+			"AllowedPattern": "[a-zA-Z0-9=,.@:/-]*",
+			"MinLength": "1",
+			"MaxLength": "64"
+		},
+		"AWSCostAndUsageReportCURBucketName": {
+			"Type": "String",
+			"Description": "The name of the Cost and Usage Report (CUR) S3 bucket to get Cost details. NOTE: THIS IS AN OPTIONAL PARAMETER, SHOULD BE INCLUDED FOR AWS MANAGEMENT/LINKED/STANDARD ACCOUNTS FOR WHICH CUR IS ENABLED!!!! Use lowercase letters, numbers, periods (.) and hyphens (-)",
+			"AllowedPattern": "^[a-z0-9\\.\\-]*$",
+			"MinLength": "0",
+			"MaxLength": "64"
+		},
+		"EnforceMFA": {
+			"Description": "Flag to enforce MFA (Multi-Factor Authentication) when Assuming the role.",
+			"Type": "String",
+			"Default": "false",
+			"AllowedValues": [
+				"true",
+				"false"
+			]
+		},
+		"CoreStackAccountId": {
+			"Type": "String",
+			"Description": "The AWS Account ID of Corestack.",
+			"Default": "028811834831"
+		}
+	},
+	"Conditions": {
+		"IncludeMFACondition": {
+			"Fn::Equals": [
+				{
+					"Ref": "EnforceMFA"
+				},
+				"true"
+			]
+		},
+		"BucketNotEmpty": {
+			"Fn::Not": [
+				{
+					"Fn::Equals": [
+						{
+							"Ref": "AWSCostAndUsageReportCURBucketName"
+						},
+						""
+					]
+				}
+			]
+		}
+	},
+	"Resources": {
+		"Role": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"RoleName": {
+					"Ref": "RoleName"
+				},
+				"AssumeRolePolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Principal": {
+								"AWS": {
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:iam::",
+											{
+												"Ref": "CoreStackAccountId"
+											},
+											":root"
+										]
+									]
+								}
+							},
+							"Condition": {
+								"Fn::If": [
+									"IncludeMFACondition",
+									{
+										"StringEquals": {
+											"sts:ExternalId": {
+												"Ref": "ExternalId"
+											}
+										},
+										"Bool": {
+											"aws:MultiFactorAuthPresent": "true"
+										}
+									},
+									{
+										"StringEquals": {
+											"sts:ExternalId": {
+												"Ref": "ExternalId"
+											}
+										}
+									}
+								]
+							},
+							"Action": [
+								"sts:AssumeRole"
+							]
+						}
+					]
+				},
+				"Tags": [
+					{
+						"Key": "Purpose",
+						"Value": "CoreStack"
+					}
+				]
+			}
+		},
+		"FinOpsRequiredReadPolicy": {
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "CoreStack_FinOpsRequiredReadPolicy",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "CostProcessingOrganizations",
+							"Effect": "Allow",
+							"Action": [
+								"organizations:ListAccounts"
+							],
+							"Resource": "*"
+						},
+						{
+							"Sid": "Budget",
+							"Effect": "Allow",
+							"Action": [
+								"budgets:ViewBudget"
+							],
+							"Resource": "*"
+						},
+						{
+							"Sid": "CloudNativeRecommendationsRead",
+							"Effect": "Allow",
+							"Action": [
+								"compute-optimizer:GetEC2InstanceRecommendations",
+								"compute-optimizer:GetLambdaFunctionRecommendations",
+								"support:DescribeTrustedAdvisorCheckResult"
+							],
+							"Resource": "*"
+						},
+						{
+							"Sid": "SavingsPlans",
+							"Effect": "Allow",
+							"Action": [
+								"ce:GetSavingsPlansUtilization",
+								"ce:GetSavingsPlansPurchaseRecommendation",
+								"savingsplans:DescribeSavingsPlans"
+							],
+							"Resource": "*"
+						},
+						{
+							"Sid": "Reservation",
+							"Effect": "Allow",
+							"Action": [
+								"ce:GetReservationUtilization",
+								"ce:GetReservationPurchaseRecommendation"
+							],
+							"Resource": "*"
+						},
+						{
+							"Sid": "ScheduleRecommendationsAndUtilization",
+							"Effect": "Allow",
+							"Action": [
+								"cloudwatch:GetMetricData",
+								"cloudwatch:GetMetricStatistics",
+								"cloudwatch:ListMetrics",
+								"lightsail:GetInstanceMetricData",
+								"lightsail:GetRelationalDatabaseMetricData",
+								"pi:GetResourceMetrics",
+								"ecs:ListServices"
+							],
+							"Resource": "*"
+						}
+					]
+				},
+				"Roles": [
+					{
+						"Ref": "Role"
+					}
+				]
+			}
+		},
+		"AWSCURAccessPolicy": {
+			"Type": "AWS::IAM::Policy",
+			"Condition": "BucketNotEmpty",
+			"Properties": {
+				"PolicyName": "CoreStack_AWSCURAccessPolicy",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "GetCURObject",
+							"Effect": "Allow",
+							"Action": [
+								"s3:GetObject"
+							],
+							"Resource": {
+								"Fn::Join": [
+									"",
+									[
+										"arn:aws:s3:::",
+										{
+											"Ref": "AWSCostAndUsageReportCURBucketName"
+										},
+										"/*"
+									]
+								]
+							}
+						},
+						{
+							"Sid": "ListCURBucket",
+							"Effect": "Allow",
+							"Action": [
+								"s3:ListBucket"
+							],
+							"Resource": {
+								"Fn::Join": [
+									"",
+									[
+										"arn:aws:s3:::",
+										{
+											"Ref": "AWSCostAndUsageReportCURBucketName"
+										}
+									]
+								]
+							}
+						}
+					]
+				},
+				"Roles": [
+					{
+						"Ref": "Role"
+					}
+				]
+			}
+		}
+	},
+	"Outputs": {
+		"RoleARN": {
+			"Description": "ARN of the IAM Role.",
+			"Value": {
+				"Fn::GetAtt": [
+					"Role",
+					"Arn"
+				]
+			}
+		},
+		"ExternalId": {
+			"Description": "ExternalId used in Role trusted policy.",
+			"Value": {
+				"Ref": "ExternalId"
+			}
+		},
+		"MFAEnabled": {
+			"Description": "Flag to identify MFA enforced for the role or not.",
+			"Value": {
+				"Ref": "EnforceMFA"
+			}
+		}
+	}
+}
