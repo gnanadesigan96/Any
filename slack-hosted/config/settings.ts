@@ -14,7 +14,7 @@ export type Settings = {
   utcOffsetMinutes: number; // IST = +330
   tzLabel: string;
   collectionChannel: string; // team submits here
-  reviewChannel: string | null; // flagged entries for the reviewer; null = collection channel
+  reviewChannel: string | null; // flagged entries for the reviewer; null = approval channel (not the team channel)
   approvalChannel: string; // final tables + approver
   hrChannel: string | null; // HR tag; null = approval channel
   reviewer: string; // decides flagged entries, answers concerns
@@ -114,5 +114,17 @@ export function problems(s: Settings): string[] {
     if (!person.test(v)) out.push(`${k} = ${v} (needs a member ID like U0123ABCD)`);
   }
   if (s.hrGroup && !/^S[A-Z0-9]{6,}$/.test(s.hrGroup)) out.push(`hrGroup = ${s.hrGroup} (needs S…, or "")`);
+  if (s.mode === "test") {
+    // Test-only features (pretend clock, reset) must never touch production channels.
+    const prod = new Set([
+      PRODUCTION.collectionChannel,
+      PRODUCTION.reviewChannel,
+      PRODUCTION.approvalChannel,
+      PRODUCTION.hrChannel,
+    ]);
+    for (const c of [s.collectionChannel, s.reviewChannel, s.approvalChannel, s.hrChannel]) {
+      if (c && prod.has(c)) out.push(`test mode uses production channel ${c} - use separate test channels`);
+    }
+  }
   return out;
 }

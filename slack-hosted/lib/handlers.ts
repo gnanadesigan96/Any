@@ -149,5 +149,14 @@ export function withHandlers<T extends { addBlockActionsHandler: any; addViewSub
     await finish(eng);
   });
 
+  fn.addBlockActionsHandler([B.A.confirm, B.A.cancel], async ({ action, body, client, env }: Any) => {
+    const eng = engineFor(client, env, body);
+    const value = JSON.parse(action.value);
+    const channel = body.channel?.id ?? body.container?.channel_id;
+    const result = await eng.confirmed(value, body.user.id, action.action_id === B.A.confirm, channel, body.message.ts);
+    if (result === "not_authorised") return void await ephemeral(client, body, `Only <@${value.by}> can confirm this.`);
+    await finish(eng);
+  });
+
   return fn;
 }

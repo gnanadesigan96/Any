@@ -58,11 +58,20 @@ export type LiveMessage = {
   key: string; // channel:ts
   channel: string;
   ts: string;
-  kind: "review" | "approval" | "concern";
+  kind: "review" | "approval" | "concern" | "confirm";
   cycle_id: string;
   execution_id: string;
   entry_ids: string; // JSON array (review messages: which entries they show)
   live: boolean;
+};
+
+export type AuditRecord = {
+  id?: string;
+  at: string;
+  actor: string;
+  action: string;
+  details: string;
+  execution_id: string;
 };
 
 const GONE = ["rejected", "removed"];
@@ -106,7 +115,46 @@ export class Store {
   /** Entries are read many times per request (duplicate / overlap checks); cache them until a write. */
   private cache: Entry[] | null = null;
 
+  /** How long `claim` waits before re-reading its lock (lets a concurrent writer show up). */
+  lockSettleMs = 400;
+
   constructor(private t: Tables) {}
+
+  // -- audit, locks, rate limits ----------------------------------------------------------------------
+
+  /** Sliding-window rate limit: records a hit and returns false if `limit` hits already happened in the window. */
+  async allowHit(key: string, limit: number, windowMs: number, now = Date.now()): Promise<boolean> {
+    const k = `rate:${key}`;
+    const recent = (JSON.parse((await this.meta(k)) || "[]") as number[]).filter((t) => now - t < windowMs);
+    if (recent.length >= limit) return false;
+    await this.setMeta(k, JSON.stringify([...recent, now]));
+    return true;
+  }
+
+  /** Append-only: records are only ever added. */
+  async audit(r: AuditRecord): Promise<void> {
+    await this.t.put("audit", { ...r, id: crypto.randomUUID() });
+  }
+
+  async auditLog(): Promise<AuditRecord[]> {
+    return (await this.t.all<AuditRecord>("audit")).sort((a, b) => a.at.localeCompare(b.at));
+  }
+
+  /**
+   * Best-effort mutual exclusion for "do this once" steps (approve, close, ...). Slack datastores have
+   * no conditional writes, so: refuse if someone holds a fresh lock; otherwise write our token, wait,
+   * and proceed only if our token is still the one stored (the last concurrent writer wins).
+   */
+  async claim(key: string, ttlMs = 120_000): Promise<boolean> {
+    const k = `lock:${key}`;
+    const current = await this.meta(k);
+    if (current && Date.now() - JSON.parse(current).at < ttlMs) return false;
+    const token = crypto.randomUUID();
+    await this.setMeta(k, JSON.stringify({ token, at: Date.now() }));
+    if (this.lockSettleMs) await new Promise((r) => setTimeout(r, this.lockSettleMs));
+    const after = await this.meta(k);
+    return !!after && JSON.parse(after).token === token;
+  }
 
   // -- cycles -------------------------------------------------------------------
   async cycle(cid: string): Promise<Cycle | null> {
@@ -147,8 +195,13 @@ export class Store {
   }
 
   async putEntry(e: Entry): Promise<void> {
-    this.cache = null;
     await this.t.put("entries", e);
+    if (this.cache) { // keep the cache current instead of re-reading everything on the next check
+      const i = this.cache.findIndex((x) => x.id === e.id);
+      const archived = e.cycle_id.startsWith("archived:");
+      if (i >= 0) archived ? this.cache.splice(i, 1) : (this.cache[i] = { ...e });
+      else if (!archived) this.cache.push({ ...e });
+    }
   }
 
   async updateEntry(id: string, fields: Partial<Entry>): Promise<Entry | null> {
@@ -178,7 +231,9 @@ export class Store {
     for (const c of cycles) await this.t.put("cycles", newCycle(c.cycle_id));
     const live = await this.liveMessages();
     for (const m of live) await this.t.put("live_messages", { ...m, live: false });
-    await this.t.put("meta", { key: "pretend_anchor", value: "" });
+    for (const m of await this.t.all<{ key: string; value: string }>("meta")) {
+      if (m.key.startsWith("lock:") || m.key === "pretend_anchor") await this.t.put("meta", { ...m, value: "" });
+    }
     return {
       entries: entries.length,
       cycles: cycles.length,
@@ -271,6 +326,7 @@ export const DATASTORES = {
   entries: "support_entries",
   live_messages: "support_live_messages",
   meta: "support_meta",
+  audit: "support_audit",
 } as const;
 
 // deno-lint-ignore no-explicit-any
@@ -318,6 +374,7 @@ export class MemoryTables implements Tables {
     entries: "id",
     live_messages: "key",
     meta: "key",
+    audit: "id",
   };
 
   private table(t: string) {

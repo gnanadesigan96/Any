@@ -1,5 +1,11 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
-import { CyclesDatastore, EntriesDatastore, LiveMessagesDatastore, MetaDatastore } from "./datastores/datastores.ts";
+import {
+  AuditDatastore,
+  CyclesDatastore,
+  EntriesDatastore,
+  LiveMessagesDatastore,
+  MetaDatastore,
+} from "./datastores/datastores.ts";
 import { HandleMentionFunction } from "./functions/handle_mention.ts";
 import { SchedulerFunction } from "./functions/scheduler.ts";
 import { MentionWorkflow } from "./workflows/mention_workflow.ts";
@@ -16,7 +22,7 @@ export default Manifest({
   icon: "assets/icon.png",
   functions: [HandleMentionFunction, SchedulerFunction],
   workflows: [MentionWorkflow, SchedulerWorkflow],
-  datastores: [CyclesDatastore, EntriesDatastore, LiveMessagesDatastore, MetaDatastore],
+  datastores: [CyclesDatastore, EntriesDatastore, LiveMessagesDatastore, MetaDatastore, AuditDatastore],
   outgoingDomains: ["api.anthropic.com"],
   botScopes: [
     "app_mentions:read",

@@ -70,3 +70,10 @@ export const MetaDatastore = DefineDatastore({
   primary_key: "key",
   attributes: { key: str, value: str },
 });
+
+/** Append-only audit trail: who did what and when (submissions, reviews, edits, approvals, concerns). */
+export const AuditDatastore = DefineDatastore({
+  name: "support_audit",
+  primary_key: "id",
+  attributes: { id: str, at: str, actor: str, action: str, details: str, execution_id: str },
+});

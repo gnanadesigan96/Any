@@ -2,6 +2,7 @@
 
 import { amount, dayTypeLabel, money, SHIFT_LABEL } from "./policy.ts";
 import type { Entry } from "./store.ts";
+import { esc } from "./safe.ts";
 import { dayShort, prettyDate } from "./time.ts";
 
 export const STATUS_LABEL: Record<Entry["review"], string> = {
@@ -33,7 +34,8 @@ export function codeBlocks(text: string, limit = 3500): string[] {
     size += ln.length + 1;
   }
   if (current.length) chunks.push(current);
-  return chunks.map((c) => "```\n" + c.join("\n") + "\n```");
+  // Tables contain names and free text: escape so nothing in them can ping or link.
+  return chunks.map((c) => "```\n" + esc(c.join("\n")) + "\n```");
 }
 
 export function clip(text: string | undefined, n = 40): string {

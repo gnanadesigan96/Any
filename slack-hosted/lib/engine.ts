@@ -20,6 +20,7 @@ import { RATES, type Settings } from "../config/settings.ts";
 import * as B from "./blocks.ts";
 import { type Shift, SHIFT_LABEL } from "./policy.ts";
 import { codeBlocks, finalReport } from "./report.ts";
+import { clean, esc, LIMITS } from "./safe.ts";
 import { type Cycle, type Entry, isPayable, type Store } from "./store.ts";
 import {
   closeAt,
@@ -112,8 +113,9 @@ export class Engine {
     return r;
   }
 
+  /** Flagged entries name people and dates, so by default they go to the (restricted) approval channel. */
   private get reviewTarget() {
-    return this.s.reviewChannel || this.s.collectionChannel;
+    return this.s.reviewChannel || this.s.approvalChannel;
   }
   private get hrChannel() {
     return this.s.hrChannel || this.s.approvalChannel;
@@ -130,7 +132,7 @@ export class Engine {
   }
 
   private async postInteractive(
-    kind: "review" | "approval" | "concern",
+    kind: "review" | "approval" | "concern" | "confirm",
     cid: string,
     args: Record<string, unknown>,
     entryIds: string[] = [],
@@ -147,6 +149,22 @@ export class Engine {
     return r;
   }
 
+  /** Append-only audit trail: who did what, when, with before/after values. */
+  async audit(actor: string, action: string, details: Record<string, unknown> = {}) {
+    await this.store.audit({
+      actor,
+      action,
+      details: JSON.stringify(details),
+      at: new Date().toISOString(),
+      execution_id: this.executionId,
+    });
+  }
+
+  /** Run `fn` only if no other execution is doing the same thing right now (guards double clicks). */
+  private async once<T>(key: string, fn: () => Promise<T>, busy: T): Promise<T> {
+    return (await this.store.claim(key)) ? await fn() : busy;
+  }
+
   /** The message no longer needs clicks; complete its execution if nothing else of it is live. */
   private async retire(channel: string, ts: string) {
     const m = await this.store.retireLive(channel, ts);
@@ -158,6 +176,7 @@ export class Engine {
     if (this.s.mode !== "test") return "Reset is only available in test mode.";
     if (user !== this.s.reviewer) return "Only the reviewer can reset the test data.";
     const r = await this.store.archiveAll();
+    await this.audit(user, "reset_test_data", r);
     for (const ex of r.executions) await this.completeIfIdle(ex);
     return `Archived ${r.entries} entries and reset ${r.cycles} month(s). Create the test timeline triggers again to restart.`;
   }
@@ -228,7 +247,7 @@ export class Engine {
         (flagged[o.cycle_id] ??= []).push(o.id);
         await this.threadNote(
           o,
-          `<@${o.person_id}> heads up: ${n.person_name} also claimed the ${SHIFT_LABEL[o.shift].toLowerCase()} ` +
+          `<@${o.person_id}> heads up: <@${n.person_id}> also claimed the ${SHIFT_LABEL[o.shift].toLowerCase()} ` +
             `shift on ${prettyDate(o.support_date)}. <@${this.s.reviewer}> will decide which entry stands.`,
         );
       }
@@ -267,7 +286,7 @@ export class Engine {
         person_name: personName,
         support_date: it.date,
         shift: it.shift,
-        extra_task: it.extra_task ?? "",
+        extra_task: clean(it.extra_task, LIMITS.extraTask),
         review: it.review ?? "",
         reviewed_by: it.reviewed_by ?? "",
         flag_reason: it.flag_reason ?? "",
@@ -277,6 +296,7 @@ export class Engine {
         submitted_at: new Date().toISOString(),
       };
       await this.store.putEntry(e);
+      await this.audit(submittedBy, "submit", { entry: e });
       added.push(e);
     }
     return { added, duplicates };
@@ -345,7 +365,11 @@ export class Engine {
     return { waiting_since: (await this.now()).toISOString(), nudges_sent: 0 };
   }
 
-  async closeCycle(cid: string): Promise<string> {
+  async closeCycle(cid: string, actor = "scheduler"): Promise<string> {
+    return await this.once(`close:${cid}`, () => this.closeCycleNow(cid, actor), "busy");
+  }
+
+  private async closeCycleNow(cid: string, actor: string): Promise<string> {
     await this.store.ensureCycle(cid);
     const now = (await this.now()).toISOString();
     if (!(await this.store.entries(cid)).length) {
@@ -362,6 +386,7 @@ export class Engine {
     if (!(await this.store.transition(cid, ["open"], to, { closed_at: now, ...(await this.startWaiting()) }))) {
       return (await this.store.cycle(cid))!.status;
     }
+    await this.audit(actor, "close_window", { cycle: cid, status: to });
     const next = slotAt(this.s, nextCycleId(cid), this.s.schedule.reminder);
     await this.post({
       channel: this.s.collectionChannel,
@@ -394,7 +419,7 @@ export class Engine {
   async notifyReviewer(cid: string, ids: string[]) {
     for (let i = 0; i < ids.length; i += B.ROWS_PER_MESSAGE) {
       const chunk = await this.store.entries(cid, { ids: ids.slice(i, i + B.ROWS_PER_MESSAGE) });
-      const names = [...new Set(chunk.map((e) => e.person_name))].sort().join(", ");
+      const names = [...new Set(chunk.map((e) => `<@${e.person_id}>`))].join(", ");
       await this.postInteractive("review", cid, {
         channel: this.reviewTarget,
         text: `Support entries for ${cycleLabel(cid)} need your review (${names}).`,
@@ -408,10 +433,11 @@ export class Engine {
     const e = await this.store.entry(entryId);
     if (!e || e.review !== "pending") return "already_decided";
     await this.store.updateEntry(entryId, { review: decision, reviewed_by: user });
+    await this.audit(user, `review_${decision}`, { entry_id: entryId, cycle: e.cycle_id, flag_reason: e.flag_reason });
     await this.threadNote(
       e,
       `<@${e.person_id}> <@${user}> *${decision}* your ${SHIFT_LABEL[e.shift].toLowerCase()} shift entry for ` +
-        `${prettyDate(e.support_date)} (${e.flag_reason}).`,
+        `${prettyDate(e.support_date)} (${esc(e.flag_reason)}).`,
     );
     return decision;
   }
@@ -432,6 +458,8 @@ export class Engine {
     }
     if (
       !(await this.store.pendingReviews(cid)).length &&
+      ((await this.store.cycle(cid))?.status === "reviewing") &&
+      await this.store.claim(`release:${cid}`) &&
       await this.store.transition(cid, ["reviewing"], "pending_approval")
     ) {
       await this.post({
@@ -482,6 +510,13 @@ export class Engine {
 
   async approve(cid: string, user: string): Promise<string> {
     if (user !== this.s.approver) return "not_authorised";
+    const c0 = await this.store.cycle(cid);
+    if (c0?.status !== "pending_approval") return c0?.status ?? "unknown";
+    // One decision per approval message: a double click (or click + chat) can't notify HR twice.
+    return await this.once(`decide:${cid}:${c0.approval_ts}`, () => this.approveNow(cid, user), "busy");
+  }
+
+  private async approveNow(cid: string, user: string): Promise<string> {
     const now = await this.now();
     if (
       !(await this.store.transition(cid, ["pending_approval"], "approved", {
@@ -493,6 +528,7 @@ export class Engine {
     }
     const c = (await this.store.cycle(cid))!;
     const r = finalReport(await this.store.entries(cid, { payableOnly: true }));
+    await this.audit(user, "approve", { cycle: cid, total: r.grandTotal, people: r.people, entries: r.entries });
     await this.replaceMessage(
       c.approval_channel,
       c.approval_ts,
@@ -520,7 +556,19 @@ export class Engine {
 
   async raiseConcern(cid: string, user: string, text: string, entryIds: string[] = []): Promise<string> {
     if (user !== this.s.approver) return "not_authorised";
-    const ids = entryIds.length ? entryIds : (await this.store.entries(cid)).map((e) => e.id);
+    const c0 = await this.store.cycle(cid);
+    if (c0?.status !== "pending_approval") return c0?.status ?? "unknown";
+    return await this.once(
+      `decide:${cid}:${c0.approval_ts}`,
+      () => this.raiseConcernNow(cid, user, clean(text, LIMITS.concern), entryIds),
+      "busy",
+    );
+  }
+
+  private async raiseConcernNow(cid: string, user: string, text: string, entryIds: string[]): Promise<string> {
+    const valid = new Set((await this.store.entries(cid)).map((e) => e.id));
+    const picked = entryIds.filter((id) => valid.has(id));
+    const ids = picked.length ? picked : [...valid];
     if (
       !(await this.store.transition(cid, ["pending_approval"], "concern", {
         concern_text: text,
@@ -530,6 +578,7 @@ export class Engine {
     ) {
       return (await this.store.cycle(cid))?.status ?? "unknown";
     }
+    await this.audit(user, "raise_concern", { cycle: cid, concern: text, entry_ids: ids });
     const c = (await this.store.cycle(cid))!;
     await this.replaceMessage(
       c.approval_channel,
@@ -542,7 +591,7 @@ export class Engine {
       channel: c.approval_channel,
       thread_ts: c.approval_ts,
       reply_broadcast: true,
-      text: `<@${this.s.reviewer}> concern from <@${user}> on ${cycleLabel(cid)}: ${text}`,
+      text: `<@${this.s.reviewer}> concern from <@${user}> on ${cycleLabel(cid)}: ${esc(text)}`,
       blocks: await this.concernBlocks(cid),
     });
     await this.store.updateCycle(cid, {
@@ -610,6 +659,7 @@ export class Engine {
       review: removed ? "removed" : (e.flag_reason ? "accepted" : ""),
       reviewed_by: user,
     });
+    await this.audit(user, removed ? "remove_entry" : "restore_entry", { entry_id: entryId, cycle: e.cycle_id });
     await this.refreshConcern(e.cycle_id);
     return "";
   }
@@ -619,8 +669,14 @@ export class Engine {
     if (!e) return "Entry not found.";
     const err = await this.checkReviewerEdit(e.cycle_id, user);
     if (err) return err;
+    extra = clean(extra, LIMITS.extraTask);
     const v = await this.validate(e.cycle_id, e.person_id, iso, shift, extra, entryId);
     if (v.error) return v.error;
+    await this.audit(user, "edit_entry", {
+      entry_id: entryId,
+      before: { date: e.support_date, shift: e.shift, extra_task: e.extra_task, review: e.review },
+      after: { date: iso, shift, extra_task: extra },
+    });
     await this.store.updateEntry(entryId, {
       support_date: iso,
       shift,
@@ -643,6 +699,8 @@ export class Engine {
   ): Promise<string> {
     const err = await this.checkReviewerEdit(cid, user);
     if (err) return err;
+    if (!/^[UW][A-Z0-9]{6,}$/.test(personId)) return "Pick a person.";
+    extra = clean(extra, LIMITS.extraTask);
     const v = await this.validate(cid, personId, iso, shift, extra);
     if (v.error) return v.error;
     const { added } = await this.addEntries(cid, personId, await this.userName(personId), [{
@@ -652,7 +710,7 @@ export class Engine {
       review: v.reason ? "accepted" : "",
       reviewed_by: v.reason ? user : "",
       flag_reason: v.reason,
-    }], await this.userName(user));
+    }], user);
     const c = (await this.store.cycle(cid))!;
     if (c.status === "concern") {
       await this.store.updateCycle(cid, {
@@ -665,19 +723,74 @@ export class Engine {
 
   async respondToConcern(cid: string, user: string, response: string): Promise<string> {
     if (user !== this.s.reviewer) return "not_authorised";
+    const c0 = await this.store.cycle(cid);
+    if (c0?.status !== "concern") return c0?.status ?? "unknown";
+    return await this.once(
+      `respond:${cid}:${c0.concern_ts}`,
+      () => this.respondNow(cid, user, clean(response, LIMITS.response)),
+      "busy",
+    );
+  }
+
+  private async respondNow(cid: string, user: string, response: string): Promise<string> {
     if (!(await this.store.transition(cid, ["concern"], "pending_approval"))) {
       return (await this.store.cycle(cid))?.status ?? "unknown";
     }
+    await this.audit(user, "respond_to_concern", { cycle: cid, response });
     const c = (await this.store.cycle(cid))!;
     await this.client.chat.update({
       channel: c.concern_channel,
       ts: c.concern_ts,
       text: `Concern on ${cycleLabel(cid)} addressed`,
-      blocks: await this.concernBlocks(cid, `:speech_balloon: <@${user}> responded: ${response}`),
+      blocks: await this.concernBlocks(cid, `:speech_balloon: <@${user}> responded: ${esc(response)}`),
     });
     await this.postForApproval(cid, response);
     await this.retire(c.concern_channel, c.concern_ts);
     return "pending_approval";
+  }
+
+  // -- admin actions asked for in chat: they only run after the role holder clicks "Confirm" -------------
+
+  /** Post a confirm button in the thread. Chat alone never runs an admin action (prompt-injection safe). */
+  async postConfirm(
+    action: "close_window" | "reset_test_data",
+    cid: string,
+    user: string,
+    channel: string,
+    threadTs: string,
+  ) {
+    const what = action === "close_window"
+      ? `close the support details window for *${cycleLabel(cid)}* now and send it on for review / approval`
+      : `archive ALL test data so the test can start again (nothing is deleted)`;
+    await this.postInteractive("confirm", cid, {
+      channel,
+      thread_ts: threadTs,
+      text: `<@${user}> please confirm: ${what}.`,
+      blocks: B.confirmBlocks(`<@${user}> please confirm: ${what}.`, { action, cid, by: user }),
+    });
+  }
+
+  /** The "Confirm" / "Cancel" click. Only the person who asked (and who holds the role) can confirm. */
+  async confirmed(
+    value: { action: string; cid: string; by: string },
+    clicker: string,
+    ok: boolean,
+    channel: string,
+    ts: string,
+  ): Promise<string> {
+    if (clicker !== value.by) return "not_authorised";
+    let result = "Cancelled.";
+    if (ok && value.action === "close_window") {
+      result = this.isAdmin(clicker)
+        ? `Window for ${cycleLabel(value.cid)}: ${await this.closeCycle(value.cid, clicker)}.`
+        : "not_authorised";
+    } else if (ok && value.action === "reset_test_data") {
+      result = await this.resetTestData(clicker);
+    }
+    if (result === "not_authorised") return result;
+    await this.replaceMessage(channel, ts, `${ok ? ":white_check_mark:" : ":x:"} ${esc(result)}`);
+    await this.retire(channel, ts);
+    return result;
   }
 
   // -- nudges -----------------------------------------------------------------------------------

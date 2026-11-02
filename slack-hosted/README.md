@@ -86,8 +86,18 @@ The second command starts the clock. Each step runs once, counting from when you
 During the first hour, follow the scenarios in `../slack-agent/TESTING.md`. They're the same
 here, except that there's no CSV. To watch what the bot is doing, run `slack activity --tail`.
 
-**To run the test again:** in #support-test, Gnanadesigan says *"@Ops Agent reset test data"*.
-This archives everything; nothing is deleted. Then create the `triggers/test/*` triggers again.
+Differences from the old scenario list:
+- **Own data only:** people can only submit their own days. "On behalf of" is gone for security, and
+  the reviewer adds missed entries through the concern table.
+- **Approvals happen only through buttons.**
+- **Admin requests:** asking the bot to close the window posts a **Confirm** button for the person who
+  asked.
+
+**To run the test again:** in #support-test, Gnanadesigan says *"@Ops Agent reset test data"* and
+clicks **Confirm**. This archives everything; nothing is deleted. Then create the `triggers/test/*`
+triggers again.
+
+See **SECURITY.md** for permissions, access rules, data handling and compliance decisions.
 
 ## Going live (production)
 
@@ -97,7 +107,7 @@ This archives everything; nothing is deleted. Then create the `triggers/test/*` 
    - HR: a user-group ID (`S…`) or member IDs
    - Uday's member ID
    - the festival holidays, in `RATES.holidays`
-2. In #support-test, say *"@Ops Agent reset test data"* so test records don't count.
+2. In #support-test, say *"@Ops Agent reset test data"* and click Confirm, so test records don't count.
 3. Remove the test triggers: run `slack trigger list`, then
    `slack trigger delete --trigger-id <id>` for each one starting with "TEST" and the
    "(test)" mention trigger.

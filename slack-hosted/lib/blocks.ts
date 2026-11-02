@@ -4,6 +4,7 @@ import type { Settings } from "../config/settings.ts";
 import { amount, dayTypeLabel, money, SHIFT_LABEL } from "./policy.ts";
 import type { FinalReport } from "./report.ts";
 import { STATUS_LABEL } from "./report.ts";
+import { esc, LIMITS } from "./safe.ts";
 import type { Cycle, Entry } from "./store.ts";
 import { cycleLabel, dayShort, periodText, prettyDate } from "./time.ts";
 
@@ -16,6 +17,8 @@ export const A = {
   concernRow: "concern_row",
   concernAdd: "concern_add",
   concernRespond: "concern_respond",
+  confirm: "admin_confirm",
+  cancel: "admin_cancel",
 } as const;
 
 export const V = {
@@ -50,14 +53,14 @@ function button(
 
 export function entryLine(e: Entry, withAmount: boolean): string {
   const parts = [
-    `*${e.person_name}*`,
+    `*${esc(e.person_name)}*`,
     `${dayShort(e.support_date)} ${prettyDate(e.support_date)}`,
     SHIFT_LABEL[e.shift],
     dayTypeLabel(e.support_date),
   ];
   if (withAmount) parts.push(money(amount(e.support_date, e.shift, !!e.extra_task).total));
   let line = parts.join(" · ");
-  if (e.extra_task) line += `\n_Extra task: ${e.extra_task}_`;
+  if (e.extra_task) line += `\n_Extra task: ${esc(e.extra_task)}_`;
   return line;
 }
 
@@ -85,7 +88,7 @@ export function reviewBlocks(s: Settings, cid: string, entries: Entry[]): Block[
     blocks.push({
       type: "section",
       block_id: `row:${e.id}`,
-      text: md(`${entryLine(e, false)}\n:warning: ${e.flag_reason || "needs review"}`),
+      text: md(`${entryLine(e, false)}\n:warning: ${esc(e.flag_reason) || "needs review"}`),
     });
     if (e.review === "pending") {
       pending.push(e.id);
@@ -127,8 +130,8 @@ export function approvalBlocks(s: Settings, cid: string, r: FinalReport, cycle: 
     blocks.push({
       type: "section",
       text: md(
-        `*Your concern:* ${cycle.concern_text.slice(0, 1200)}\n*Response from <@${s.reviewer}>:* ${
-          response.slice(0, 1200)
+        `*Your concern:* ${esc(cycle.concern_text.slice(0, 1200))}\n*Response from <@${s.reviewer}>:* ${
+          esc(response.slice(0, 1200))
         }`,
       ),
     });
@@ -154,7 +157,7 @@ export function concernBlocks(s: Settings, cid: string, cycle: Cycle, entries: E
     type: "section",
     text: md(
       `<@${s.reviewer}> <@${cycle.concern_by}> raised a concern on *${cycleLabel(cid)}*:\n>${
-        cycle.concern_text.slice(0, 2000)
+        esc(cycle.concern_text.slice(0, 2000))
       }\n` +
         (closedNote ? "" : "Fix the entries below with the ⋮ menu, then press *Respond & send for approval*."),
     ),
@@ -226,6 +229,7 @@ function dateInput(initial?: string): Block {
 function extraInput(initial?: string): Block {
   const el: Block = {
     type: "plain_text_input",
+    max_length: LIMITS.extraTask,
     action_id: "v",
     placeholder: plain("Additional task performed (leave empty if none)"),
   };
@@ -248,7 +252,7 @@ export function concernModal(cid: string, entries: Entry[]) {
     type: "input",
     block_id: "concern",
     label: plain("Concern"),
-    element: { type: "plain_text_input", action_id: "v", multiline: true },
+    element: { type: "plain_text_input", action_id: "v", multiline: true, max_length: LIMITS.concern },
   });
   return modal(V.concern, "Raise a concern", blocks, { cid }, "Send to reviewer");
 }
@@ -258,7 +262,7 @@ export function editModal(e: Entry) {
     V.edit,
     "Edit entry",
     [
-      { type: "section", text: md(`*${e.person_name}*`) },
+      { type: "section", text: md(`*${esc(e.person_name)}*`) },
       dateInput(e.support_date),
       shiftSelect(e.shift),
       extraInput(e.extra_task),
@@ -288,12 +292,12 @@ export function respondModal(cid: string, cycle: Cycle) {
     V.respond,
     "Respond to concern",
     [
-      { type: "section", text: md(`*Concern:* ${cycle.concern_text.slice(0, 2500)}`) },
+      { type: "section", text: md(`*Concern:* ${esc(cycle.concern_text.slice(0, 2500))}`) },
       {
         type: "input",
         block_id: "response",
         label: plain("Your response"),
-        element: { type: "plain_text_input", action_id: "v", multiline: true },
+        element: { type: "plain_text_input", action_id: "v", multiline: true, max_length: LIMITS.response },
       },
     ],
     { cid },
@@ -314,4 +318,17 @@ export function modalValues(view: any): Record<string, any> {
       ((v.value ?? "").trim() || null);
   }
   return out;
+}
+
+// -- confirmation for admin actions requested in chat ---------------------------------------------------
+
+export function confirmBlocks(text: string, value: { action: string; cid: string; by: string }): Block[] {
+  const v = JSON.stringify(value);
+  return [
+    { type: "section", text: md(text) },
+    {
+      type: "actions",
+      elements: [button("Confirm", A.confirm, v, "primary"), button("Cancel", A.cancel, v)],
+    },
+  ];
 }

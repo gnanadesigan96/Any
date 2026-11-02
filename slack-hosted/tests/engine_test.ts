@@ -59,9 +59,13 @@ class FakeSlack {
 
 const ist = (y: number, m: number, d: number, hh = 0, mm = 0) => localInstant(S, y, m, d, hh, mm);
 
+const fastStore = (tables: MemoryTables) => Object.assign(new Store(tables), { lockSettleMs: 0 });
+const approvalPosts = (slack: FakeSlack) =>
+  slack.withBlocks("CAPPROVE1").filter((p) => JSON.stringify(p.blocks).includes(B.A.approve));
+
 function setup(settings: Settings = S, exec = "Fx_main") {
   const slack = new FakeSlack(), tables = new MemoryTables(), clock = { now: ist(2026, 10, 18, 12) };
-  const make = (execId = exec) => new Engine(slack, new Store(tables), settings, execId, () => clock.now);
+  const make = (execId = exec) => new Engine(slack, fastStore(tables), settings, execId, () => clock.now);
   return { slack, clock, eng: make(), make };
 }
 
@@ -134,21 +138,23 @@ Deno.test("full month: flags, review, approval, concern fixed in the table, HR, 
   const table = r.req.attachments.join("\n");
   assertStringIncludes(table, "Awaiting review");
   assert(!table.includes("₹"));
-  const reviewMsg = slack.withBlocks("CSUPPORT1").at(-1);
+  // Flagged entries go to the approval channel by default (the team channel is visible to everyone).
+  const reviewMsg = slack.withBlocks("CAPPROVE1").at(-1);
+  assert(!slack.withBlocks("CSUPPORT1").length);
   const flaggedId = B.rowIds(reviewMsg.blocks)[0];
 
   // Overlap: Arun claims Priya's night shift -> both flagged.
   r = await asUser(eng, ARUN, "submit_support_details", {
     entries: [{ date: "2026-10-03", shift: "night" }, { date: "2026-10-05", shift: "day" }],
   });
-  assertEquals(r.out.flagged_for_reviewer, ["2026-10-03 (overlaps with Priya Kumar's night shift)"]);
+  assertEquals(r.out.flagged_for_reviewer, ["2026-10-03 (overlaps with another person's night shift)"]);
   assertEquals((await eng.store.pendingReviews("2026-10")).length, 3);
 
   // Window closes; flags still open -> final table waits.
   clock.now = ist(2026, 10, 20, 0, 0);
   await eng.tick();
   assertEquals((await eng.store.cycle("2026-10"))!.status, "reviewing");
-  assertEquals(slack.withBlocks("CAPPROVE1").length, 0);
+  assertEquals(approvalPosts(slack).length, 0);
 
   // After the window: "window is closed".
   r = await asUser(eng, ARUN, "submit_support_details", { entries: [{ date: "2026-10-10", shift: "day" }] });
@@ -210,12 +216,15 @@ Deno.test("full month: flags, review, approval, concern fixed in the table, HR, 
 Deno.test("members see only their own details and no money; amounts only in the approval channel", async () => {
   const { eng } = setup();
   await asUser(eng, ARUN, "submit_support_details", { entries: [{ date: "2026-10-05", shift: "day" }] });
-  assert((await asUser(eng, PRIYA, "show_support_details", { person_slack_id: ARUN })).out.error);
+  // Asking for someone else's details just shows your own.
+  const mine = await asUser(eng, PRIYA, "show_support_details", { person_slack_id: ARUN });
+  assert(!mine.req.attachments.join().includes("Arun") && !mine.req.privateTo);
   let r = await asUser(eng, BOSS, "show_support_details", {}, "CAPPROVE1");
   assertEquals(r.out.total, "₹500");
+  // Everyone's details outside the approval channel: only visible to the admin, no money.
   r = await asUser(eng, BOSS, "show_support_details", {});
-  assert(r.out.amounts_hidden && !r.req.attachments.join().includes("₹"));
-  assert((await asUser(eng, PRIYA, "close_window_now", {})).out.error);
+  assert(r.out.amounts_hidden && !r.req.attachments.join().includes("₹") && r.req.privateTo === BOSS);
+  assert((await asUser(eng, PRIYA, "request_admin_action", { action: "close_window" })).out.error);
 });
 
 Deno.test("comparisons: only analytics users, shown privately", async () => {
@@ -319,7 +328,7 @@ Deno.test("button and form handlers", async () => {
   await asUser(eng, PRIYA, "submit_support_details", {
     entries: [{ date: "2026-09-01", shift: "night" }, { date: "2026-10-01", shift: "day" }],
   });
-  const msg = slack.withBlocks("CSUPPORT1").at(-1);
+  const msg = slack.withBlocks("CAPPROVE1").at(-1);
   const flaggedId = B.rowIds(msg.blocks)[0];
   const body = (user: string) => ({
     user: { id: user },
@@ -497,4 +506,122 @@ Deno.test("reset test data archives everything (test mode, reviewer only)", asyn
     await new Engine(slack, new Store(tables), S, "Fx", () => real).resetTestData(ME),
     "only available in test mode",
   );
+});
+
+// -- security ------------------------------------------------------------------------------------
+
+Deno.test("security: nobody can submit for someone else (the parameter is ignored)", async () => {
+  const { eng } = setup();
+  const r = await asUser(eng, PRIYA, "submit_support_details", {
+    entries: [{ date: "2026-10-05", shift: "day" }],
+    person_slack_id: ARUN,
+  });
+  assertEquals(r.out.added, 1);
+  assertEquals((await eng.store.entries("2026-10", { personId: ARUN })).length, 0);
+  assertEquals((await eng.store.entries("2026-10", { personId: PRIYA }))[0].submitted_by, PRIYA); // audit uses IDs
+});
+
+Deno.test("security: chat cannot run admin actions - they need the role holder's Confirm click", async () => {
+  const { eng, slack } = setup();
+  await asUser(eng, PRIYA, "submit_support_details", { entries: [{ date: "2026-10-05", shift: "day" }] });
+  // No chat tool exists any more for approving / reviewing / raising concerns.
+  for (
+    const tool of [
+      "approve_support_allowance",
+      "review_flagged_entries",
+      "raise_concern_on_allowance",
+      "respond_to_concern",
+      "close_window_now",
+      "reset_test_data",
+    ]
+  ) {
+    assert((await asUser(eng, ME, tool, { cycle: "2026-10" })).out.error, tool);
+  }
+  const r = await asUser(eng, ME, "request_admin_action", { action: "close_window" });
+  assert(r.out.confirmation_posted);
+  assertEquals((await eng.store.cycle("2026-10"))!.status, "open"); // nothing happened yet
+  const confirm = slack.posts.at(-1);
+  const value = JSON.parse(confirm.blocks[1].elements[0].value);
+  assertEquals(await eng.confirmed(value, PRIYA, true, confirm.channel, "x"), "not_authorised");
+  assertEquals(await eng.confirmed(value, BOSS, true, confirm.channel, "x"), "not_authorised"); // only the asker
+  assertStringIncludes(await eng.confirmed(value, ME, true, confirm.channel, "1.000"), "pending_approval");
+  assert((await asUser(eng, ME, "request_admin_action", { action: "reset_test_data" })).out.error); // production mode
+});
+
+Deno.test("security: user text can't ping or hide links (escaping) and the AI reply is sanitised", async () => {
+  const { sanitizeModelText } = await import("../lib/safe.ts");
+  const { eng, slack } = setup();
+  await asUser(eng, PRIYA, "submit_support_details", {
+    entries: [{
+      date: "2026-09-10",
+      shift: "night",
+      extra_task: "<!channel> <https://evil.example|Approve here> " + "x".repeat(500),
+    }],
+  });
+  const review = JSON.stringify(slack.withBlocks("CAPPROVE1").at(-1).blocks);
+  assert(!review.includes("<!channel>") && !review.includes("<https://evil"));
+  assertStringIncludes(review, "&lt;!channel&gt;");
+  const stored = (await eng.store.entries("2026-10", { personId: PRIYA }))[0];
+  assert(stored.extra_task.length <= 200);
+  const out = sanitizeModelText("Hi <!here> <!subteam^S123|hr> see <https://evil.example|Approve here> <@U0123ABC>");
+  assertEquals(out, "Hi @here @group see Approve here (https://evil.example) <@U0123ABC>");
+});
+
+Deno.test("security: junk input is refused (far-off dates, too many entries, bad month ids)", async () => {
+  const { eng } = setup();
+  const many = Array.from(
+    { length: 80 },
+    (_, i) => ({ date: `2026-10-${String((i % 20) + 1).padStart(2, "0")}`, shift: i < 20 ? "day" : "night" }),
+  );
+  let r = await asUser(eng, PRIYA, "submit_support_details", { entries: many });
+  assert(r.out.added <= 62 && r.out.problems.some((p: string) => p.includes("only the first 62")));
+  r = await asUser(eng, ARUN, "submit_support_details", {
+    entries: [{ date: "1999-01-01", shift: "day" }, { date: "2027-06-01", shift: "day" }],
+  });
+  assertEquals(r.out.added, 0);
+  assert(r.out.problems.every((p: string) => p.includes("too far outside")));
+  r = await asUser(eng, BOSS, "show_support_details", { cycle: "<!channel>" }, "CAPPROVE1");
+  assertEquals(r.out.cycle, "October 2026"); // invalid month id ignored, no junk cycle created
+  assertEquals(await eng.store.cycle("<!channel>"), null);
+});
+
+Deno.test("security: a double click on Approve notifies HR only once", async () => {
+  const { slack, clock } = setup();
+  const tables = new MemoryTables();
+  const mk = (ex: string) =>
+    new Engine(slack, Object.assign(new Store(tables), { lockSettleMs: 30 }), S, ex, () => clock.now);
+  await asUser(mk("Fx_a"), PRIYA, "submit_support_details", { entries: [{ date: "2026-10-05", shift: "day" }] });
+  await mk("Fx_a").closeCycle("2026-10");
+  const results = await Promise.all([mk("Fx_1").approve("2026-10", BOSS), mk("Fx_2").approve("2026-10", BOSS)]);
+  assertEquals(results.filter((x) => x === "approved").length, 1);
+  assertEquals(slack.texts("CAPPROVE1").filter((t) => t.includes("<!subteam^SHRGROUP1>")).length, 1);
+});
+
+Deno.test("security: per-person rate limit, audit trail, test-mode guard", async () => {
+  const tables = new MemoryTables(), store = fastStore(tables);
+  for (let i = 0; i < 8; i++) assert(await store.allowHit("mention:U1", 8, 600_000, 1000 + i));
+  assertEquals(await store.allowHit("mention:U1", 8, 600_000, 2000), false);
+  assert(await store.allowHit("mention:U1", 8, 600_000, 1000 + 600_001)); // window slides
+  assert(await store.allowHit("mention:U2", 8, 600_000, 2000)); // per person
+
+  const { eng } = setup();
+  await asUser(eng, PRIYA, "submit_support_details", { entries: [{ date: "2026-09-01", shift: "day" }] });
+  await eng.review((await eng.store.pendingReviews("2026-10"))[0].id, "rejected", ME);
+  const log = await eng.store.auditLog();
+  assertEquals(log.map((a) => [a.actor, a.action]), [[PRIYA, "submit"], [ME, "review_rejected"]]);
+
+  assertEquals(problems({ ...TEST, approvalChannel: "C0PROD0001" }).length, 0);
+  const prodLike = { ...TEST, collectionChannel: PRODUCTION.approvalChannel };
+  assert(problems(prodLike).some((p) => p.includes("production") || p.includes("needs a channel ID")));
+});
+
+Deno.test("security: no names in what is sent to the AI for comparisons", async () => {
+  const { eng, clock } = setup();
+  clock.now = ist(2026, 10, 18, 12);
+  await asUser(eng, PRIYA, "submit_support_details", { entries: [{ date: "2026-10-02", shift: "day" }] });
+  await eng.closeCycle("2026-10");
+  const r = await asUser(eng, UDAY, "compare_support_months", {}, "CAPPROVE1");
+  const sentToAi = JSON.stringify(r.out);
+  assert(!sentToAi.includes("Priya"), sentToAi);
+  assert(r.req.attachments.join().includes("Priya")); // tables (posted to Slack directly) keep names
 });

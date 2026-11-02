@@ -161,13 +161,11 @@ export function compare(a: CycleStats, b: CycleStats) {
     summaryTable: renderTable(["Metric", a.label, b.label, "Change"], rows),
     personTable,
     columnsNote: `Per-person columns read ${a.label} → ${b.label}.`,
-    biggestChanges: people.sort((x, y) => Math.abs(y.change) - Math.abs(x.change)).slice(0, 15).map((p) => ({
-      name: p.name,
-      before: p.pa,
-      after: p.pb,
-      change: p.change,
-      status: p.note || "both months",
-    })),
+    // For the AI: Slack IDs only (it writes <@ID>, which Slack displays as the name) - no names leave Slack.
+    biggestChanges: people.sort((x, y) => Math.abs(y.change) - Math.abs(x.change)).slice(0, 15).map((p) => {
+      const { name: _a, ...before } = p.pa, { name: _b, ...after } = p.pb;
+      return { person: `<@${p.id}>`, before, after, change: p.change, status: p.note || "both months" };
+    }),
   };
 }
 
