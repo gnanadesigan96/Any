@@ -630,7 +630,6 @@
 								"cognito-identity:GetOpenIdTokenForDeveloperIdentity",
 								"lightsail:GetInstanceAccessDetails",
 								"lightsail:GetRelationalDatabaseMasterUserPassword",
-								"wafv2:GetDecryptedAPIKey",
 								"ec2:DescribeInstanceAttribute",
 								"quicksight:DescribeAssetBundleExportJob",
 								"quicksight:DescribeDashboardSnapshotJobResult",
@@ -643,8 +642,7 @@
 								"glue:GetEntityRecords",
 								"glue:GetDataPreviewStatement",
 								"glue:GetRecipeAction",
-								"glue:GetDashboardUrl",
-								"storagegateway:DescribeChapCredentials"
+								"glue:GetDashboardUrl"
 							],
 							"Resource": "*"
 						}
