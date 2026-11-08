@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Happy Diwali – Aura Grand Stay (v2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Playfair+Display:wght@600;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&display=block" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#000}
+  .poster{position:relative;width:1080px;height:1150px;overflow:hidden;background:#0b0a26;font-family:'Cormorant Garamond',serif}
+  svg.scene{position:absolute;inset:0}
+  .gold{background:linear-gradient(180deg,#fff7d6 0%,#ffd968 38%,#e8a52a 62%,#fff0b0 82%,#c7861f 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .abs{position:absolute;left:0;right:0;text-align:center}
+  .logo{top:72px;font-family:'Playfair Display',serif;font-weight:700;font-size:66px;letter-spacing:.5px;color:#fff;
+        text-shadow:0 3px 10px rgba(0,0,0,.6)}
+  .logo .gold{text-shadow:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+  .sub{top:152px;font-family:'Cinzel',serif;font-weight:600;font-size:17px;letter-spacing:7px;color:#f4e4c0}
+  .city{top:229px;font-family:'Cinzel',serif;font-weight:700;font-size:28px;letter-spacing:4px;padding-left:34px;color:#ffd66b;background:none;text-shadow:0 0 10px rgba(255,190,70,.5)}
+  .wish{top:347px;font-style:italic;font-weight:700;font-size:36px;color:#fff3da;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+  .happy{top:384px;font-family:'Great Vibes',cursive;font-size:104px;line-height:1;
+         filter:drop-shadow(0 0 14px rgba(255,190,70,.7)) drop-shadow(0 3px 2px rgba(0,0,0,.7))}
+  .diwali{top:452px;font-family:'Great Vibes',cursive;font-size:196px;line-height:1;
+         filter:drop-shadow(0 0 22px rgba(255,180,50,.85)) drop-shadow(0 4px 3px rgba(0,0,0,.75))}
+  .msg{top:612px;font-weight:700;font-size:27px;line-height:1.32;color:#fff6e4;text-shadow:0 2px 8px rgba(0,0,0,.9),0 0 20px rgba(20,0,40,.9)}
+  .from{top:976px;font-style:italic;font-weight:700;font-size:30px;color:#fbe7b4}
+  .name{top:1004px;font-style:italic;font-weight:700;font-size:58px;letter-spacing:1px;
+        filter:drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+</style>
+</head>
+<body>
+<div class="poster">
+<svg class="scene" id="scene" width="1080" height="1150" viewBox="0 0 1080 1150">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a0a2a"/><stop offset=".35" stop-color="#1d1650"/><stop offset=".6" stop-color="#3f2366"/><stop offset=".72" stop-color="#7a3f78"/><stop offset=".76" stop-color="#b8687a"/>
+    </linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2b8"/><stop offset=".45" stop-color="#f2bd45"/><stop offset="1" stop-color="#a86d16"/></linearGradient>
+    <linearGradient id="gh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a86d16"/><stop offset=".5" stop-color="#ffe9a0"/><stop offset="1" stop-color="#a86d16"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#ffcf6a" stop-opacity=".9"/><stop offset=".4" stop-color="#ffa53a" stop-opacity=".35"/><stop offset="1" stop-color="#ff8a1a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="flame" cx=".5" cy=".7" r=".6"><stop offset="0" stop-color="#fffbe6"/><stop offset=".35" stop-color="#ffd54a"/><stop offset=".8" stop-color="#ff7a1a"/><stop offset="1" stop-color="#ff3d00" stop-opacity="0"/></radialGradient>
+    <radialGradient id="lampbody" cx=".5" cy=".45" r=".6"><stop offset="0" stop-color="#fff4c4"/><stop offset=".45" stop-color="#ffbe4a"/><stop offset="1" stop-color="#b8620e"/></radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a2c3a"/><stop offset=".4" stop-color="#2c1a24"/><stop offset="1" stop-color="#140a10"/></linearGradient>
+    <linearGradient id="pool" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3fb3d6"/><stop offset="1" stop-color="#0e4c6e"/></linearGradient>
+    <linearGradient id="bld" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e9d6b8"/><stop offset="1" stop-color="#b79a7a"/></linearGradient>
+    <linearGradient id="curtain" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3e0716"/><stop offset=".3" stop-color="#9c1f3e"/><stop offset=".55" stop-color="#5a0c22"/><stop offset=".8" stop-color="#b22a4c"/><stop offset="1" stop-color="#4a0a1c"/></linearGradient>
+    <linearGradient id="table" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9c48a"/><stop offset="1" stop-color="#8a5a2a"/></linearGradient>
+    <linearGradient id="tableside" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a2416"/><stop offset=".5" stop-color="#8a6034"/><stop offset="1" stop-color="#2a170c"/></linearGradient>
+    <linearGradient id="plaque" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a1030"/><stop offset="1" stop-color="#3a0618"/></linearGradient>
+    <linearGradient id="gift" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7dc95"/><stop offset=".5" stop-color="#c9933a"/><stop offset="1" stop-color="#8a5a18"/></linearGradient>
+    <filter id="blur2"><feGaussianBlur stdDeviation="2"/></filter>
+    <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="1.2"/></filter>
+    <pattern id="jaali" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="#3a1d08"/>
+      <path d="M20,2 L38,20 L20,38 L2,20Z" fill="none" stroke="#ffcf6a" stroke-width="3"/>
+      <circle cx="20" cy="20" r="6" fill="none" stroke="#ffcf6a" stroke-width="2"/>
+      <path d="M0,0 L6,0 L0,6Z M40,0 L34,0 L40,6Z M0,40 L6,40 L0,34Z M40,40 L34,40 L40,34Z" fill="#ffcf6a"/>
+    </pattern>
+    <!-- diya -->
+    <g id="diya">
+      <ellipse cx="0" cy="-26" rx="46" ry="48" fill="url(#glow)"/>
+      <path d="M-7,-12 C-8,-28 0,-40 0,-48 C0,-40 8,-28 7,-12 C5,-5 -5,-5 -7,-12Z" fill="url(#flame)"/>
+      <path d="M-3,-11 C-3,-19 0,-24 0,-28 C0,-24 3,-19 3,-11 C2,-8 -2,-8 -3,-11Z" fill="#fff"/>
+      <path d="M-40,-4 Q0,6 40,-4 Q34,24 0,27 Q-34,24 -40,-4Z" fill="url(#g)"/>
+      <ellipse cx="0" cy="-4" rx="40" ry="6" fill="#7a3d06"/>
+      <ellipse cx="0" cy="-5" rx="34" ry="4" fill="#ffcf6a" opacity=".6"/>
+      <path d="M-28,8 Q0,16 28,8" stroke="#8a4a0a" stroke-width="1.5" fill="none" stroke-dasharray="3 5"/>
+    </g>
+    <!-- hanging lantern (ornate) -->
+    <g id="hlantern">
+      <circle cx="0" cy="70" r="90" fill="url(#glow)" opacity=".8"/>
+      <path d="M-10,0 L10,0 L14,14 L-14,14Z" fill="url(#g)"/>
+      <path d="M-22,14 L22,14 L30,26 L-30,26Z" fill="url(#g)"/>
+      <ellipse cx="0" cy="72" rx="52" ry="48" fill="url(#lampbody)" stroke="url(#g)" stroke-width="3"/>
+      <g stroke="#7a3d06" stroke-width="2.2" fill="none" opacity=".8">
+        <ellipse cx="0" cy="72" rx="34" ry="48"/><ellipse cx="0" cy="72" rx="14" ry="48"/>
+        <path d="M-52,72 L52,72"/><path d="M-46,50 Q0,40 46,50 M-46,94 Q0,104 46,94"/>
+      </g>
+      <g fill="#fff6d0" opacity=".9"><circle cx="-24" cy="60" r="3"/><circle cx="24" cy="60" r="3"/><circle cx="0" cy="56" r="3"/><circle cx="-24" cy="86" r="3"/><circle cx="24" cy="86" r="3"/><circle cx="0" cy="90" r="3"/></g>
+      <path d="M-30,118 L30,118 L22,130 L-22,130Z" fill="url(#g)"/>
+      <path d="M-8,130 L8,130 L5,150 L-5,150Z" fill="url(#g)"/>
+      <path d="M-3,150 L-6,190 L6,190 L3,150Z" fill="#d89a2a"/>
+    </g>
+    <!-- standing lantern -->
+    <g id="slantern">
+      <ellipse cx="0" cy="-90" rx="120" ry="140" fill="url(#glow)"/>
+      <path d="M-8,-215 L8,-215 L10,-200 L-10,-200Z" fill="url(#g)"/>
+      <path d="M-30,-200 L30,-200 L46,-172 L-46,-172Z" fill="url(#g)"/>
+      <rect x="-46" y="-172" width="92" height="150" fill="url(#lampbody)"/>
+      <rect x="-46" y="-172" width="92" height="150" fill="url(#jaali)" opacity=".55"/>
+      <rect x="-46" y="-172" width="92" height="150" fill="none" stroke="url(#g)" stroke-width="5"/>
+      <line x1="0" y1="-172" x2="0" y2="-22" stroke="url(#g)" stroke-width="3"/>
+      <path d="M-52,-22 L52,-22 L58,-8 L-58,-8Z" fill="url(#g)"/>
+      <rect x="-60" y="-8" width="120" height="10" fill="#9a6418"/>
+    </g>
+    <!-- palm -->
+    <g id="palm" fill="#0f2a22">
+      <path d="M-4,0 Q4,-80 0,-160 L6,-160 Q10,-80 4,0Z"/>
+      <path d="M3,-160 Q-50,-175 -90,-140 Q-50,-160 3,-155Z"/><path d="M3,-160 Q50,-178 95,-140 Q50,-162 3,-155Z"/>
+      <path d="M3,-160 Q-30,-200 -70,-205 Q-30,-190 3,-155Z"/><path d="M3,-160 Q35,-205 75,-200 Q35,-188 3,-155Z"/>
+      <path d="M3,-160 Q0,-210 10,-230 Q8,-200 6,-155Z"/>
+    </g>
+  </defs>
+
+  <!-- SKY -->
+  <rect width="1080" height="800" fill="url(#sky)"/>
+  <g id="stars"></g>
+  <g id="fireworks"></g>
+  <ellipse cx="540" cy="560" rx="300" ry="260" fill="#120626" opacity=".55" filter="url(#blur6)"/>
+  <ellipse cx="540" cy="680" rx="260" ry="90" fill="#120626" opacity=".55" filter="url(#blur6)"/>
+
+  <!-- Distant city glow & palms on horizon -->
+  <ellipse cx="760" cy="770" rx="380" ry="50" fill="#ff9a5a" opacity=".25" filter="url(#blur6)"/>
+  <use href="#palm" transform="translate(860 770) scale(.9)"/><use href="#palm" transform="translate(930 775) scale(1.1)"/>
+  <use href="#palm" transform="translate(345 790) scale(.7)"/>
+
+  <!-- BUILDING -->
+  <g id="building"></g>
+
+  <!-- RIGHT JAALI PILLAR + LEFT -->
+  <rect x="975" y="120" width="105" height="700" fill="url(#jaali)"/>
+  <rect x="975" y="120" width="105" height="700" fill="#ffb84a" opacity=".18"/>
+  <rect x="968" y="120" width="12" height="700" fill="#e9c88a"/>
+  <rect x="0" y="0" width="60" height="760" fill="url(#jaali)"/>
+  <rect x="0" y="0" width="60" height="760" fill="#ffb84a" opacity=".15"/>
+
+  <!-- POOL & FLOOR -->
+  <rect x="0" y="790" width="1080" height="360" fill="url(#floor)"/>
+  <path d="M420,786 L1080,786 L1080,830 L470,830Z" fill="url(#pool)"/>
+  <g id="poolshine" stroke="#bff0ff" stroke-width="2" opacity=".55"></g>
+  <path d="M470,830 L1080,830 L1080,840 L460,840Z" fill="#d9c3a5"/>
+  <g id="floorlines" stroke="#ffcf8a" stroke-opacity=".08" stroke-width="1"></g>
+  <ellipse cx="760" cy="960" rx="420" ry="140" fill="#ff9a3a" opacity=".12" filter="url(#blur6)"/>
+  <!-- right planter / ledge with diyas -->
+  <rect x="900" y="700" width="180" height="105" fill="#efe2cc"/><rect x="900" y="700" width="180" height="8" fill="#fff4e0"/>
+  <use href="#diya" transform="translate(950 700) scale(.6)"/><use href="#diya" transform="translate(1035 700) scale(.6)"/>
+
+  <!-- RANGOLI -->
+  <g transform="translate(910 905) scale(1 .33)" id="rangoli"></g>
+
+  <!-- row of floating/floor diyas -->
+  <g id="diyarow"></g>
+
+  <!-- TABLE -->
+  <g>
+    <path d="M60,905 L60,975 Q380,1050 700,975 L700,905Z" fill="url(#tableside)"/>
+    <ellipse cx="380" cy="905" rx="320" ry="62" fill="url(#table)"/>
+    <ellipse cx="380" cy="905" rx="320" ry="62" fill="none" stroke="#ffe3a0" stroke-width="3"/>
+    <ellipse cx="380" cy="900" rx="250" ry="40" fill="#fff0c0" opacity=".25" filter="url(#blur6)"/>
+  </g>
+  <!-- sofa hint -->
+  <path d="M0,700 L160,690 Q190,690 190,720 L190,880 L0,895Z" fill="#c9ab86"/>
+  <path d="M0,700 L160,690 Q190,690 190,720 L190,740 L0,760Z" fill="#e2c7a0"/>
+  <rect x="40" y="660" width="120" height="110" rx="18" fill="#8a3a2a" transform="rotate(-8 100 715)"/>
+  <rect x="48" y="668" width="104" height="94" rx="14" fill="none" stroke="#e9b44c" stroke-width="2" stroke-dasharray="6 4" transform="rotate(-8 100 715)"/>
+
+  <!-- table items -->
+  <use href="#slantern" transform="translate(205 905)"/>
+  <use href="#slantern" transform="translate(320 920) scale(.72)"/>
+  <!-- marigold bowl -->
+  <g transform="translate(480 905)">
+    <ellipse cx="0" cy="-30" rx="110" ry="60" fill="url(#glow)" opacity=".6"/>
+    <g id="bowlflowers"></g>
+    <path d="M-80,-24 Q0,-14 80,-24 Q70,26 0,30 Q-70,26 -80,-24Z" fill="url(#g)"/>
+    <path d="M-62,0 Q0,10 62,0" stroke="#7a3d06" stroke-width="2" fill="none" stroke-dasharray="5 5"/>
+    <ellipse cx="0" cy="30" rx="30" ry="6" fill="#8a5a18"/>
+  </g>
+  <use href="#diya" transform="translate(300 950) scale(1.1)"/>
+  <use href="#diya" transform="translate(610 930) scale(.95)"/>
+  <!-- small vase -->
+  <g transform="translate(600 880)">
+    <path d="M-14,0 Q-24,-26 -8,-40 L8,-40 Q24,-26 14,0Z" fill="url(#g)"/>
+    <g fill="#ffc21a" stroke="#d07b00" stroke-width="1.5"><circle cx="-14" cy="-58" r="10"/><circle cx="10" cy="-66" r="11"/><circle cx="20" cy="-48" r="8"/><circle cx="-2" cy="-80" r="8"/></g>
+    <g fill="#fff6d0"><circle cx="-14" cy="-58" r="3"/><circle cx="10" cy="-66" r="3"/><circle cx="20" cy="-48" r="2.5"/><circle cx="-2" cy="-80" r="2.5"/></g>
+  </g>
+
+  <!-- GIFT -->
+  <g transform="translate(-10 945)">
+    <rect x="0" y="0" width="200" height="150" fill="url(#gift)"/>
+    <rect x="-8" y="-28" width="216" height="34" fill="#f2cd78"/>
+    <rect x="88" y="-28" width="26" height="178" fill="#fff0b8"/>
+    <path d="M101,-28 C60,-70 30,-50 50,-30 Z M101,-28 C140,-72 175,-50 152,-30Z" fill="#fff0b8" stroke="#c9933a" stroke-width="2"/>
+  </g>
+
+  <!-- PLAQUE -->
+  <g transform="translate(540 1028)">
+    <path d="M-260,-60 L260,-60 Q246,-40 262,-25 L290,0 L262,25 Q246,40 260,60 L-260,60 Q-246,40 -262,25 L-290,0 L-262,-25 Q-246,-40 -260,-60Z" fill="url(#plaque)" stroke="url(#g)" stroke-width="5"/>
+    <path d="M-248,-50 L248,-50 Q236,-34 250,-20 L274,0 L250,20 Q236,34 248,50 L-248,50 Q-236,34 -250,20 L-274,0 L-250,-20 Q-236,-34 -248,-50Z" fill="none" stroke="#f2bd45" stroke-width="1.5"/>
+    <g fill="url(#g)">
+      <path d="M-30,-60 Q0,-92 30,-60 Q0,-74 -30,-60Z"/><circle cx="0" cy="-80" r="5"/>
+      <path d="M-30,60 Q0,92 30,60 Q0,74 -30,60Z"/><circle cx="0" cy="80" r="5"/>
+      <path d="M-300,0 L-282,-10 L-282,10Z"/><path d="M300,0 L282,-10 L282,10Z"/>
+    </g>
+  </g>
+
+  <!-- FOREGROUND FLOWERS (blurred) -->
+  <g filter="url(#blur2)" id="fgflowers"></g>
+
+  <!-- CURTAINS -->
+  <path d="M0,0 L250,0 Q200,60 150,110 Q90,180 70,260 Q40,170 0,150Z" fill="url(#curtain)"/>
+  <path d="M1080,0 L830,0 Q880,60 930,110 Q990,180 1010,260 Q1040,170 1080,150Z" fill="url(#curtain)"/>
+  <!-- top foliage + fairy lights -->
+  <g id="foliage"></g>
+
+  <!-- HANGING LANTERNS -->
+  <line x1="150" y1="0" x2="150" y2="118" stroke="#e9b44c" stroke-width="2"/><use href="#hlantern" transform="translate(150 116) scale(.85)"/>
+  <line x1="905" y1="0" x2="905" y2="140" stroke="#e9b44c" stroke-width="2"/><use href="#hlantern" transform="translate(905 138) scale(.8)"/>
+
+  <!-- LOGO: roof -->
+  <g transform="translate(540 0)">
+    <path d="M-150,88 L0,22 L150,88" fill="none" stroke="url(#gh)" stroke-width="5" stroke-linejoin="round"/>
+    <rect x="58" y="34" width="12" height="28" fill="url(#g)"/>
+    <g fill="#fff"><rect x="-14" y="54" width="12" height="12"/><rect x="2" y="54" width="12" height="12"/><rect x="-14" y="70" width="12" height="12"/><rect x="2" y="70" width="12" height="12"/></g>
+  </g>
+  <g stroke="url(#gh)" stroke-width="2"><line x1="300" y1="161" x2="360" y2="161"/><line x1="720" y1="161" x2="780" y2="161"/></g>
+
+  <!-- Madurai temple gopuram line-art -->
+  <g id="temple" transform="translate(540 217) scale(.72)" fill="none" stroke="#f2bd45" stroke-width="1.6"></g>
+  <!-- City pill -->
+  <rect x="380" y="221" width="320" height="48" rx="24" fill="#1a0c2a" fill-opacity=".75" stroke="url(#gh)" stroke-width="3"/>
+  <path transform="translate(418 233)" d="M10,0 C4,0 0,4.5 0,10 C0,17 10,26 10,26 C10,26 20,17 20,10 C20,4.5 16,0 10,0Z M10,6 A4,4 0 1 1 9.99,6Z" fill="#f2bd45" fill-rule="evenodd"/>
+
+  <!-- MANDALA ARCH behind greeting -->
+  <g transform="translate(540 482) scale(.78)" id="arch"></g>
+  <use href="#diya" transform="translate(540 322) scale(.75)"/>
+  <!-- divider -->
+  <g transform="translate(540 748)">
+    <line x1="-150" y1="0" x2="-30" y2="0" stroke="url(#gh)" stroke-width="2"/><line x1="30" y1="0" x2="150" y2="0" stroke="url(#gh)" stroke-width="2"/>
+    <path d="M0,-14 C10,-6 10,6 0,12 C-10,6 -10,-6 0,-14Z M-22,6 C-14,-6 -4,0 0,12 C-10,12 -18,10 -22,6Z M22,6 C14,-6 4,0 0,12 C10,12 18,10 22,6Z" fill="none" stroke="#f2bd45" stroke-width="1.6"/>
+  </g>
+</svg>
+
+<div class="abs logo">Aura Grand <span class="gold">Stay</span></div>
+<div class="abs sub">SERVICE APARTMENT</div>
+<div class="abs city">MADURAI</div>
+<div class="abs wish">Wishes you a</div>
+<div class="abs happy gold">Happy</div>
+<div class="abs diwali gold">Diwali</div>
+<div class="abs msg">May the festival of lights<br>bring peace, prosperity, good health,<br>and lasting happiness to you<br>and your loved ones.</div>
+<div class="abs from gold">From</div>
+<div class="abs name gold">Alwarappan</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e;};
+let seed=7;const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647);
+
+// stars
+const st=document.getElementById('stars');
+for(let i=0;i<90;i++)el('circle',{cx:rnd()*1080,cy:rnd()*520,r:rnd()*1.4+.3,fill:'#fff',opacity:rnd()*.7+.2},st);
+
+// fireworks
+const fw=document.getElementById('fireworks');
+function firework(cx,cy,R,c1,c2,n){
+  const g=el('g',{},fw);
+  el('circle',{cx,cy,r:R*1.1,fill:c1,opacity:.18,filter:'url(#blur6)'},g);
+  for(let i=0;i<n;i++){const a=i/n*Math.PI*2+rnd()*.05,r=R*(.75+rnd()*.25);
+    const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r+r*.06;
+    el('path',{d:`M${cx+Math.cos(a)*R*.12},${cy+Math.sin(a)*R*.12} Q${cx+Math.cos(a)*r*.6},${cy+Math.sin(a)*r*.6+4} ${x},${y}`,stroke:i%3?c1:c2,'stroke-width':1.6,fill:'none',opacity:.85,'stroke-linecap':'round'},g);
+    el('circle',{cx:x,cy:y,r:2.4,fill:'#fff'},g);el('circle',{cx:x,cy:y,r:4.5,fill:i%3?c1:c2,opacity:.6},g);}
+  el('circle',{cx,cy,r:R*.12,fill:'#fff',opacity:.9,filter:'url(#blur2)'},g);
+}
+firework(250,250,72,'#ff5fcf','#ffd36a',48);
+firework(380,345,40,'#ffb347','#ffe9a0',36);
+firework(835,250,92,'#c86bff','#ff7ad9',52);
+firework(880,415,72,'#ff6a9a','#ffb347',44);
+firework(170,420,40,'#ffd36a','#fff',28);
+
+// building
+const b=document.getElementById('building');
+el('rect',{x:60,y:330,width:225,height:450,fill:'url(#bld)'},b);
+el('rect',{x:285,y:400,width:40,height:380,fill:'#9c7e60'},b);
+el('path',{d:'M48,330 L298,330 L298,316 L60,316Z',fill:'#f4e6cc'},b);
+for(let r=0;r<8;r++){const y=345+r*54;
+  el('rect',{x:55,y:y+40,width:240,height:8,fill:'#f7ead2'},b);
+  for(let c=0;c<4;c++){const x=72+c*54;
+    el('rect',{x,y,width:38,height:36,fill:rnd()>.15?'#ffcf6a':'#6a4a3a'},b);
+    el('rect',{x:x+17,y,width:3,height:36,fill:'#a87a3a'},b);}
+  el('line',{x1:105,y1:y+30,x2:375,y2:y+30,stroke:'#3a2a20','stroke-width':1.5,opacity:.5},b);
+  // fairy light string along balcony
+  for(let k=0;k<24;k++)el('circle',{cx:58+k*10,cy:y+44,r:1.6,fill:'#fff3b0'},b);}
+for(let r=0;r<6;r++)el('rect',{x:295,y:420+r*60,width:20,height:30,fill:'#ffcf6a',opacity:.8},b);
+el('rect',{x:55,y:316,width:270,height:470,fill:'#1d0f3c',opacity:.38},b);
+
+// pool shine & floor
+const ps=document.getElementById('poolshine');
+for(let i=0;i<40;i++){const x=440+rnd()*620,y=792+rnd()*34;el('line',{x1:x,y1:y,x2:x+10+rnd()*25,y2:y},ps);}
+const fl=document.getElementById('floorlines');
+for(let i=0;i<9;i++)el('line',{x1:0,y1:845+i*i*4.2,x2:1080,y2:845+i*i*4.2},fl);
+for(let i=-6;i<16;i++)el('line',{x1:540+i*30,y1:840,x2:540+i*140,y2:1150},fl);
+// reflections of lights on floor
+for(let i=0;i<14;i++)el('ellipse',{cx:500+rnd()*560,cy:870+rnd()*240,rx:4,ry:22,fill:'#ffc860',opacity:.25,filter:'url(#blur2)'},fl.parentNode);
+
+// diyas on pool edge, receding
+const dr=document.getElementById('diyarow');
+[[1045,838,.62],[975,836,.56],[905,834,.5],[840,832,.45],[780,830,.4],[1015,880,.75],[930,875,.68],[860,868,.6],[720,825,.36]].forEach(([x,y,s])=>{
+  el('use',{href:'#diya',transform:`translate(${x} ${y}) scale(${s})`},dr);
+  el('ellipse',{cx:x,cy:y+16*s+8,rx:6*s,ry:26*s,fill:'#ffc860',opacity:.35,filter:'url(#blur2)'},dr);});
+
+// rangoli
+const rg=document.getElementById('rangoli');
+const ring=(r,n,col,len,w)=>{for(let i=0;i<n;i++){const a=i/n*360;el('path',{d:`M0,${-r} C${w},${-r-len*.4} ${w*.6},${-r-len} 0,${-r-len} C${-w*.6},${-r-len} ${-w},${-r-len*.4} 0,${-r}Z`,fill:col,transform:`rotate(${a})`},rg);}};
+el('circle',{r:205,fill:'#ffd34a'},rg);el('circle',{r:195,fill:'#c2185b'},rg);
+ring(150,20,'#ff9800',50,22);ring(110,16,'#ffeb3b',44,20);el('circle',{r:112,fill:'#6a1b9a'},rg);
+ring(70,12,'#e91e63',40,18);el('circle',{r:72,fill:'#ff5722'},rg);ring(30,8,'#fff59d',36,14);el('circle',{r:32,fill:'#fff'},rg);el('circle',{r:20,fill:'#e91e63'},rg);
+for(let i=0;i<40;i++){const a=i/40*Math.PI*2;el('circle',{cx:Math.cos(a)*200,cy:Math.sin(a)*200,r:5,fill:'#fff'},rg);}
+el('use',{href:'#diya',transform:'translate(0 0) scale(1.3 3.6)'},rg);
+
+// marigolds in bowl
+const bf=document.getElementById('bowlflowers');
+for(let i=0;i<18;i++){const x=-70+(i%6)*28+(Math.floor(i/6)%2)*12,y=-30-Math.floor(i/6)*16+rnd()*6;
+  el('circle',{cx:x,cy:y,r:16,fill:i%3?'#ffb300':'#ff8f00',stroke:'#d06a00','stroke-width':2},bf);
+  el('circle',{cx:x,cy:y,r:9,fill:'#ffcf40',stroke:'#e08a00','stroke-width':1.5},bf);}
+
+// foreground flowers
+const ff=document.getElementById('fgflowers');
+for(let i=0;i<9;i++){const x=10+rnd()*260,y=1080+rnd()*70,r=26+rnd()*20,c=rnd()>.3?'#ff9a00':'#ffc21a';
+  el('circle',{cx:x,cy:y,r,fill:c},ff);el('circle',{cx:x,cy:y,r:r*.55,fill:c=='#ff9a00'?'#ffb84a':'#ffe27a'},ff);}
+for(let i=0;i<5;i++)el('ellipse',{cx:150+i*55,cy:1110+rnd()*30,rx:50,ry:14,fill:'#1f4a22',transform:`rotate(${-30+rnd()*60} ${150+i*55} 1110)`},ff);
+
+// top foliage + fairy lights
+const fo=document.getElementById('foliage');
+[[260,0,1],[340,10,.8],[420,-5,.7],[700,0,.8],[780,10,1],[640,-8,.6]].forEach(([x,y,s])=>{
+  for(let i=0;i<9;i++){const a=rnd()*Math.PI,lx=x+Math.cos(a)*70*s,ly=y+Math.sin(a)*40*s+10;
+    el('ellipse',{cx:lx,cy:ly,rx:16*s,ry:8*s,fill:i%2?'#c9a23a':'#7a8a2a',transform:`rotate(${rnd()*180} ${lx} ${ly})`},fo);}
+  for(let i=0;i<10;i++){el('circle',{cx:x-60*s+rnd()*120*s,cy:y+rnd()*60*s,r:2.5,fill:'#fff6c0'},fo);}});
+for(let x=0;x<1080;x+=12){const y=6+Math.abs(Math.sin(x/90))*24;el('circle',{cx:x,cy:y,r:2.2,fill:'#ffe8a0'},fo);el('circle',{cx:x,cy:y,r:6,fill:'#ffcf6a',opacity:.25},fo);}
+
+// temple gopuram line art
+const tp=document.getElementById('temple');
+function gopuram(dx,sc){const g=el('g',{transform:`translate(${dx} 0) scale(${sc})`},tp);
+  let w=30,y=0;for(let i=0;i<6;i++){const nw=w-4;el('path',{d:`M${-w},${y} L${-nw},${y-8} L${nw},${y-8} L${w},${y}Z`},g);
+    for(let k=-nw+5;k<nw;k+=7)el('line',{x1:k,y1:y-1,x2:k,y2:y-7},g);w=nw;y-=8;}
+  el('path',{d:`M${-w},${y} Q${-w},${y-10} 0,${y-10} Q${w},${y-10} ${w},${y}`},g);
+  [-6,0,6].forEach(k=>el('line',{x1:k,y1:y-10,x2:k,y2:y-15},g));
+  el('path',{d:'M-7,0 L-7,-10 Q0,-16 7,-10 L7,0',fill:'#1a0c2a'},g);}
+gopuram(-110,.55);gopuram(110,.55);gopuram(-60,.75);gopuram(60,.75);gopuram(0,1);
+el('line',{x1:-150,y1:0,x2:150,y2:0},tp);
+
+// mandala arch
+const ar=document.getElementById('arch');
+el('path',{d:'M-210,140 L-210,0 A210,210 0 0 1 210,0 L210,140',fill:'#1a0a30','fill-opacity':.45,stroke:'none'},ar);
+for(let i=0;i<=18;i++){const a=Math.PI+i/18*Math.PI,x=Math.cos(a)*215,y=Math.sin(a)*215;
+  el('path',{d:'M0,0 C8,-10 8,-22 0,-34 C-8,-22 -8,-10 0,0Z',fill:'none',stroke:'#f2bd45','stroke-width':1.6,transform:`translate(${x} ${y}) rotate(${i/18*180-90})`},ar);
+  el('circle',{cx:Math.cos(a)*258,cy:Math.sin(a)*258,r:2.5,fill:'#ffd36a'},ar);}
+el('path',{d:'M-210,0 A210,210 0 0 1 210,0',fill:'none',stroke:'#f2bd45','stroke-width':2},ar);
+el('path',{d:'M-196,0 A196,196 0 0 1 196,0',fill:'none',stroke:'#f2bd45','stroke-width':1,'stroke-dasharray':'3 5'},ar);
+for(let i=0;i<=12;i++){const a=Math.PI+i/12*Math.PI;
+  el('path',{d:'M0,0 C14,-14 14,-30 0,-44 C-14,-30 -14,-14 0,0Z',fill:'#f2bd45','fill-opacity':.12,stroke:'#f2bd45','stroke-width':1.2,transform:`translate(${Math.cos(a)*165} ${Math.sin(a)*165}) rotate(${i/12*180-90})`},ar);}
+</script>
+</body>
+</html>
