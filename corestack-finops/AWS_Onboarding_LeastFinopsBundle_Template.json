@@ -311,7 +311,7 @@
 				"ManagedPolicyName": {
 					"Fn::Sub": "CoreStack_InventoryFinopsReadPolicy1-${RoleName}"
 				},
-				"Description": "CoreStack FinOps resource inventory and policy engine read access (access-analyzer to ecs), part 1 of 3",
+				"Description": "CoreStack FinOps resource inventory and policy engine read access (acm to ecs), part 1 of 3",
 				"PolicyDocument": {
 					"Version": "2012-10-17",
 					"Statement": [
@@ -319,8 +319,6 @@
 							"Sid": "Auth",
 							"Effect": "Allow",
 							"Action": [
-								"access-analyzer:ListAnalyzers",
-								"access-analyzer:ListFindings",
 								"acm:DescribeCertificate",
 								"acm:GetCertificate",
 								"acm:ListCertificates",
@@ -483,9 +481,7 @@
 								"kinesis:ListTagsForStream",
 								"lambda:GetAccountSettings",
 								"lambda:GetEventSourceMapping",
-								"lambda:GetFunctionCodeSigningConfig",
 								"lambda:GetFunctionConcurrency",
-								"lambda:GetFunctionConfiguration",
 								"lambda:GetFunctionUrlConfig",
 								"lambda:GetPolicy",
 								"lambda:GetProvisionedConcurrencyConfig",
@@ -589,14 +585,11 @@
 								"s3:GetLifecycleConfiguration",
 								"s3:GetBucketNotification",
 								"s3:GetBucketLocation",
+								"s3:ListAllMyBuckets",
 								"s3:ListMultipartUploadParts",
 								"secretsmanager:ListSecrets",
-								"securityhub:DescribeStandards",
-								"securityhub:GetAdministratorAccount",
-								"securityhub:GetFindings",
 								"ses:ListConfigurationSets",
 								"shield:DescribeSubscription",
-								"shield:DescribeDRTAccess",
 								"sns:ListSubscriptions",
 								"sns:ListTagsForResource",
 								"sns:ListTopics",
@@ -642,30 +635,6 @@
 								"glue:GetDataPreviewStatement",
 								"glue:GetRecipeAction",
 								"glue:GetDashboardUrl"
-							],
-							"Resource": "*"
-						}
-					]
-				},
-				"Roles": [
-					{
-						"Ref": "Role"
-					}
-				]
-			}
-		},
-		"CostPolicyReadPolicy": {
-			"Type": "AWS::IAM::Policy",
-			"Properties": {
-				"PolicyName": "CoreStack_CostPolicyReadPolicy",
-				"PolicyDocument": {
-					"Version": "2012-10-17",
-					"Statement": [
-						{
-							"Sid": "CoreStackCostPolicyRead",
-							"Effect": "Allow",
-							"Action": [
-								"s3:ListAllMyBuckets"
 							],
 							"Resource": "*"
 						}
