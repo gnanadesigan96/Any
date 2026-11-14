@@ -311,7 +311,7 @@
 				"ManagedPolicyName": {
 					"Fn::Sub": "CoreStack_InventoryFinopsReadPolicy1-${RoleName}"
 				},
-				"Description": "CoreStack FinOps resource inventory and policy engine read access (acm to ecs), part 1 of 3",
+				"Description": "CoreStack FinOps resource inventory and policy engine read access (apigateway to ecs), part 1 of 3",
 				"PolicyDocument": {
 					"Version": "2012-10-17",
 					"Statement": [
@@ -319,26 +319,14 @@
 							"Sid": "Auth",
 							"Effect": "Allow",
 							"Action": [
-								"acm:DescribeCertificate",
-								"acm:GetCertificate",
-								"acm:ListCertificates",
-								"acm:ListTagsForCertificate",
 								"apigateway:GET",
 								"application-autoscaling:DescribeScheduledActions",
-								"appstream:DescribeFleets",
-								"appstream:DescribeImages",
-								"appstream:DescribeStacks",
-								"appstream:DescribeUsers",
-								"appstream:ListAssociatedFleets",
-								"appstream:ListAssociatedStacks",
 								"appsync:ListGraphqlApis",
 								"athena:ListNamedQueries",
 								"athena:ListWorkGroups",
 								"autoscaling:DescribeAutoScalingGroups",
 								"autoscaling:DescribeAutoScalingInstances",
 								"autoscaling:DescribePolicies",
-								"backup:ListBackupJobs",
-								"backup:ListBackupVaults",
 								"batch:DescribeComputeEnvironments",
 								"batch:DescribeJobQueues",
 								"cloudformation:DescribeStacks",
@@ -393,13 +381,6 @@
 								"ec2:DescribeVpcEndpoints",
 								"ec2:DescribeVpcs",
 								"ec2:DescribeVpnGateways",
-								"ecr-public:DescribeRepositories",
-								"ecr-public:GetRepositoryCatalogData",
-								"ecr:BatchGetImage",
-								"ecr:DescribeImages",
-								"ecr:DescribeRepositories",
-								"ecr:GetLifecyclePolicy",
-								"ecr:GetLifecyclePolicyPreview",
 								"ecs:DescribeClusters",
 								"ecs:DescribeContainerInstances",
 								"ecs:DescribeServices",
@@ -490,7 +471,6 @@
 								"lambda:ListFunctions",
 								"lambda:ListProvisionedConcurrencyConfigs",
 								"lambda:ListTags",
-								"lex:GetBots",
 								"lightsail:GetBlueprints",
 								"lightsail:GetBuckets",
 								"lightsail:GetBundles",
@@ -536,7 +516,7 @@
 				"ManagedPolicyName": {
 					"Fn::Sub": "CoreStack_InventoryFinopsReadPolicy3-${RoleName}"
 				},
-				"Description": "CoreStack FinOps resource inventory and policy engine read access (qldb to xray), part 3 of 3",
+				"Description": "CoreStack FinOps resource inventory and policy engine read access (quicksight to transfer), part 3 of 3",
 				"PolicyDocument": {
 					"Version": "2012-10-17",
 					"Statement": [
@@ -544,7 +524,6 @@
 							"Sid": "Auth",
 							"Effect": "Allow",
 							"Action": [
-								"qldb:DescribeLedger",
 								"quicksight:ListDashboards",
 								"quicksight:ListDataSets",
 								"quicksight:ListDataSources",
@@ -600,15 +579,10 @@
 								"ssm:DescribeInstanceInformation",
 								"ssm:DescribeParameters",
 								"ssm:ListDocuments",
-								"states:ListActivities",
-								"states:ListStateMachines",
-								"states:ListTagsForResource",
-								"synthetics:DescribeCanaries",
 								"tag:GetResources",
 								"tag:GetTagKeys",
 								"tag:GetTagValues",
-								"transfer:ListServers",
-								"workmail:ListOrganizations"
+								"transfer:ListServers"
 							],
 							"Resource": "*"
 						},
