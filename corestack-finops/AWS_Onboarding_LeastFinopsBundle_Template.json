@@ -291,7 +291,8 @@
 								"cloudwatch:GetMetricData",
 								"cloudwatch:GetMetricStatistics",
 								"cloudwatch:ListDashboards",
-								"cloudwatch:ListMetrics"
+								"cloudwatch:ListMetrics",
+								"pi:GetResourceMetrics"
 							],
 							"Effect": "Allow",
 							"Resource": "*"
