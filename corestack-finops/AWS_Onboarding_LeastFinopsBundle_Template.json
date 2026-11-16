@@ -596,32 +596,6 @@
 								"transfer:ListServers"
 							],
 							"Resource": "*"
-						},
-						{
-							"Sid": "DenySensitiveActions",
-							"Effect": "Deny",
-							"Action": [
-								"cognito-identity:GetId",
-								"cognito-identity:GetCredentialsForIdentity",
-								"cognito-identity:GetOpenIdToken",
-								"cognito-identity:GetOpenIdTokenForDeveloperIdentity",
-								"lightsail:GetInstanceAccessDetails",
-								"lightsail:GetRelationalDatabaseMasterUserPassword",
-								"ec2:DescribeInstanceAttribute",
-								"quicksight:DescribeAssetBundleExportJob",
-								"quicksight:DescribeDashboardSnapshotJobResult",
-								"sns:ListPhoneNumbersOptedOut",
-								"lightsail:GetContainerLog",
-								"lightsail:GetRelationalDatabaseLogEvents",
-								"glue:GetConnection",
-								"glue:GetConnections",
-								"glue:GetStatement",
-								"glue:GetEntityRecords",
-								"glue:GetDataPreviewStatement",
-								"glue:GetRecipeAction",
-								"glue:GetDashboardUrl"
-							],
-							"Resource": "*"
 						}
 					]
 				},
