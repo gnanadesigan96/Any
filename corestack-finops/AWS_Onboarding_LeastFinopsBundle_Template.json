@@ -417,7 +417,7 @@
 				"ManagedPolicyName": {
 					"Fn::Sub": "CoreStack_InventoryFinopsReadPolicy2-${RoleName}"
 				},
-				"Description": "CoreStack FinOps resource inventory and policy engine read access (eks to pi), part 2 of 3",
+				"Description": "CoreStack FinOps resource inventory and policy engine read access (eks to organizations), part 2 of 3",
 				"PolicyDocument": {
 					"Version": "2012-10-17",
 					"Statement": [
