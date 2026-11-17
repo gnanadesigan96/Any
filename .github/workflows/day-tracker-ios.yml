@@ -52,21 +52,20 @@ jobs:
 
   verify:
     if: github.event_name == 'workflow_dispatch' && inputs.job == 'verify'
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 90
     defaults:
       run:
         working-directory: day-tracker
     steps:
       - uses: actions/checkout@v4
-      - name: Pick Xcode 26.0–26.2 (Expo SDK 58 needs Swift 6.2; 26.3+ is stricter and breaks Expo's JSI module)
+      - name: Use the newest Xcode on the runner (Expo SDK 58 is built against the current Xcode)
         working-directory: .
         run: |
           ls -d /Applications/Xcode*.app
-          for v in 26.2 26.1.1 26.1 26.0.1 26.0; do
-            if [ -d "/Applications/Xcode_$v.app" ]; then sudo xcode-select -s "/Applications/Xcode_$v.app"; echo "Using Xcode $v"; exit 0; fi
-          done
-          echo "::error::No Xcode 26.0–26.2 on this runner"; exit 1
+          LATEST=$(ls -d /Applications/Xcode_*.app | sed -E 's#.*/Xcode_([0-9.]+)\.app#\1#' | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
+          sudo xcode-select -s "/Applications/Xcode_${LATEST}.app"
+          echo "Using Xcode ${LATEST}"
       - run: xcodebuild -version && swift --version
         working-directory: .
       - uses: actions/setup-node@v4
@@ -92,7 +91,7 @@ jobs:
   testflight:
     needs: check-secrets
     if: needs.check-secrets.outputs.ready == 'true' && (github.event_name == 'push' || inputs.job == 'testflight')
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 120
     defaults:
       run:
@@ -106,14 +105,13 @@ jobs:
       ISSUER: ${{ secrets.ASC_ISSUER_ID }}
     steps:
       - uses: actions/checkout@v4
-      - name: Pick Xcode 26.0–26.2 (Expo SDK 58 needs Swift 6.2; 26.3+ is stricter and breaks Expo's JSI module)
+      - name: Use the newest Xcode on the runner (Expo SDK 58 is built against the current Xcode)
         working-directory: .
         run: |
           ls -d /Applications/Xcode*.app
-          for v in 26.2 26.1.1 26.1 26.0.1 26.0; do
-            if [ -d "/Applications/Xcode_$v.app" ]; then sudo xcode-select -s "/Applications/Xcode_$v.app"; echo "Using Xcode $v"; exit 0; fi
-          done
-          echo "::error::No Xcode 26.0–26.2 on this runner"; exit 1
+          LATEST=$(ls -d /Applications/Xcode_*.app | sed -E 's#.*/Xcode_([0-9.]+)\.app#\1#' | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
+          sudo xcode-select -s "/Applications/Xcode_${LATEST}.app"
+          echo "Using Xcode ${LATEST}"
       - run: xcodebuild -version && swift --version
         working-directory: .
       - uses: actions/setup-node@v4
