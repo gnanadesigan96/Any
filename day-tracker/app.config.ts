@@ -15,7 +15,7 @@ const config: ExpoConfig = {
     supportsTablet: false,
     bundleIdentifier: 'com.daytracker.app',
     infoPlist: {
-      UIBackgroundModes: ['location', 'fetch'],
+      UIBackgroundModes: ['location', 'fetch', 'processing'],
     },
   },
   android: {
@@ -35,6 +35,9 @@ const config: ExpoConfig = {
       'ACTIVITY_RECOGNITION',
       'POST_NOTIFICATIONS',
       'RECEIVE_BOOT_COMPLETED',
+      'REQUEST_IGNORE_BATTERY_OPTIMIZATIONS',
+      'android.permission.health.READ_STEPS',
+      'android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND',
     ],
     predictiveBackGestureEnabled: false,
   },
@@ -59,6 +62,10 @@ const config: ExpoConfig = {
       },
     ],
     'expo-notifications',
+    'expo-background-task',
+    // Real step counts on Android come from Health Connect (needs Android 8+).
+    'react-native-health-connect',
+    ['expo-build-properties', { android: { minSdkVersion: 26 } }],
     ['react-native-maps', { androidGoogleMapsApiKey: googleMapsKey }],
   ],
 };

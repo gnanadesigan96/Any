@@ -1,10 +1,14 @@
 import * as Location from 'expo-location';
-import { db, listPlaces, Place, Visit } from './db';
+import { db, listPlaces, Place, savePlace, Visit } from './db';
 import { distance, LatLon } from './geo';
 
 export interface Candidate { name: string; category: string; lat: number; lon: number; distance: number }
 
 const OVERPASS = 'https://overpass-api.de/api/interpreter';
+const GOOGLE_PLACES = 'https://places.googleapis.com/v1/places:searchNearby';
+// Optional. Set EXPO_PUBLIC_GOOGLE_PLACES_API_KEY in .env (or the GitHub secret) for Google's richer place data.
+const GOOGLE_KEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY ?? '';
+export const usingGooglePlaces = GOOGLE_KEY.length > 0;
 
 const CATEGORY_ICON: Record<string, string> = {
   home: '🏠', office: '🏢', restaurant: '🍽️', cafe: '☕', fast_food: '🍔', bar: '🍸', pub: '🍺',
@@ -37,21 +41,78 @@ export function matchSavedPlace(p: LatLon, places: Place[] = listPlaces()): Plac
   return best;
 }
 
-/** Named businesses and points of interest around a spot, from OpenStreetMap. Nearest/most likely first. */
+/**
+ * Named businesses and places around a spot, most likely first.
+ * Uses Google Places when a key is configured (best coverage), and OpenStreetMap as well/as a fallback.
+ */
 export async function nearbyCandidates(p: LatLon, radius = 80): Promise<Candidate[]> {
+  const [g, o] = await Promise.all([usingGooglePlaces ? googleCandidates(p, radius) : Promise.resolve([]), osmCandidates(p, radius)]);
+  const seen = new Set<string>();
+  const out: Candidate[] = [];
+  for (const c of [...g, ...o]) {
+    const key = c.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (seen.has(key)) continue;
+    seen.add(key); out.push(c);
+  }
+  return out;
+}
+
+// Google place types → our categories.
+function googleCategory(types: string[]): string {
+  const t = types.join(' ');
+  const rules: [RegExp, string][] = [
+    [/coffee|cafe|tea_house/, 'cafe'], [/fast_food|hamburger|pizza|sandwich/, 'fast_food'], [/ice_cream|dessert/, 'ice_cream'],
+    [/bakery/, 'bakery'], [/restaurant|food_court|meal_takeaway|diner/, 'restaurant'], [/\bbar\b|pub|night_club/, 'bar'],
+    [/shopping_mall/, 'mall'], [/supermarket|grocery/, 'supermarket'], [/store|market/, 'shop'],
+    [/hospital/, 'hospital'], [/dentist/, 'dentist'], [/doctor|clinic|medical/, 'clinic'], [/pharmacy|drugstore/, 'pharmacy'],
+    [/gym|fitness/, 'gym'], [/university/, 'university'], [/school/, 'school'], [/church|hindu_temple|mosque|place_of_worship|synagogue/, 'place_of_worship'],
+    [/movie_theater/, 'cinema'], [/lodging|hotel/, 'hotel'], [/train_station|subway_station|transit_station/, 'station'],
+    [/bus_station/, 'bus_station'], [/airport/, 'airport'], [/park/, 'park'], [/bank/, 'bank'], [/atm/, 'atm'], [/gas_station/, 'fuel'],
+  ];
+  return rules.find(([re]) => re.test(t))?.[1] ?? 'other';
+}
+
+async function googleCandidates(p: LatLon, radius: number): Promise<Candidate[]> {
+  try {
+    const res = await fetchWithTimeout(GOOGLE_PLACES, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': GOOGLE_KEY,
+        'X-Goog-FieldMask': 'places.displayName,places.location,places.types,places.primaryType' },
+      body: JSON.stringify({ maxResultCount: 10, rankPreference: 'DISTANCE',
+        locationRestriction: { circle: { center: { latitude: p.lat, longitude: p.lon }, radius: Math.max(radius, 30) } } }),
+    });
+    if (!res.ok) return [];
+    const json = (await res.json()) as { places?: any[] };
+    const out = (json.places ?? []).filter((x) => x.displayName?.text && x.location).map((x) => {
+      const category = googleCategory([x.primaryType ?? '', ...(x.types ?? [])]);
+      const d = distance(p, { lat: x.location.latitude, lon: x.location.longitude });
+      return { name: x.displayName.text as string, category, lat: x.location.latitude, lon: x.location.longitude, distance: d,
+        score: (PRIORITY[category] ?? 0) - d * 0.6 };
+    });
+    out.sort((a, b) => b.score - a.score);
+    return out.map(({ score: _s, ...c }) => c);
+  } catch {
+    return [];
+  }
+}
+
+async function fetchWithTimeout(url: string, init: RequestInit, ms = 15000): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try { return await fetch(url, { ...init, signal: controller.signal }); } finally { clearTimeout(timer); }
+}
+
+async function osmCandidates(p: LatLon, radius: number): Promise<Candidate[]> {
   const a = `(around:${radius},${p.lat},${p.lon})`;
   const q = `[out:json][timeout:15];(` +
     ['amenity', 'shop', 'leisure', 'tourism', 'office', 'healthcare', 'railway', 'aeroway']
       .map((k) => `nwr${a}["name"]["${k}"];`).join('') +
     `);out center 40;`;
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 15000);
   try {
-    const res = await fetch(OVERPASS, {
+    const res = await fetchWithTimeout(OVERPASS, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'DayTracker/1.0' },
       body: 'data=' + encodeURIComponent(q),
-      signal: controller.signal,
     });
     if (!res.ok) return [];
     const json = (await res.json()) as { elements: any[] };
@@ -74,8 +135,6 @@ export async function nearbyCandidates(p: LatLon, radius = 80): Promise<Candidat
       .map(({ score: _s, ...c }) => c);
   } catch {
     return [];
-  } finally {
-    clearTimeout(timer);
   }
 }
 
@@ -99,8 +158,10 @@ export async function resolveVisit(v: Visit): Promise<void> {
   const p = { lat: v.lat, lon: v.lon };
   const saved = matchSavedPlace(p);
   if (saved) {
+    const category = saved.kind !== 'other' ? saved.kind
+      : db.getFirstSync<{ category: string }>('SELECT category FROM visits WHERE place_id=? AND category IS NOT NULL ORDER BY id DESC', saved.id)?.category ?? 'other';
     db.runSync('UPDATE visits SET place_id=?, name=?, category=?, address=?, resolved=1 WHERE id=?',
-      saved.id, saved.name, saved.kind === 'other' ? 'other' : saved.kind, saved.address, v.id);
+      saved.id, saved.name, category, saved.address, v.id);
     return;
   }
   const [cands, address] = await Promise.all([nearbyCandidates(p, 70), addressFor(p)]);
@@ -121,4 +182,18 @@ export function relabelVisits(p: Place) {
       }
     }
   });
+}
+
+/**
+ * You named a visit (picked a restaurant or typed "Mom's house"): remember that spot so the
+ * next visit there gets the same name automatically. Shown as "Learned" in My places.
+ */
+export function learnName(v: Visit, name: string, category: string | null) {
+  if (v.place_id) {
+    const saved = listPlaces().find((p) => p.id === v.place_id);
+    if (saved && !saved.learned) return; // don't override Home/Office/hand-made places
+  }
+  const existing = listPlaces().find((p) => p.learned && distance(p, v) <= 60);
+  const id = savePlace({ id: existing?.id, name, kind: 'other', lat: v.lat, lon: v.lon, radius: 50, address: v.address, learned: 1 });
+  db.runSync('UPDATE visits SET place_id=?, name=?, category=?, resolved=1 WHERE id=?', id, name, category ?? v.category, v.id);
 }

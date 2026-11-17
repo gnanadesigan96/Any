@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, View } from 'react-native';
-import { Trip, Visit } from '../db';
+import { dayBounds, Gap, gapsBetween, Trip, Visit } from '../db';
 import { summarizeDay, DaySummary, TimelineItem } from '../stats';
 import { stepsBetween, StepResult } from '../steps';
 import { formatDistance, formatDuration, formatTime, MODE_LABEL } from '../geo';
@@ -21,11 +21,13 @@ export function Today() {
   const [openVisit, setOpenVisit] = useState<Visit | null>(null);
   const [openTrip, setOpenTrip] = useState<Trip | null>(null);
   const [remembering, setRemembering] = useState(false);
+  const [gaps, setGaps] = useState<Gap[]>([]);
   const today = isSameDay(day, new Date());
 
   const load = useCallback(() => {
     const s = summarizeDay(day);
     setSum(s);
+    setGaps(gapsBetween(...dayBounds(day)));
     stepsBetween(s.start, s.end, s.walkedM).then(setSteps);
   }, [day]);
 
@@ -69,11 +71,22 @@ export function Today() {
         {today && <Button title="📌 Remember this place" kind="secondary" onPress={() => setRemembering(true)} style={{ marginTop: 12 }} />}
 
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 16, marginBottom: 12 }}>
-          <Stat label="Steps" value={steps ? steps.steps.toLocaleString() : '…'} color={t.home} hint={steps?.estimated ? 'estimated from walking' : undefined} />
+          <Stat label="Steps" value={steps ? steps.steps.toLocaleString() : '…'} color={t.home}
+            hint={steps ? (steps.source === 'estimate' ? 'estimated from walking' : steps.source === 'health-connect' ? 'from Health Connect' : 'from iPhone') : undefined} />
           <Stat label="Distance travelled" value={formatDistance(sum.distanceM)} color={t.accent} />
           <Stat label="Time travelling" value={formatDuration(sum.travelMs)} color={t.travel} />
           <Stat label="Places visited" value={String(sum.placeTotals.length)} color={t.other} />
         </View>
+
+        {steps?.hint ? <Sub style={{ marginBottom: 12 }}>👣 {steps.hint}</Sub> : null}
+
+        {gaps.length > 0 && (
+          <Card style={{ borderColor: t.danger, borderWidth: 1 }}>
+            <H2>⚠️ Tracking had {gaps.length === 1 ? 'a gap' : `${gaps.length} gaps`}</H2>
+            {gaps.slice(-3).map((g, i) => <Sub key={i}>{formatTime(g.from)} – {formatTime(g.to)}: {g.reason}</Sub>)}
+            <Sub style={{ marginTop: 6 }}>Open Settings → “Keep tracking reliable” to stop your phone pausing Day Tracker.</Sub>
+          </Card>
+        )}
 
         {(sum.commute.toOffice != null || sum.commute.toHome != null) && (
           <Card>

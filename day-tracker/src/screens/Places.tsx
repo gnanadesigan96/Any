@@ -4,6 +4,7 @@ import { deletePlace, listPlaces, Place, PlaceKind } from '../db';
 import { categoryIcon } from '../places';
 import { emitChange, onChange } from '../events';
 import { PlaceEditor } from '../components/PlaceEditor';
+import { syncGeofences } from '../tracker';
 import { Body, Button, Card, H1, Sub, useTheme } from '../ui';
 
 export function Places() {
@@ -27,10 +28,10 @@ export function Places() {
               <View style={{ flex: 1 }}>
                 <Body style={{ fontWeight: '700' }}>{p.name}</Body>
                 <Sub numberOfLines={1}>{p.address ?? `${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}`}</Sub>
-                <Sub>within {p.radius} m</Sub>
+                <Sub>within {p.radius} m{p.learned ? ' · learned from your visits' : ''}</Sub>
               </View>
               <Pressable hitSlop={12} onPress={() => Alert.alert(`Delete ${p.name}?`, 'Past visits keep their times but lose this label.', [
-                { text: 'Cancel' }, { text: 'Delete', style: 'destructive', onPress: () => { deletePlace(p.id); emitChange(); } }])}>
+                { text: 'Cancel' }, { text: 'Delete', style: 'destructive', onPress: () => { deletePlace(p.id); syncGeofences(); emitChange(); } }])}>
                 <Body style={{ color: t.danger }}>Delete</Body>
               </Pressable>
             </Card>
@@ -46,7 +47,7 @@ export function Places() {
           <Pressable onPress={() => setEditing(null)} style={{ alignSelf: 'flex-end' }}><Body style={{ color: t.accent, fontWeight: '700' }}>Cancel</Body></Pressable>
           <H1>{editing?.place ? `Edit ${editing.place.name}` : editing?.kind === 'home' ? 'Set Home' : editing?.kind === 'office' ? 'Set Office' : 'New place'}</H1>
           {editing && (
-            <PlaceEditor kind={editing.kind} initial={editing.place} allowKindChange={!editing.place && editing.kind === 'other'} onSaved={() => { setEditing(null); emitChange(); }} />
+            <PlaceEditor kind={editing.kind} initial={editing.place} allowKindChange={!editing.place && editing.kind === 'other'} onSaved={() => { setEditing(null); syncGeofences(); emitChange(); }} />
           )}
         </ScrollView>
       </Modal>

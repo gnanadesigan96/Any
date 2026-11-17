@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, View } from 'react-native';
 import { getVisit, pointsBetween, renameVisit, setTripMode, Trip, Visit, db } from '../db';
 import { PlaceEditor } from './PlaceEditor';
-import { Candidate, categoryIcon, nearbyCandidates } from '../places';
+import { syncGeofences } from '../tracker';
+import { Candidate, categoryIcon, learnName, nearbyCandidates } from '../places';
 import { formatDistance, formatDuration, formatTime, MODE_LABEL } from '../geo';
 import { emitChange } from '../events';
 import { RouteMap } from './RouteMap';
@@ -32,7 +33,7 @@ export function RememberSheet({ visible, at, onClose }: {
       <H1>📌 Remember this place</H1>
       <Sub style={{ marginBottom: 12 }}>Save it as Home, Office or any named place — a single shop, a building, or a whole street.
         From now on (and in your past days) it shows up by this name.</Sub>
-      <PlaceEditor kind="other" allowKindChange at={at} onSaved={() => { emitChange(); onClose(); }} />
+      <PlaceEditor kind="other" allowKindChange at={at} onSaved={() => { syncGeofences(); emitChange(); onClose(); }} />
     </Sheet>
   );
 }
@@ -54,7 +55,8 @@ export function VisitSheet({ visit, onClose }: { visit: Visit | null; onClose: (
 
   const choose = (name: string, category?: string) => {
     renameVisit(visit.id, name);
-    if (category) db.runSync('UPDATE visits SET category=? WHERE id=?', category, visit.id);
+    // Remember the name for this spot so next time it's recognised automatically.
+    learnName(visit, name, category ?? null);
     emitChange(); onClose();
   };
   if (remember) {
@@ -116,9 +118,11 @@ export function TripSheet({ trip, onClose }: { trip: Trip | null; onClose: () =>
         <Row k="Distance" v={formatDistance(trip.distance_m)} />
         <Row k="Average speed" v={`${kmh.toFixed(1)} km/h`} />
         <Row k="Top speed" v={`${maxKmh.toFixed(0)} km/h`} />
+        {trip.steps != null ? <Row k="Steps" v={trip.steps.toLocaleString()} /> : null}
         <Row k="GPS points" v={String(pts.length)} />
       </Card>
       <H2>How did you travel?</H2>
+      <Sub style={{ marginBottom: 8 }}>Fix it once and similar trips between the same places are labelled this way from now on.</Sub>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {MODES.map((m) => (
           <Chip key={m} label={MODE_LABEL[m]} active={mode === m}

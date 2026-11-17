@@ -5,6 +5,8 @@ import * as Notifications from 'expo-notifications';
 import { Pedometer } from 'expo-sensors';
 import { setKV } from '../db';
 import { startTracking } from '../tracker';
+import { connectHealthConnect } from '../steps';
+import { phoneGuide, requestUnrestrictedBattery } from '../reliability';
 import { PlaceEditor } from '../components/PlaceEditor';
 import { Body, Button, Card, H1, H2, Sub, useTheme } from '../ui';
 
@@ -50,7 +52,13 @@ export function Onboarding({ onFinish }: { onFinish: () => void }) {
     try {
       await Notifications.requestPermissionsAsync().catch(() => null);
       await Pedometer.requestPermissionsAsync().catch(() => null);
-      if (Platform.OS === 'android') await Location.requestMotionActivityPermissionsAsync().catch(() => null);
+      if (Platform.OS === 'android') {
+        await Location.requestMotionActivityPermissionsAsync().catch(() => null);
+        const hc = await connectHealthConnect().catch(() => null);
+        if (hc === 'not-installed' || hc === 'needs-update') {
+          Alert.alert('Health Connect', 'For exact step counts install or update Health Connect from the Play Store. Until then steps are estimated. You can connect it later in Settings.');
+        }
+      }
       next();
     } finally { setBusy(false); }
   }
@@ -115,14 +123,16 @@ export function Onboarding({ onFinish }: { onFinish: () => void }) {
       {step === 'extras' && (
         <>
           <H1>Steps & alerts</H1>
-          <Body>Allow motion/fitness access to count steps, and notifications so you get a note like
+          <Body>Allow {Platform.OS === 'android' ? 'Health Connect (step count)' : 'Motion & Fitness'} access to count steps, and notifications so you get a note like
             “Arrived at Office · 38 min commute”.</Body>
           {Platform.OS === 'android' && (
             <Card style={{ marginTop: 16 }}>
               <H2>Important on Android</H2>
-              <Sub>Some phones (Samsung, Xiaomi, OnePlus, Vivo, Oppo…) stop background apps to save battery. Set Day Tracker’s battery usage to “Unrestricted” so tracking never pauses.</Sub>
-              <Button title="Open battery settings" kind="secondary"
-                onPress={() => Linking.sendIntent('android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS').catch(() => Linking.openSettings())} />
+              <Sub>Phones stop background apps to save battery. Tap below and choose “Allow” so tracking never pauses.</Sub>
+              <Button title="Allow running in background" kind="secondary" onPress={requestUnrestrictedBattery} />
+              {phoneGuide().brand !== 'google' && phoneGuide().brand !== 'other' && (
+                <Sub style={{ marginTop: 8 }}>Your {phoneGuide().brand} phone needs one more step — it’s shown in Settings → Keep tracking reliable.</Sub>
+              )}
             </Card>
           )}
           <Button title="Continue" busy={busy} onPress={askExtras} />

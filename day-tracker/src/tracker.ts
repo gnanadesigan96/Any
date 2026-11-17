@@ -1,12 +1,16 @@
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import * as Notifications from 'expo-notifications';
-import { db, getKV, setKV, getVisit, unresolvedVisits, Visit } from './db';
+import * as BackgroundTask from 'expo-background-task';
+import { addGap, db, getKV, setKV, getVisit, listPlaces, Trip, unresolvedVisits, Visit } from './db';
+import { realSteps } from './steps';
 import { distance, guessMode, pathLength, formatDuration, MODE_LABEL } from './geo';
 import { resolveVisit } from './places';
 import { emitChange } from './events';
 
 export const LOCATION_TASK = 'daytracker-location';
+export const GEOFENCE_TASK = 'daytracker-geofence';
+export const WATCHDOG_TASK = 'daytracker-watchdog';
 
 // ---- Tuning ----
 /** You count as "staying" somewhere if you remain within this many metres... */
@@ -17,8 +21,11 @@ const STAY_MIN_MS = 5 * 60 * 1000;
 const MAX_ACCURACY_M = 80;
 /** Speed assumed when estimating when you left a place after a gap in GPS updates. */
 const GAP_TRAVEL_SPEED_MPS = 5;
+/** A jump this far with no fixes in between means the phone paused tracking mid-journey. */
+const MISSED_ROUTE_M = 1000;
+const MISSED_ROUTE_MS = 10 * 60 * 1000;
 
-interface Anchor { lat: number; lon: number; n: number; startTs: number; lastTs: number }
+interface Anchor { lat: number; lon: number; n: number; startTs: number; lastTs: number; /** m/s at the latest fix */ speed?: number }
 interface EngineState {
   anchor: Anchor | null;      // cluster of recent points that might become a visit
   visitId: number | null;     // currently open visit (you are there now)
@@ -35,6 +42,28 @@ export type TrackingMode = 'precise' | 'balanced';
 TaskManager.defineTask<{ locations: Location.LocationObject[] }>(LOCATION_TASK, async ({ data, error }) => {
   if (error || !data?.locations?.length) return;
   await ingest(data.locations);
+});
+
+// Geofences around your saved places wake the app on arrival/departure even if the phone
+// killed the tracking service – then tracking restarts and the current position is recorded.
+TaskManager.defineTask(GEOFENCE_TASK, async ({ error }) => {
+  if (error || !getKV('settings.tracking', false)) return;
+  await ensureRunning('geofence');
+  try {
+    const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+    await ingest([pos]);
+  } catch {}
+});
+
+// Runs every ~15 minutes when the OS allows: restarts tracking if it was stopped.
+TaskManager.defineTask(WATCHDOG_TASK, async () => {
+  try {
+    if (getKV('settings.tracking', false)) await ensureRunning('watchdog');
+    await refinePendingTrips();
+    return BackgroundTask.BackgroundTaskResult.Success;
+  } catch {
+    return BackgroundTask.BackgroundTaskResult.Failed;
+  }
 });
 
 let queue: Promise<void> = Promise.resolve();
@@ -55,9 +84,13 @@ async function processBatch(locations: Location.LocationObject[]) {
       const acc = loc.coords.accuracy ?? 999;
       if (loc.timestamp <= state.lastTs || acc > MAX_ACCURACY_M) continue;
       const p = { lat: loc.coords.latitude, lon: loc.coords.longitude, ts: loc.timestamp };
+      const prev = db.getFirstSync<{ ts: number; lat: number; lon: number }>('SELECT ts, lat, lon FROM points ORDER BY ts DESC LIMIT 1');
+      if (prev && p.ts - prev.ts >= MISSED_ROUTE_MS && distance(prev, p) >= MISSED_ROUTE_M) {
+        addGap({ from: prev.ts, to: p.ts, reason: 'Part of this route is missing – the phone paused tracking.' });
+      }
       db.runSync('INSERT INTO points (ts, lat, lon, acc, speed) VALUES (?,?,?,?,?)',
         p.ts, p.lat, p.lon, acc, loc.coords.speed ?? null);
-      step(state, p, acc, toResolve, closedTrips);
+      step(state, p, acc, loc.coords.speed ?? null, toResolve, closedTrips);
       state.lastTs = p.ts;
     }
     setKV('engine.state', state);
@@ -68,12 +101,58 @@ async function processBatch(locations: Location.LocationObject[]) {
     const v = getVisit(id);
     if (!v) continue;
     await resolveVisit(v);
+    for (const tid of closedTrips) await refineTrip(tid);
     await notifyArrival(id, closedTrips);
     emitChange();
   }
 }
 
-function step(s: EngineState, p: { lat: number; lon: number; ts: number }, acc: number,
+// ---------- Better travel-mode detection ----------
+/**
+ * Improve the speed-based guess with:
+ *  1. Your own corrections – if you said Home→Office is "bus" before, it's probably bus again.
+ *  2. Steps during the trip (iPhone motion chip / Health Connect): ~100 steps a minute means walking,
+ *     almost none at speed means a vehicle.
+ */
+export async function refineTrip(tripId: number) {
+  const t = db.getFirstSync<Trip>('SELECT * FROM trips WHERE id=?', tripId);
+  if (!t || t.end_ts == null || t.mode_edited || t.refined) return;
+  const from = getVisit(t.from_visit), to = getVisit(t.to_visit);
+  const mins = (t.end_ts - t.start_ts) / 60000;
+  const avg = t.distance_m / Math.max(1, (t.end_ts - t.start_ts) / 1000);
+  let mode = t.mode ?? 'vehicle';
+
+  const real = await realSteps(t.start_ts, t.end_ts);
+  if (real) {
+    const cadence = real.steps / Math.max(1, mins);
+    if (cadence >= 60) mode = avg > 2.4 && cadence > 130 ? 'run' : 'walk';
+    else if (cadence < 15 && (mode === 'walk' || mode === 'run')) mode = avg > 5 ? 'vehicle' : 'cycle';
+    db.runSync('UPDATE trips SET steps=? WHERE id=?', real.steps, tripId);
+  }
+
+  if (from?.place_id && to?.place_id) {
+    const learned = db.getFirstSync<{ mode: string }>(`
+      SELECT t.mode FROM trips t JOIN visits a ON a.id=t.from_visit JOIN visits b ON b.id=t.to_visit
+      WHERE t.mode_edited=1 AND a.place_id=? AND b.place_id=? AND t.id<>?
+        AND abs(t.distance_m - ?) < ? ORDER BY t.start_ts DESC LIMIT 1`,
+      from.place_id, to.place_id, tripId, t.distance_m, Math.max(1500, t.distance_m * 0.3));
+    // Your correction wins unless the steps clearly say you walked.
+    if (learned && !(real && real.steps / Math.max(1, mins) >= 60 && learned.mode !== 'walk')) mode = learned.mode;
+  }
+
+  // Health Connect may refuse background reads on older Android: retry when the app opens.
+  const retryLater = !real && getKV('settings.healthConnect', false);
+  db.runSync('UPDATE trips SET mode=?, refined=? WHERE id=?', mode, retryLater ? 0 : 1, tripId);
+}
+
+export async function refinePendingTrips() {
+  const pending = db.getAllSync<{ id: number }>(
+    'SELECT id FROM trips WHERE refined=0 AND mode_edited=0 AND end_ts IS NOT NULL ORDER BY start_ts DESC LIMIT 30');
+  for (const { id } of pending) await refineTrip(id);
+  if (pending.length) emitChange();
+}
+
+function step(s: EngineState, p: { lat: number; lon: number; ts: number }, acc: number, speed: number | null,
   toResolve: number[], closedTrips: number[]) {
   // 1) You're at a place. Have you left?
   if (s.visitId != null && s.anchor) {
@@ -103,13 +182,16 @@ function step(s: EngineState, p: { lat: number; lon: number; ts: number }, acc: 
     a.lon = (a.lon * a.n + p.lon) / (a.n + 1);
     a.n += 1;
     a.lastTs = p.ts;
+    a.speed = speed ?? undefined;
     if (a.lastTs - a.startTs >= STAY_MIN_MS) confirmVisit(s, a, toResolve, closedTrips);
     return;
   }
 
   // Moved away from the cluster. Phones send few updates while you sit still, so a long
   // gap followed by a fix elsewhere usually means you stayed put and then travelled.
-  if (a) {
+  // But if you were still moving when the fixes stopped, it's a missing piece of route, not a stop.
+  const wasStill = a && (a.speed == null || a.speed < 2) && (a.n > 1 || s.tripId == null || a.speed != null);
+  if (a && wasStill) {
     const d = distance(a, p);
     const leftEstimate = p.ts - d / GAP_TRAVEL_SPEED_MPS;
     if (leftEstimate - a.startTs >= STAY_MIN_MS) {
@@ -123,11 +205,11 @@ function step(s: EngineState, p: { lat: number; lon: number; ts: number }, acc: 
   if (s.tripId == null) {
     s.tripId = db.runSync('INSERT INTO trips (start_ts, from_visit) VALUES (?, NULL)', p.ts).lastInsertRowId;
   }
-  s.anchor = newAnchor(p);
+  s.anchor = newAnchor(p, speed);
 }
 
-function newAnchor(p: { lat: number; lon: number; ts: number }): Anchor {
-  return { lat: p.lat, lon: p.lon, n: 1, startTs: p.ts, lastTs: p.ts };
+function newAnchor(p: { lat: number; lon: number; ts: number }, speed: number | null = null): Anchor {
+  return { lat: p.lat, lon: p.lon, n: 1, startTs: p.ts, lastTs: p.ts, speed: speed ?? undefined };
 }
 
 function confirmVisit(s: EngineState, a: Anchor, toResolve: number[], closedTrips: number[]) {
@@ -201,6 +283,30 @@ export async function startTracking(mode: TrackingMode = getKV<TrackingMode>('se
   });
   setKV('settings.mode', mode);
   setKV('settings.tracking', true);
+  await syncGeofences();
+  try { await BackgroundTask.registerTaskAsync(WATCHDOG_TASK, { minimumInterval: 15 }); } catch {}
+}
+
+/** Watch your saved places (Home, Office, favourites) so arriving/leaving always wakes the app. */
+export async function syncGeofences() {
+  try {
+    // iOS allows 20 regions per app; hand-made places first, then the most recent learned ones.
+    const regions = listPlaces().sort((a, b) => (a.learned ?? 0) - (b.learned ?? 0) || b.id - a.id).slice(0, 18)
+      .map((p) => ({ identifier: String(p.id), latitude: p.lat, longitude: p.lon, radius: Math.max(100, p.radius),
+        notifyOnEnter: true, notifyOnExit: true }));
+    if (!regions.length) return;
+    await Location.startGeofencingAsync(GEOFENCE_TASK, regions);
+  } catch (e) { console.warn('geofences failed', e); }
+}
+
+/** Restart tracking if the OS (or a battery saver) stopped it, and note the gap. */
+async function ensureRunning(source: string) {
+  if (await isTracking()) return;
+  const last = db.getFirstSync<{ ts: number }>('SELECT ts FROM points ORDER BY ts DESC LIMIT 1')?.ts;
+  if (last && Date.now() - last > 15 * 60 * 1000) {
+    addGap({ from: last, to: Date.now(), reason: `Tracking was stopped by the phone (restarted by ${source}).` });
+  }
+  try { await startTracking(); } catch (e) { console.warn('restart failed', e); }
 }
 
 export async function stopTracking() {
@@ -213,6 +319,8 @@ export async function stopTracking() {
   if (s.visitId != null) db.runSync('UPDATE visits SET end_ts=? WHERE id=?', s.anchor?.lastTs ?? now, s.visitId);
   if (s.tripId != null) db.runSync('DELETE FROM trips WHERE id=?', s.tripId);
   setKV('engine.state', EMPTY);
+  try { if (await Location.hasStartedGeofencingAsync(GEOFENCE_TASK)) await Location.stopGeofencingAsync(GEOFENCE_TASK); } catch {}
+  try { await BackgroundTask.unregisterTaskAsync(WATCHDOG_TASK); } catch {}
   setKV('settings.tracking', false);
   emitChange();
 }
@@ -223,12 +331,11 @@ export async function isTracking(): Promise<boolean> {
 
 /** Called when the app opens: restart tracking if it should be on, and finish any place lookups that failed offline. */
 export async function resume() {
-  if (getKV('settings.tracking', false) && !(await isTracking())) {
-    try { await startTracking(); } catch (e) { console.warn('restart failed', e); }
-  }
+  if (getKV('settings.tracking', false)) await ensureRunning('app opened');
   const pending: Visit[] = unresolvedVisits();
   for (const v of pending) { await resolveVisit(v); }
   if (pending.length) emitChange();
+  await refinePendingTrips();
 }
 
 /** Where you are right now, as the engine sees it. */

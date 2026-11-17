@@ -21,25 +21,46 @@ you stopped at, and your steps.
 - **Arrival notifications**: "Arrived at Office · 🚗 Vehicle · 38 min · 12.4 km".
 - **Private**: everything is stored in SQLite on the phone. Export as JSON or delete it from Settings.
 
-## Run it on your phone
+## Install it on your phone
 
-Background location doesn't work in Expo Go, so you need a *development build* (one-time):
+### Android: download the APK (no developer tools needed)
+
+Every push to this repository builds the app automatically (GitHub Actions →
+*Day Tracker – Android APK*) and publishes it on the repository's **Releases** page.
+
+1. On your Android phone, open `https://github.com/<owner>/<repo>/releases/latest`.
+2. Tap **DayTracker.apk** to download it.
+3. Open the downloaded file. If Android asks, allow your browser to *install unknown apps*.
+4. Open Day Tracker and follow the setup screens.
+
+New builds install over the old one and keep your data.
+
+**Optional keys** (repository → Settings → Secrets and variables → Actions):
+
+| Secret | What it does | Cost |
+|---|---|---|
+| `GOOGLE_MAPS_API_KEY` | Shows the map on Android (Maps SDK for Android) | Free |
+| `GOOGLE_PLACES_API_KEY` | Better restaurant/shop names (Places API (New)) | Free monthly allowance, then paid |
+
+Without the Maps key, the map areas on Android show up blank. Everything else (timeline, places, steps, commute) still works.
+
+### iPhone
+
+Apple only lets you install apps through the App Store or TestFlight, and both need a paid Apple Developer
+account ($99/year). With one:
 
 ```bash
 cd day-tracker
-npm install
-npx eas-cli@latest login
-npx eas-cli@latest build --profile development --platform android   # or ios
+npx eas-cli@latest build --platform ios --profile production
+npx eas-cli@latest submit --platform ios   # then install via TestFlight
 ```
 
-Install the build on your phone, then:
+### Developers: live-reload build
 
 ```bash
-npx expo start --dev-client
+cd day-tracker && npm install
+npx expo run:android      # needs Android Studio, or use: npx eas-cli build --profile development
 ```
-
-Android maps need a Google Maps key. Put `GOOGLE_MAPS_API_KEY=...` in `day-tracker/.env` (it is git-ignored).
-iPhone uses Apple Maps and needs no key.
 
 ## Code map
 
@@ -53,11 +74,19 @@ iPhone uses Apple Maps and needs no key.
 
 Tuning (in `src/tracker.ts`): `STAY_RADIUS_M` (100 m) and `STAY_MIN_MS` (5 min) decide what counts as a stop.
 
-## Known limits
+## Reliability features
 
-- Android phones from Samsung, Xiaomi, OnePlus, Vivo and Oppo may pause background apps. Set battery usage to **Unrestricted**
-  (there's a button for this in the app).
-- On Android, steps are **estimated** from walking distance. iPhone uses the real step counter. Exact
-  Android steps would need a Health Connect integration.
-- Place names come from OpenStreetMap, which is free but less complete than Google Places in some areas.
-  You can always pick the right place or remember it.
+- **Steps:** iPhone uses the motion chip. Android uses **Health Connect**, which gets steps from the phone,
+  Google Fit, Samsung Health or a watch. If neither is available, steps are estimated from walking distance,
+  and the app says so.
+- **Battery killers:** the app opens Android's own "allow background" dialog and shows extra steps for your
+  phone's brand (Samsung, Xiaomi, OnePlus, Vivo, Oppo, Huawei).
+- **Self-healing:** a watchdog restarts tracking if it stops. Geofences around your saved places wake the app
+  on arrival or departure even after the phone killed it. Any gap is shown on the Today screen.
+- **Place names:** Google Places (if a key is set) plus OpenStreetMap. Any name you choose is remembered for that spot.
+- **Travel mode:** speed, plus steps during the trip (about 100 steps/min means walking, almost none means a
+  vehicle), plus your own corrections between the same places.
+
+Still out of an app's control: if you swipe the app away on an iPhone, iOS stops it until you open it again
+or arrive at or leave a saved place. Health Connect only has steps if something writes them (the phone on
+Android 14+, Google Fit, Samsung Health or a watch).

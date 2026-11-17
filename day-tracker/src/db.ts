@@ -36,11 +36,22 @@ CREATE TABLE IF NOT EXISTS trips (
 CREATE INDEX IF NOT EXISTS trips_start ON trips(start_ts);
 `);
 
+// Lightweight migrations for columns added after the first release.
+for (const sql of [
+  'ALTER TABLE trips ADD COLUMN refined INTEGER NOT NULL DEFAULT 0',
+  'ALTER TABLE trips ADD COLUMN steps INTEGER',
+  'ALTER TABLE places ADD COLUMN learned INTEGER NOT NULL DEFAULT 0',
+]) {
+  try { db.execSync(sql); } catch { /* column already exists */ }
+}
+
 export type PlaceKind = 'home' | 'office' | 'other';
 
 export interface Place {
   id: number; name: string; kind: PlaceKind;
   lat: number; lon: number; radius: number; address: string | null;
+  /** 1 = created automatically when you named a visit (not added by hand). */
+  learned?: number;
 }
 export interface Visit {
   id: number; start_ts: number; end_ts: number | null;
@@ -51,6 +62,7 @@ export interface Trip {
   id: number; start_ts: number; end_ts: number | null;
   from_visit: number | null; to_visit: number | null;
   distance_m: number; mode: string | null; mode_edited: number;
+  refined: number; steps: number | null;
 }
 export interface Point { id: number; ts: number; lat: number; lon: number; acc: number | null; speed: number | null; }
 
@@ -68,19 +80,19 @@ export function setKV(key: string, value: unknown) {
 export function listPlaces(): Place[] {
   return db.getAllSync<Place>("SELECT * FROM places ORDER BY CASE kind WHEN 'home' THEN 0 WHEN 'office' THEN 1 ELSE 2 END, name");
 }
-export function savePlace(p: Omit<Place, 'id'> & { id?: number }): number {
+export function savePlace(p: Omit<Place, 'id' | 'learned'> & { id?: number; learned?: number }): number {
   // Only one Home and one Office: replace the existing one.
   if (!p.id && (p.kind === 'home' || p.kind === 'office')) {
     const existing = db.getFirstSync<{ id: number }>('SELECT id FROM places WHERE kind = ?', p.kind);
     if (existing) p = { ...p, id: existing.id };
   }
   if (p.id) {
-    db.runSync('UPDATE places SET name=?, kind=?, lat=?, lon=?, radius=?, address=? WHERE id=?',
-      p.name, p.kind, p.lat, p.lon, p.radius, p.address, p.id);
+    db.runSync('UPDATE places SET name=?, kind=?, lat=?, lon=?, radius=?, address=?, learned=? WHERE id=?',
+      p.name, p.kind, p.lat, p.lon, p.radius, p.address, p.learned ?? 0, p.id);
     return p.id;
   }
-  return db.runSync('INSERT INTO places (name, kind, lat, lon, radius, address) VALUES (?,?,?,?,?,?)',
-    p.name, p.kind, p.lat, p.lon, p.radius, p.address).lastInsertRowId;
+  return db.runSync('INSERT INTO places (name, kind, lat, lon, radius, address, learned) VALUES (?,?,?,?,?,?,?)',
+    p.name, p.kind, p.lat, p.lon, p.radius, p.address, p.learned ?? 0).lastInsertRowId;
 }
 export function deletePlace(id: number) {
   db.runSync('UPDATE visits SET place_id = NULL, resolved = 0 WHERE place_id = ?', id);
@@ -114,6 +126,17 @@ export function unresolvedVisits(): Visit[] {
 export function renameVisit(id: number, name: string) {
   db.runSync('UPDATE visits SET name = ?, resolved = 1 WHERE id = ?', name, id);
 }
+/** Times when tracking was interrupted (phone killed the app, location turned off…). */
+export interface Gap { from: number; to: number; reason: string }
+export function addGap(g: Gap) {
+  const gaps = getKV<Gap[]>('engine.gaps', []);
+  gaps.push(g);
+  setKV('engine.gaps', gaps.slice(-100));
+}
+export function gapsBetween(from: number, to: number): Gap[] {
+  return getKV<Gap[]>('engine.gaps', []).filter((g) => g.from < to && g.to > from);
+}
+
 export function setTripMode(id: number, mode: string) {
   db.runSync('UPDATE trips SET mode = ?, mode_edited = 1 WHERE id = ?', mode, id);
 }
