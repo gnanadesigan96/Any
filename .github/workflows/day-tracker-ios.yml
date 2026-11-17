@@ -74,7 +74,10 @@ jobs:
           set -o pipefail
           xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Release \
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO build | tail -n 80
+            CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/build.log" 2>&1 || {
+              echo "::group::Build errors"; grep -nE "error:|fatal error|Error:|❌|failed with" "$RUNNER_TEMP/build.log" | head -60; echo "::endgroup::"
+              grep -nE "error:" -B3 -A8 "$RUNNER_TEMP/build.log" | head -150; exit 1; }
+          tail -n 20 "$RUNNER_TEMP/build.log"
 
   testflight:
     needs: check-secrets
@@ -117,7 +120,9 @@ jobs:
             -allowProvisioningUpdates \
             -authenticationKeyPath "$RUNNER_TEMP/keys/AuthKey.p8" \
             -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER" \
-            archive | tail -n 80
+            archive > "$RUNNER_TEMP/archive.log" 2>&1 || {
+              grep -nE "error:" -B3 -A8 "$RUNNER_TEMP/archive.log" | head -150; exit 1; }
+          tail -n 20 "$RUNNER_TEMP/archive.log"
       - name: Upload to TestFlight
         run: |
           cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
