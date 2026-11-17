@@ -59,10 +59,14 @@ jobs:
         working-directory: day-tracker
     steps:
       - uses: actions/checkout@v4
-      - name: Use the newest Xcode (packages need Swift 6.2+)
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
+      - name: Pick Xcode 26.0–26.2 (Expo SDK 58 needs Swift 6.2; 26.3+ is stricter and breaks Expo's JSI module)
+        working-directory: .
+        run: |
+          ls -d /Applications/Xcode*.app
+          for v in 26.2 26.1.1 26.1 26.0.1 26.0; do
+            if [ -d "/Applications/Xcode_$v.app" ]; then sudo xcode-select -s "/Applications/Xcode_$v.app"; echo "Using Xcode $v"; exit 0; fi
+          done
+          echo "::error::No Xcode 26.0–26.2 on this runner"; exit 1
       - run: xcodebuild -version && swift --version
         working-directory: .
       - uses: actions/setup-node@v4
@@ -102,10 +106,14 @@ jobs:
       ISSUER: ${{ secrets.ASC_ISSUER_ID }}
     steps:
       - uses: actions/checkout@v4
-      - name: Use the newest Xcode (packages need Swift 6.2+)
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
+      - name: Pick Xcode 26.0–26.2 (Expo SDK 58 needs Swift 6.2; 26.3+ is stricter and breaks Expo's JSI module)
+        working-directory: .
+        run: |
+          ls -d /Applications/Xcode*.app
+          for v in 26.2 26.1.1 26.1 26.0.1 26.0; do
+            if [ -d "/Applications/Xcode_$v.app" ]; then sudo xcode-select -s "/Applications/Xcode_$v.app"; echo "Using Xcode $v"; exit 0; fi
+          done
+          echo "::error::No Xcode 26.0–26.2 on this runner"; exit 1
       - run: xcodebuild -version && swift --version
         working-directory: .
       - uses: actions/setup-node@v4
