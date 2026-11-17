@@ -59,6 +59,12 @@ jobs:
         working-directory: day-tracker
     steps:
       - uses: actions/checkout@v4
+      - name: Use the newest Xcode (packages need Swift 6.2+)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - run: xcodebuild -version && swift --version
+        working-directory: .
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -96,6 +102,12 @@ jobs:
       ISSUER: ${{ secrets.ASC_ISSUER_ID }}
     steps:
       - uses: actions/checkout@v4
+      - name: Use the newest Xcode (packages need Swift 6.2+)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - run: xcodebuild -version && swift --version
+        working-directory: .
       - uses: actions/setup-node@v4
         with:
           node-version: 22
