@@ -1,0 +1,139 @@
+# iPhone build for Day Tracker.
+#
+#  • "verify"     – compiles the app for the iOS Simulator. No Apple account needed. Run it from the
+#                   Actions tab (Run workflow) whenever you want to confirm iOS still builds.
+#  • "testflight" – signs the app and uploads it to TestFlight, so you can install it on your iPhone.
+#                   Runs on every push once these repository secrets exist
+#                   (Settings → Secrets and variables → Actions):
+#                     APPLE_TEAM_ID            10-character Team ID (developer.apple.com → Membership)
+#                     ASC_KEY_ID               App Store Connect API key ID
+#                     ASC_ISSUER_ID            App Store Connect API issuer ID
+#                     ASC_KEY_P8               contents of the downloaded AuthKey_XXXX.p8 file
+#                     IOS_BUNDLE_ID            your app's bundle ID, e.g. com.yourname.daytracker
+name: Day Tracker – iOS
+
+on:
+  push:
+    paths:
+      - 'day-tracker/**'
+      - '.github/workflows/day-tracker-ios.yml'
+  workflow_dispatch:
+    inputs:
+      job:
+        description: 'What to run'
+        type: choice
+        options: [verify, testflight]
+        default: verify
+
+concurrency:
+  group: day-tracker-ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-secrets:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.c.outputs.ready }}
+    steps:
+      - id: c
+        env:
+          A: ${{ secrets.APPLE_TEAM_ID }}
+          B: ${{ secrets.ASC_KEY_ID }}
+          C: ${{ secrets.ASC_ISSUER_ID }}
+          D: ${{ secrets.ASC_KEY_P8 }}
+          E: ${{ secrets.IOS_BUNDLE_ID }}
+        run: |
+          if [ -n "$A" ] && [ -n "$B" ] && [ -n "$C" ] && [ -n "$D" ] && [ -n "$E" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Apple secrets not set yet – skipping TestFlight upload (see day-tracker/README.md)."
+          fi
+
+  verify:
+    if: github.event_name == 'workflow_dispatch' && inputs.job == 'verify'
+    runs-on: macos-15
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: day-tracker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: day-tracker/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - name: Generate native iOS project (+ CocoaPods)
+        run: npx expo prebuild --platform ios
+      - name: Build for iOS Simulator (Release, unsigned)
+        run: |
+          WS=$(ls -d ios/*.xcworkspace | head -1); SCHEME=$(basename "$WS" .xcworkspace)
+          set -o pipefail
+          xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Release \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -n 80
+
+  testflight:
+    needs: check-secrets
+    if: needs.check-secrets.outputs.ready == 'true' && (github.event_name == 'push' || inputs.job == 'testflight')
+    runs-on: macos-15
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: day-tracker
+    env:
+      IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+      IOS_BUILD_NUMBER: ${{ github.run_number }}
+      EXPO_PUBLIC_GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+      TEAM: ${{ secrets.APPLE_TEAM_ID }}
+      KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: day-tracker/package-lock.json
+      - run: npm ci
+      - name: Generate native iOS project (+ CocoaPods)
+        run: npx expo prebuild --platform ios
+      - name: App Store Connect API key
+        env:
+          P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/keys"
+          printf '%s' "$P8" > "$RUNNER_TEMP/keys/AuthKey.p8"
+      - name: Archive (signed automatically with your Apple team)
+        run: |
+          WS=$(ls -d ios/*.xcworkspace | head -1); SCHEME=$(basename "$WS" .xcworkspace)
+          set -o pipefail
+          xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/DayTracker.xcarchive" \
+            DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_STYLE=Automatic \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/keys/AuthKey.p8" \
+            -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER" \
+            archive | tail -n 80
+      - name: Upload to TestFlight
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>${TEAM}</string>
+            <key>signingStyle</key><string>automatic</string>
+          </dict></plist>
+          PLIST
+          set -o pipefail
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/DayTracker.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/keys/AuthKey.p8" \
+            -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER" | tail -n 40
+          echo "::notice::Uploaded build ${IOS_BUILD_NUMBER}. It appears in TestFlight after Apple finishes processing (5–30 min)."

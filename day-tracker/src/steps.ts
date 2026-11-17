@@ -2,6 +2,19 @@ import { Platform } from 'react-native';
 import { Pedometer } from 'expo-sensors';
 import { getKV, setKV } from './db';
 
+const DAY = 24 * 60 * 60 * 1000;
+
+/** Save each of the last 7 days' step totals (iPhone forgets them after a week). Runs on app open and in the background. */
+export async function saveRecentSteps() {
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i);
+    const start = d.getTime();
+    const end = Math.min(start + DAY, Date.now());
+    const real = await realSteps(start, end).catch(() => null);
+    if (real && real.steps > 0 && (i > 0 || end - start >= DAY - 1000)) setKV(`steps.day.${start}`, real.steps);
+  }
+}
+
 export type StepSource = 'iphone' | 'health-connect' | 'estimate';
 export interface StepResult { steps: number; source: StepSource; hint?: string }
 
@@ -88,7 +101,11 @@ export async function realSteps(start: number, end: number): Promise<{ steps: nu
  */
 export async function stepsBetween(start: number, end: number, walkedMetres: number): Promise<StepResult> {
   const estimate = Math.round(walkedMetres / 0.75);
+  // iPhone keeps only 7 days of step history: older days come from our own saved copy.
+  const saved = getKV<number | null>(`steps.day.${start}`, null);
+  if (Platform.OS === 'ios' && saved != null && Date.now() - start > 6 * DAY) return { steps: saved, source: 'iphone' };
   const real = await realSteps(start, end);
+  if (real && end - start >= DAY - 1000 && real.steps > 0) setKV(`steps.day.${start}`, real.steps);
   if (real) {
     // Health Connect connected but empty while you clearly walked: nothing is writing steps into it.
     if (real.source === 'health-connect' && real.steps === 0 && walkedMetres > 400) {

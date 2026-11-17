@@ -9,7 +9,10 @@ const config: ExpoConfig = {
   userInterfaceStyle: 'automatic',
   ios: {
     supportsTablet: false,
-    bundleIdentifier: 'com.daytracker.app',
+    // Must be unique on the App Store: set IOS_BUNDLE_ID (e.g. com.yourname.daytracker) when publishing.
+    bundleIdentifier: process.env.IOS_BUNDLE_ID || 'com.daytracker.app',
+    buildNumber: process.env.IOS_BUILD_NUMBER || '1',
+    config: { usesNonExemptEncryption: false },
     infoPlist: {
       UIBackgroundModes: ['location', 'fetch', 'processing'],
     },

@@ -3,7 +3,7 @@ import * as TaskManager from 'expo-task-manager';
 import * as Notifications from 'expo-notifications';
 import * as BackgroundTask from 'expo-background-task';
 import { addGap, db, getKV, setKV, getVisit, listPlaces, Trip, unresolvedVisits, Visit } from './db';
-import { realSteps } from './steps';
+import { realSteps, saveRecentSteps } from './steps';
 import { distance, guessMode, pathLength, formatDuration, MODE_LABEL } from './geo';
 import { resolveVisit } from './places';
 import { emitChange } from './events';
@@ -60,6 +60,7 @@ TaskManager.defineTask(WATCHDOG_TASK, async () => {
   try {
     if (getKV('settings.tracking', false)) await ensureRunning('watchdog');
     await refinePendingTrips();
+    await saveRecentSteps();
     return BackgroundTask.BackgroundTaskResult.Success;
   } catch {
     return BackgroundTask.BackgroundTaskResult.Failed;
@@ -336,6 +337,7 @@ export async function resume() {
   for (const v of pending) { await resolveVisit(v); }
   if (pending.length) emitChange();
   await refinePendingTrips();
+  saveRecentSteps().catch(() => null);
 }
 
 /** Where you are right now, as the engine sees it. */
