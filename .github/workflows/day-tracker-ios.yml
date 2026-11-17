@@ -12,11 +12,8 @@
 #                     IOS_BUNDLE_ID            your app's bundle ID, e.g. com.yourname.daytracker
 name: Day Tracker – iOS
 
+# Manual only: runs when you press "Run workflow" in the Actions tab. Never runs on its own.
 on:
-  push:
-    paths:
-      - 'day-tracker/**'
-      - '.github/workflows/day-tracker-ios.yml'
   workflow_dispatch:
     inputs:
       job:
@@ -90,7 +87,7 @@ jobs:
 
   testflight:
     needs: check-secrets
-    if: needs.check-secrets.outputs.ready == 'true' && (github.event_name == 'push' || inputs.job == 'testflight')
+    if: needs.check-secrets.outputs.ready == 'true' && inputs.job == 'testflight'
     runs-on: macos-26
     timeout-minutes: 120
     defaults:
