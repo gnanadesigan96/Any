@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@maplibre/maplibre-react-native": "^11.5.1",
+    "@types/geojson": "^7946.0.16",
     "expo": "~58.0.25",
     "expo-background-task": "~58.0.13",
     "expo-build-properties": "~58.0.12",
@@ -17,8 +19,7 @@
     "expo-task-manager": "~58.0.14",
     "react": "19.3.0",
     "react-native": "0.88.1",
-    "react-native-health-connect": "^4.1.3",
-    "react-native-maps": "1.29.11"
+    "react-native-health-connect": "^4.1.3"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",

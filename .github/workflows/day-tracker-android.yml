@@ -24,8 +24,7 @@ jobs:
       run:
         working-directory: day-tracker
     env:
-      # Optional repository secrets (Settings → Secrets and variables → Actions):
-      GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+      # Optional repository secret (Settings → Secrets and variables → Actions):
       EXPO_PUBLIC_GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
       NODE_ENV: production
     steps:

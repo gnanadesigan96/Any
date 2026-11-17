@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import MapView, { Circle, Marker } from 'react-native-maps';
+import React, { useEffect, useState } from 'react';
+import { Alert, View } from 'react-native';
+import { AppMap } from './AppMap';
 import * as Location from 'expo-location';
 import { listPlaces, PlaceKind, savePlace, Place } from '../db';
 import { nearbyCandidates, relabelVisits } from '../places';
@@ -29,7 +29,6 @@ export function PlaceEditor({ kind: initialKind, initial, at, allowKindChange, o
   allowKindChange?: boolean; onSaved: (id: number) => void; onSkip?: () => void;
 }) {
   const t = useTheme();
-  const map = useRef<MapView>(null);
   const [kind, setKind] = useState<PlaceKind>(initial?.kind ?? initialKind);
   const [name, setName] = useState(initial?.name ?? at?.name ?? DEFAULT_NAME[initialKind]);
   const [coord, setCoord] = useState<Coord | null>(
@@ -46,9 +45,8 @@ export function PlaceEditor({ kind: initialKind, initial, at, allowKindChange, o
     if (at) moveTo(at, false); else useCurrent();
   }, []);
 
-  const moveTo = async (c: Coord, animate = true) => {
+  const moveTo = async (c: Coord, _animate = true) => {
     setCoord(c);
-    if (animate) map.current?.animateToRegion({ ...c, latitudeDelta: 0.006, longitudeDelta: 0.006 }, 400);
     try {
       const [r] = await Location.reverseGeocodeAsync(c);
       if (r) {
@@ -110,21 +108,15 @@ export function PlaceEditor({ kind: initialKind, initial, at, allowKindChange, o
 
   return (
     <View>
-      <View style={[s.mapWrap, { borderColor: t.border }]}>
-        <MapView
-          ref={map}
-          style={StyleSheet.absoluteFill}
-          showsUserLocation
-          initialRegion={coord ? { ...coord, latitudeDelta: 0.006, longitudeDelta: 0.006 } : undefined}
-          onLongPress={(e) => moveTo(e.nativeEvent.coordinate)}>
-          {coord && (
-            <>
-              <Marker coordinate={coord} draggable onDragEnd={(e) => moveTo(e.nativeEvent.coordinate)} pinColor={t.accent} />
-              <Circle center={coord} radius={radius} strokeColor={t.accent} fillColor="rgba(37,99,235,0.15)" />
-            </>
-          )}
-        </MapView>
-      </View>
+      <AppMap
+        style={{ height: 260 }}
+        live
+        dragPin={coord}
+        onDragPin={moveTo}
+        onLongPress={moveTo}
+        circle={coord ? { lat: coord.latitude, lon: coord.longitude, radius } : undefined}
+        zoom={16}
+      />
       <Sub style={{ marginTop: 6 }}>Drag the pin or long-press the map to fine-tune.</Sub>
       {address ? <Body style={{ marginTop: 6 }}>{address}</Body> : null}
 
@@ -162,7 +154,3 @@ export function PlaceEditor({ kind: initialKind, initial, at, allowKindChange, o
     </View>
   );
 }
-
-const s = StyleSheet.create({
-  mapWrap: { height: 260, borderRadius: 16, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth },
-});

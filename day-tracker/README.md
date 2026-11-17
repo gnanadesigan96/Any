@@ -35,14 +35,9 @@ Every push to this repository builds the app automatically (GitHub Actions →
 
 New builds install over the old one and keep your data.
 
-**Optional keys** (repository → Settings → Secrets and variables → Actions):
-
-| Secret | What it does | Cost |
-|---|---|---|
-| `GOOGLE_MAPS_API_KEY` | Shows the map on Android (Maps SDK for Android) | Free |
-| `GOOGLE_PLACES_API_KEY` | Better restaurant/shop names (Places API (New)) | Free monthly allowance, then paid |
-
-Without the Maps key, the map areas on Android show up blank. Everything else (timeline, places, steps, commute) still works.
+**Optional key** (repository → Settings → Secrets and variables → Actions): `GOOGLE_PLACES_API_KEY`
+gives better restaurant and shop names (Google Places API (New): free monthly allowance, then paid).
+The app works fully without it.
 
 ### iPhone
 
@@ -62,6 +57,14 @@ cd day-tracker && npm install
 npx expo run:android      # needs Android Studio, or use: npx eas-cli build --profile development
 ```
 
+## Maps
+
+Day Tracker has its own map. It's drawn on the phone by **MapLibre** (open source) from
+**OpenStreetMap** data, served free by **OpenFreeMap**. It doesn't use Google and needs no API key.
+Routes, place pins and place circles are drawn by the app (`src/components/AppMap.tsx`). The map follows the
+phone's light/dark mode. To restyle the whole map, point `STYLE_LIGHT` / `STYLE_DARK` at your own
+[MapLibre style](https://maplibre.org/maplibre-style-spec/).
+
 ## Code map
 
 | File | Purpose |
@@ -70,6 +73,7 @@ npx expo run:android      # needs Android Studio, or use: npx eas-cli build --pr
 | `src/places.ts` | Saved-place matching, OpenStreetMap lookup, re-labelling |
 | `src/stats.ts` | Daily summary: timeline, commute, time breakdown |
 | `src/db.ts` | On-device SQLite storage |
+| `src/components/AppMap.tsx` | Our own map (MapLibre + OpenStreetMap) |
 | `src/screens/*` | Onboarding, Today, Map, Places, Settings |
 
 Tuning (in `src/tracker.ts`): `STAY_RADIUS_M` (100 m) and `STAY_MIN_MS` (5 min) decide what counts as a stop.

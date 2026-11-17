@@ -1,9 +1,5 @@
 import type { ExpoConfig } from 'expo/config';
 
-// Google Maps key is only needed for the map on Android (iOS uses Apple Maps).
-// Put it in a local .env file as GOOGLE_MAPS_API_KEY=... — never commit it.
-const googleMapsKey = process.env.GOOGLE_MAPS_API_KEY ?? '';
-
 const config: ExpoConfig = {
   name: 'Day Tracker',
   slug: 'day-tracker',
@@ -66,7 +62,8 @@ const config: ExpoConfig = {
     // Real step counts on Android come from Health Connect (needs Android 8+).
     'react-native-health-connect',
     ['expo-build-properties', { android: { minSdkVersion: 26 } }],
-    ['react-native-maps', { androidGoogleMapsApiKey: googleMapsKey }],
+    // Our own map: MapLibre + OpenStreetMap data (no Google, no key).
+    '@maplibre/maplibre-react-native',
   ],
 };
 
