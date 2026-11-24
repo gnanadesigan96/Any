@@ -1,0 +1,51 @@
+level_1,dma_account_id,pma_name,pma_account_id,transfer_id,transfer_status,transfer_start,cma_name,cma_account_id,cur_bucket,note
+DMA,854669817389,Integra_Technologies_FZE,561041808498,rt-1okshsy2,ACCEPTED,2025-12-01,devcloud-smb,,aws-cur-integra-technologies-fze-devcloud-smb-561041808498,Inferred from CUR bucket name
+DMA,854669817389,Integra_Technologies_FZE,561041808498,rt-1okshsy2,ACCEPTED,2025-12-01,abg,,aws-cur-integra-technologies-fze-abg-561041808498,Inferred from CUR bucket name
+DMA,854669817389,Integra_Technologies_FZE,561041808498,rt-1okshsy2,ACCEPTED,2025-12-01,incloud-smb,,aws-cur-integra-technologies-fze-incloud-smb-561041808498,Inferred from CUR bucket name
+DMA,854669817389,Integra_Technologies_FZE,561041808498,rt-1okshsy2,ACCEPTED,2025-12-01,interplast,,aws-cur-integra-technologies-fze-interplast-561041808498,Inferred from CUR bucket name
+DMA,854669817389,EndcustomerCBI-IntegraPMA,094840069092,rt-slu75vo1,ACCEPTED,2025-12-01,cbi-integra,,aws-cur-endcustomercbi-integrapma-cbi-integra-094840069092,Inferred from CUR bucket name
+DMA,854669817389,Integra_Alfuttaim,485304455816,rt-ocexgdn7,ACCEPTED,2026-01-01,,,aws-cur-integra-alfuttaim-485304455816,No customer CURs; level not confirmed
+DMA,854669817389,bluecast-suntechglobal,186912365979,rt-l84iudlp,ACCEPTED,2026-01-01,suntech-global,,aws-cur-bluecast-suntechglobal-suntech-global-186912365979,Inferred from CUR bucket name
+DMA,854669817389,Vantlogix-Internal,818648487825,rt-ljoa0c5a,ACCEPTED,2026-01-01,vantlogix-internal,,aws-cur-vantlogix-internal-vantlogix-internal-818648487825,Inferred from CUR bucket name
+DMA,854669817389,Etisalat-Resell,225334088655,rt-11fm8vme,ACCEPTED,2026-02-01,indianhighschool,,aws-cur-etisalat-resell-indianhighschool-225334088655,Inferred from CUR bucket name
+DMA,854669817389,Etisalat-Resell,225334088655,rt-11fm8vme,ACCEPTED,2026-02-01,exceed-info-tech-llc,,aws-cur-etisalat-resell-exceed-info-tech-llc-225334088655,Inferred from CUR bucket name
+DMA,854669817389,Etisalat-Resell,225334088655,rt-11fm8vme,ACCEPTED,2026-02-01,benzy-infotech-solutions,,aws-cur-etisalat-resell-benzy-infotech-solutions-225334088655,Inferred from CUR bucket name
+DMA,854669817389,Etisalat-Resell,225334088655,rt-11fm8vme,ACCEPTED,2026-02-01,black-tulip-flowers-llc,,aws-cur-etisalat-resell-black-tulip-flowers-llc-225334088655,Inferred from CUR bucket name
+DMA,854669817389,Etisalat-Resell,225334088655,rt-11fm8vme,ACCEPTED,2026-02-01,dojoin,,aws-cur-etisalat-resell-dojoin-225334088655,Inferred from CUR bucket name
+DMA,854669817389,f9-infotech,128121110093,rt-4b9gl0tz,ACCEPTED,2026-02-01,,,aws-cur-f9-infotech-128121110093,No customer CURs; level not confirmed
+DMA,854669817389,cloudmates-pma,052124709073,rt-ececu9xv,ACCEPTED,2026-02-01,,,aws-cur-cloudmates-pma-052124709073,No customer CURs; level not confirmed
+DMA,854669817389,holograph,192481307361,rt-g3rmg03v,ACCEPTED,2026-02-01,elucidata,,aws-cur-holograph-elucidata-192481307361,Inferred from CUR bucket name
+DMA,854669817389,holograph,192481307361,rt-g3rmg03v,ACCEPTED,2026-02-01,betterplace-conncet,,aws-cur-holograph-betterplace-conncet-192481307361,Inferred from CUR bucket name
+DMA,854669817389,holograph,192481307361,rt-g3rmg03v,ACCEPTED,2026-02-01,betterplace-platform,,aws-cur-holograph-betterplace-platform-192481307361,Inferred from CUR bucket name
+DMA,854669817389,holograph,192481307361,rt-g3rmg03v,ACCEPTED,2026-02-01,versatile-billingtransfer,,aws-cur-holograph-versatile-billingtransfer-192481307361,Inferred from CUR bucket name
+DMA,854669817389,Etisalat-PMA2-Managed,196010725928,rt-tlzckzxj,ACCEPTED,2026-03-01,raynatourismllc,,aws-cur-etisalat-pma2-managed-raynatourismllc-196010725928,Inferred from CUR bucket name
+DMA,854669817389,Etisalat-PMA2-Managed,196010725928,rt-tlzckzxj,ACCEPTED,2026-03-01,pairtwotechnologies,,aws-cur-etisalat-pma2-managed-pairtwotechnologies-196010725928,Inferred from CUR bucket name
+DMA,854669817389,Servion-UAE,641288786511,rt-9gdb0kon,ACCEPTED,2026-03-01,,,aws-cur-servion-uae-641288786511,No customer CURs; level not confirmed
+DMA,854669817389,AlaanPay_UAE,630190205837,rt-9kcvcs0c,ACCEPTED,2026-03-01,alaanpay,,aws-cur-alaanpay-uae-alaanpay-630190205837,Inferred from CUR bucket name
+DMA,854669817389,SUDO_UAE,170727075313,rt-v0sjrjrb,ACCEPTED,2026-03-01,tradeling,,aws-cur-sudo-uae-tradeling-170727075313,Inferred from CUR bucket name
+DMA,854669817389,Zaintech-UAE,065227442929,rt-wiewtmhf,ACCEPTED,2026-03-01,afia,,aws-cur-zaintech-uae-afia-065227442929,Inferred from CUR bucket name
+DMA,854669817389,Zaintech-UAE,065227442929,rt-wiewtmhf,ACCEPTED,2026-03-01,viwell,,aws-cur-zaintech-uae-viwell-065227442929,Inferred from CUR bucket name
+DMA,854669817389,Rounak_UAE,586337033237,rt-xprszsxl,ACCEPTED,2026-03-01,,,aws-cur-rounak-uae-586337033237,No customer CURs; level not confirmed
+DMA,854669817389,Whistlemind-UAE,001746151368,rt-692jl76s,ACCEPTED,2026-04-01,letscooee-limited,,aws-cur-whistlemind-uae-letscooee-limited-001746151368,Inferred from CUR bucket name
+DMA,854669817389,Whistlemind-UAE,001746151368,rt-692jl76s,ACCEPTED,2026-04-01,royal-international-llc,,aws-cur-whistlemind-uae-royal-international-llc-001746151368,Inferred from CUR bucket name
+DMA,854669817389,Lauren-UAE,998506037092,rt-o0ndhloc,ACCEPTED,2026-04-01,arabyads-lauren,,aws-cur-lauren-uae-arabyads-lauren-998506037092,Inferred from CUR bucket name
+DMA,854669817389,Crediblex_UAE,475108759603,rt-xuhu5b90,ACCEPTED,2026-04-01,cx-main-transfer,,aws-cur-crediblex-uae-cx-main-transfer-475108759603,Inferred from CUR bucket name
+DMA,854669817389,AlphaDataAD-UAE,201240241992,rt-yxf6egn0,ACCEPTED,2026-04-01,,,billing-cur-201240241992,No customer CURs; level not confirmed
+DMA,854669817389,Zinovate-UAE-PMAV1,824050487503,rt-zri1qza3,ACCEPTED,2026-04-01,kintsugi,,aws-cur-zinovate-uae-pmav1-kintsugi-824050487503,Inferred from CUR bucket name
+DMA,854669817389,Adamas_UAE,822725963341,rt-2dibcukx,ACCEPTED,2026-05-01,,,billing-cur-822725963341,No customer CURs; level not confirmed
+DMA,854669817389,Webcastle_UAE,206226812117,rt-yuwute8t,ACCEPTED,2026-05-01,mattressland,,aws-cur-webcastle-uae-mattressland-206226812117,Inferred from CUR bucket name
+DMA,854669817389,Webcastle_UAE,206226812117,rt-yuwute8t,ACCEPTED,2026-05-01,yateemoptician,,aws-cur-webcastle-uae-yateemoptician-206226812117,Inferred from CUR bucket name
+DMA,854669817389,wiscloud,287127678047,rt-5lk2ov9m,ACCEPTED,2026-07-01,,,billing-cur-287127678047,No customer CURs; level not confirmed
+DMA,854669817389,Ensure-PMA,511131040233,rt-9hu5ikql,ACCEPTED,2026-07-01,,,billing-cur-511131040233,No customer CURs; level not confirmed
+DMA,854669817389,CloudZenia_UAE,703222328690,rt-gnzjt1kz,ACCEPTED,2026-07-01,,,billing-cur-703222328690,No customer CURs; level not confirmed
+DMA,854669817389,Alaan-NewPMA,638593101947,rt-edpt2f8o,ACCEPTED,2026-08-01,,,billing-cur-638593101947,No customer CURs; level not confirmed
+DMA,854669817389,Sappire_UAE,146092012595,rt-5iayr6jk,ACCEPTED,2026-09-01,,,billing-cur-146092012595,No customer CURs; level not confirmed
+DMA,854669817389,NewCrediblex_UAE,219712359012,rt-kjha324c,ACCEPTED,2026-10-01,,,billing-cur-219712359012,No customer CURs; level not confirmed
+DMA,854669817389,Integra-Payer-Account,626635421229,rt-05qk6klo,WITHDRAWN,2025-10-01,,,,Inactive (ended 2025-12-01)
+DMA,854669817389,Data_Inflexion_integra,372517046755,rt-9mc7jesi,WITHDRAWN,2025-11-01,,,,Inactive (ended 2025-12-01)
+DMA,854669817389,4codesystem,960596858988,rt-6ny16zfr,WITHDRAWN,2025-10-01,,,,Inactive (ended 2025-12-01)
+DMA,854669817389,Postiefs_UAE,627581620711,rt-2tmc5mhc,WITHDRAWN,2026-05-01,,,,Inactive (ended 2026-05-01)
+DMA,854669817389,Zinovate-UAE,,rt-594njhtf,EXPIRED,2026-03-01,,,,Inactive (invitation not accepted)
+DMA,854669817389,Cloudzenia-UAE,,rt-lb9b8qo8,EXPIRED,2026-03-01,,,,Inactive (invitation not accepted)
+DMA,854669817389,Zinovate-UAE,,rt-cixmzprv,CANCELED,2026-04-01,,,,Inactive (invitation not accepted)
+DMA,854669817389,Zinovate-UAE-PMA,,rt-grcrcrgp,CANCELED,2026-04-01,,,,Inactive (invitation not accepted)

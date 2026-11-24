@@ -1,0 +1,71 @@
+DMA 854669817389 "Transferbilling" (bill-transfer account)
+├── Integra_Technologies_FZE [561041808498] since 2025-12-01
+│   ├── CMA: devcloud-smb (account ID unknown)
+│   ├── CMA: abg (account ID unknown)
+│   ├── CMA: incloud-smb (account ID unknown)
+│   └── CMA: interplast (account ID unknown)
+├── EndcustomerCBI-IntegraPMA [094840069092] since 2025-12-01
+│   └── CMA: cbi-integra (account ID unknown)
+├── Integra_Alfuttaim [485304455816] since 2026-01-01
+│   └── (customers not visible yet)
+├── bluecast-suntechglobal [186912365979] since 2026-01-01
+│   └── CMA: suntech-global (account ID unknown)
+├── Vantlogix-Internal [818648487825] since 2026-01-01
+│   └── CMA: vantlogix-internal (account ID unknown)
+├── Etisalat-Resell [225334088655] since 2026-02-01
+│   ├── CMA: indianhighschool (account ID unknown)
+│   ├── CMA: exceed-info-tech-llc (account ID unknown)
+│   ├── CMA: benzy-infotech-solutions (account ID unknown)
+│   ├── CMA: black-tulip-flowers-llc (account ID unknown)
+│   └── CMA: dojoin (account ID unknown)
+├── f9-infotech [128121110093] since 2026-02-01
+│   └── (customers not visible yet)
+├── cloudmates-pma [052124709073] since 2026-02-01
+│   └── (customers not visible yet)
+├── holograph [192481307361] since 2026-02-01
+│   ├── CMA: elucidata (account ID unknown)
+│   ├── CMA: betterplace-conncet (account ID unknown)
+│   ├── CMA: betterplace-platform (account ID unknown)
+│   └── CMA: versatile-billingtransfer (account ID unknown)
+├── Etisalat-PMA2-Managed [196010725928] since 2026-03-01
+│   ├── CMA: raynatourismllc (account ID unknown)
+│   └── CMA: pairtwotechnologies (account ID unknown)
+├── Servion-UAE [641288786511] since 2026-03-01
+│   └── (customers not visible yet)
+├── AlaanPay_UAE [630190205837] since 2026-03-01
+│   └── CMA: alaanpay (account ID unknown)
+├── SUDO_UAE [170727075313] since 2026-03-01
+│   └── CMA: tradeling (account ID unknown)
+├── Zaintech-UAE [065227442929] since 2026-03-01
+│   ├── CMA: afia (account ID unknown)
+│   └── CMA: viwell (account ID unknown)
+├── Rounak_UAE [586337033237] since 2026-03-01
+│   └── (customers not visible yet)
+├── Whistlemind-UAE [001746151368] since 2026-04-01
+│   ├── CMA: letscooee-limited (account ID unknown)
+│   └── CMA: royal-international-llc (account ID unknown)
+├── Lauren-UAE [998506037092] since 2026-04-01
+│   └── CMA: arabyads-lauren (account ID unknown)
+├── Crediblex_UAE [475108759603] since 2026-04-01
+│   └── CMA: cx-main-transfer (account ID unknown)
+├── AlphaDataAD-UAE [201240241992] since 2026-04-01
+│   └── (customers not visible yet)
+├── Zinovate-UAE-PMAV1 [824050487503] since 2026-04-01
+│   └── CMA: kintsugi (account ID unknown)
+├── Adamas_UAE [822725963341] since 2026-05-01
+│   └── (customers not visible yet)
+├── Webcastle_UAE [206226812117] since 2026-05-01
+│   ├── CMA: mattressland (account ID unknown)
+│   └── CMA: yateemoptician (account ID unknown)
+├── wiscloud [287127678047] since 2026-07-01
+│   └── (customers not visible yet)
+├── Ensure-PMA [511131040233] since 2026-07-01
+│   └── (customers not visible yet)
+├── CloudZenia_UAE [703222328690] since 2026-07-01
+│   └── (customers not visible yet)
+├── Alaan-NewPMA [638593101947] since 2026-08-01
+│   └── (customers not visible yet)
+├── Sappire_UAE [146092012595] since 2026-09-01
+│   └── (customers not visible yet)
+└── NewCrediblex_UAE [219712359012] since 2026-10-01
+    └── (customers not visible yet)
